@@ -23,9 +23,13 @@ class NfvTopology(fnss.Topology):
         :return: return a set of nfv nodes
         """
 
-        return set (v for v in self
-                           if 'stack' in self.node[v]
-                           and self.node[v]['stack'][0] == 'nfv_node')
+        return set(v for v in self
+                   if 'stack' in self.node[v]
+                   and self.node[v]['stack'][0] == 'nfv_node')
+
+
+
+
 
 
 

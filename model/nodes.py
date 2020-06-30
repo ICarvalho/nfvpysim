@@ -56,6 +56,11 @@ class VnfNode(Node):
     def get_ram(self):
         return self.ram
 
+    def get_rem_cpu(self):
+        return self.remaining_cpu
+
+    def get_rem_ram(self):
+        return self.remaining_ram
 
     def has_ram(self):
 
@@ -107,9 +112,6 @@ class VnfNode(Node):
                 vnfs_cpu.append(proc)
 
             return vnfs_cpu
-
-
-
 
 
 
@@ -396,6 +398,7 @@ print(p.cpu)
 proc = p.proc_request(r)
 print(p.cpu)
 print(p.remaining_cpu)
+
 
 
 

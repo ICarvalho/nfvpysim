@@ -149,6 +149,10 @@ class NetworkModel:
         return egress_nodes_candidates
 
 
+
+
+
+
     def select_random_egress_node(self, topology):
         nodes = self.list_egress_nodes(topology)
         rand_egr_node = random.choice(nodes) if len(nodes) > 0 else None
@@ -156,18 +160,24 @@ class NetworkModel:
 
 
 
+
+
+    def get_rem_cpu_nodes_path(self, path):
+
+        node_rem_cpu = {}
+        for node in path:
+            if not isinstance(node, VnfNode):
+                continue
+            else:
+                node_rem_cpu[node] = node.get_rem_cpu()
+            return node_rem_cpu
+
+
     def compute_vnf_nodes_resources(self, topology, ingress_node, egress_node):
 
       pass
 
 
-    def has_nvf_node_path(self, topology, path):
-
-        for node in path:
-            stack_name, stack_props = fnss.get_stack(topology, node)
-            if stack_name == 'nfv_node':
-                return True
-            return False
 
 
     def locate_vnf_nodes_path(self, topology, path):
@@ -175,9 +185,8 @@ class NetworkModel:
         if not isinstance(topology, fnss.Topology):
             raise ValueError('The provided topology must be an instance of'
                              'fnss.Topology or any of its subclasses')
+        else:
 
-
-        if self.has_nvf_node_path(topology, path):
             list_vnf_nodes = []
             for node in path:
                 stack_name, stack_props = fnss.get_stack(topology, node)
@@ -185,8 +194,7 @@ class NetworkModel:
                     list_vnf_nodes.append(node)
 
             return list_vnf_nodes
-        else:
-            print("No vnf nodes were found in the given path")
+
 
 
     # Convert a path expressed as list of nodes into a path expressed as a list of edges.
@@ -243,28 +251,12 @@ topo = topology_geant()
 model = NetworkModel(topo)
 view = NetworkView(model)
 contr  = NetworkController(model)
+
 ingress = view.model.select_random_ingress_node(topo)
 egress = view.model.select_random_egress_node(topo)
 path = view.model.calculate_shortest_path(topo, ingress, egress)
-comp = view.model.compute_vnf_nodes_resources(topo, ingress, egress)
+nfv_path = view.model.locate_vnf_nodes_path(topo, path)
+
 print(path)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+print(topo.nfv_nodes())
+print(view.model.get_rem_cpu_nodes_path(nfv_path))
