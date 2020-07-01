@@ -154,22 +154,29 @@ def topology_tatanld(**kwargs):
     topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/datasets/TataNld.graphml').to_undirected() # 186 nodes
     deg = nx.degree(topology)
     ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 80 nodes
-    vnf_nodes = [v for v in topology.nodes() if deg[v] > 2]   # 34 nodes
+    nfv_node = [v for v in topology.nodes() if deg[v] > 2]   # 34 nodes
     egress_nodes = [v for v in topology.nodes() if deg[v] == 2] # 22 nodes
-    forwarding_nodes = [v for v in topology.nodes() if v not in ingress_nodes + vnf_nodes + egress_nodes] # 9 nodes
+    forwarding_nodes = [v for v in topology.nodes() if v not in ingress_nodes + nfv_node + egress_nodes] # 9 nodes
 
     # Add stacks to nodes
+    ing_node = IngressNode()
     for v in ingress_nodes:
-        fnss.add_stack(topology, v, 'ingress_node')
+        fnss.add_stack(topology, v, 'ingress_node', {'id': ing_node.get_node_id()})
 
-    for v in vnf_nodes:
-        fnss.add_stack(topology, v, 'vnf_node')
-
+    vnf_node = VnfNode()
+    for v in nfv_node:
+        fnss.add_stack(topology, v, 'nfv_node', {'id': vnf_node.get_node_id(),
+                                                 'cpu': vnf_node.get_cpu(),
+                                                 'ram': vnf_node.get_ram(),
+                                                 'r_cpu': vnf_node.get_rem_cpu(),
+                                                 'r_ram': vnf_node.get_rem_ram()})
+    egr_node = EgressNode()
     for v in egress_nodes:
-        fnss.add_stack(topology, v, 'egress_node')
+        fnss.add_stack(topology, v, 'egress_node', {'id': egr_node.get_node_id()})
 
     for v in forwarding_nodes:
-        fnss.add_stack(topology, v, 'forwarding_node')
+        fw_node = ForwardingNode()
+        fnss.add_stack(topology, v, 'forwarding_node', {'id': fw_node.get_node_id()})
 
 
     # Set weight and delay on all links
@@ -230,4 +237,5 @@ def topology_datacenter_two_tier():
 
     return NfvTopology(topology)
 
-
+topo = topology_geant()
+print(topo.nfv_nodes())

@@ -1,10 +1,11 @@
 import networkx as nx
 import fnss
 import matplotlib
-from topologies.topology import topology_geant, topology_datacenter_two_tier
+from topologies.topology import topology_geant, topology_datacenter_two_tier, topology_tatanld
 import random
 import queueing_tool as qt
-from model.nodes import *
+from model.nodes import VnfNode
+import collections
 
 def symmetrify_paths(shortest_paths):
     """Make paths symmetric
@@ -125,10 +126,16 @@ class NetworkModel:
         return ingress_nodes_candidates
 
 
+
+
+
+
     def select_random_ingress_node(self, topology):
         nodes = self.list_ingress_nodes(topology)
         rand_ing_node = random.choice(nodes) if len(nodes) > 0 else None
         return rand_ing_node
+
+
 
 
 
@@ -162,15 +169,22 @@ class NetworkModel:
 
 
 
-    def get_rem_cpu_nodes_path(self, path):
+    def get_rem_cpu_nodes_path(self, topology, path):
+        if not isinstance(topology, fnss.Topology):
+            raise ValueError('The provided topology must be an instance of'
+                             'fnss.Topology or any of its subclasses')
+        else:
+            node_rem_cpu = {}
+            for node in path:
+                stack_name, stack_props = fnss.get_stack(topology, node)
+                if stack_name == 'nfv_node':
+                    r_cpu = VnfNode().get_rem_cpu()
+                    node_rem_cpu[node] = r_cpu
+        return node_rem_cpu
 
-        node_rem_cpu = {}
-        for node in path:
-            if not isinstance(node, VnfNode):
-                continue
-            else:
-                node_rem_cpu[node] = node.get_rem_cpu()
-            return node_rem_cpu
+
+
+
 
 
     def compute_vnf_nodes_resources(self, topology, ingress_node, egress_node):
@@ -256,6 +270,8 @@ ingress = view.model.select_random_ingress_node(topo)
 egress = view.model.select_random_egress_node(topo)
 path = view.model.calculate_shortest_path(topo, ingress, egress)
 nfv_path = view.model.locate_vnf_nodes_path(topo, path)
+proc = view.model.get_rem_cpu_nodes_path(topo, nfv_path)
 
-
-print(topo.nfv_nodes().keys())
+print(topo._node)
+print(nfv_path)
+print(proc)
