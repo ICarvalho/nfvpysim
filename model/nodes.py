@@ -18,6 +18,9 @@ class IngressNode(Node):
     def __init__(self, id='ingress_node'):
         self.id = id
 
+    def get_node_id(self):
+        return self.id
+
 
 
 
@@ -27,6 +30,9 @@ class ForwardingNode(Node):
     def __init__(self, id='router_node'):
         self.id = id
 
+    def get_node_id(self):
+        return self.id
+
 
 
 
@@ -35,12 +41,14 @@ class EgressNode(Node):
     def __init__(self, id='egress_node'):
         self.id = id
 
+    def get_node_id(self):
+        return self.id
 
 
 
 class VnfNode(Node):
 
-    def __init__(self, id='vnf_node'):
+    def __init__(self, id='nfv_node'):
         self.id = id
         self.cpu = 100
         self.ram = 100
@@ -48,6 +56,10 @@ class VnfNode(Node):
         self.remaining_ram = 100
         self.handle_vnf = False
         self.vnf_counter = defaultdict(int)
+
+
+    def get_node_id(self):
+        return self.id
 
 
     def get_cpu(self):

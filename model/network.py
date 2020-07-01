@@ -257,7 +257,5 @@ egress = view.model.select_random_egress_node(topo)
 path = view.model.calculate_shortest_path(topo, ingress, egress)
 nfv_path = view.model.locate_vnf_nodes_path(topo, path)
 
-print(path)
-print(topo.nfv_nodes())
-print(view.model.get_rem_cpu_nodes_path(nfv_path))
-print(path)
+
+print(topo.nfv_nodes().keys())
