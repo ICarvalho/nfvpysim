@@ -187,12 +187,6 @@ class NetworkModel:
 
 
 
-    def compute_vnf_nodes_resources(self, topology, ingress_node, egress_node):
-
-      pass
-
-
-
 
     def locate_vnf_nodes_path(self, topology, path):
 
