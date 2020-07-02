@@ -4,7 +4,7 @@ import matplotlib
 from topologies.topology import topology_geant, topology_datacenter_two_tier, topology_tatanld
 import random
 import queueing_tool as qt
-from model.nodes import VnfNode
+from model.nodes import VnfNode, IngressNode, EgressNode, ForwardingNode
 import collections
 
 def symmetrify_paths(shortest_paths):
@@ -113,6 +113,63 @@ class NetworkModel:
 
 
 
+    def add_stack_to_topology(self, topology):
+
+        if not isinstance(topology, fnss.Topology):
+            raise ValueError('The provided topology must be an instance of'
+                             'fnss.Topology or any of its subclasses')
+
+        ing_nodes = {}
+        egr_nodes = {}
+        nfv_nodes = {}
+        fw_nodes = {}
+        for node in topology.nodes():
+            stack_name, stack_props = fnss.get_stack(topology, node)
+            if stack_name == 'ingress_node':
+                ing_node = IngressNode()
+                ing_nodes[node] = ing_node
+                ing_nodes[node] = stack_props['ing_node_id']
+
+            elif stack_name == 'egress_node':
+                egr_node = EgressNode()
+                egr_nodes[node] = egr_node
+                egr_nodes[node] = stack_props['egr_node_id']
+
+            elif stack_name == 'nfv_node':
+                nfv_node = VnfNode()
+                nfv_nodes[node] = nfv_node
+                if 'id' in stack_props:
+                    if 'cpu' in stack_props:
+                        if 'ram' in stack_props:
+                            if 'remaining_cpu' in stack_props:
+                                if 'remaining_ram' in stack_props:
+                                    nfv_nodes[node] = stack_props['nfv_node_id']
+                                    nfv_nodes[node] = stack_props['nfv_node_cpu']
+                                    nfv_nodes[node] = stack_props['nfv_node_ram']
+                                    nfv_nodes[node] = stack_props['nfv_node_r_cpu']
+                                    nfv_nodes[node] = stack_props['nfv_node_r_ram']
+
+            elif stack_name == 'fw_node':
+                fw_node = ForwardingNode()
+                fw_nodes[node] = fw_node
+                fw_nodes[node] = stack_props['fw_node_id']
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     # Select the ingress node to send the VNFs request
     def list_ingress_nodes(self, topology):
 
@@ -145,7 +202,6 @@ class NetworkModel:
         if not isinstance(topology, fnss.Topology):
             raise ValueError('The provided topology must be an instance of'
                              'fnss.Topology or any of its subclasses')
-
 
         egress_nodes_candidates = []
         for node in topology.nodes:
@@ -266,6 +322,5 @@ path = view.model.calculate_shortest_path(topo, ingress, egress)
 nfv_path = view.model.locate_vnf_nodes_path(topo, path)
 proc = view.model.get_rem_cpu_nodes_path(topo, nfv_path)
 
-print(topo._node)
-print(nfv_path)
-print(proc)
+t = view.model.add_stack_to_topology(topo)
+print(t)

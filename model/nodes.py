@@ -27,7 +27,7 @@ class IngressNode(Node):
 
 class ForwardingNode(Node):
 
-    def __init__(self, id='router_node'):
+    def __init__(self, id='fw_node'):
         self.id = id
 
     def get_node_id(self):
