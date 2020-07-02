@@ -385,7 +385,7 @@ class RequestPickRandomSFC:
     def __init__(self, ingress_node, egress_node, delay_req):
         self.ingress_node = ingress_node
         self.egress_node = egress_node
-        self.sfc =  SFC_01().get_sfc_01() #SelectRandomSFC.select_random_sfc(self)
+        self.sfc =  SelectRandomSFC.select_random_sfc(self)
         self.delay_req = delay_req
 
 class RequestGenerateRandomSFC:
@@ -408,7 +408,7 @@ p = VnfNode()
 print(r.sfc)
 print(p.cpu)
 proc = p.proc_request(r)
-print(p.cpu)
+#print(p.cpu)
 print(p.remaining_cpu)
 
 
