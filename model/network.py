@@ -1,11 +1,9 @@
 import networkx as nx
 import fnss
-import matplotlib
 from topologies.topology import topology_geant, topology_datacenter_two_tier, topology_tatanld
 import random
-import queueing_tool as qt
 from model.nodes import VnfNode, IngressNode, EgressNode, ForwardingNode
-import collections
+
 
 def symmetrify_paths(shortest_paths):
     """Make paths symmetric
@@ -128,12 +126,12 @@ class NetworkModel:
             if stack_name == 'ingress_node':
                 ing_node = IngressNode()
                 ing_nodes[node] = ing_node
-                ing_nodes[node] = stack_props['ing_node_id']
+                #ing_nodes[node] = stack_props['ing_node_id']
 
             elif stack_name == 'egress_node':
                 egr_node = EgressNode()
                 egr_nodes[node] = egr_node
-                egr_nodes[node] = stack_props['egr_node_id']
+                #egr_nodes[node] = stack_props['egr_node_id']
 
             elif stack_name == 'nfv_node':
                 nfv_node = VnfNode()
