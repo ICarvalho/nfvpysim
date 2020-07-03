@@ -139,12 +139,6 @@ class Request:
         self.sfc = sfc
 
 
-    def process_request(self):
-        pass
-
-
-
-
 class GenerateRandomRequest(Request):
 
     def __init__(self, ingress_node, egress_node, delay_req, sfc):
@@ -169,5 +163,5 @@ req_1 = ServiceChain().random_sfc()
 req_2 = ServiceChain().random_var_len_sfc()
 rr = GenerateRandomRequest(1, 2, 60, req_1)
 vr = GenerateVarLenRequest(1, 2, 60, req_2)
-print(rr.get_random_sfc())
+print(rr.delay_req, rr.ingress_node)
 print(vr.get_var_len_sfc())
