@@ -110,28 +110,26 @@ def topology_geant(**kwargs):
     # Add stacks to nodes
     ing_node = IngressNode()
     for v in ingress_nodes:
-
-        fnss.add_stack(topology, v, 'ingress_node', {'id': ing_node.get_node_id()})
+        fnss.add_stack(topology, v, 'ingress_node', {'id': ing_node.id})
 
 
     nfv_node = VnfNode()
     for v in nfv_nodes:
-        fnss.add_stack(topology, v, 'nfv_node', {'id': nfv_node.get_node_id(),
-                                                'cpu': nfv_node.get_cpu(),
-                                                'ram': nfv_node.get_ram(),
-                                                'r_cpu': nfv_node.get_rem_cpu(),
-                                                'r_ram': nfv_node.get_ram()})
+        fnss.add_stack(topology, v, 'nfv_node', {'id': nfv_node.id, 'cpu': nfv_node.get_cpu(), 'ram': nfv_node.ram, 'r_cpu': nfv_node.get_rem_cpu(),  'r_ram': nfv_node.get_rem_ram()})
+
+
+
 
 
     egr_node = EgressNode()
     for v in egress_nodes:
-        fnss.add_stack(topology, v, 'egress_node', {'id': egr_node.get_node_id()})
+        fnss.add_stack(topology, v, 'egress_node', {'id': egr_node.id})
 
 
 
     fw_node = ForwardingNode()
     for v in forwarding_nodes:
-        fnss.add_stack(topology, v, 'forwarding_node', {'id': fw_node.get_node_id()})
+        fnss.add_stack(topology, v, 'forwarding_node', {'id': fw_node.id})
 
 
     # Set weight and delay on all links

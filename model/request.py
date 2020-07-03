@@ -132,17 +132,17 @@ class ServiceChain:
 
 class Request:
 
-    def __init__(self, ingress_node, egress_node, delay_req, sfc):
+    def __init__(self, ingress_node, egress_node, delay_req):
         self.ingress_node = ingress_node
         self.egress_node = egress_node
         self.delay_req = delay_req
-        self.sfc = sfc
+
 
 
 class GenerateRandomRequest(Request):
 
-    def __init__(self, ingress_node, egress_node, delay_req, sfc):
-        super().__init__(ingress_node, egress_node, delay_req, sfc)
+    def __init__(self, ingress_node, egress_node, delay_req):
+        super().__init__(ingress_node, egress_node, delay_req)
         self.sfc = ServiceChain().random_sfc()
 
     def get_random_sfc(self):
@@ -151,17 +151,17 @@ class GenerateRandomRequest(Request):
 
 class GenerateVarLenRequest(Request):
 
-    def __init__(self, ingress_node, egress_node, delay_req, sfc):
-        super().__init__(ingress_node, egress_node, delay_req, sfc )
+    def __init__(self, ingress_node, egress_node, delay_req):
+        super().__init__(ingress_node, egress_node, delay_req)
         self.sfc = ServiceChain().random_var_len_sfc()
 
     def get_var_len_sfc(self):
         return self.sfc
 
 
-req_1 = ServiceChain().random_sfc()
-req_2 = ServiceChain().random_var_len_sfc()
-rr = GenerateRandomRequest(1, 2, 60, req_1)
-vr = GenerateVarLenRequest(1, 2, 60, req_2)
-print(rr.delay_req, rr.ingress_node)
+"""
+rr = GenerateRandomRequest(1, 2, 60)
+vr = GenerateVarLenRequest(1, 2, 60)
+print(rr.sfc)
 print(vr.get_var_len_sfc())
+"""

@@ -2,7 +2,7 @@ import networkx as nx
 import fnss
 from topologies.topology import topology_geant, topology_datacenter_two_tier, topology_tatanld
 import random
-from model.nodes import *
+from model.request import *
 
 
 def symmetrify_paths(shortest_paths):
@@ -111,51 +111,6 @@ class NetworkModel:
 
 
 
-    def add_stack_to_topology(self, topology):
-
-        if not isinstance(topology, fnss.Topology):
-            raise ValueError('The provided topology must be an instance of'
-                             'fnss.Topology or any of its subclasses')
-
-        ing_nodes = {}
-        egr_nodes = {}
-        nfv_nodes = {}
-        fw_nodes = {}
-        for node in topology.nodes():
-            stack_name, stack_props = fnss.get_stack(topology, node, data=True)
-            if stack_name == 'ingress_node':
-                ing_node = IngressNode()
-                ing_nodes[node] = ing_node
-                #ing_nodes[node] = stack_props['ing_node_id']
-
-            elif stack_name == 'egress_node':
-                egr_node = EgressNode()
-                egr_nodes[node] = egr_node
-                #egr_nodes[node] = stack_props['egr_node_id']
-
-            elif stack_name == 'nfv_node':
-                nfv_node = VnfNode()
-                nfv_nodes[node] = nfv_node
-                if 'id' in stack_props:
-                    if 'cpu' in stack_props:
-                        if 'ram' in stack_props:
-                            if 'remaining_cpu' in stack_props:
-                                if 'remaining_ram' in stack_props:
-                                    nfv_nodes[node] = stack_props['id']
-                                    nfv_nodes[node] = stack_props['cpu']
-                                    nfv_nodes[node] = stack_props['ram']
-                                    nfv_nodes[node] = stack_props['r_cpu']
-                                    nfv_nodes[node] = stack_props['r_ram']
-
-
-            elif stack_name == 'fw_node':
-                fw_node = ForwardingNode()
-                fw_nodes[node] = fw_node
-                fw_nodes[node] = stack_props['fw_node_id']
-
-
-
-
 
 
 
@@ -215,27 +170,37 @@ class NetworkModel:
 
 
 
+
+
+
     def proc_request_path(self, topology, request, path):
 
         if not isinstance(topology, fnss.Topology):
             raise ValueError('The provided topology must be an instance of'
                              'fnss.Topology or any of its subclasses')
 
-        if not isinstance(request, (RequestPickRandomSFC, RequestGenerateRandomSFC)) :
-            raise ValueError('Request must be in the specified format')
+
 
         else:
 
             node_proc ={}
+
             for node in path:
                 for vnf in request.sfc:
-                    stack_name, stack_props = fnss.get_stack(topology, node)
+                    stack_name, stack_props = fnss.get_stack(topo, node)
                     if stack_name == 'nfv_node':
-                        p_node = VnfNode()
-                        node_proc[node] = p_node.proc_vnf_cpu(vnf.__getattribute__('cpu'))
-                        r_cpu_node = p_node.get_rem_cpu()
+                        print(stack_name, stack_props)
+                       # print(node)
+                        #node_proc[node]['cpu'] = proc.remaining_cpu
 
-            return node_proc, r_cpu_node
+
+
+
+
+            return  node_proc
+
+
+
 
 
 
@@ -332,20 +297,20 @@ model = NetworkModel(topo)
 view = NetworkView(model)
 contr = NetworkController(model)
 
-t = view.model.add_stack_to_topology(topo)
-
 ingress = view.model.select_random_ingress_node(topo)
 egress = view.model.select_random_egress_node(topo)
+
 path = view.model.calculate_shortest_path(topo, ingress, egress)
-s = RequestPickRandomSFC(ingress, egress, 100)
+req = GenerateRandomRequest(ingress, egress, 100)
 
-proc = view.model.proc_request_path(topo, s, path)
-rem = view.model.get_rem_cpu_nodes_path(topo, path)
+proc = view.model.proc_request_path(topo, req, path)
 
 
-#nfv_path = view.model.locate_vnf_nodes_path(topo, path)
+
+#nfv_path = view.model.loc  ate_vnf_nodes_path(topo, path)
 
 print(path)
-print(s.sfc)
+print()
+print(req.sfc)
 print(proc)
-print(rem)
+
