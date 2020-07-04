@@ -24,7 +24,15 @@ class NfvTopology(fnss.Topology):
         :return: return a set of nfv nodes
         """
 
-        return {v: self.node[v]['stack'][0]['id'][1]['cpu'][2]['ram'][3]['r_cpu'][4]['r_ram']
+
+        return set (v for v in self
+                    if 'stack' in self.node[v]
+                    and self.node[v]['stack'][0] == 'nfv_node')
+
+
+
+        """
+         return {v: self.node[v]['stack'][0]['id'][1]['cpu'][2]['ram'][3]['r_cpu'][4]['r_ram']
                 for v in self
                 if 'stack' in self.node[v]
                 and 'id' in self.node[v]['stack'][0]
@@ -33,6 +41,9 @@ class NfvTopology(fnss.Topology):
                 and 'r_cpu' in self.node[v]['stack'][3]
                 and 'r_ram' in self.node[v]['stack'][4]
                 }
+        
+        """
+
 
 
 
@@ -42,10 +53,9 @@ class NfvTopology(fnss.Topology):
         :return: return a set of ingress nodes
         """
 
-        return {v: self.node[v]['stack'][1]['id'] for v in self
+        return set (v for v in self
                 if 'stack' in self.node[v]
-                and self.node[v]['stack'][1] == 'ingress_node'
-                }
+                and self.node[v]['stack'][0] == 'ingress_node')
 
 
 
@@ -57,10 +67,9 @@ class NfvTopology(fnss.Topology):
         :return: return a set of egress nodes
         """
 
-        return {v: self.node[v]['stack'][1]['id'] for v in self
-                if 'stack' in self.node[v]
-                and self.node[v]['stack'][1] == 'egress_node'
-                }
+        return set (v for v in self
+                    if 'stack' in self.node[v]
+                    and self.node[v]['stack'][0] == 'egress_node')
 
 
 
@@ -69,10 +78,9 @@ class NfvTopology(fnss.Topology):
         :return: return a set of forwarding nodes (generic nodes for general topology)
         """
 
-        return {v: self.node[v]['stack'][1]['id'] for v in self
-                if 'stack' in self.node[v]
-                and self.node[v]['stack'][1] == 'fw_node'
-                }
+        return set (v for v in self
+                    if 'stack' in self.node[v]
+                    and self.node[v]['stack'][0] == 'fw_node')
 
 
     def router_nodes(self):
@@ -110,12 +118,12 @@ def topology_geant(**kwargs):
     # Add stacks to nodes
     ing_node = IngressNode()
     for v in ingress_nodes:
-        fnss.add_stack(topology, v, 'ingress_node', {'id': ing_node.id})
+        fnss.add_stack(topology, v, 'ingress_node', {'id': ing_node.get_node_id()})
 
 
     nfv_node = VnfNode()
     for v in nfv_nodes:
-        fnss.add_stack(topology, v, 'nfv_node', {'id': nfv_node.id, 'cpu': nfv_node.get_cpu(), 'ram': nfv_node.ram, 'r_cpu': nfv_node.get_rem_cpu(),  'r_ram': nfv_node.get_rem_ram()})
+        fnss.add_stack(topology, v, 'nfv_node', {'id': nfv_node.get_node_id(), 'cpu': nfv_node.get_cpu(), 'ram': nfv_node.ram, 'r_cpu': nfv_node.get_rem_cpu(),  'r_ram': nfv_node.get_rem_ram()})
 
 
 
@@ -123,13 +131,13 @@ def topology_geant(**kwargs):
 
     egr_node = EgressNode()
     for v in egress_nodes:
-        fnss.add_stack(topology, v, 'egress_node', {'id': egr_node.id})
+        fnss.add_stack(topology, v, 'egress_node', {'id': egr_node.get_node_id()})
 
 
 
     fw_node = ForwardingNode()
     for v in forwarding_nodes:
-        fnss.add_stack(topology, v, 'forwarding_node', {'id': fw_node.id})
+        fnss.add_stack(topology, v, 'forwarding_node', {'id': fw_node.get_node_id()})
 
 
     # Set weight and delay on all links
@@ -238,4 +246,4 @@ def topology_datacenter_two_tier():
     return NfvTopology(topology)
 
 topo = topology_geant()
-print(topo.nfv_nodes())
+print(topo.ingress_nodes())
