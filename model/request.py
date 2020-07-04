@@ -10,7 +10,7 @@ class SFC_01:
         return self.sfc_01
 
 
-class SFC_02:
+class SFC_02: # this is a comment
 
     def __init__(self):
         self.sfc_02 = [Nat(), Firewall(), Ids()]
