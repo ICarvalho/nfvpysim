@@ -3,6 +3,7 @@ import fnss
 from topologies.topology import topology_geant, topology_datacenter_two_tier, topology_tatanld
 import random
 from model.request import *
+from model.nodes import *
 
 
 def symmetrify_paths(shortest_paths):
@@ -189,12 +190,11 @@ class NetworkModel:
                 for vnf in request.sfc:
                     stack_name, stack_props = fnss.get_stack(topo, node)
                     if stack_name == 'nfv_node':
-                        print(stack_name, stack_props)
-                       # print(node)
-                        #node_proc[node]['cpu'] = proc.remaining_cpu
-
-
-
+                        if isinstance(node, VnfNode):
+                            if isinstance(vnf, Vnf):
+                                vnf_cpu = getattr(vnf, 'cpu')
+                                cpu_proc = VnfNode().proc_vnf_cpu(vnf_cpu)
+                                node_proc[node] = VnfNode().get_rem_cpu()
 
 
             return  node_proc
@@ -309,8 +309,7 @@ proc = view.model.proc_request_path(topo, req, path)
 
 #nfv_path = view.model.loc  ate_vnf_nodes_path(topo, path)
 
-print(path)
-print()
+
 print(req.sfc)
 print(proc)
 
