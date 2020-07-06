@@ -15,11 +15,9 @@ class Node:
 
 class IngressNode(Node):
 
-    def __init__(self, id='ingress_node'):
-        self.id = id
+    def __init__(self):
+        super(IngressNode, self).__init__(id='ingress_node')
 
-    def get_node_id(self):
-        return self.id
 
 
 
@@ -27,28 +25,23 @@ class IngressNode(Node):
 
 class ForwardingNode(Node):
 
-    def __init__(self, id='fw_node'):
-        self.id = id
-
-    def get_node_id(self):
-        return self.id
+    def __init__(self):
+        super(ForwardingNode, self).__init__(id='forwarding_node')
 
 
 
 
 class EgressNode(Node):
 
-    def __init__(self, id='egress_node'):
-        self.id = id
-
-    def get_node_id(self):
-        return self.id
+    def __init__(self):
+        super(EgressNode, self).__init__(id='egress_node')
 
 
 
 class VnfNode(Node):
 
-    def __init__(self, id='nfv_node'):
+    def __init__(self):
+        super(VnfNode, self).__init__(id='nfv_node')
         self.id = id
         self.cpu = 100
         self.ram = 100
@@ -75,55 +68,32 @@ class VnfNode(Node):
         return self.remaining_ram
 
     def has_ram(self):
-
         if self.remaining_ram > 0:
             return True
 
         return False
 
-    def proc_vnf_cpu(self, cpu):
-        self.cpu = self.cpu - cpu
+
+
+    def proc_vnf_cpu(self, cpu_req):
+        self.cpu = self.cpu - cpu_req
         self.remaining_cpu = self.cpu
 
 
-    def load_vnf_ram(self, ram):
-        self.ram = self.ram - ram
+    def load_vnf_ram(self, ram_req):
+        self.ram = self.ram - ram_req
         self.remaining_ram = self.ram
+
 
     def has_cpu(self):
         if self.remaining_cpu > 0:
             return True
-
         return False
 
     def has_ram(self):
         if self.remaining_ram > 0:
             return True
-
         return False
-
-    def update_vnf_stats(self, vnf):
-        vnf = Vnf.get_id()
-        self.update_vnf_stats[vnf] += 1
-
-
-
-
-    def proc_request(self, request):
-
-        if not isinstance(request, (RequestPickRandomSFC, RequestGenerateRandomSFC)) :
-            raise ValueError('Request must be in the specified format')
-
-        if not self.has_cpu() and not self.has_ram():
-            raise ValueError('Not enough cpu and ram for processing the VNF')
-        else:
-
-            vnfs_cpu = []
-            for vnf in request.sfc:
-                proc = self.proc_vnf_cpu(vnf.__getattribute__('cpu'))
-                vnfs_cpu.append(proc)
-
-            return vnfs_cpu
 
 
 

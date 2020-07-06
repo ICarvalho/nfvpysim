@@ -169,22 +169,22 @@ def topology_tatanld(**kwargs):
     # Add stacks to nodes
     ing_node = IngressNode()
     for v in ingress_nodes:
-        fnss.add_stack(topology, v, 'ingress_node', {'id': ing_node.get_node_id()})
+        fnss.add_stack(topology, v, 'ingress_node', {'id': ing_node.id})
 
     vnf_node = VnfNode()
     for v in nfv_node:
-        fnss.add_stack(topology, v, 'nfv_node', {'id': vnf_node.get_node_id(),
-                                                 'cpu': vnf_node.get_cpu(),
-                                                 'ram': vnf_node.get_ram(),
-                                                 'r_cpu': vnf_node.get_rem_cpu(),
-                                                 'r_ram': vnf_node.get_rem_ram()})
+        fnss.add_stack(topology, v, 'nfv_node', {'id': vnf_node.id,
+                                                 'cpu': vnf_node.cpu,
+                                                 'ram': vnf_node.ram,
+                                                 'r_cpu': vnf_node.remaining_cpu,
+                                                 'r_ram': vnf_node.remaining_ram})
     egr_node = EgressNode()
     for v in egress_nodes:
-        fnss.add_stack(topology, v, 'egress_node', {'id': egr_node.get_node_id()})
+        fnss.add_stack(topology, v, 'egress_node', {'id': egr_node.id})
 
     for v in forwarding_nodes:
         fw_node = ForwardingNode()
-        fnss.add_stack(topology, v, 'forwarding_node', {'id': fw_node.get_node_id()})
+        fnss.add_stack(topology, v, 'forwarding_node', {'id': fw_node.id})
 
 
     # Set weight and delay on all links
@@ -245,5 +245,3 @@ def topology_datacenter_two_tier():
 
     return NfvTopology(topology)
 
-topo = topology_geant()
-print(topo.ingress_nodes())

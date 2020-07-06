@@ -86,6 +86,8 @@ class NetworkModel:
         self.topology = topology
         self.ingress_nodes = {}
         self.egress_nodes = {}
+        self.nfv_nodes = {}
+        self.fw_nodes = {}
 
         self.link_type = nx.get_edge_attributes(topology, 'type')
         self.link_delay = fnss.get_delays(topology)
@@ -96,6 +98,31 @@ class NetworkModel:
 
             for (u,v), delay in list(self.link_delay.items()):
                 self.link_delay[(v,u)] = delay
+
+        for node in topology.nodes():
+            stack_name, stack_props = fnss.get_stack(topology, node)
+            if stack_name == 'ingress_node':
+                if 'id' in stack_props:
+                    self.ingress_nodes[node] = stack_props['id']
+            elif stack_name == 'egress_node':
+                if 'id' in stack_props:
+                    self.egress_nodes[node] = stack_props['id']
+            elif stack_name == 'nfv_node':
+                if 'id' in stack_props:
+                    if 'cpu' in stack_props:
+                        if 'ram' in stack_props:
+                            if 'r_cpu' in stack_props:
+                                if 'r_ram' in stack_props:
+                                    self.nfv_nodes[node] = stack_props['id']
+                                    self.nfv_nodes[node] = stack_props['cpu']
+                                    self.nfv_nodes[node] = stack_props['ram']
+                                    self.nfv_nodes[node] = stack_props['r_cpu']
+                                    self.nfv_nodes[node] = stack_props['r_ram']
+            elif stack_name == 'fw_node':
+                self.fw_nodes[node] = stack_props['id']
+
+
+
 
        # policy_name = policy['name']
         #policy_args = {k: v for k, v in policy.items() if k != 'name'}
@@ -174,30 +201,41 @@ class NetworkModel:
 
 
 
+
+
+
+
     def proc_request_path(self, topology, request, path):
 
         if not isinstance(topology, fnss.Topology):
             raise ValueError('The provided topology must be an instance of'
                              'fnss.Topology or any of its subclasses')
 
-
-
         else:
 
-            node_proc ={}
 
+            path_nodes = {}
             for node in path:
-                for vnf in request.sfc:
+                for vnf in request.get_sfc():
                     stack_name, stack_props = fnss.get_stack(topo, node)
                     if stack_name == 'nfv_node':
-                        if isinstance(node, VnfNode):
-                            if isinstance(vnf, Vnf):
-                                vnf_cpu = getattr(vnf, 'cpu')
-                                cpu_proc = VnfNode().proc_vnf_cpu(vnf_cpu)
-                                node_proc[node] = VnfNode().get_rem_cpu()
+                        vnf_cpu = getattr(vnf, 'cpu')
+                        vnf_ram = getattr(vnf, 'ram')
+                        nfv_node = VnfNode()
+                        path_nodes[node]=  nfv_node.proc_vnf_cpu(vnf_cpu)
+                        path_nodes[node] = nfv_node.get_rem_cpu()
+                        #path_nodes[node] = nfv_node.load_vnf_ram(vnf_ram)
+                        #path_nodes[node] = nfv_node.get_rem_ram()
+                        print(vnf.id)
+
+            return path, path_nodes
 
 
-            return  node_proc
+
+
+
+
+
 
 
 
@@ -310,6 +348,7 @@ proc = view.model.proc_request_path(topo, req, path)
 #nfv_path = view.model.loc  ate_vnf_nodes_path(topo, path)
 
 
-print(req.sfc)
+
 print(proc)
+
 
