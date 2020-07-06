@@ -189,8 +189,9 @@ class NetworkModel:
                 for vnf in request.sfc:
                     stack_name, stack_props = fnss.get_stack(topo, node)
                     if stack_name == 'nfv_node':
+                        node_
                         print(stack_name, stack_props)
-                       # print(node)
+                        print(node_proc.update(node))
                         #node_proc[node]['cpu'] = proc.remaining_cpu
 
 
