@@ -1,6 +1,7 @@
 import random
 import networkx as nx
 from tools.stats import TruncatedZipfDist
+from topologies.topology import topology_geant
 
 
 class StationaryWorkload:
@@ -19,7 +20,7 @@ class StationaryWorkload:
 
     """
 
-    def __init__(self, topology, n_sfcs, alpha,  beta=0, rate=1.0, n_req=10**5, seed=None, **kwargs):
+    def __init__(self, topology, n_sfcs, alpha,  beta=0, rate=1.0, n_req=10**3, seed=None, **kwargs):
 
         if beta < 0:
             raise ValueError('beta must be positive')
@@ -27,6 +28,7 @@ class StationaryWorkload:
         self.zipf = TruncatedZipfDist(alpha, n_sfcs)
         self.n_sfcs = n_sfcs
         self.alpha = alpha
+        self.beta = beta
         self.rate = rate
         self.n_req = n_req
         random.seed(seed)
@@ -52,3 +54,8 @@ class StationaryWorkload:
         raise StopIteration()
 
 
+#topology, n_sfcs, alpha,  beta=0, rate=1.0, n_req=10**5, seed=None, **kwargs
+topo = topology_geant()
+workload = StationaryWorkload(topo, 100, 1)
+for i in workload:
+    print(i)
