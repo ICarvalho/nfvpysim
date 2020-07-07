@@ -56,6 +56,6 @@ class StationaryWorkload:
 
 #topology, n_sfcs, alpha,  beta=0, rate=1.0, n_req=10**5, seed=None, **kwargs
 topo = topology_geant()
-workload = StationaryWorkload(topo, 100, 1)
+workload = StationaryWorkload(topo, 10, 1)
 for i in workload:
     print(i)

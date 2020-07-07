@@ -113,11 +113,13 @@ class NetworkModel:
                         if 'ram' in stack_props:
                             if 'r_cpu' in stack_props:
                                 if 'r_ram' in stack_props:
-                                    self.nfv_nodes[node] = stack_props['id']
-                                    self.nfv_nodes[node] = stack_props['cpu']
-                                    self.nfv_nodes[node] = stack_props['ram']
-                                    self.nfv_nodes[node] = stack_props['r_cpu']
-                                    self.nfv_nodes[node] = stack_props['r_ram']
+                                    if 'vnfs' in stack_props:
+                                        self.nfv_nodes[node] = stack_props['id']
+                                        self.nfv_nodes[node] = stack_props['cpu']
+                                        self.nfv_nodes[node] = stack_props['ram']
+                                        self.nfv_nodes[node] = stack_props['r_cpu']
+                                        self.nfv_nodes[node] = stack_props['r_ram']
+                                        self.nfv_nodes[node] = stack_props['vnfs']
             elif stack_name == 'fw_node':
                 self.fw_nodes[node] = stack_props['id']
 

@@ -12,7 +12,7 @@ class DataCollector:
         self.view = view
 
 
-    def start_session(self, timestamp, ingress_node, request):
+    def start_session(self, timestamp, ingress_node, sfc):
 
         pass
 
@@ -51,9 +51,9 @@ class CollectorProxy(DataCollector):
 
 
 
-    def start_session(self, timestamp, ingress_node, request):
+    def start_session(self, timestamp, ingress_node, sfc):
         for c in self.collectors['start_session']:
-            c.start_session(timestamp, ingress_node, request)
+            c.start_session(timestamp, ingress_node, sfc)
 
 
 
@@ -101,7 +101,7 @@ class LinkLoadCollector(DataCollector):
         self.t_end = 1
 
 
-    def start_session(self, timestamp, ingress_node, request):
+    def start_session(self, timestamp, ingress_node, sfc):
         if self.t_start < 0:
             self.t_start = timestamp
         self.t_end = timestamp
@@ -157,7 +157,7 @@ class LatencyCollector(DataCollector):
             self.latency_data = collections.deque()
 
 
-    def start_session(self, timestamp, ingress_node, request):
+    def start_session(self, timestamp, ingress_node, sfc):
         self.sess_count += 1
         self.sess_latency = 0.0
 
@@ -189,19 +189,18 @@ class AcceptanceRatio(DataCollector):
 
     """
 
-    def __init__(self, view):
+    def __init__(self, view, per_sfc=True ):
 
         self.view = view
         self.sess_count = 0
-        self.req_acc_number = 0
+        self.acc_req = 0
+        if per_sfc:
+            self.per_sfc_ratio = collections.defaultdict(int)
 
-        def start_session(self, timestamp, ingress_node, request):
+        def start_session(self, timestamp, ingress_node, sfc):
             self.sess_count += 1
 
-        def enabled_path(self, path):
-            self.req_acc_number += 1
-            if self.view.all_short_paths(path):
-                pass
+
 
 
 
