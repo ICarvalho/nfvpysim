@@ -186,9 +186,6 @@ class NetworkModel:
 
 
 
-
-
-
     def select_random_egress_node(self, topology):
         nodes = self.list_egress_nodes(topology)
         rand_egr_node = random.choice(nodes) if len(nodes) > 0 else None
@@ -196,15 +193,24 @@ class NetworkModel:
 
 
 
+    def proc_vnf_node(self, vnf):
+
+        """
+        Process each vnf at a given node
+
+        :param vnf: an instance of a VNF
+        :return: remaining cpu after processing the vnf
+        """
+
+        if isinstance(vnf, Vnf):
+            vnf_cpu = getattr(vnf, 'cpu')
+            node = VnfNode()
+            node_proc = node.proc_vnf_cpu(vnf_cpu)
+        return node_proc
 
 
 
-
-
-
-
-
-
+    """
     def proc_request_path(self, topology, request, path):
 
         if not isinstance(topology, fnss.Topology):
@@ -233,27 +239,36 @@ class NetworkModel:
 
 
 
-
-
-
-
-
-
-
+    """
 
 
     def get_rem_cpu_nodes_path(self, topology, path):
+
+        """
+        Used to get how much cpu is available at a given path
+
+        :param topology: fnss topology
+        :param path: path between ingress_node and egress_node
+        :return: the total available cpu
+        """
+
         if not isinstance(topology, fnss.Topology):
             raise ValueError('The provided topology must be an instance of'
                              'fnss.Topology or any of its subclasses')
         else:
             node_rem_cpu = {}
+
             for node in path:
                 stack_name, stack_props = fnss.get_stack(topology, node)
                 if stack_name == 'nfv_node':
-                    r_cpu = VnfNode().get_rem_cpu()
+                    node = VnfNode()
+                    r_cpu = node.get_rem_cpu()
                     node_rem_cpu[node] = r_cpu
-            return node_rem_cpu
+
+            total_cpu = sum(node_rem_cpu.values())
+
+
+            return total_cpu
 
 
 
@@ -341,14 +356,15 @@ egress = view.model.select_random_egress_node(topo)
 path = view.model.calculate_shortest_path(topo, ingress, egress)
 req = GenerateRandomRequest(ingress, egress, 100)
 
-proc = view.model.proc_request_path(topo, req, path)
+proc = view.model.get_rem_cpu_nodes_path(topo, path)
 
 
 
 #nfv_path = view.model.loc  ate_vnf_nodes_path(topo, path)
 
 
-
+print(path)
+print(topo.nfv_nodes())
 print(proc)
 
 

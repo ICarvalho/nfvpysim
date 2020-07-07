@@ -1,4 +1,4 @@
-from util.util import Tree
+from tools.util import Tree
 from tools.stats import cdf
 import collections
 
