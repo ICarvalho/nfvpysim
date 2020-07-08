@@ -1,6 +1,214 @@
 import random
 from collections import defaultdict
 
+class Vnf:
+
+    def __init__(self, id, name, cpu, ram, bw):
+
+        self.id = id
+        self.name = name
+        self.cpu = cpu
+        self.ram = ram
+        self.bw = bw
+
+
+    def get_id(self):
+        return self.id
+
+    def get_name(self):
+        return self.name
+
+    def get_cpu(self):
+        return self.cpu
+
+
+    def get_ram(self):
+        return self.ram
+
+    def get_bw(self):
+        return self.bw
+
+
+
+class Nat(Vnf):
+
+    def __init__(self):
+        self.id = 1
+        self.name = 'nat'
+        self.cpu = 15
+        self.ram = 20
+        self.bw = 50  # Mbps
+
+    def get_id(self):
+        return self.id
+
+    def get_name(self):
+        return self.name
+
+    def get_cpu(self):
+        return self.cpu
+
+    def get_ram(self):
+        return self.ram
+
+    def get_bw(self):
+        return self.bw
+
+
+
+class Firewall(Vnf):
+
+    def __init__(self):
+        self.id = 2
+        self.name = 'fw'
+        self.cpu = 25
+        self.ram = 30
+        self.bw = 80 # Mbps
+
+    def get_id(self):
+        return self.id
+
+    def get_name(self):
+        return self.name
+
+    def get_cpu(self):
+        return self.cpu
+
+    def get_ram(self):
+        return self.ram
+
+    def get_bw(self):
+        return self.bw
+
+
+
+class Ids(Vnf):
+
+    def __init__(self):
+        self.id = 3
+        self.name = 'ids'
+        self.cpu = 30
+        self.ram = 30
+        self.bw = 100 #Mbps
+
+    def get_id(self):
+        return self.id
+
+    def get_name(self):
+        return self.name
+
+    def get_cpu(self):
+        return self.cpu
+
+    def get_ram(self):
+        return self.ram
+
+    def get_bw(self):
+        return self.bw
+
+
+class WanOptimizer(Vnf):
+
+    def __init__(self):
+        self.id = 4
+        self.name = 'wanopt'
+        self.cpu = 20
+        self.ram = 25
+        self.bw = 90 # Mbps
+
+    def get_id(self):
+        return self.id
+
+    def get_name(self):
+        return self.name
+
+    def get_cpu(self):
+        return self.cpu
+
+    def get_ram(self):
+        return self.ram
+
+    def get_bw(self):
+        return self.bw
+
+
+
+class LoadBalancer(Vnf):
+
+    def __init__(self):
+        self.id = 5
+        self.name = 'lb'
+        self.cpu = 30
+        self.ram = 35
+        self.bw = 120 # Mbps
+
+    def get_id(self):
+        return self.id
+
+    def get_name(self):
+        return self.name
+
+    def get_cpu(self):
+        return self.cpu
+
+    def get_ram(self):
+        return self.ram
+
+    def get_bw(self):
+        return self.bw
+
+
+
+class Encrypter(Vnf):
+
+    def __init__(self):
+        self.id = 6
+        self.name = 'encrpt'
+        self.cpu = 40
+        self.ram = 30
+        self.bw = 150 # Mbps
+
+    def get_id(self):
+        return self.id
+
+    def get_name(self):
+        return self.name
+
+    def get_cpu(self):
+        return self.cpu
+
+    def get_ram(self):
+        return self.ram
+
+    def get_bw(self):
+        return self.bw
+
+
+class Decrypter(Vnf):
+
+    def __init__(self):
+        self.id = 7
+        self.name = 'decrpt'
+        self.cpu = 40
+        self.ram = 30
+        self.bw = 150 # Mbps
+
+    def get_id(self):
+        return self.id
+
+    def get_name(self):
+        return self.name
+
+    def get_cpu(self):
+        return self.cpu
+
+    def get_ram(self):
+        return self.ram
+
+    def get_bw(self):
+        return self.bw
+
+
 
 class Node:
 
@@ -47,8 +255,8 @@ class VnfNode(Node):
         self.ram = 100
         self.remaining_cpu = 100
         self.remaining_ram = 100
-        self.handle_vnf = False
-        self.vnf_counter = defaultdict(int)
+        self.vnfs = {}
+
 
 
     def get_node_id(self):
@@ -74,7 +282,6 @@ class VnfNode(Node):
         return False
 
 
-
     def proc_vnf_cpu(self, cpu_req):
         self.cpu = self.cpu - cpu_req
         self.remaining_cpu = self.cpu
@@ -97,146 +304,34 @@ class VnfNode(Node):
 
 
 
+    def insert_vnfs(self, vnf):
 
-class Vnf:
+        if isinstance(vnf, Vnf):
+            self.vnfs['id'] = vnf.get_id()
+            self.vnfs['name'] = vnf.get_name()
+            self.vnfs['cpu'] = vnf.get_cpu()
+            self.vnfs['ram'] = vnf.get_ram()
+            self.vnfs['bw'] = vnf.get_bw()
 
-    def __init__(self, id, cpu, ram, bw):
-
-        self.id = id
-        self.cpu = cpu
-        self.ram = ram
-        self.bw = bw
-
-
-    def get_id(self):
-        return self.id
-
-    def get_cpu(self):
-        return self.cpu
+        return self.vnfs
 
 
-    def get_ram(self):
-        return self.ram
+    def get_vnfs(self):
 
-    def get_bw(self):
-        return self.bw
-
-
-
-class Nat(Vnf):
-
-    def __init__(self):
-        self.id = 'nat'
-        self.cpu = 15
-        self.ram = 20
-        self.bw = 50  # Mbps
-
-
-    def get_id(self):
-        return self.id
-
-    def get_cpu(self):
-        return self.cpu
-
-
-    def get_ram(self):
-        return self.ram
-
-    def get_bw(self):
-        return self.bw
-
-
-
-class Firewall(Vnf):
-
-    def __init__(self):
-        self.id = 'fw'
-        self.cpu = 25
-        self.ram = 30
-        self.bw = 80 # Mbps
-
-    def get_id(self):
-        return self.id
-
-    def get_cpu(self):
-        return self.cpu
-
-    def get_ram(self):
-        return self.ram
-
-    def get_bw(self):
-        return self.bw
-
-
-
-class Ids(Vnf):
-
-    def __init__(self):
-        self.id = 'ids'
-        self.cpu = 30
-        self.ram = 30
-        self.bw = 100 #Mbps
-
-    def get_id(self):
-        return self.id
-
-    def get_cpu(self):
-        return self.cpu
-
-    def get_ram(self):
-        return self.ram
-
-    def get_bw(self):
-        return self.bw
-
-
-class WanOptimizer(Vnf):
-
-    def __init__(self):
-        self.id = 'wanopt'
-        self.cpu = 20
-        self.ram = 25
-        self.bw = 90 # Mbps
-
-    def get_id(self):
-        return self.id
-
-    def get_cpu(self):
-        return self.cpu
-
-    def get_ram(self):
-        return self.ram
-
-    def get_bw(self):
-        return self.bw
-
-
-
-class LoadBalancer(Vnf):
-
-    def __init__(self):
-        self.id = 'lb'
-        self.cpu = 20
-        self.ram = 20
-        self.bw = 120 # Mbps
-
-    def get_id(self):
-        return self.id
-
-    def get_cpu(self):
-        return self.cpu
-
-    def get_ram(self):
-        return self.ram
-
-    def get_bw(self):
-        return self.bw
+        return self.vnfs
 
 
 
 
 
+nat = Nat()
+lb = LoadBalancer()
 
+vnf_node = VnfNode()
+
+vnf_node.insert_vnfs(nat)
+vnf_node.insert_vnfs(lb)
+print(vnf_node.get_vnfs())
 
 
 
