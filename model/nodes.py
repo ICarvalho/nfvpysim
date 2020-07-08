@@ -331,7 +331,7 @@ vnf_node = VnfNode()
 
 vnf_node.insert_vnfs(nat)
 vnf_node.insert_vnfs(lb)
-print(vnf_node.get_vnfs())
+print(vnf_node.vnfs)
 
 
 
