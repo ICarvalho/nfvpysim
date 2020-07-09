@@ -247,15 +247,15 @@ class EgressNode(Node):
 
 
 class VnfNode(Node):
+    vnfs_instances = defaultdict(dict)
 
     def __init__(self):
         super(VnfNode, self).__init__(id='nfv_node')
-        self.id = id
         self.cpu = 100
         self.ram = 100
-        self.remaining_cpu = 100
-        self.remaining_ram = 100
-        self.vnfs = {}
+        self.r_cpu = 100
+        self.r_ram = 100
+
 
 
 
@@ -302,24 +302,18 @@ class VnfNode(Node):
             return True
         return False
 
+    def add_vnf_instance(self, vnf):
+        self.vnfs_instances[1]['id'] = vnf.get_id()
+        self.vnfs_instances['name'] = vnf.get_name()
+        self.vnfs_instances['cpu'] = vnf.get_cpu()
+        self.vnfs_instances['ram'] = vnf.get_ram()
+        self.vnfs_instances['bw'] = vnf.get_bw()
 
 
-    def insert_vnfs(self, vnf):
-
-        if isinstance(vnf, Vnf):
-            self.vnfs['id'] = vnf.get_id()
-            self.vnfs['name'] = vnf.get_name()
-            self.vnfs['cpu'] = vnf.get_cpu()
-            self.vnfs['ram'] = vnf.get_ram()
-            self.vnfs['bw'] = vnf.get_bw()
-
-        return self.vnfs
 
 
-    def get_vnfs(self):
-
-        return self.vnfs
-
+    def get_vnfs_instances(self):
+        self.vnfs_instances
 
 
 
@@ -328,10 +322,8 @@ nat = Nat()
 lb = LoadBalancer()
 
 vnf_node = VnfNode()
-
-vnf_node.insert_vnfs(nat)
-vnf_node.insert_vnfs(lb)
-print(vnf_node.vnfs)
-
+vnf_node.add_vnf_instance(nat)
+vnf_node.add_vnf_instance(lb)
+print(vnf_node.vnfs_instances)
 
 
