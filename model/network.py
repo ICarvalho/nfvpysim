@@ -224,8 +224,21 @@ class NetworkModel:
                     if sum_vnfs_cpu > nfv_node.get_cpu():
                         raise ValueError('The vnfs cannot be processed at one node')
 
-                    else:
+                    elif sum_vnfs_cpu <= nfv_node.get_cpu():
+                        vnfs = {vnf: vnf.__getattribute__('cpu') for vnf in request.get_sfc()}
+                        max_val_cpu = max(vnfs.values())
+                        print(max_val_cpu)
+
+
+                        #max_vnfs_desc_cpu = vnfs.sort(reverse=True)
                         for vnf in request.get_sfc():
+                            n_vnfs = len(request.get_sfc())
+                            n_nodes = len(path)
+
+
+
+
+
                             vnf_cpu = getattr(vnf, 'cpu')
                             #vnf_ram = getattr(vnf, 'ram')
                             path_nodes[node]['node']=  node
@@ -376,3 +389,4 @@ print(req.sfc)
 print(proc)
 
 
+print(len(path))
