@@ -189,7 +189,6 @@ class GenerateVarLenRequest(Request):
     def get_sfc(self):
         return self.sfc
 
-
 """
 rr = GenerateRandomRequest(1, 2, 60)
 vr = GenerateVarLenRequest(1, 2, 60)
@@ -198,5 +197,8 @@ print(rr.sfc)
 print(vr.get_sfc)
 
 """
+
+
+
 
 

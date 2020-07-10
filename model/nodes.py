@@ -270,10 +270,12 @@ class VnfNode(Node):
         return self.ram
 
     def get_rem_cpu(self):
-        return self.remaining_cpu
+        self.r_cpu = self.cpu
+        return self.r_cpu
 
     def get_rem_ram(self):
-        return self.remaining_ram
+        self.r_ram = self.ram
+        return self.ram
 
     def has_ram(self):
         if self.remaining_ram > 0:
@@ -284,12 +286,14 @@ class VnfNode(Node):
 
     def proc_vnf_cpu(self, cpu_req):
         self.cpu = self.cpu - cpu_req
-        self.remaining_cpu = self.cpu
+        return self.cpu
+
+
 
 
     def load_vnf_ram(self, ram_req):
         self.ram = self.ram - ram_req
-        self.remaining_ram = self.ram
+
 
 
     def has_cpu(self):
@@ -303,6 +307,7 @@ class VnfNode(Node):
         return False
 
     def add_vnf_instance(self, vnf):
+
         self.vnfs_instances[1]['id'] = vnf.get_id()
         self.vnfs_instances['name'] = vnf.get_name()
         self.vnfs_instances['cpu'] = vnf.get_cpu()
@@ -317,7 +322,7 @@ class VnfNode(Node):
 
 
 
-
+"""
 nat = Nat()
 lb = LoadBalancer()
 
@@ -326,4 +331,7 @@ vnf_node.add_vnf_instance(nat)
 vnf_node.add_vnf_instance(lb)
 print(vnf_node.vnfs_instances)
 
+
+
+"""
 
