@@ -368,25 +368,3 @@ contr = NetworkController(model)
 ingress = view.model.select_random_ingress_node(topo)
 egress = view.model.select_random_egress_node(topo)
 
-path = view.model.calculate_shortest_path(topo, ingress, egress)
-all_path = view.model.calculate_all_shortest_paths(topo, ingress, egress)
-
-req = GenerateRandomRequest(ingress, egress, 100)
-a = view.model.sum_vnfs_cpu(req.get_sfc())
-print(a)
-
-proc = view.model.proc_request_path(topo, req, path)
-
-
-
-#nfv_path = view.model.loc  ate_vnf_nodes_path(topo, path)
-
-
-print(path)
-#print(all_path)
-#print(topo.nfv_nodes())
-print(req.sfc)
-print(proc)
-
-
-print(len(path))
