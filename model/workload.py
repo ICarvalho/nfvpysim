@@ -5,13 +5,6 @@ from topologies.topology import topology_geant
 from model.request import *
 
 
-
-
-
-
-
-
-
 class StationaryWorkload:
 
     """
