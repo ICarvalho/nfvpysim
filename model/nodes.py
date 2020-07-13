@@ -6,7 +6,7 @@ class VnfNode:
 
 
     def __init__(self):
-
+        self.id = 'nfv_node'
         self.cpu = 100
         self.ram = 100
         self.r_cpu = 100
@@ -76,7 +76,7 @@ class VnfNode:
         if self.r_ram > 0:
             return True
         return False
-
+"""
 
 node = VnfNode()
 nat = Nat()
@@ -89,3 +89,7 @@ proc = node.proc_vnf_cpu(fw)
 print(node._vnfs)
 r = node.load_vnf_ram(fw)
 print(node.has_ram())
+"""
+
+
+

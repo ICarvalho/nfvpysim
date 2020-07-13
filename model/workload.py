@@ -2,6 +2,14 @@ import random
 import networkx as nx
 from tools.stats import TruncatedZipfDist
 from topologies.topology import topology_geant
+from model.request import *
+
+
+
+
+
+
+
 
 
 class StationaryWorkload:
@@ -147,9 +155,9 @@ class TraceDrivenWorkload:
 
 
 
-
 #topology, n_sfcs, alpha,  beta=0, rate=1.0, n_req=10**5, seed=None, **kwargs
 topo = topology_geant()
 workload = StationaryWorkload(topo, 10, 1)
 for i in workload:
     print(i)
+
