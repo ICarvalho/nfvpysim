@@ -122,7 +122,7 @@ class SFC_07:
 
     def __init__(self):
         self.id = 'SFC_07'
-        self.sfc_07 = [Firewall(), Ids(), LoadBalancer(), Nat()]
+        self.sfc_07 = [Firewall(), Ids(), LoadBalancer(), Encrypter()]
 
     def get_id(self):
         return self.id
@@ -158,7 +158,7 @@ class SFC_09:
 
     def __init__(self):
         self.id = 'SFC_09'
-        self.sfc_09 = [LoadBalancer(), WanOptimizer(), Nat(), Firewall()]
+        self.sfc_09 = [LoadBalancer(), WanOptimizer(), Nat(), Firewall(), Encrypter(), Decrypter()]
 
     def get_id(self):
         return self.id
@@ -176,7 +176,7 @@ class SFC_10:
 
     def __init__(self):
         self.id = 'SFC_10'
-        self.sfc_10 = [LoadBalancer(), WanOptimizer(), Nat(), Firewall(), Ids()]
+        self.sfc_10 = [LoadBalancer(), WanOptimizer(), Encrypter(), Firewall(), Ids()]
 
     def get_id(self):
         return self.id
@@ -195,13 +195,17 @@ class SFC_10:
 
 class Request:
 
+    # return the ids of the vnfs on the chain.
+    # It is also possible to get the vnfs themselves
     def select_random_sfc(self):
+
             services = [SFC_01().get_sfc_01(), SFC_02().get_sfc_02(), SFC_03().get_sfc_03(), SFC_04().get_sfc_04(),
                         SFC_05().get_sfc_05(),
                         SFC_06().get_sfc_06(), SFC_07().get_sfc_07(), SFC_08().get_sfc_08(), SFC_09().get_sfc_09(),
                         SFC_10().get_sfc_10()]
             sfc = random.choice(services)
-            return sfc
+            sfc_id = self.get_vnfs_id(sfc)
+            return sfc_id
 
 
     def generate_seq_vnfs(self):
@@ -219,7 +223,8 @@ class Request:
                 vnf = random.choice(vnfs)
                 if vnf not in sfc:
                     sfc.append(vnf)
-            return sfc
+            sfc_id = self.get_vnfs_id(sfc)
+            return sfc_id
 
 
 
@@ -232,20 +237,25 @@ class Request:
             return var_len_sfc
 
 
+    def get_vnfs_id(self, sfc):
+        vnf_list = []
+        for i in sfc:
+            vnf_list.append(i.get_id())
+        return vnf_list
+
+
 
 
 
 req_01  = Request()
 req_02 = Request()
+req_03 = Request()
 
 
 print(req_01.get_random_sfc())
 print(req_02.get_random_var_len_sfc())
+print(req_03.select_random_sfc())
 
-
-sf01 = SFC_10()
-print(sf01.get_sfc_10())
-print(sf01.get_vnfs_id())
 
 
 
