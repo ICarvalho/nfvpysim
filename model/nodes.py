@@ -16,15 +16,20 @@ class VnfNode:
 
 
     def add_vnf(self, vnf):
-        if vnf in self._vnfs:
-            print('vnf is already on the node')
+
+        vnf_cpu = getattr(vnf, 'cpu')
+        if self.sum_vnfs_cpu() + vnf_cpu > 100:
+            raise ValueError('The vnf cannot be added to this node')
         else:
-            self._vnfs[vnf]['id'] = vnf.get_id()
-            self._vnfs[vnf]['name'] = vnf.get_name()
-            self._vnfs[vnf]['cpu'] = vnf.get_cpu()
-            self._vnfs[vnf]['ram'] = vnf.get_ram()
-            self._vnfs[vnf]['bw'] = vnf.get_bw()
-        return self._vnfs
+            if getattr(vnf, 'cpu')  <= self.get_rem_cpu():
+                if vnf not in self._vnfs:
+                    self._vnfs[vnf]['id'] = vnf.get_id()
+                    self._vnfs[vnf]['name'] = vnf.get_name()
+                    self._vnfs[vnf]['cpu'] = vnf.get_cpu()
+                    self._vnfs[vnf]['ram'] = vnf.get_ram()
+                    self._vnfs[vnf]['bw'] = vnf.get_bw()
+
+            return self._vnfs
 
 
 
@@ -51,7 +56,7 @@ class VnfNode:
             vnf_cpu = self._vnfs[vnf]['cpu']
             self.cpu = self.cpu - vnf_cpu
             self.r_cpu = self.cpu
-            return self.cpu
+
         else:
             print('vnf is not instantiated on the node')
 
@@ -61,35 +66,45 @@ class VnfNode:
             vnf_ram = self._vnfs[vnf]['ram']
             self.ram = self.ram - vnf_ram
             self.r_ram = self.ram
-            return self.ram
+
         else:
             print('vnf is not instantiated on the node')
 
 
 
-    def has_cpu(self):
-        if self.r_cpu > 0:
-            return True
-        return False
+    def sum_vnfs_cpu(self):
+        sum = 0
+        for key,value in self._vnfs.items():
+            if value and 'cpu' in value.keys():
+                sum += value['cpu']
 
-    def has_ram(self):
-        if self.r_ram > 0:
-            return True
-        return False
-"""
+        return sum
+
+
+
 
 node = VnfNode()
 nat = Nat()
 fw = Firewall()
+en = Encrypter()
 lb = LoadBalancer()
 node.add_vnf(nat)
 node.add_vnf(fw)
-node.add_vnf(lb)
-proc = node.proc_vnf_cpu(fw)
+node.add_vnf(en)
+
+print(node.get_rem_cpu())
+sum = node.sum_vnfs_cpu()
+
+proc_fw = node.proc_vnf_cpu(fw)
+proc_nat = node.proc_vnf_cpu(nat)
+#proc_en_nat = node.proc_vnf_cpu(en)
+proc_lb = node.proc_vnf_cpu(en)
+print(node.get_rem_cpu())
+
+
 print(node._vnfs)
-r = node.load_vnf_ram(fw)
-print(node.has_ram())
-"""
+print('remaining cpu: ', node.get_rem_cpu())
+print('sum of vnfs: ',  sum)
 
 
 

@@ -4,6 +4,7 @@ from topologies.topology import topology_geant, topology_datacenter_two_tier, to
 import random
 from model.request import *
 from model.nodes import *
+from model.vnfs import *
 
 
 def symmetrify_paths(shortest_paths):
@@ -137,7 +138,6 @@ class NetworkModel:
 
 
     def calculate_all_shortest_paths(self, topology, ingress_node, egress_node):
-
         return [p for p in nx.all_shortest_paths(topology, ingress_node, egress_node)]
 
 
@@ -162,7 +162,7 @@ class NetworkModel:
 
 
 
-
+    # select randomly an ingress node from the ones available in list_ingress_nodes()
     def select_random_ingress_node(self, topology):
         nodes = self.list_ingress_nodes(topology)
         rand_ing_node = random.choice(nodes) if len(nodes) > 0 else None
@@ -172,7 +172,7 @@ class NetworkModel:
 
 
 
-    # Select the egress node. where the service is finished
+    # Select the egress node, where the service is finished
     def list_egress_nodes(self, topology):
 
         if not isinstance(topology, fnss.Topology):
@@ -187,8 +187,7 @@ class NetworkModel:
 
         return egress_nodes_candidates
 
-
-
+    # select randomly an ingress node from the ones available in list_ingress_nodes()
     def select_random_egress_node(self, topology):
         nodes = self.list_egress_nodes(topology)
         rand_egr_node = random.choice(nodes) if len(nodes) > 0 else None
@@ -196,12 +195,11 @@ class NetworkModel:
 
 
 
-    def sum_vnfs_cpu(self, vnfs):
-        vnf_cpu = []
-        for x in vnfs:
-            if isinstance(x, Vnf):
-                vnf_cpu.append(x.get_cpu())
-        return sum(vnf_cpu)
+
+
+
+
+
 
 
     
@@ -290,8 +288,8 @@ class NetworkModel:
 
 
 
-
-    def locate_vnf_nodes_path(self, topology, path):
+    #return all vnf nodes along a given path
+    def get_vnf_nodes_path(self, topology, path):
 
         if not isinstance(topology, fnss.Topology):
             raise ValueError('The provided topology must be an instance of'
@@ -312,6 +310,11 @@ class NetworkModel:
     def path_links(self, path):
 
         return [(path[i], path[i + 1]) for i in range(len(path) - 1)]
+
+
+
+################################### END OF NETWORK MODEL ###################################################
+
 
 
 class NetworkController:
@@ -368,3 +371,8 @@ contr = NetworkController(model)
 ingress = view.model.select_random_ingress_node(topo)
 egress = view.model.select_random_egress_node(topo)
 
+path = view.model.calculate_shortest_path(topo, ingress, egress)
+sum_vnfs = view.model.sum_vnfs_cpu(path)
+print(path)
+print(topo.nfv_nodes())
+print(sum_vnfs)

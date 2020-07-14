@@ -1,7 +1,7 @@
 import random
 import networkx as nx
 from tools.stats import TruncatedZipfDist
-from topologies.topology import topology_geant
+from topologies.topology import topology_tatanld
 from model.request import *
 
 
@@ -21,9 +21,10 @@ class StationaryWorkload:
 
     """
 
-    def __init__(self, topology, rate=1.0, n_req=10**8, seed=None, **kwargs):
+    def __init__(self, topology, rate=1.0, n_req=10**3, seed=None, **kwargs):
 
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
+        self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
         self.rate = rate
         self.n_req = n_req
         random.seed(seed)
@@ -35,16 +36,18 @@ class StationaryWorkload:
         while req_counter < self.n_req:
             t_event += (random.expovariate(self.rate))
             ingress_node = random.choice(self.ingress_nodes)
+            egress_node = random.choice(self.egress_nodes)
             sfc = Request().get_random_sfc()
             log = (req_counter <= self.n_req)
-            event = {'requester': ingress_node, 'sfc': sfc, 'log': log}
+            event = {'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
             yield (t_event, event)
             req_counter += 1
         raise StopIteration()
 
 
 
-topo = topology_geant()
+topo = topology_tatanld()
+print(len(topo.nodes()))
 workload = StationaryWorkload(topo)
 for i in workload:
     print(i)

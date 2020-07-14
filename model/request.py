@@ -246,7 +246,7 @@ class Request:
 
 
 
-
+"""
 req_01  = Request()
 req_02 = Request()
 req_03 = Request()
@@ -255,6 +255,10 @@ req_03 = Request()
 print(req_01.get_random_sfc())
 print(req_02.get_random_var_len_sfc())
 print(req_03.select_random_sfc())
+
+"""
+
+
 
 
 
