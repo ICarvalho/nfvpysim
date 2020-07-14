@@ -22,7 +22,9 @@ class VnfNode:
             raise ValueError('The vnf cannot be added to this node')
         else:
             if getattr(vnf, 'cpu')  <= self.get_rem_cpu():
-                if vnf not in self._vnfs:
+                if vnf in self._vnfs:
+                    print('this vnf is already on the node')
+                else:
                     self._vnfs[vnf]['id'] = vnf.get_id()
                     self._vnfs[vnf]['name'] = vnf.get_name()
                     self._vnfs[vnf]['cpu'] = vnf.get_cpu()
@@ -82,7 +84,7 @@ class VnfNode:
 
 
 
-
+"""
 node = VnfNode()
 nat = Nat()
 fw = Firewall()
@@ -91,6 +93,7 @@ lb = LoadBalancer()
 node.add_vnf(nat)
 node.add_vnf(fw)
 node.add_vnf(en)
+
 
 print(node.get_rem_cpu())
 sum = node.sum_vnfs_cpu()
@@ -105,6 +108,9 @@ print(node.get_rem_cpu())
 print(node._vnfs)
 print('remaining cpu: ', node.get_rem_cpu())
 print('sum of vnfs: ',  sum)
+
+
+"""
 
 
 

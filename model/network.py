@@ -196,60 +196,24 @@ class NetworkModel:
 
 
 
-
-
-
-
-
-
     
     
-    
-    def proc_request_path(self, topology, request, path):
-
-        if not isinstance(topology, fnss.Topology):
-            raise ValueError('The provided topology must be an instance of'
-                             'fnss.Topology or any of its subclasses')
-
-        else:
-
-            sum_vnfs_cpu = self.sum_vnfs_cpu(request.get_sfc())
-            path_nodes = defaultdict(dict)
-            for node in path:
-                stack_name, stack_props = fnss.get_stack(topo, node)
-                if stack_name == 'nfv_node':
-                    nfv_node = VnfNode()
-                    if sum_vnfs_cpu > nfv_node.get_cpu():
-                        raise ValueError('The vnfs cannot be processed at one node')
-
-                    elif sum_vnfs_cpu <= nfv_node.get_cpu():
-                        vnfs = {vnf: vnf.__getattribute__('cpu') for vnf in request.get_sfc()}
-                        max_val_cpu = max(vnfs.values())
-                        print(max_val_cpu)
-
-
-                        #max_vnfs_desc_cpu = vnfs.sort(reverse=True)
-                        for vnf in request.get_sfc():
-                            n_vnfs = len(request.get_sfc())
-                            n_nodes = len(path)
+    def proc_request_path(self, request, path):
+        vnf_proc = {vnf: False for vnf in request}
+        for node in path:
+            if isinstance(node, VnfNode):
+                for vnf in request:
+                    if vnf in node._vnfs:
+                        vnf_cpu = getattr(vnf, 'cpu')
+                        node.proc_vnf_cpu(vnf_cpu)
+                        vnf_proc[vnf] = True
+                        print(node.get_rem_cpu())
 
 
 
+        return vnf_proc
 
 
-                            vnf_cpu = getattr(vnf, 'cpu')
-                            #vnf_ram = getattr(vnf, 'ram')
-                            path_nodes[node]['node']=  node
-                            path_nodes[node]['proc_vnf']=  nfv_node.proc_vnf_cpu(vnf_cpu)
-                            path_nodes[node]['r_cpu'] = nfv_node.get_rem_cpu()
-                        break
-
-
-                        #path_nodes[node]['ram'] = nfv_node.load_vnf_ram(vnf_ram)
-                        #path_nodes[node]['ram'] = nfv_node.get_rem_ram()
-
-
-            return sum_vnfs_cpu, path_nodes.items()
 
 
 
@@ -368,11 +332,14 @@ model = NetworkModel(topo)
 view = NetworkView(model)
 contr = NetworkController(model)
 
+req_01  = Request()
+req = req_01.get_random_sfc()
 ingress = view.model.select_random_ingress_node(topo)
 egress = view.model.select_random_egress_node(topo)
-
 path = view.model.calculate_shortest_path(topo, ingress, egress)
-sum_vnfs = view.model.sum_vnfs_cpu(path)
+proc = view.model.proc_request_path(req, path)
+
+
 print(path)
-print(topo.nfv_nodes())
-print(sum_vnfs)
+print(proc)
+
