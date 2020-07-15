@@ -123,7 +123,7 @@ def topology_geant(**kwargs):
 
     nfv_node = VnfNode()
     for v in nfv_nodes:
-        fnss.add_stack(topology, v, 'nfv_node', {'id': nfv_node.get_node_id(), 'cpu': nfv_node.get_cpu(), 'ram': nfv_node.get_ram(), 'r_cpu': nfv_node.get_rem_cpu(),  'r_ram': nfv_node.get_rem_ram()})
+        fnss.add_stack(topology, v, 'nfv_node', {'id': nfv_node.get_node_id(), 'cpu': nfv_node.get_cpu(), 'ram': nfv_node.get_ram(), 'r_cpu': nfv_node.get_rem_cpu(),  'r_ram': nfv_node.get_rem_ram(), 'vnfs': nfv_node.get_vnfs()})
 
 
 

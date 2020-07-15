@@ -52,6 +52,9 @@ class VnfNode:
     def get_rem_ram(self):
         return self.r_ram
 
+    def get_vnfs(self):
+        return self._vnfs
+
 
     def proc_vnf_cpu(self, vnf):
         if vnf in self._vnfs:

@@ -143,9 +143,6 @@ class NetworkModel:
 
 
 
-
-
-
     # Select the ingress node to send the VNFs request
     def list_ingress_nodes(self, topology):
 
@@ -199,53 +196,46 @@ class NetworkModel:
     
     
     def proc_request_path(self, request, path):
+
         vnf_proc = {vnf: False for vnf in request}
         for node in path:
             if isinstance(node, VnfNode):
                 for vnf in request:
-                    if vnf in node._vnfs:
+                    if vnf in node._vnfs and vnf_proc[vnf]:
                         vnf_cpu = getattr(vnf, 'cpu')
                         node.proc_vnf_cpu(vnf_cpu)
                         vnf_proc[vnf] = True
-                        print(node.get_rem_cpu())
-
 
 
         return vnf_proc
 
 
 
+    def get_nfv_nodes_location(self, topology):
+
+        return [v for v in topology if topology.node[v]['stack'][0] == 'nfv_node']
+
+
+    def apply_vnf_placement(self, placement, topology):
+
+        for v, vnfs in placement.items():
+            topology.node[v]['stack'][1]['vnfs'] = vnfs
+
+
+    def uniform_vnf_placement(self, topology, vnfs, seed=None):
+
+        random.seed(seed)
+        vnf_nodes = self.get_nfv_nodes_location(topology)
+        vnf_placement = defaultdict(set)
+        for c in vnfs:
+            vnf_placement[random.choice(vnf_nodes)].add(c)
+        self.apply_vnf_placement(vnf_placement, topology)
 
 
 
 
-    def get_rem_cpu_nodes_path(self, topology, path):
-
-        """
-        Used to get how much cpu is available at a given path
-
-        :param topology: fnss topology
-        :param path: path between ingress_node and egress_node
-        :return: the total available cpu
-        """
-
-        if not isinstance(topology, fnss.Topology):
-            raise ValueError('The provided topology must be an instance of'
-                             'fnss.Topology or any of its subclasses')
-        else:
-            node_rem_cpu = {}
-
-            for node in path:
-                stack_name, stack_props = fnss.get_stack(topology, node)
-                if stack_name == 'nfv_node':
-                    node = VnfNode()
-                    r_cpu = node.get_rem_cpu()
-                    node_rem_cpu[node] = r_cpu
-
-            total_cpu = sum(node_rem_cpu.values())
 
 
-            return total_cpu
 
 
 
@@ -253,20 +243,14 @@ class NetworkModel:
 
 
     #return all vnf nodes along a given path
-    def get_vnf_nodes_path(self, topology, path):
+    def get_vnf_nodes_path(self, topology,  path):
+        list_vnf_nodes = []
+        for node in path:
+            stack_name, stack_props = fnss.get_stack(topology, node)
+            if stack_name == 'nfv_node':
+                list_vnf_nodes.append(node)
 
-        if not isinstance(topology, fnss.Topology):
-            raise ValueError('The provided topology must be an instance of'
-                             'fnss.Topology or any of its subclasses')
-        else:
-
-            list_vnf_nodes = []
-            for node in path:
-                stack_name, stack_props = fnss.get_stack(topology, node)
-                if stack_name == 'nfv_node':
-                    list_vnf_nodes.append(node)
-
-            return list_vnf_nodes
+        return list_vnf_nodes
 
 
 
@@ -327,19 +311,49 @@ class NetworkController:
 
 topo = topology_geant()
 
-
 model = NetworkModel(topo)
 view = NetworkView(model)
 contr = NetworkController(model)
+
+
+
+
+
 
 req_01  = Request()
 req = req_01.get_random_sfc()
 ingress = view.model.select_random_ingress_node(topo)
 egress = view.model.select_random_egress_node(topo)
 path = view.model.calculate_shortest_path(topo, ingress, egress)
+
+nat = Nat()
+fw = Firewall()
+en = Encrypter()
+lb = LoadBalancer()
+
+vnfs = [nat, fw, en, lb]
+
+pl =  view.model.uniform_vnf_placement(topo, vnfs, seed=None)
+
+
+
 proc = view.model.proc_request_path(req, path)
 
-
+""" 
 print(path)
+print(topo.nfv_nodes())
+print(topo.ingress_nodes())
+print(topo.egress_nodes())
+"""
+print(topo.nfv_nodes())
+print()
+print(topo._node)
+
+
+"""
+print(path)
+print(req)
 print(proc)
+"""
+
 
