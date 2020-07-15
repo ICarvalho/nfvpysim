@@ -211,35 +211,6 @@ class NetworkModel:
 
 
 
-    def get_nfv_nodes_location(self, topology):
-
-        return [v for v in topology if topology.node[v]['stack'][0] == 'nfv_node']
-
-
-    def apply_vnf_placement(self, placement, topology):
-
-        for v, vnfs in placement.items():
-            topology.node[v]['stack'][1]['vnfs'] = vnfs
-
-
-    def uniform_vnf_placement(self, topology, vnfs, seed=None):
-
-        random.seed(seed)
-        vnf_nodes = self.get_nfv_nodes_location(topology)
-        vnf_placement = defaultdict(set)
-        for c in vnfs:
-            vnf_placement[random.choice(vnf_nodes)].add(c)
-        self.apply_vnf_placement(vnf_placement, topology)
-
-
-
-
-
-
-
-
-
-
 
 
     #return all vnf nodes along a given path
