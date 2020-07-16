@@ -213,8 +213,50 @@ class NetworkModel:
 
 
 
+
+
+    def get_nfv_nodes_topo(self, topology):
+
+        return [v for v in topology if topology.node[v]['stack'][0] == 'nfv_node']
+
+
+    def pick_random_nfv_node(self, topology):
+        nfv_nodes = self.get_nfv_nodes_topo(topology)
+        rand_nfv_node = random.choice(nfv_nodes) if len(nfv_nodes) > 0 else None
+        return rand_nfv_node
+
+
+
+    def add_vnf_on_node(self, vnfs, node):
+        if isinstance(vnfs, (Nat, Firewall, WanOptimizer, LoadBalancer, Ids, Encrypter, Decrypter)):
+            for vnf in vnfs:
+                if isinstance(node, VnfNode):
+                    picked_vnf = random.choice(vnf)
+                    node.add_vnf(picked_vnf)
+        return node._vnfs
+
+
+
+
+
+
+
+
+    def place_vnf_on_topo_nodes(self, topology):
+
+        nfv_nodes = self.get_nfv_nodes_topo(topology)
+        list_vnfs = [Nat(), Firewall(), WanOptimizer(), LoadBalancer(), Ids(), Encrypter(), Decrypter()]
+        #for node in nfv_nodes:
+
+
+
+
+
+
+
+
     #return all vnf nodes along a given path
-    def get_vnf_nodes_path(self, topology,  path):
+    def get_nfv_nodes_path(self, topology,  path):
         list_vnf_nodes = []
         for node in path:
             stack_name, stack_props = fnss.get_stack(topology, node)
@@ -304,8 +346,8 @@ lb = LoadBalancer()
 
 vnfs = [nat, fw, en, lb]
 
-pl =  view.model.uniform_vnf_placement(topo, vnfs, seed=None)
-
+node = view.model.pick_random_nfv_node(topo)
+add = view.model.add_vnf_on_node(vnfs, node)
 
 
 proc = view.model.proc_request_path(req, path)
@@ -318,7 +360,7 @@ print(topo.egress_nodes())
 """
 print(topo.nfv_nodes())
 print()
-print(topo._node)
+print(add)
 
 
 """
