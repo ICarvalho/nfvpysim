@@ -5,6 +5,7 @@ import random
 from model.request import *
 from model.nodes import *
 from model.vnfs import *
+from topologies.vnfplacement import *
 
 
 def symmetrify_paths(shortest_paths):
@@ -49,7 +50,7 @@ class NetworkView:
 
 
     def all_pairs_shortest_paths(self, ingress_node, egress_node):
-        return  self.model.calculate_all_shortest_paths[ingress_node][egress_node]
+        return self.model.calculate_all_shortest_paths[ingress_node][egress_node]
 
 
     def link_type(self, u, v):
@@ -76,14 +77,17 @@ class NetworkModel:
 
     """
 
-    def __init__(self, topology): #, policy, shortest_path=None):
+    def __init__(self, topology, shortest_path=None): #, policy, shortest_path=None):
 
         if not isinstance(topology, fnss.Topology):
             raise ValueError('The topology argument must be an'
                              'instance of fnss.Topology or any of its subclasses')
 
-       # self.shortest_path = shortest_path if shortest_path is not None \
-                           #  else symmetrify_paths(nx.all_pairs_dijkstra_path(topology))
+
+
+        self.shortest_path = shortest_path if shortest_path is not None \
+                             else symmetrify_paths(dict(nx.all_pairs_dijkstra_path(topology)))
+
         self.topology = topology
         self.ingress_nodes = {}
         self.egress_nodes = {}
@@ -94,10 +98,10 @@ class NetworkModel:
         self.link_delay = fnss.get_delays(topology)
 
         if not topology.is_directed():
-            for (u,v), link_type in list(self.link_type.items()):
+            for (u, v), link_type in list(self.link_type.items()):
                 self.link_type[(v,u)] = link_type
 
-            for (u,v), delay in list(self.link_delay.items()):
+            for (u, v), delay in list(self.link_delay.items()):
                 self.link_delay[(v,u)] = delay
 
         for node in topology.nodes():
@@ -144,16 +148,10 @@ class NetworkModel:
 
 
     # Select the ingress node to send the VNFs request
-    def list_ingress_nodes(self, topology):
+    @staticmethod
+    def list_ingress_nodes(topology):
 
-
-        ingress_nodes_candidates = []
-        for node in topology.nodes():
-            stack_name, stack_props = fnss.get_stack(topology, node)
-            if stack_name == 'ingress_node':
-               ingress_nodes_candidates.append(node)
-
-        return ingress_nodes_candidates
+        return [v for v in topology if topology.node[v]['stack'][0] == 'ingress_node']
 
 
 
@@ -170,19 +168,13 @@ class NetworkModel:
 
 
     # Select the egress node, where the service is finished
-    def list_egress_nodes(self, topology):
+    @staticmethod
+    def list_egress_nodes(topology):
 
-        if not isinstance(topology, fnss.Topology):
-            raise ValueError('The provided topology must be an instance of'
-                             'fnss.Topology or any of its subclasses')
+        return [v for v in topology if topology.node[v]['stack'][0] == 'egress_node']
 
-        egress_nodes_candidates = []
-        for node in topology.nodes:
-            stack_name, stack_props= fnss.get_stack(topology, node)
-            if stack_name == 'egress_node':
-                egress_nodes_candidates.append(node)
 
-        return egress_nodes_candidates
+
 
     # select randomly an ingress node from the ones available in list_ingress_nodes()
     def select_random_egress_node(self, topology):
@@ -193,15 +185,44 @@ class NetworkModel:
 
 
 
-    
-    
-    def proc_request_path(self, request, path):
+
+
+
+
+    def place_vnf_on_random_nfv_nodes(self, topology, vnfs):
+
+        nfv_nodes = self.get_nfv_nodes_topo(topology)
+
+    def add_vnf_on_node(vnf, node):
+
+        return node.add_vnf(vnf)
+
+    @staticmethod
+    def get_nfv_nodes_topo(topology):
+
+        return [v for v in topology if topology.node[v]['stack'][0] == 'nfv_node']
+
+    @staticmethod
+    def place_random_vnfs_on_nodes(vnfs, topology):
+
+        nfv_nodes = get_nfv_nodes_topo(topology)
+        for nfv_node in nfv_nodes:
+            final_nodes = []
+            if isinstance(nfv_node, VnfNode):
+                for vnf in vnfs:
+                    add_vnf_on_node(vnf, nfv_node)
+                    final_nodes.append(nfv_node)
+                    print(nfv_node.get_vnfs())
+        return final_nodes
+
+    @staticmethod
+    def proc_request_path(request, path):
 
         vnf_proc = {vnf: False for vnf in request}
         for node in path:
             if isinstance(node, VnfNode):
                 for vnf in request:
-                    if vnf in node._vnfs and vnf_proc[vnf]:
+                    if vnf in node.vnfs and vnf_proc[vnf]:
                         vnf_cpu = getattr(vnf, 'cpu')
                         node.proc_vnf_cpu(vnf_cpu)
                         vnf_proc[vnf] = True
@@ -215,48 +236,14 @@ class NetworkModel:
 
 
 
-    def get_nfv_nodes_topo(self, topology):
-
-        return [v for v in topology if topology.node[v]['stack'][0] == 'nfv_node']
-
-
-    def pick_random_nfv_node(self, topology):
-        nfv_nodes = self.get_nfv_nodes_topo(topology)
-        rand_nfv_node = random.choice(nfv_nodes) if len(nfv_nodes) > 0 else None
-        return rand_nfv_node
-
-
-
-    def add_vnf_on_node(self, vnfs, node):
-        if isinstance(vnfs, (Nat, Firewall, WanOptimizer, LoadBalancer, Ids, Encrypter, Decrypter)):
-            for vnf in vnfs:
-                if isinstance(node, VnfNode):
-                    picked_vnf = random.choice(vnf)
-                    node.add_vnf(picked_vnf)
-        return node._vnfs
 
 
 
 
 
-
-
-
-    def place_vnf_on_topo_nodes(self, topology):
-
-        nfv_nodes = self.get_nfv_nodes_topo(topology)
-        list_vnfs = [Nat(), Firewall(), WanOptimizer(), LoadBalancer(), Ids(), Encrypter(), Decrypter()]
-        #for node in nfv_nodes:
-
-
-
-
-
-
-
-
-    #return all vnf nodes along a given path
-    def get_nfv_nodes_path(self, topology,  path):
+    # return all vnf nodes along a given path
+    @staticmethod
+    def get_nfv_nodes_path (topology, path):
         list_vnf_nodes = []
         for node in path:
             stack_name, stack_props = fnss.get_stack(topology, node)
@@ -268,7 +255,8 @@ class NetworkModel:
 
 
     # Convert a path expressed as list of nodes into a path expressed as a list of edges.
-    def path_links(self, path):
+    @staticmethod
+    def path_links(path):
 
         return [(path[i], path[i + 1]) for i in range(len(path) - 1)]
 
@@ -307,7 +295,7 @@ class NetworkController:
 
         if path is None:
             path = self.model.shortest_path[s][t]
-        for u, v in NetworkModel.path_links(path):
+        for u, v in NetworkModel.path_links():
             self.forward_request_hop(u, v, main_path)
 
     def forward_request_hop(self, u, v, main_path=True):
@@ -346,8 +334,7 @@ lb = LoadBalancer()
 
 vnfs = [nat, fw, en, lb]
 
-node = view.model.pick_random_nfv_node(topo)
-add = view.model.add_vnf_on_node(vnfs, node)
+#add = view.model.add_vnf_on_node(vnfs, node)
 
 
 proc = view.model.proc_request_path(req, path)
@@ -358,9 +345,9 @@ print(topo.nfv_nodes())
 print(topo.ingress_nodes())
 print(topo.egress_nodes())
 """
-print(topo.nfv_nodes())
+print(topo._node)
 print()
-print(add)
+#print(add)
 
 
 """
@@ -370,3 +357,11 @@ print(proc)
 """
 
 
+nat = Nat()
+fw = Firewall()
+wan = WanOptimizer()
+vnfs = [nat, fw, wan]
+
+nfv_nodes = topo.nfv_nodes()
+placement = view.model.place_random_vnfs_on_nodes(vnfs, topo)
+print(placement)

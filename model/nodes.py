@@ -11,10 +11,10 @@ class VnfNode:
         self.ram = 100
         self.r_cpu = 100
         self.r_ram = 100
-        self._vnfs =defaultdict(dict)
+        self._vnfs = defaultdict(dict)
 
 
-
+    @staticmethod
     def add_vnf(self, vnf):
 
         vnf_cpu = getattr(vnf, 'cpu')
@@ -22,10 +22,10 @@ class VnfNode:
             raise ValueError('The vnf cannot be added to this node')
         else:
             if getattr(vnf, 'cpu')  <= self.get_rem_cpu():
-                if vnf in self._vnfs:
+                if vnf in self.vnfs:
                     print('this vnf is already on the node')
                 else:
-                    self._vnfs[vnf]['id'] = vnf.get_id()
+                    self._vnfs[vnf]['id'] = vnf.get_node_id()
                     self._vnfs[vnf]['name'] = vnf.get_name()
                     self._vnfs[vnf]['cpu'] = vnf.get_cpu()
                     self._vnfs[vnf]['ram'] = vnf.get_ram()
@@ -79,12 +79,15 @@ class VnfNode:
 
     def sum_vnfs_cpu(self):
         sum = 0
-        for key,value in self._vnfs.items():
+        for key, value in self._vnfs.items():
             if value and 'cpu' in value.keys():
                 sum += value['cpu']
 
         return sum
 
+    @property
+    def vnfs(self):
+        return self._vnfs
 
 
 """
