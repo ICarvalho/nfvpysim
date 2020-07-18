@@ -102,12 +102,18 @@ class NetworkModel:
         for node in topology.nodes():
             stack_name, stack_props = fnss.get_stack(topology, node)
             if stack_name == 'ingress_node':
+                ingress_node = IngressNode()
                 if 'id' in stack_props:
                     self.ingress_nodes[node] = stack_props['id']
+
+
             elif stack_name == 'egress_node':
+                egress_node = EgressNode()
                 if 'id' in stack_props:
                     self.egress_nodes[node] = stack_props['id']
+
             elif stack_name == 'nfv_node':
+                nfv_node = VnfNode()
                 if 'id' in stack_props:
                     if 'cpu' in stack_props:
                         if 'ram' in stack_props:
@@ -115,13 +121,21 @@ class NetworkModel:
                                 if 'r_ram' in stack_props:
                                     if 'vnfs' in stack_props:
                                         self.nfv_nodes[node] = stack_props['id']
+
                                         self.nfv_nodes[node] = stack_props['cpu']
+
                                         self.nfv_nodes[node] = stack_props['ram']
+
                                         self.nfv_nodes[node] = stack_props['r_cpu']
+
                                         self.nfv_nodes[node] = stack_props['r_ram']
+
                                         self.nfv_nodes[node] = stack_props['vnfs']
+
             elif stack_name == 'fw_node':
+                fw_node = ForwardingNode()
                 self.fw_nodes[node] = stack_props['id']
+                self.fw_nodes[node]['stack'][0] = fw_node.get_node_id()
 
 
 
@@ -139,8 +153,6 @@ class NetworkModel:
     def calculate_all_shortest_paths(self, topology, ingress_node, egress_node):
 
         return [p for p in nx.all_shortest_paths(topology, ingress_node, egress_node)]
-
-
 
 
 
@@ -220,11 +232,10 @@ class NetworkModel:
             for node in path:
                 stack_name, stack_props = fnss.get_stack(topo, node)
                 if stack_name == 'nfv_node':
-                    nfv_node = VnfNode()
-                    if sum_vnfs_cpu > nfv_node.get_cpu():
+                    if sum_vnfs_cpu > VnfNode().get_cpu():
                         raise ValueError('The vnfs cannot be processed at one node')
 
-                    elif sum_vnfs_cpu <= nfv_node.get_cpu():
+                    elif sum_vnfs_cpu <= VnfNode().get_cpu():
                         vnfs = {vnf: vnf.__getattribute__('cpu') for vnf in request.get_sfc()}
                         max_val_cpu = max(vnfs.values())
                         print(max_val_cpu)
@@ -232,26 +243,19 @@ class NetworkModel:
 
                         #max_vnfs_desc_cpu = vnfs.sort(reverse=True)
                         for vnf in request.get_sfc():
-                            n_vnfs = len(request.get_sfc())
-                            n_nodes = len(path)
-
-
-
-
-
                             vnf_cpu = getattr(vnf, 'cpu')
                             #vnf_ram = getattr(vnf, 'ram')
                             path_nodes[node]['node']=  node
-                            path_nodes[node]['proc_vnf']=  nfv_node.proc_vnf_cpu(vnf_cpu)
-                            path_nodes[node]['r_cpu'] = nfv_node.get_rem_cpu()
-                        break
+                            path_nodes[node]['proc_vnf']=  VnfNode().proc_vnf_cpu(vnf_cpu)
+                            path_nodes[node]['r_cpu'] = VnfNode().get_rem_cpu()
+
 
 
                         #path_nodes[node]['ram'] = nfv_node.load_vnf_ram(vnf_ram)
                         #path_nodes[node]['ram'] = nfv_node.get_rem_ram()
 
 
-            return sum_vnfs_cpu, path_nodes.items()
+            return sum_vnfs_cpu, path_nodes
 
 
 
@@ -372,8 +376,8 @@ path = view.model.calculate_shortest_path(topo, ingress, egress)
 all_path = view.model.calculate_all_shortest_paths(topo, ingress, egress)
 
 req = GenerateRandomRequest(ingress, egress, 100)
-a = view.model.sum_vnfs_cpu(req.get_sfc())
-print(a)
+#a = view.model.sum_vnfs_cpu(req.get_sfc())
+#print(a)
 
 proc = view.model.proc_request_path(topo, req, path)
 
@@ -388,5 +392,3 @@ print(path)
 print(req.sfc)
 print(proc)
 
-
-print(len(path))

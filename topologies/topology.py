@@ -24,7 +24,6 @@ class NfvTopology(fnss.Topology):
         :return: return a set of nfv nodes
         """
 
-
         return set (v for v in self
                     if 'stack' in self.node[v]
                     and self.node[v]['stack'][0] == 'nfv_node')
@@ -32,7 +31,7 @@ class NfvTopology(fnss.Topology):
 
 
         """
-         return {v: self.node[v]['stack'][0]['id'][1]['cpu'][2]['ram'][3]['r_cpu'][4]['r_ram']
+        return {v: self.node[v]['stack'][0]['id'][1]['cpu'][2]['ram'][3]['r_cpu'][4]['r_ram'][5]['vnfs']
                 for v in self
                 if 'stack' in self.node[v]
                 and 'id' in self.node[v]['stack'][0]
@@ -40,9 +39,13 @@ class NfvTopology(fnss.Topology):
                 and 'ram' in self.node[v]['stack'][2]
                 and 'r_cpu' in self.node[v]['stack'][3]
                 and 'r_ram' in self.node[v]['stack'][4]
+                and 'vnfs' in self.node[v]['stack'][5]
                 }
         
         """
+
+        
+
 
 
 
@@ -123,7 +126,12 @@ def topology_geant(**kwargs):
 
     nfv_node = VnfNode()
     for v in nfv_nodes:
-        fnss.add_stack(topology, v, 'nfv_node', {'id': nfv_node.get_node_id(), 'cpu': nfv_node.get_cpu(), 'ram': nfv_node.ram, 'r_cpu': nfv_node.get_rem_cpu(),  'r_ram': nfv_node.get_rem_ram()})
+        fnss.add_stack(topology, v, 'nfv_node', {'id': nfv_node.get_node_id(),
+                                                 'cpu': nfv_node.get_cpu(),
+                                                 'ram': nfv_node.ram,
+                                                 'r_cpu': nfv_node.get_rem_cpu(),
+                                                 'r_ram': nfv_node.get_rem_ram(),
+                                                 'vnfs': nfv_node.get_vnfs()})
 
 
 

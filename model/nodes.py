@@ -339,7 +339,7 @@ vnf_node = VnfNode()
 vnf_node.add_vnf_on_vnf_node(nat)
 vnf_node.add_vnf_on_vnf_node(lb)
 vnf_node.add_vnf_on_vnf_node(nat)
-print(vnf_node.__dict__)
+#print(vnf_node.__dict__)
 
 
 
