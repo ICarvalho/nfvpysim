@@ -247,7 +247,6 @@ class EgressNode(Node):
 
 
 class VnfNode(Node):
-    vnfs_instances = defaultdict(dict)
 
     def __init__(self):
         super(VnfNode, self).__init__(id='nfv_node')
@@ -255,13 +254,13 @@ class VnfNode(Node):
         self.ram = 100
         self.r_cpu = 100
         self.r_ram = 100
+        self.vnfs = {}
 
 
 
 
     def get_node_id(self):
         return self.id
-
 
     def get_cpu(self):
         return self.cpu
@@ -280,13 +279,15 @@ class VnfNode(Node):
     def has_ram(self):
         if self.remaining_ram > 0:
             return True
-
         return False
 
 
     def proc_vnf_cpu(self, cpu_req):
         self.cpu = self.cpu - cpu_req
         return self.cpu
+
+    def get_vnfs(self):
+        return self.vnfs
 
 
 
@@ -306,32 +307,40 @@ class VnfNode(Node):
             return True
         return False
 
-    def add_vnf_instance(self, vnf):
 
-        self.vnfs_instances[1]['id'] = vnf.get_id()
-        self.vnfs_instances['name'] = vnf.get_name()
-        self.vnfs_instances['cpu'] = vnf.get_cpu()
-        self.vnfs_instances['ram'] = vnf.get_ram()
-        self.vnfs_instances['bw'] = vnf.get_bw()
+    def vnf_node_can_handle_vnf(self, vnf):
 
-
-
-
-    def get_vnfs_instances(self):
-        self.vnfs_instances
+        if isinstance(vnf, (Nat, LoadBalancer, Ids, Firewall, Encrypter, Decrypter, WanOptimizer)):
+            vnf_cpu = getattr(vnf, 'cpu')
+            if self.r_cpu < vnf_cpu:
+                return False
+            return True
 
 
+    def add_vnf_on_vnf_node(self, vnf):
 
-"""
+        if self.vnf_node_can_handle_vnf(vnf):
+            self.vnfs.update(vnf.__dict__)
+
+
+
+
+
+
+
+
+
+
 nat = Nat()
 lb = LoadBalancer()
+fw = Firewall()
 
 vnf_node = VnfNode()
-vnf_node.add_vnf_instance(nat)
-vnf_node.add_vnf_instance(lb)
-print(vnf_node.vnfs_instances)
+vnf_node.add_vnf_on_vnf_node(nat)
+vnf_node.add_vnf_on_vnf_node(lb)
+vnf_node.add_vnf_on_vnf_node(nat)
+print(vnf_node.__dict__)
 
 
 
-"""
 
