@@ -193,48 +193,82 @@ class SFC_10:
 
 
 
-class Request:
 
-    # return the ids of the vnfs on the chain.
-    # It is also possible to get the vnfs themselves
+class GenerateSfcs:
+
+
+
     def select_random_sfc(self):
 
-            services = [SFC_01().get_sfc_01(), SFC_02().get_sfc_02(), SFC_03().get_sfc_03(), SFC_04().get_sfc_04(),
-                        SFC_05().get_sfc_05(),
-                        SFC_06().get_sfc_06(), SFC_07().get_sfc_07(), SFC_08().get_sfc_08(), SFC_09().get_sfc_09(),
-                        SFC_10().get_sfc_10()]
-            sfc = random.choice(services)
-            sfc_id = self.get_vnfs_id(sfc)
-            return sfc_id
+        services = [SFC_01().get_sfc_01(), SFC_02().get_sfc_02(), SFC_03().get_sfc_03(), SFC_04().get_sfc_04(),
+                    SFC_05().get_sfc_05(),
+                    SFC_06().get_sfc_06(), SFC_07().get_sfc_07(), SFC_08().get_sfc_08(), SFC_09().get_sfc_09(),
+                    SFC_10().get_sfc_10()]
+        sfc = random.choice(services)
+        #sfcs = self.get_vnfs_id(sfc)
+        return sfc
+
 
 
     def generate_seq_vnfs(self):
-            sfc = []
-            nat = Nat()
-            fw = Firewall()
-            wanopt = WanOptimizer()
-            lb = LoadBalancer()
-            ids = Ids()
-            encr = Encrypter()
-            decr = Decrypter()
-            vnfs = [nat, fw, wanopt, lb, ids, encr, decr]
-            n = random.randint(1, len(vnfs))
-            for i in range(1, n + 1):
-                vnf = random.choice(vnfs)
-                if vnf not in sfc:
-                    sfc.append(vnf)
-            sfc_id = self.get_vnfs_id(sfc)
-            return sfc_id
+        sfc = []
+        nat = Nat()
+        fw = Firewall()
+        wanopt = WanOptimizer()
+        lb = LoadBalancer()
+        ids = Ids()
+        encr = Encrypter()
+        decr = Decrypter()
+        vnfs = [nat, fw, wanopt, lb, ids, encr, decr]
+        n = random.randint(1, len(vnfs))
+        for i in range(1, n + 1):
+            vnf = random.choice(vnfs)
+            if vnf not in sfc:
+                sfc.append(vnf)
+           # sfcs = self.get_vnfs_id(sfc)
+        return sfc
+
+
+    def get_vnfs_id(self, sfc):
+        vnf_list = []
+        for i in sfc:
+            vnf_list.append(i.get_id())
+        return vnf_list
 
 
 
-    def get_random_sfc(self):
-            random_sfc = self.select_random_sfc()
-            return random_sfc
+class RequestRandomSfc:
 
-    def get_random_var_len_sfc(self):
-            var_len_sfc = self.generate_seq_vnfs()
-            return var_len_sfc
+    def __init__(self):
+
+        self.sfc = GenerateSfcs().select_random_sfc()
+
+
+    def get_sfc(self):
+
+        return self.sfc
+
+
+class RequestVarLenSFc:
+
+    def __init__(self):
+
+        self.sfc = GenerateSfcs().generate_seq_vnfs()
+
+
+    def get_sfc(self):
+        return self.sfc
+
+
+
+
+    # return the ids of the vnfs on the chain.
+    # It is also possible to get the vnfs themselves
+
+
+
+
+
 
 
     def get_vnfs_id(self, sfc):
@@ -246,17 +280,14 @@ class Request:
 
 
 
-"""
-req_01  = Request()
-req_02 = Request()
-req_03 = Request()
+req_01  = RequestVarLenSFc()
+req_02 = RequestRandomSfc()
 
 
-print(req_01.get_random_sfc())
-print(req_02.get_random_var_len_sfc())
-print(req_03.select_random_sfc())
+print(req_01.get_sfc())
+print(req_02.get_sfc())
 
-"""
+
 
 
 

@@ -232,11 +232,12 @@ class NetworkModel:
             for node in path:
                 stack_name, stack_props = fnss.get_stack(topo, node)
                 if stack_name == 'nfv_node':
-                    if sum_vnfs_cpu > VnfNode().get_cpu():
-                        raise ValueError('The vnfs cannot be processed at one node')
+                    if isinstance(node, VnfNode):
+                        if sum_vnfs_cpu > node().get_cpu():
+                            raise ValueError('The vnfs cannot be processed at one node')
 
-                    elif sum_vnfs_cpu <= VnfNode().get_cpu():
-                        vnfs = {vnf: vnf.__getattribute__('cpu') for vnf in request.get_sfc()}
+                        elif sum_vnfs_cpu <= node.get_cpu():
+                        vnfs = {vnf: vnf.get_cpu() for vnf in request.get_sfc()}
                         max_val_cpu = max(vnfs.values())
                         print(max_val_cpu)
 
@@ -362,6 +363,9 @@ class NetworkController:
             self.collector.end_session(success)
         self.session = None
 
+
+
+
 topo = topology_geant()
 
 
@@ -375,9 +379,8 @@ egress = view.model.select_random_egress_node(topo)
 path = view.model.calculate_shortest_path(topo, ingress, egress)
 all_path = view.model.calculate_all_shortest_paths(topo, ingress, egress)
 
-req = GenerateRandomRequest(ingress, egress, 100)
-#a = view.model.sum_vnfs_cpu(req.get_sfc())
-#print(a)
+req = RequestRandomSfc()
+
 
 proc = view.model.proc_request_path(topo, req, path)
 
@@ -389,6 +392,5 @@ proc = view.model.proc_request_path(topo, req, path)
 print(path)
 #print(all_path)
 #print(topo.nfv_nodes())
-print(req.sfc)
 print(proc)
 
