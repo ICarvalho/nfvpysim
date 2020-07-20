@@ -37,7 +37,7 @@ class StationaryWorkload:
             t_event += (random.expovariate(self.rate))
             ingress_node = random.choice(self.ingress_nodes)
             egress_node = random.choice(self.egress_nodes)
-            sfc = Request().get_random_sfc()
+            sfc = RequestRandomSfc().get_sfc()
             log = (req_counter <= self.n_req)
             event = {'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
             yield (t_event, event)

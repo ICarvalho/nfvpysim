@@ -184,8 +184,8 @@ def topology_tatanld(**kwargs):
         fnss.add_stack(topology, v, 'nfv_node', {'id': vnf_node.id,
                                                  'cpu': vnf_node.cpu,
                                                  'ram': vnf_node.ram,
-                                                 'r_cpu': vnf_node.remaining_cpu,
-                                                 'r_ram': vnf_node.remaining_ram})
+                                                 'r_cpu': vnf_node.r_cpu,
+                                                 'r_ram': vnf_node.r_ram,})
     egr_node = EgressNode()
     for v in egress_nodes:
         fnss.add_stack(topology, v, 'egress_node', {'id': egr_node.id})
@@ -253,3 +253,7 @@ def topology_datacenter_two_tier():
 
     return NfvTopology(topology)
 
+
+topo = topology_geant()
+
+print(topo._node)

@@ -14,7 +14,7 @@ def add_vnf_on_node(vnf, node):
 
 def get_nfv_nodes_topo(topology):
 
-    return [v for v in topology if topology.node[v]['stack'][0] == 'nfv_node']
+    return topology.nfv_nodes()
 
 
 
@@ -37,9 +37,10 @@ topo = topology_geant()
 nat = Nat()
 fw = Firewall()
 wan = WanOptimizer()
-vnfs = [nat, fw, wan]
+vnfs = [Nat(), Firewall(), Encrypter()]
 
 nfv_nodes = topo.nfv_nodes()
 placement = place_random_vnfs_on_nodes(vnfs, topo)
 print(placement)
+print(nfv_nodes)
 

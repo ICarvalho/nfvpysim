@@ -323,6 +323,13 @@ class VnfNode(Node):
             self.vnfs.update(vnf.__dict__)
 
 
+    def is_vnf_on_vnf_node(self, vnf):
+
+        return self.vnfs[vnf]
+
+
+
+
 
 
 
