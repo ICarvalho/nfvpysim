@@ -227,10 +227,6 @@ class IngressNode(Node):
         super(IngressNode, self).__init__(id='ingress_node')
 
 
-
-
-
-
 class ForwardingNode(Node):
 
     def __init__(self):
@@ -254,7 +250,7 @@ class VnfNode(Node):
         self.ram = 100
         self.r_cpu = 100
         self.r_ram = 100
-        self.vnfs = {}
+        self._vnfs = defaultdict(dict)
 
 
 
@@ -277,36 +273,20 @@ class VnfNode(Node):
         return self.ram
 
     def has_ram(self):
-        if self.remaining_ram > 0:
+        if self.r_ram > 0:
             return True
         return False
 
 
-    def proc_vnf_cpu(self, cpu_req):
-        self.cpu = self.cpu - cpu_req
-        return self.cpu
-
-    def get_vnfs(self):
-        return self.vnfs
-
-
-
-
-    def load_vnf_ram(self, ram_req):
-        self.ram = self.ram - ram_req
-
-
-
-    def has_cpu(self):
-        if self.remaining_cpu > 0:
+    def proc_vnf_cpu(self):
+        if self.r_cpu > 0:
             return True
         return False
 
     def has_ram(self):
-        if self.remaining_ram > 0:
+        if self.r_ram > 0:
             return True
         return False
-
 
     def vnf_node_can_handle_vnf(self, vnf):
 
@@ -319,15 +299,25 @@ class VnfNode(Node):
 
     def add_vnf_on_vnf_node(self, vnf):
 
-        if self.vnf_node_can_handle_vnf(vnf):
-            self.vnfs.update(vnf.__dict__)
+        if vnf.get_cpu() + self.get_sum_cpu_vnfs() <= self.r_cpu:
+            self._vnfs[vnf]['id'] = vnf.get_id()
+            self._vnfs[vnf]['name'] = vnf.get_name()
+            self._vnfs[vnf]['cpu'] = vnf.get_cpu()
+            self._vnfs[vnf]['ram'] = vnf.get_ram()
+            self._vnfs[vnf]['bw'] = vnf.get_bw()
+        else:
+            raise ValueError('vnf cannot be placed on the node')
+
+
+    def get_sum_cpu_vnfs(self):
+        return sum(self._vnfs[vnf]['cpu'] for vnf in self._vnfs)
+
+
 
 
     def is_vnf_on_vnf_node(self, vnf):
 
-        return self.vnfs[vnf]
-
-
+        return self._vnfs[vnf]
 
 
 
@@ -341,12 +331,16 @@ class VnfNode(Node):
 nat = Nat()
 lb = LoadBalancer()
 fw = Firewall()
+en = Encrypter()
 
 vnf_node = VnfNode()
 vnf_node.add_vnf_on_vnf_node(nat)
 vnf_node.add_vnf_on_vnf_node(lb)
-vnf_node.add_vnf_on_vnf_node(nat)
-#print(vnf_node.__dict__)
+#vnf_node.add_vnf_on_vnf_node(fw)
+#vnf_node.add_vnf_on_vnf_node(en)
+print(vnf_node.__dict__)
+print(vnf_node.get_sum_cpu_vnfs())
+print(vnf_node.get_cpu())
 
 
 
