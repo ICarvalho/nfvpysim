@@ -288,6 +288,10 @@ class VnfNode(Node):
         return False
 
 
+    def get_vnfs(self):
+        return self._vnfs
+
+
 
 
     def proc_vnf_on_node(self, vnfs):
