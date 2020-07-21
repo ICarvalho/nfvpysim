@@ -265,11 +265,9 @@ class VnfNode(Node):
         return self.ram
 
     def get_rem_cpu(self):
-        self.r_cpu = self.cpu
         return self.r_cpu
 
     def get_rem_ram(self):
-        self.r_ram = self.ram
         return self.ram
 
     def has_ram(self):
@@ -278,23 +276,32 @@ class VnfNode(Node):
         return False
 
 
-    def proc_vnf_cpu(self):
-        if self.r_cpu > 0:
-            return True
-        return False
+    def proc_vnf(self, cpu_req):
+        self.cpu = self.cpu - cpu_req
+        self.r_cpu = self.cpu
+
+
 
     def has_ram(self):
         if self.r_ram > 0:
             return True
         return False
 
-    def vnf_node_can_handle_vnf(self, vnf):
 
-        if isinstance(vnf, (Nat, LoadBalancer, Ids, Firewall, Encrypter, Decrypter, WanOptimizer)):
-            vnf_cpu = getattr(vnf, 'cpu')
-            if self.r_cpu < vnf_cpu:
-                return False
-            return True
+
+
+    def proc_vnf_on_node(self, vnf):
+
+        if not self.is_vnf_on_vnf_node(vnf):
+            raise ValueError('this vnf is not placed on this node')
+
+        else:
+            if vnf.get_cpu() <= self.get_rem_cpu():
+                vnf_cpu = vnf.get_cpu()
+                self.proc_vnf(vnf_cpu)
+
+
+
 
 
     def add_vnf_on_vnf_node(self, vnf):
@@ -306,7 +313,8 @@ class VnfNode(Node):
             self._vnfs[vnf]['ram'] = vnf.get_ram()
             self._vnfs[vnf]['bw'] = vnf.get_bw()
         else:
-            raise ValueError('vnf cannot be placed on the node')
+            pass
+            #raise ValueError('vnf cannot be placed on the node')
 
 
     def get_sum_cpu_vnfs(self):
@@ -316,7 +324,6 @@ class VnfNode(Node):
 
 
     def is_vnf_on_vnf_node(self, vnf):
-
         return self._vnfs[vnf]
 
 
@@ -336,10 +343,12 @@ en = Encrypter()
 vnf_node = VnfNode()
 vnf_node.add_vnf_on_vnf_node(nat)
 vnf_node.add_vnf_on_vnf_node(lb)
-#vnf_node.add_vnf_on_vnf_node(fw)
-#vnf_node.add_vnf_on_vnf_node(en)
-print(vnf_node.__dict__)
+vnf_node.add_vnf_on_vnf_node(fw)
+vnf_node.add_vnf_on_vnf_node(en)
+print(vnf_node._vnfs)
 print(vnf_node.get_sum_cpu_vnfs())
+print(vnf_node.proc_vnf(nat.get_cpu()))
+print(vnf_node.proc_vnf(lb.get_cpu()))
 print(vnf_node.get_cpu())
 
 
