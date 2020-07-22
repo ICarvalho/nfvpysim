@@ -44,11 +44,12 @@ class StationaryWorkload:
             req_counter += 1
         raise StopIteration()
 
-
-
+"""
 topo = topology_tatanld()
 print(len(topo.nodes()))
 workload = StationaryWorkload(topo)
 for i in workload:
     print(i)
+"""
+
 

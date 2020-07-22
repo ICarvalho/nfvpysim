@@ -205,6 +205,17 @@ class NetworkModel:
         return random.choice(self.get_egress_nodes(topology))
 
 
+    def random_vnf_placement(self, topology, vnfs):
+
+        if isinstance(topology, fnss.Topology):
+            nfv_nodes = self.get_nfv_nodes(topology)
+            for nfv_node in nfv_nodes:
+                if isinstance(nfv_node, VnfNode):
+                    while nfv_node.get_sum_cpu_vnfs_on_vnf_node() <= nfv_node.get_rem_cpu():
+                        random_vnf = random.choice(vnfs)
+                        self.nfv_nodes[nfv_node]['stack'][1]['vnfs'].add_vnf_on_vnf_node(random_vnf)
+
+            return self.nfv_nodes
 
 
 
@@ -238,18 +249,18 @@ class NetworkModel:
     def proc_req_greedy(self, topology, request, path):
 
         for node in path:
+            vnfs = request.get_sfc()
             stack_name, stack_props = fnss.get_stack(topology, node)
             if stack_name == 'nfv_node':
                 if isinstance(node, VnfNode):
-                    sum_vnfs_cpu = sum(vnf.get_cpu() for vnf in request.get_sfc())
+                    sum_vnfs_cpu = sum(vnf.get_cpu() for vnf in vnfs)
                     if sum_vnfs_cpu <= node.get_rem_cpu():
-                        for vnf in request.get_sfc():
-                            self.nfv_nodes[node] = node.proc_vnf_cpu(vnf.get_cpu())
+                        self.nfv_nodes[node] = node.proc_vnf_on_node(vnfs)
                     else:
                         continue
 
-            else:
-                raise ValueError('No vnf node in this path can process such request')
+        else:
+            raise ValueError('No vnf node in this path can process such request')
 
 
 
@@ -350,9 +361,7 @@ class NetworkController:
 
 
 
-
-
-
+"""
 topo = topology_geant()
 
 
@@ -373,6 +382,31 @@ vnfs = [Nat(), Firewall(), Encrypter()]
 
 
 print(view.model.get_nfv_nodes(topo))
+
+
+"""
+
+topo = topology_geant()
+model = NetworkModel(topo)
+view = NetworkView(model)
+
+nat = Nat()
+lb = LoadBalancer()
+fw = Firewall()
+en = Encrypter()
+de = Decrypter()
+wan = WanOptimizer()
+
+vnfs = [nat,  fw, lb, en, de, wan]
+
+vnf_pl = view.model.random_vnf_placement(topo, vnfs)
+
+print(vnf_pl)
+print()
+print(topo.nfv_nodes())
+
+
+
 #print(view.model.get_ingress_nodes(topo))
 #print(view.model.select_ingress_node(topo))
 

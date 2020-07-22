@@ -253,7 +253,8 @@ class VnfNode(Node):
         self._vnfs = defaultdict(dict)
 
 
-
+    def get_vnfs(self):
+        return self._vnfs
 
     def get_node_id(self):
         return self.id
@@ -275,21 +276,17 @@ class VnfNode(Node):
             return True
         return False
 
-
-    def proc_vnf(self, cpu_req):
-        self.cpu = self.cpu - cpu_req
-        self.r_cpu = self.cpu
-
-
-
-    def has_ram(self):
-        if self.r_ram > 0:
+    def has_cpu(self):
+        if self.r_cpu > 0:
             return True
         return False
 
 
-    def get_vnfs(self):
-        return self._vnfs
+
+
+    def proc_vnf(self, vnf):
+        self.cpu = self.cpu - vnf.get_cpu()
+        self.r_cpu = self.cpu
 
 
 
@@ -301,37 +298,39 @@ class VnfNode(Node):
                 raise ValueError('this vnf is not placed on this node')
 
             else:
-                sum_vnf_cpu = sum(vnf.get_cpu() for vnf in vnfs)
-                if sum_vnf_cpu <= self.get_rem_cpu():
-                    vnf_cpu = vnf.get_cpu()
-                    self.proc_vnf(vnf_cpu)
+                vnf_cpu = vnf.get_cpu()
+                if vnf_cpu <= self.get_rem_cpu():
+                    self.proc_vnf(vnf)
+                else:
+                    print('There is not enough cpu available to run the vnf')
 
 
 
 
 
-    def add_vnf_on_vnf_node(self, vnfs):
+    def add_vnf_on_vnf_node(self, vnf):
 
-        for vnf in vnfs:
-            if vnf.get_cpu() + self.get_sum_cpu_vnfs() <= self.r_cpu:
+            if vnf.get_cpu() + self.get_sum_cpu_vnfs_on_vnf_node() <= self.r_cpu:
                 self._vnfs[vnf]['id'] = vnf.get_id()
                 self._vnfs[vnf]['name'] = vnf.get_name()
                 self._vnfs[vnf]['cpu'] = vnf.get_cpu()
                 self._vnfs[vnf]['ram'] = vnf.get_ram()
                 self._vnfs[vnf]['bw'] = vnf.get_bw()
-        else:
-            pass
-            #raise ValueError('vnf cannot be placed on the node')
+            else:
+
+                raise ValueError('Not enough cpu')
 
 
-    def get_sum_cpu_vnfs(self):
+    def get_sum_cpu_vnfs_on_vnf_node(self):
         return sum(self._vnfs[vnf]['cpu'] for vnf in self._vnfs)
 
 
 
 
     def is_vnf_on_vnf_node(self, vnf):
-        return self._vnfs[vnf]
+        if vnf in self._vnfs:
+            return True
+        return False
 
 
 
@@ -340,22 +339,21 @@ class VnfNode(Node):
 
 
 
-
-
+"""
 nat = Nat()
 lb = LoadBalancer()
 fw = Firewall()
 en = Encrypter()
+de = Decrypter()
+wan = WanOptimizer()
 
-vnfs = [nat, lb, fw]
+vnfs = [nat,  fw, lb, en, de, wan]
 vnf_node = VnfNode()
 vnf_node.add_vnf_on_vnf_node(vnfs)
-
+vnf_node.proc_vnf_on_node(vnfs)
 print(vnf_node._vnfs)
-print(vnf_node.get_sum_cpu_vnfs())
-print(vnf_node.proc_vnf_on_node(vnfs))
-print(vnf_node.get_rem_cpu())
-
-
-
+print('Sum of vnf_cpus:', vnf_node.get_sum_cpu_vnfs_on_vnf_node())
+print('Remaining cpu on vnf_node: ' , vnf_node.get_rem_cpu())
+print(vnf_node.__dict__)
+"""
 

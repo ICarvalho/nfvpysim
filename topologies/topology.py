@@ -245,7 +245,10 @@ def topology_datacenter_two_tier():
     return NfvTopology(topology)
 
 
+"""
 topo = topology_geant()
 
 print(topo.nfv_nodes())
 print(topo.ingress_nodes())
+"""
+
