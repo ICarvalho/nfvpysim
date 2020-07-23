@@ -208,12 +208,14 @@ class NetworkModel:
     def random_vnf_placement(self, vnfs):
 
         for node in self.nfv_nodes:
-            if isinstance(node, VnfNode):
-                while node.get_sum_cpu_vnfs_on_vnf_node(vnfs) <= node.get_rem_cpu():
+            if self.topology.node[node]['stack'][0] == 'nfv_node':
+                nfv_node = VnfNode()
+                if nfv_node.get_sum_cpu_vnfs_on_vnf_node() <= nfv_node.get_rem_cpu():
                     random_vnf = random.choice(vnfs)
-                    self.nfv_nodes[node]['stack'][1]['vnfs'].add_vnf_on_vnf_node(random_vnf)
+                    self.topology.node[node]['stack'][1]['vnf'] =nfv_node.add_vnf_on_vnf_node(random_vnf)
+            return self.topology.node[node]['stack'][1]
 
-            return self.nfv_nodes
+
 
 
 
@@ -387,7 +389,6 @@ print(view.model.get_nfv_nodes(topo))
 topo = topology_geant()
 model = NetworkModel(topo)
 view = NetworkView(model)
-
 nat = Nat()
 lb = LoadBalancer()
 fw = Firewall()
@@ -395,9 +396,12 @@ en = Encrypter()
 de = Decrypter()
 wan = WanOptimizer()
 
-vnfs = [nat,  fw, lb, en, de, wan]
-
+vnfs = [nat, fw, lb]
 vnf_pl = view.model.random_vnf_placement(vnfs)
+
+
+
+
 
 print(vnf_pl)
 print()

@@ -110,32 +110,36 @@ def topology_geant(**kwargs):
     forwarding_nodes = [v for v in topology.nodes() if v not in ingress_nodes + nfv_nodes+ egress_nodes] # 14 nodes
 
     # Add stacks to nodes
-    ing_node = IngressNode()
+
     for v in ingress_nodes:
-        fnss.add_stack(topology, v, 'ingress_node', {'id': ing_node.get_node_id()})
+        ing_node = IngressNode()
+        fnss.add_stack(topology, v, 'ingress_node', {'id': ing_node.id})
 
 
-    nfv_node = VnfNode()
+
     for v in nfv_nodes:
-        fnss.add_stack(topology, v, 'nfv_node', {'id': nfv_node.get_node_id(),
-                                                 'cpu': nfv_node.get_cpu(),
-                                                 'ram': nfv_node.get_ram(),
-                                                 'r_cpu': nfv_node.get_rem_cpu(),
-                                                 'r_ram': nfv_node.get_rem_ram(),
-                                                 'vnfs': nfv_node.get_vnfs()})
+        nfv_node = VnfNode()
+        fnss.add_stack(topology, v, 'nfv_node', {'id': nfv_node.id,
+                                                 'cpu': nfv_node.cpu,
+                                                 'ram': nfv_node.ram,
+                                                 'r_cpu': nfv_node.r_cpu,
+                                                 'r_ram': nfv_node.r_ram,
+                                                 'vnfs': nfv_node._vnfs})
 
 
 
 
 
-    egr_node = EgressNode()
+
     for v in egress_nodes:
+        egr_node = EgressNode()
         fnss.add_stack(topology, v, 'egress_node', {'id': egr_node.get_node_id()})
 
 
 
-    fw_node = ForwardingNode()
+
     for v in forwarding_nodes:
+        fw_node = ForwardingNode()
         fnss.add_stack(topology, v, 'forwarding_node', {'id': fw_node.get_node_id()})
 
 
