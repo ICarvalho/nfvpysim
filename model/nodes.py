@@ -309,16 +309,15 @@ class VnfNode(Node):
 
 
     def add_vnf_on_vnf_node(self, vnf):
-
+        if vnf not in self._vnfs:
             if vnf.get_cpu() + self.get_sum_cpu_vnfs_on_vnf_node() <= self.r_cpu:
                 self._vnfs[vnf]['id'] = vnf.get_id()
                 self._vnfs[vnf]['name'] = vnf.get_name()
                 self._vnfs[vnf]['cpu'] = vnf.get_cpu()
                 self._vnfs[vnf]['ram'] = vnf.get_ram()
                 self._vnfs[vnf]['bw'] = vnf.get_bw()
-            else:
 
-                raise ValueError('Not enough cpu')
+
 
 
     def get_sum_cpu_vnfs_on_vnf_node(self):

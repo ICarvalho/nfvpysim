@@ -102,38 +102,30 @@ class NetworkModel:
         for node in topology.nodes():
             stack_name, stack_props = fnss.get_stack(topology, node)
             if stack_name == 'ingress_node':
-
                 if 'id' in stack_props:
                     self.ingress_nodes[node] = stack_props['id']
 
-
             elif stack_name == 'egress_node':
-
                 if 'id' in stack_props:
                     self.egress_nodes[node] = stack_props['id']
 
             elif stack_name == 'nfv_node':
-
                 if 'id' in stack_props:
-                    if 'cpu' in stack_props:
-                        if 'ram' in stack_props:
-                            if 'r_cpu' in stack_props:
-                                if 'r_ram' in stack_props:
-                                    if 'vnfs' in stack_props:
-                                        self.nfv_nodes[node] = stack_props['id']
+                    self.nfv_nodes[node] = stack_props['id']
+                if 'cpu' in stack_props:
+                    self.nfv_nodes[node] = stack_props['cpu']
+                if 'ram' in stack_props:
+                    self.nfv_nodes[node] = stack_props['ram']
+                if 'r_cpu' in stack_props:
+                    self.nfv_nodes[node] = stack_props['r_cpu']
+                if 'r_ram' in stack_props:
+                    self.nfv_nodes[node] = stack_props['r_ram']
+                if 'vnfs' in stack_props:
+                    self.nfv_nodes[node] = stack_props['vnfs']
 
-                                        self.nfv_nodes[node] = stack_props['cpu']
 
-                                        self.nfv_nodes[node] = stack_props['ram']
-
-                                        self.nfv_nodes[node] = stack_props['r_cpu']
-
-                                        self.nfv_nodes[node] = stack_props['r_ram']
-
-                                        self.nfv_nodes[node] = stack_props['vnfs']
 
             elif stack_name == 'fw_node':
-
                 self.fw_nodes[node] = stack_props['id']
 
 
@@ -207,14 +199,12 @@ class NetworkModel:
 
     def random_vnf_placement(self, vnfs):
 
-        for node in self.nfv_nodes:
+        for node in self.topology.nodes:
             if self.topology.node[node]['stack'][0] == 'nfv_node':
-                nfv_node = VnfNode()
-                if nfv_node.get_sum_cpu_vnfs_on_vnf_node() <= nfv_node.get_rem_cpu():
+                if isinstance(node, VnfNode):
                     random_vnf = random.choice(vnfs)
-                    self.topology.node[node]['stack'][1]['vnf'] =nfv_node.add_vnf_on_vnf_node(random_vnf)
-            return self.topology.node[node]['stack'][1]
-
+                    self.topology.node[node]['stack'][1]['vnfs'] =  self.topology.node[node].add_vnf_on_vnf_node(random_vnf)
+                return self.topology.node[node]['stack'][1]
 
 
 
@@ -389,22 +379,13 @@ print(view.model.get_nfv_nodes(topo))
 topo = topology_geant()
 model = NetworkModel(topo)
 view = NetworkView(model)
-nat = Nat()
-lb = LoadBalancer()
-fw = Firewall()
-en = Encrypter()
-de = Decrypter()
-wan = WanOptimizer()
-
-vnfs = [nat, fw, lb]
-vnf_pl = view.model.random_vnf_placement(vnfs)
 
 
 
 
 
-print(vnf_pl)
-print()
+
+print(view.model.nfv_nodes)
 print(topo.nfv_nodes())
 
 

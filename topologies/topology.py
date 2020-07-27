@@ -5,7 +5,7 @@ import networkx as nx
 import fnss
 import random
 from model.nodes import VnfNode, IngressNode, EgressNode, ForwardingNode
-
+from model.vnfs import *
 
 
 INTERNAL_LINK_DELAY = 2
@@ -26,7 +26,8 @@ class NfvTopology(fnss.Topology):
 
         return {v: self.node[v]['stack'][1]
                 for v in self
-                if 'stack' in self.node[v]
+                if self.node[v]['stack'][0] == 'nfv_node'
+                and 'stack' in self.node[v]
                 and 'id' in self.node[v]['stack'][1]
                 and 'cpu' in self.node[v]['stack'][1]
                 and 'ram' in self.node[v]['stack'][1]
@@ -109,6 +110,8 @@ def topology_geant(**kwargs):
     egress_nodes = [v for v in topology.nodes() if deg[v] == 2] # 13 nodes
     forwarding_nodes = [v for v in topology.nodes() if v not in ingress_nodes + nfv_nodes+ egress_nodes] # 14 nodes
 
+
+
     # Add stacks to nodes
 
     for v in ingress_nodes:
@@ -119,12 +122,30 @@ def topology_geant(**kwargs):
 
     for v in nfv_nodes:
         nfv_node = VnfNode()
-        fnss.add_stack(topology, v, 'nfv_node', {'id': nfv_node.id,
-                                                 'cpu': nfv_node.cpu,
-                                                 'ram': nfv_node.ram,
-                                                 'r_cpu': nfv_node.r_cpu,
-                                                 'r_ram': nfv_node.r_ram,
-                                                 'vnfs': nfv_node._vnfs})
+        nat = Nat()
+        lb = LoadBalancer()
+        ids = Ids()
+        fw = Firewall()
+        en = Encrypter()
+        de = Decrypter()
+        wan = WanOptimizer()
+        vnfs = [nat, fw, ids, lb, en, de, wan]
+        n_vnfs = random.randint(1, len(vnfs))
+        sum_vnfs_cpu = 0
+        for vnf in range(1, n_vnfs + 1):
+            while sum_vnfs_cpu <= nfv_node.get_cpu():
+                target_vnf = random.choice(vnfs)
+                nfv_node.add_vnf_on_vnf_node(target_vnf)
+                sum_vnfs_cpu = sum_vnfs_cpu + target_vnf.get_cpu()
+                if sum_vnfs_cpu == 100:
+                    break
+
+        fnss.add_stack(topology, v, 'nfv_node', {'id': nfv_node.get_node_id(),
+                                                 'cpu': nfv_node.get_cpu(),
+                                                 'ram': nfv_node.get_ram(),
+                                                 'r_cpu': nfv_node.get_rem_cpu(),
+                                                 'r_ram': nfv_node.get_rem_ram(),
+                                                 'vnfs': nfv_node.get_vnfs()})
 
 
 
@@ -249,10 +270,9 @@ def topology_datacenter_two_tier():
     return NfvTopology(topology)
 
 
-"""
+
 topo = topology_geant()
 
 print(topo.nfv_nodes())
-print(topo.ingress_nodes())
-"""
+
 
