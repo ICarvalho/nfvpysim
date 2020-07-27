@@ -118,8 +118,6 @@ def topology_geant(**kwargs):
         ing_node = IngressNode()
         fnss.add_stack(topology, v, 'ingress_node', {'id': ing_node.id})
 
-
-
     for v in nfv_nodes:
         nfv_node = VnfNode()
         nat = Nat()
@@ -273,6 +271,6 @@ def topology_datacenter_two_tier():
 
 topo = topology_geant()
 
-print(topo.nfv_nodes())
+#print(topo.nfv_nodes())
 
 

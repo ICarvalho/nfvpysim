@@ -197,14 +197,7 @@ class NetworkModel:
         return random.choice(self.get_egress_nodes(topology))
 
 
-    def random_vnf_placement(self, vnfs):
 
-        for node in self.topology.nodes:
-            if self.topology.node[node]['stack'][0] == 'nfv_node':
-                if isinstance(node, VnfNode):
-                    random_vnf = random.choice(vnfs)
-                    self.topology.node[node]['stack'][1]['vnfs'] =  self.topology.node[node].add_vnf_on_vnf_node(random_vnf)
-                return self.topology.node[node]['stack'][1]
 
 
 
@@ -213,17 +206,16 @@ class NetworkModel:
 
 
     def get_rem_cpu_path(self, topology, path):
-
-
-        node_rem_cpu = {}
         for node in path:
                 stack_name, stack_props = fnss.get_stack(topology, node)
                 if stack_name == 'nfv_node':
-                    if isinstance(node, VnfNode):
-                        node_rem_cpu[node] = node.get_rem_cpu()
+                    if isinstance(node, VnfNode) and node in self.nfv_nodes:
+                        self.nfv_nodes[node] = node.get_rem_cpu()
+                        print(self.nfv_nodes[node][1]['r_cpu'])
 
 
-                return node_rem_cpu
+
+
 
 
 
@@ -243,14 +235,10 @@ class NetworkModel:
             stack_name, stack_props = fnss.get_stack(topology, node)
             if stack_name == 'nfv_node':
                 if isinstance(node, VnfNode):
-                    sum_vnfs_cpu = sum(vnf.get_cpu() for vnf in vnfs)
-                    if sum_vnfs_cpu <= node.get_rem_cpu():
-                        self.nfv_nodes[node] = node.proc_vnf_on_node(vnfs)
-                    else:
-                        continue
+                    for vnf in vnfs:
+                        if vnf in node._vnfs:
+                            self.nfv_nodes[node] = node.proc_vnf_on_node(vnfs)
 
-        else:
-            raise ValueError('No vnf node in this path can process such request')
 
 
 
@@ -351,7 +339,7 @@ class NetworkController:
 
 
 
-"""
+
 topo = topology_geant()
 
 
@@ -366,12 +354,15 @@ path = view.model.calculate_shortest_path(topo, ingress, egress)
 all_path = view.model.calculate_all_shortest_paths(topo, ingress, egress)
 
 req = RequestRandomSfc()
-rem = view.model.get_rem_cpu_path(topo, path)
+
 
 vnfs = [Nat(), Firewall(), Encrypter()]
 
+print(view.model.proc_req_greedy(topo, req, path))
+rem = view.model.get_rem_cpu_path(topo, path)
+print(rem)
+#print(view.model.get_nfv_nodes(topo))
 
-print(view.model.get_nfv_nodes(topo))
 
 
 """
@@ -380,13 +371,11 @@ topo = topology_geant()
 model = NetworkModel(topo)
 view = NetworkView(model)
 
-
-
-
-
-
 print(view.model.nfv_nodes)
 print(topo.nfv_nodes())
+
+"""
+
 
 
 
