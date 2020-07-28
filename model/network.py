@@ -123,17 +123,8 @@ class NetworkModel:
                 if 'vnfs' in stack_props:
                     self.nfv_nodes[node] = stack_props['vnfs']
 
-
-
             elif stack_name == 'fw_node':
                 self.fw_nodes[node] = stack_props['id']
-
-
-
-
-
-       # policy_name = policy['name']
-        #policy_args = {k: v for k, v in policy.items() if k != 'name'}
 
 
 
@@ -143,7 +134,6 @@ class NetworkModel:
 
 
     def calculate_all_shortest_paths(self, topology, ingress_node, egress_node):
-
         return [p for p in nx.all_shortest_paths(topology, ingress_node, egress_node)]
 
 
@@ -190,8 +180,11 @@ class NetworkModel:
             return nfv_nodes
 
 
+
     def select_ingress_node(self, topology):
         return random.choice(self.get_ingress_nodes(topology))
+
+
 
     def select_egress_node(self, topology):
         return random.choice(self.get_egress_nodes(topology))
@@ -199,20 +192,15 @@ class NetworkModel:
 
 
 
-
-
-
-
-
-
     def get_rem_cpu_path(self, topology, path):
+        node_rem_cpu = {}
         for node in path:
-                stack_name, stack_props = fnss.get_stack(topology, node)
-                if stack_name == 'nfv_node':
-                    if isinstance(node, VnfNode) and node in self.nfv_nodes:
-                        self.nfv_nodes[node] = node.get_rem_cpu()
-                        print(self.nfv_nodes[node][1]['r_cpu'])
+            stack_name, stack_props = fnss.get_stack(topology, node)
+            if stack_name == 'nfv_node':
+                if isinstance(node, VnfNode) and node in self.nfv_nodes:
+                    node_rem_cpu[node] = node.get_rem_cpu()
 
+        return node_rem_cpu
 
 
 
@@ -231,13 +219,19 @@ class NetworkModel:
     def proc_req_greedy(self, topology, request, path):
 
         for node in path:
-            vnfs = request.get_sfc()
-            stack_name, stack_props = fnss.get_stack(topology, node)
-            if stack_name == 'nfv_node':
-                if isinstance(node, VnfNode):
-                    for vnf in vnfs:
-                        if vnf in node._vnfs:
-                            self.nfv_nodes[node] = node.proc_vnf_on_node(vnfs)
+            if isinstance(request, (RequestRandomSfc, RequestVarLenSFc)):
+                vnfs = request.get_sfc()
+                stack_name, stack_props = fnss.get_stack(topology, node)
+                if stack_name == 'nfv_node':
+                    if isinstance(node, VnfNode):
+                        for vnf in vnfs:
+                            if vnf in node.vnfs.keys():
+                                self.nfv_nodes[node] = node.proc_vnf_on_node(vnf)
+                                print(vnfs)
+                            else:
+                                continue
+
+            return self.nfv_nodes
 
 
 
@@ -268,7 +262,7 @@ class NetworkModel:
                             print(max_val_cpu)
 
 
-                        #max_vnfs_desc_cpu = vnfs.sort(reverse=True)
+                        #max_vnfs_desc_cpu =print(rem) vnfs.sort(reverse=True)
                             for vnf in request.get_sfc():
                                 vnf_cpu = getattr(vnf, 'cpu')[v for v in topology if  topology.node[v]['stack'][0] == 'ingress_node']
                                 #vnf_ram = getattr(vnf, 'ram')
@@ -358,9 +352,10 @@ req = RequestRandomSfc()
 
 vnfs = [Nat(), Firewall(), Encrypter()]
 
+print(path)
 print(view.model.proc_req_greedy(topo, req, path))
-rem = view.model.get_rem_cpu_path(topo, path)
-print(rem)
+print (view.model.get_rem_cpu_path(topo, path))
+print(view.model.nfv_nodes)
 #print(view.model.get_nfv_nodes(topo))
 
 
