@@ -110,18 +110,9 @@ class NetworkModel:
                     self.egress_nodes[node] = stack_props['id']
 
             elif stack_name == 'nfv_node':
-                if 'id' in stack_props:
-                    self.nfv_nodes[node] = stack_props['id']
-                if 'cpu' in stack_props:
-                    self.nfv_nodes[node] = stack_props['cpu']
-                if 'ram' in stack_props:
-                    self.nfv_nodes[node] = stack_props['ram']
-                if 'r_cpu' in stack_props:
-                    self.nfv_nodes[node] = stack_props['r_cpu']
-                if 'r_ram' in stack_props:
-                    self.nfv_nodes[node] = stack_props['r_ram']
-                if 'vnfs' in stack_props:
-                    self.nfv_nodes[node] = stack_props['vnfs']
+                if 'node_specs' in stack_props:
+                    self.nfv_nodes[node] = stack_props['node_specs']
+
 
             elif stack_name == 'fw_node':
                 self.fw_nodes[node] = stack_props['id']
@@ -223,15 +214,22 @@ class NetworkModel:
                 vnfs = request.get_sfc()
                 stack_name, stack_props = fnss.get_stack(topology, node)
                 if stack_name == 'nfv_node':
-                    if isinstance(node, VnfNode):
-                        for vnf in vnfs:
-                            if vnf in node.vnfs.keys():
-                                self.nfv_nodes[node] = node.proc_vnf_on_node(vnf)
-                                print(vnfs)
-                            else:
-                                continue
+                    aux_nfv_node = VnfNode()
+                    for vnf in vnfs:
+                        if vnf in self.nfv_nodes[node][1]['vnfs']:
+                            self.nfv_nodes[node][1]['node_specs'] = aux_nfv_node.proc_vnf(vnf)
+                            self.nfv_nodes[node][1]['node_specs'] = aux_nfv_node.get_rem_ram()
+                            print()
+                        else:
+                            continue
 
-            return self.nfv_nodes
+            return self.nfv_nodes[node]['vnfs']
+
+
+    def show_nfv_nodes_specs(self):
+
+        for node in self.nfv_nodes:
+            print(self.nfv_nodes[node])
 
 
 
@@ -352,11 +350,13 @@ req = RequestRandomSfc()
 
 vnfs = [Nat(), Firewall(), Encrypter()]
 
+
 print(path)
 print(view.model.proc_req_greedy(topo, req, path))
-print (view.model.get_rem_cpu_path(topo, path))
+
 print(view.model.nfv_nodes)
-#print(view.model.get_nfv_nodes(topo))
+
+
 
 
 

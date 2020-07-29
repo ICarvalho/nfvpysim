@@ -220,7 +220,7 @@ class Node:
 
 
 
-
+"""
 class IngressNode(Node):
 
     def __init__(self):
@@ -242,6 +242,9 @@ class EgressNode(Node):
 
 
 
+"""
+
+
 class VnfNode(Node):
 
     def __init__(self):
@@ -253,8 +256,6 @@ class VnfNode(Node):
         self.vnfs = defaultdict(dict)
 
 
-    def get_vnfs(self):
-        return self.vnfs
 
     def get_node_id(self):
         return self.id
@@ -290,7 +291,7 @@ class VnfNode(Node):
 
 
 
-
+"""
     def proc_vnf_on_node(self, vnfs):
 
         for vnf in vnfs:
@@ -330,6 +331,8 @@ class VnfNode(Node):
         if vnf in self.vnfs:
             return True
         return False
+"""
+
 
 
 
