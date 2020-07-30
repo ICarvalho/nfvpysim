@@ -99,7 +99,9 @@ class NetworkModel:
             for (u,v), delay in list(self.link_delay.items()):
                 self.link_delay[(v,u)] = delay
 
-        for node in topology.nodes():
+
+        """
+                for node in topology.nodes():
             stack_name, stack_props = fnss.get_stack(topology, node)
             if stack_name == 'ingress_node':
                 if 'id' in stack_props:
@@ -116,6 +118,10 @@ class NetworkModel:
 
             elif stack_name == 'fw_node':
                 self.fw_nodes[node] = stack_props['id']
+        
+        """
+
+
 
 
 
@@ -212,18 +218,17 @@ class NetworkModel:
         for node in path:
             if isinstance(request, (RequestRandomSfc, RequestVarLenSFc)):
                 vnfs = request.get_sfc()
+                is_proc = {vnf:False for vnf in vnfs}
                 stack_name, stack_props = fnss.get_stack(topology, node)
                 if stack_name == 'nfv_node':
                     aux_nfv_node = VnfNode()
                     for vnf in vnfs:
-                        if vnf in self.nfv_nodes[node][1]['vnfs']:
-                            self.nfv_nodes[node][1]['node_specs'] = aux_nfv_node.proc_vnf(vnf)
-                            self.nfv_nodes[node][1]['node_specs'] = aux_nfv_node.get_rem_ram()
-                            print()
-                        else:
-                            continue
+                        if vnf in topology.node[node]['stack'][1]['node_specs']['vnfs']:
+                            topology.node[node]['stack'][1]['node_specs'] = aux_nfv_node.proc_vnf(vnf)
+                            print(vnf, vnf.get_cpu())
+                            print(node, aux_nfv_node.get_rem_cpu())
 
-            return self.nfv_nodes[node]['vnfs']
+
 
 
     def show_nfv_nodes_specs(self):
@@ -354,7 +359,7 @@ vnfs = [Nat(), Firewall(), Encrypter()]
 print(path)
 print(view.model.proc_req_greedy(topo, req, path))
 
-print(view.model.nfv_nodes)
+#print(view.model.nfv_nodes)
 
 
 

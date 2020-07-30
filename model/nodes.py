@@ -288,6 +288,7 @@ class VnfNode(Node):
     def proc_vnf(self, vnf):
         self.cpu = self.cpu - vnf.get_cpu()
         self.r_cpu = self.cpu
+        return self.r_cpu
 
 
 

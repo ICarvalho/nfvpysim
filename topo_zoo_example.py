@@ -40,4 +40,4 @@ print(len(egress_nodes))
 
 for node in topology.nodes:
     stack_name, stack_props = fnss.get_stack(topology, node)
-    print(topology.node[node]['stack'][1]['name'])
+    print(topology.node[node]['stack'][1]['id'])

@@ -130,14 +130,14 @@ def topology_geant(**kwargs):
         wan = WanOptimizer()
         vnfs = [nat, fw, ids, lb, en, de, wan]
 
-        vnfs_on_node = {v: {'node_type': nfv_node, 'vnfs': []} for v in nfv_nodes}
+        vnfs_on_node = {v: {nfv_node: []} for v in nfv_nodes}
         n_vnfs = random.randint(1, len(vnfs))
         sum_vnfs_cpu = 0
         for vnf in range(1, n_vnfs + 1):
             while sum_vnfs_cpu <= 100:
                 target_vnf = random.choice(vnfs)
-                if target_vnf not in vnfs_on_node[v]['vnfs']:
-                    vnfs_on_node[v]['vnfs'].append(target_vnf)
+                if target_vnf not in vnfs_on_node[v][nfv_node]:
+                    vnfs_on_node[v][nfv_node].append(target_vnf)
                     sum_vnfs_cpu = sum_vnfs_cpu + target_vnf.get_cpu()
                     if sum_vnfs_cpu == 100:
                         break
@@ -308,3 +308,4 @@ def topology_datacenter_two_tier():
 topo = topology_geant()
 topo_tata = topology_tatanld()
 
+print(topo.nfv_nodes())
