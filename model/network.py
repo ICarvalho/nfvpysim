@@ -223,10 +223,10 @@ class NetworkModel:
                 if stack_name == 'nfv_node':
                     aux_nfv_node = VnfNode()
                     for vnf in vnfs:
-                        if vnf in topology.node[node]['stack'][1]['node_specs']['vnfs']:
-                            topology.node[node]['stack'][1]['node_specs'] = aux_nfv_node.proc_vnf(vnf)
-                            print(vnf, vnf.get_cpu())
-                            print(node, aux_nfv_node.get_rem_cpu())
+                        if vnf in  topology.node[node]['stack'][1]['node_specs']['vnfs']:
+                            topology.node[node]['stack'][1]['node_specs']['node_type'] = aux_nfv_node.proc_vnf(vnf)
+                            print(aux_nfv_node.get_rem_cpu())
+
 
 
 
