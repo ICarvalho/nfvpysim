@@ -76,14 +76,14 @@ class NetworkModel:
 
     """
 
-    def __init__(self, topology): #, policy, shortest_path=None):
+    def __init__(self, topology, shortest_path=None): #, policy, shortest_path=None):
 
         if not isinstance(topology, fnss.Topology):
             raise ValueError('The topology argument must be an'
                              'instance of fnss.Topology or any of its subclasses')
 
-       # self.shortest_path = shortest_path if shortest_path is not None \
-                           #  else symmetrify_paths(nx.all_pairs_dijkstra_path(topology))
+        self.shortest_path = shortest_path if shortest_path is not None \
+                            else symmetrify_paths(nx.all_pairs_dijkstra_path(topology))
         self.topology = topology
         self.ingress_nodes = {}
         self.egress_nodes = {}
@@ -114,7 +114,7 @@ class NetworkModel:
 
             elif stack_name == 'nfv_node':
                 if 'node_specs' in stack_props:
-                    self.nfv_nodes[node] = stack_props['node_specs']
+                    self.nfv_nodes[node] = stack_props['nfv_node_inst']
 
 
             elif stack_name == 'fw_node':
@@ -139,96 +139,6 @@ class NetworkModel:
     # Convert a path expressed as list of nodes into a path expressed as a list of edges.
     def path_links(self, path):
         return [(path[i], path[i + 1]) for i in range(len(path) - 1)]
-
-
-
-
-    def get_ingress_nodes(self, topology):
-
-        if isinstance(topology, fnss.Topology):
-            ing_nodes = []
-            for node in topology.nodes():
-                stack_name, stack_props = fnss.get_stack(topology, node)
-                if stack_name == 'ingress_node':
-                   ing_nodes.append(node)
-
-            return ing_nodes
-
-    def get_egress_nodes(self, topology):
-
-        if isinstance(topology, fnss.Topology):
-            egr_nodes = []
-            for node in topology.nodes():
-                stack_name, stack_props = fnss.get_stack(topology, node)
-                if stack_name == 'egress_node':
-                    egr_nodes.append(node)
-
-            return egr_nodes
-
-
-    def get_nfv_nodes(self, topology):
-
-        if isinstance(topology, fnss.Topology):
-            nfv_nodes = []
-            for node in topology.nodes():
-                stack_name, stack_props = fnss.get_stack(topology, node)
-                if stack_name == 'nfv_node':
-                    nfv_nodes.append(node)
-
-            return nfv_nodes
-
-
-
-    def select_ingress_node(self, topology):
-        return random.choice(self.get_ingress_nodes(topology))
-
-
-
-    def select_egress_node(self, topology):
-        return random.choice(self.get_egress_nodes(topology))
-
-
-
-
-    def get_sum_cpu_vnfs(self, vnfs):
-        return sum(vnf.get_cpu() for vnf in vnfs)
-
-
-
-    def is_vnf_on_node(self, node, vnf):
-        if vnf in self.nfv_nodes[node][1]['node_specs']:
-            return True
-        return False
-
-
-
-
-
-    def proc_req_greedy(self, topology, request, path):
-
-        for node in path:
-            if isinstance(request, (RequestRandomSfc, RequestVarLenSFc)):
-                vnfs = request.get_sfc()
-                is_proc = {vnf:False for vnf in vnfs}
-                stack_name, stack_props = fnss.get_stack(topology, node)
-                if stack_name == 'nfv_node':
-                    aux_nfv_node = VnfNode()
-                    for vnf in vnfs:
-                        if vnf in  topology.node[node]['stack'][1]['node_specs']:
-                            topology.node[node]['stack'][1]['node_specs'] = aux_nfv_node.proc_vnf(vnf)
-                            print(aux_nfv_node.get_rem_cpu())
-
-
-
-
-
-    def show_nfv_nodes_specs(self):
-
-        for node in self.nfv_nodes:
-            print(self.nfv_nodes[node])
-
-
-
 
 
     
@@ -302,6 +212,77 @@ class NetworkController:
 
         if self.collector is not None and self.session['log']:
             self.collector.start_session(timestamp, ingress_node, request)
+
+
+
+
+    def get_ingress_nodes(self, topology):
+
+        if isinstance(topology, fnss.Topology):
+            ing_nodes = []
+            for node in topology.nodes():
+                stack_name, stack_props = fnss.get_stack(topology, node)
+                if stack_name == 'ingress_node':
+                    ing_nodes.append(node)
+
+            return ing_nodes
+
+    def get_egress_nodes(self, topology):
+
+        if isinstance(topology, fnss.Topology):
+            egr_nodes = []
+            for node in topology.nodes():
+                stack_name, stack_props = fnss.get_stack(topology, node)
+                if stack_name == 'egress_node':
+                    egr_nodes.append(node)
+
+        return egr_nodes
+
+    def get_nfv_nodes(self, topology):
+
+        if isinstance(topology, fnss.Topology):
+            nfv_nodes = []
+            for node in topology.nodes():
+                stack_name, stack_props = fnss.get_stack(topology, node)
+                if stack_name == 'nfv_node':
+                    nfv_nodes.append(node)
+
+        return nfv_nodes
+
+    def select_ingress_node(self, topology):
+        return random.choice(self.get_ingress_nodes(topology))
+
+
+    def select_egress_node(self, topology):
+        return random.choice(self.get_egress_nodes(topology))
+
+
+    def get_sum_cpu_vnfs(self, vnfs):
+        return sum(vnf.get_cpu() for vnf in vnfs)
+
+    def is_vnf_on_node(self, node, vnf):
+        if vnf in self.nfv_nodes[node][1]['node_specs']:
+            return True
+        return False
+
+    def proc_req_greedy(self, topology, request, path):
+
+        for node in path:
+            if isinstance(request, (RequestRandomSfc, RequestVarLenSFc)):
+                vnfs = request.get_sfc()
+                sum_cpus_vnfs = self.get_sum_cpu_vnfs(vnfs)
+                is_proc = {vnf: False for vnf in vnfs}
+                stack_name, stack_props = fnss.get_stack(topology, node)
+                aux_nfv_node = VnfNode()
+                if stack_name == 'nfv_node':
+                    if isinstance(self.nfv_nodes[node], VnfNode):
+                        for vnf in vnfs:
+                            if sum_cpus_vnfs <= self.nfv_nodes[node][1]['node_specs'][VnfNode().get_rem_cpu()]:
+                                self.nfv_nodes[node][1]['node_specs'][VnfNode] = aux_nfv_node.proc_vnf(vnf)
+                                self.nfv_nodes[node][1]['node_specs'][VnfNode.r_cpu] = aux_nfv_node.get_rem_cpu()
+                                is_proc[vnf] = True
+                    return is_proc.values()
+
 
     def forward_request_path(self, s, t, path=None, main_path=True):
 

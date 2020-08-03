@@ -4,7 +4,7 @@ from os import path
 import networkx as nx
 import fnss
 import random
-from model.nodes import VnfNode
+from model.nodes import *
 from model.vnfs import *
 
 
@@ -27,7 +27,7 @@ class NfvTopology(fnss.Topology):
         return {v: self.node[v]['stack'][1]
                 for v in self
                 if self.node[v]['stack'][0] == 'nfv_node'
-                and 'node_specs' in self.node[v]['stack'][1]
+                and 'nfv_node_inst' in self.node[v]['stack'][1]
                 #and 'id' in self.node[v]['stack'][1]
                 #and 'cpu' in self.node[v]['stack'][1]
                 #and 'ram' in self.node[v]['stack'][1]
@@ -115,46 +115,24 @@ def topology_geant(**kwargs):
     # Add stacks to nodes
 
     for v in ingress_nodes:
-        fnss.add_stack(topology, v, 'ingress_node', {'id': 'ingress_node'})
+        fnss.add_stack(topology, v, 'ingress_node')
 
 
 
     for v in nfv_nodes:
-        nfv_node = VnfNode()
-        nat = Nat()
-        lb = LoadBalancer()
-        ids = Ids()
-        fw = Firewall()
-        en = Encrypter()
-        de = Decrypter()
-        wan = WanOptimizer()
-        vnfs = [nat, fw, ids, lb, en, de, wan]
 
-        vnfs_on_node = {v: {nfv_node: []} for v in nfv_nodes}
-        n_vnfs = random.randint(1, len(vnfs))
-        sum_vnfs_cpu = 0
-        for vnf in range(1, n_vnfs + 1):
-            while sum_vnfs_cpu <= 100:
-                target_vnf = random.choice(vnfs)
-                if target_vnf not in vnfs_on_node[v][nfv_node]:
-                    vnfs_on_node[v][nfv_node].append(target_vnf)
-                    sum_vnfs_cpu = sum_vnfs_cpu + target_vnf.get_cpu()
-                    if sum_vnfs_cpu == 100:
-                        break
-
-        fnss.add_stack(topology, v, 'nfv_node', {'node_specs': vnfs_on_node[v]})
+        fnss.add_stack(topology, v, 'nfv_node')
 
 
 
     for v in egress_nodes:
-        fnss.add_stack(topology, v, 'egress_node', {'id': 'egress_node'})
+        fnss.add_stack(topology, v, 'egress_node')
 
 
 
 
     for v in forwarding_nodes:
-
-        fnss.add_stack(topology, v, 'forwarding_node', {'id': 'fw_node'})
+        fnss.add_stack(topology, v, 'forwarding_node')
 
 
     # Set weight and delay on all links
@@ -186,40 +164,16 @@ def topology_tatanld(**kwargs):
     # Add stacks to nodes
 
     for v in ingress_nodes:
-
-        fnss.add_stack(topology, v, 'ingress_node', {'id': 'ingress_node'})
+        fnss.add_stack(topology, v, 'ingress_node')
 
     for v in nfv_nodes:
-        nfv_node = VnfNode()
-        nat = Nat()
-        lb = LoadBalancer()
-        ids = Ids()
-        fw = Firewall()
-        en = Encrypter()
-        de = Decrypter()
-        wan = WanOptimizer()
-        vnfs = [nat, fw, ids, lb, en, de, wan]
-
-        vnfs_on_node = {v: {'node_specs': nfv_node, 'vnfs': []} for v in nfv_nodes}
-        n_vnfs = random.randint(1, len(vnfs))
-        sum_vnfs_cpu = 0
-        for vnf in range(1, n_vnfs + 1):
-            while sum_vnfs_cpu <= 100:
-                target_vnf = random.choice(vnfs)
-                if target_vnf not in vnfs_on_node[v]['vnfs']:
-                    vnfs_on_node[v]['vnfs'].append(target_vnf)
-                    sum_vnfs_cpu = sum_vnfs_cpu + target_vnf.get_cpu()
-                    if sum_vnfs_cpu == 100:
-                        break
-
-        fnss.add_stack(topology, v, 'nfv_node', {'node_specs': vnfs_on_node[v]})
+        fnss.add_stack(topology, v, 'nfv_node')
 
     for v in egress_nodes:
-
-        fnss.add_stack(topology, v, 'egress_node', {'id': 'egress_node'})
+        fnss.add_stack(topology, v, 'egress_node')
 
     for v in forwarding_nodes:
-        fnss.add_stack(topology, v, 'forwarding_node', {'id': 'fw_node'})
+        fnss.add_stack(topology, v, 'forwarding_node')
 
 
     # Set weight and delay on all links
@@ -249,36 +203,15 @@ def topology_datacenter_two_tier():
 
     # add stack on nodes
     for v in ingress_nodes:
-
-        fnss.add_stack(topology, v, 'ingress_node', {'id': 'ingress_node'})
-
-    for v in egress_nodes:
-        fnss.add_stack(topology, v, 'egress_node', {'id': 'egress_node'})
+        fnss.add_stack(topology, v, 'ingress_node')
 
     for v in nfv_nodes:
-        nfv_node = VnfNode()
-        nat = Nat()
-        lb = LoadBalancer()
-        ids = Ids()
-        fw = Firewall()
-        en = Encrypter()
-        de = Decrypter()
-        wan = WanOptimizer()
-        vnfs = [nat, fw, ids, lb, en, de, wan]
+        fnss.add_stack(topology, v, 'nfv_node')
 
-        vnfs_on_node = {v: {'node_type': nfv_node, 'vnfs': []} for v in nfv_nodes}
-        n_vnfs = random.randint(1, len(vnfs))
-        sum_vnfs_cpu = 0
-        for vnf in range(1, n_vnfs + 1):
-            while sum_vnfs_cpu <= 100:
-                target_vnf = random.choice(vnfs)
-                if target_vnf not in vnfs_on_node[v]['vnfs']:
-                    vnfs_on_node[v]['vnfs'].append(target_vnf)
-                    sum_vnfs_cpu = sum_vnfs_cpu + target_vnf.get_cpu()
-                    if sum_vnfs_cpu == 100:
-                        break
+    for v in egress_nodes:
+        fnss.add_stack(topology, v, 'egress_node')
 
-        fnss.add_stack(topology, v, 'nfv_node', {'node_specs': vnfs_on_node[v]})
+
 
 
 

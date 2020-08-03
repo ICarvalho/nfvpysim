@@ -1,5 +1,6 @@
 import random
 from collections import defaultdict
+from model.vnfs import *
 
 class Vnf:
 
@@ -282,6 +283,9 @@ class VnfNode(Node):
             return True
         return False
 
+    def get_vnfs(self):
+        return self.vnfs
+
 
 
 
@@ -292,7 +296,7 @@ class VnfNode(Node):
 
 
 
-"""
+
     def proc_vnf_on_node(self, vnfs):
 
         for vnf in vnfs:
@@ -320,6 +324,29 @@ class VnfNode(Node):
                 self.vnfs[vnf]['bw'] = vnf.get_bw()
 
 
+    def allocate_vnfs_on_node(self):
+        nat = Nat()
+        lb = LoadBalancer()
+        ids = Ids()
+        fw = Firewall()
+        en = Encrypter()
+        de = Decrypter()
+        wan = WanOptimizer()
+        vnfs = [nat, fw, ids, lb, en, de, wan]
+        n_vnfs = random.randint(1, len(vnfs))
+        sum_vnfs_cpu = 0
+        for vnf in range(1, n_vnfs + 1):
+            while sum_vnfs_cpu <= 100:
+                target_vnf = random.choice(vnfs)
+                if not self.is_vnf_on_vnf_node(target_vnf):
+                    self.add_vnf_on_vnf_node(target_vnf)
+                    sum_vnfs_cpu += target_vnf.get_cpu()
+                    if sum_vnfs_cpu == 100:
+                        break
+            return self.vnfs
+
+
+
 
 
     def get_sum_cpu_vnfs_on_vnf_node(self):
@@ -332,12 +359,31 @@ class VnfNode(Node):
         if vnf in self.vnfs:
             return True
         return False
-"""
+
+
+
+
+class VnfNodeInstance:
+
+    def __init__(self):
+        self.vnf_node_instance = VnfNode().allocate_vnfs_on_node()
+
+    def get_vnfs_on_node(self):
+        return self.vnf_node_instance
 
 
 
 
 
+
+
+
+
+vnf_node = VnfNodeInstance()
+vnf_node_01 = VnfNodeInstance()
+
+print(vnf_node.get_vnfs_on_node())
+print(vnf_node_01.get_vnfs_on_node())
 
 
 
