@@ -362,7 +362,7 @@ class VnfNode(Node):
 
 
 
-
+"""
 class VnfNodeInstance:
 
     def __init__(self):
@@ -372,18 +372,12 @@ class VnfNodeInstance:
         return self.vnf_node_instance
 
 
+"""
 
 
 
 
 
-
-
-vnf_node = VnfNodeInstance()
-vnf_node_01 = VnfNodeInstance()
-
-print(vnf_node.get_vnfs_on_node())
-print(vnf_node_01.get_vnfs_on_node())
 
 
 

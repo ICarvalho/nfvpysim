@@ -101,7 +101,7 @@ class NetworkModel:
                 self.link_delay[(v,u)] = delay
 
 
-
+        nfv_nodes = {}
         for node in topology.nodes():
             stack_name, stack_props = fnss.get_stack(topology, node)
             if stack_name == 'ingress_node':
@@ -114,11 +114,13 @@ class NetworkModel:
 
             elif stack_name == 'nfv_node':
                 if 'node_specs' in stack_props:
-                    self.nfv_nodes[node] = stack_props['nfv_node_inst']
+                    nfv_nodes[node] = stack_props['nfv_node_inst']
 
 
             elif stack_name == 'fw_node':
                 self.fw_nodes[node] = stack_props['id']
+
+        self.nvf_nodes = {node: VnfNode() for node in nfv_nodes}
         
 
 
@@ -260,27 +262,26 @@ class NetworkController:
     def get_sum_cpu_vnfs(self, vnfs):
         return sum(vnf.get_cpu() for vnf in vnfs)
 
+
     def is_vnf_on_node(self, node, vnf):
-        if vnf in self.nfv_nodes[node][1]['node_specs']:
-            return True
+        if node in self.model.VnfNodeInstance:
+            if vnf in self.model.VnfNodeInstance.get_vnfs_on_node():
+                return True
         return False
 
-    def proc_req_greedy(self, topology, request, path):
+    def proc_req_greedy(self, request, path):
 
         for node in path:
             if isinstance(request, (RequestRandomSfc, RequestVarLenSFc)):
                 vnfs = request.get_sfc()
                 sum_cpus_vnfs = self.get_sum_cpu_vnfs(vnfs)
                 is_proc = {vnf: False for vnf in vnfs}
-                stack_name, stack_props = fnss.get_stack(topology, node)
-                aux_nfv_node = VnfNode()
+                stack_name, stack_props = fnss.get_stack(self.model.topology, node)
                 if stack_name == 'nfv_node':
-                    if isinstance(self.nfv_nodes[node], VnfNode):
+                    if node in self.model.VnfNode:
                         for vnf in vnfs:
-                            if sum_cpus_vnfs <= self.nfv_nodes[node][1]['node_specs'][VnfNode().get_rem_cpu()]:
-                                self.nfv_nodes[node][1]['node_specs'][VnfNode] = aux_nfv_node.proc_vnf(vnf)
-                                self.nfv_nodes[node][1]['node_specs'][VnfNode.r_cpu] = aux_nfv_node.get_rem_cpu()
-                                is_proc[vnf] = True
+                            if sum_cpus_vnfs <= self.model.nfv_nodes[node].get_cpu():
+                                self.model.nfv_nodes[node].proc_vnf_on_node(vnf)
                     return is_proc.values()
 
 
@@ -312,7 +313,7 @@ class NetworkController:
 topo = topology_geant()
 
 
-model = NetworkModel(topo)
+ model = NetworkModel(topo)
 view = NetworkView(model)
 contr = NetworkController(model)
 
