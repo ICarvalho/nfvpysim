@@ -4,6 +4,7 @@ from topologies.topology import topology_geant, topology_datacenter_two_tier, to
 import random
 from model.request import *
 from model.nodes import *
+from model.vnfs import *
 
 
 def symmetrify_paths(shortest_paths):
@@ -100,8 +101,8 @@ class NetworkModel:
                 self.link_delay[(v,u)] = delay
 
 
-        """
-                for node in topology.nodes():
+
+        for node in topology.nodes():
             stack_name, stack_props = fnss.get_stack(topology, node)
             if stack_name == 'ingress_node':
                 if 'id' in stack_props:
@@ -119,7 +120,7 @@ class NetworkModel:
             elif stack_name == 'fw_node':
                 self.fw_nodes[node] = stack_props['id']
         
-        """
+
 
 
 
@@ -189,26 +190,16 @@ class NetworkModel:
 
 
 
-    def get_rem_cpu_path(self, topology, path):
-        node_rem_cpu = {}
-        for node in path:
-            stack_name, stack_props = fnss.get_stack(topology, node)
-            if stack_name == 'nfv_node':
-                if isinstance(node, VnfNode) and node in self.nfv_nodes:
-                    node_rem_cpu[node] = node.get_rem_cpu()
-
-        return node_rem_cpu
+    def get_sum_cpu_vnfs(self, vnfs):
+        return sum(vnf.get_cpu() for vnf in vnfs)
 
 
 
+    def is_vnf_on_node(self, node, vnf):
+        if vnf in self.nfv_nodes[node][1]['node_specs']:
+            return True
+        return False
 
-
-
-    def find_node_max_av_cpu_path(self, topology, path):
-
-        path_nodes = self.get_rem_cpu_path(topology, path)
-        node_max_cpu = max(path_nodes.values())
-        return node_max_cpu
 
 
 
@@ -223,8 +214,8 @@ class NetworkModel:
                 if stack_name == 'nfv_node':
                     aux_nfv_node = VnfNode()
                     for vnf in vnfs:
-                        if vnf in  topology.node[node]['stack'][1]['node_specs']['vnfs']:
-                            topology.node[node]['stack'][1]['node_specs']['node_type'] = aux_nfv_node.proc_vnf(vnf)
+                        if vnf in  topology.node[node]['stack'][1]['node_specs']:
+                            topology.node[node]['stack'][1]['node_specs'] = aux_nfv_node.proc_vnf(vnf)
                             print(aux_nfv_node.get_rem_cpu())
 
 
@@ -359,7 +350,7 @@ vnfs = [Nat(), Firewall(), Encrypter()]
 print(path)
 print(view.model.proc_req_greedy(topo, req, path))
 
-#print(view.model.nfv_nodes)
+print(view.model.nfv_nodes)
 
 
 
