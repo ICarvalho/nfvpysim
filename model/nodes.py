@@ -268,7 +268,7 @@ class VnfNode(Node):
         return self.ram
 
     def get_rem_cpu(self):
-        return self.r_cpu
+        return self.cpu - self.get_sum_cpu_vnfs_on_vnf_node()
 
     def get_rem_ram(self):
         return self.ram
@@ -297,18 +297,17 @@ class VnfNode(Node):
 
 
 
-    def proc_vnf_on_node(self, vnfs):
+    def proc_vnf_on_node(self, vnf):
 
-        for vnf in vnfs:
-            if not self.is_vnf_on_vnf_node(vnf):
-                raise ValueError('this vnf is not placed on this node')
+        if not self.is_vnf_on_vnf_node(vnf):
+            raise ValueError('this vnf is not placed on this node')
 
+        else:
+            vnf_cpu = vnf.get_cpu()
+            if vnf_cpu <= self.get_rem_cpu():
+                self.proc_vnf(vnf)
             else:
-                vnf_cpu = vnf.get_cpu()
-                if vnf_cpu <= self.get_rem_cpu():
-                    self.proc_vnf(vnf)
-                else:
-                    print('There is not enough cpu available to run the vnf')
+                print('There is not enough cpu available to run the vnf')
 
 
 
@@ -343,7 +342,9 @@ class VnfNode(Node):
                     sum_vnfs_cpu += target_vnf.get_cpu()
                     if sum_vnfs_cpu == 100:
                         break
-            return self.vnfs
+
+
+
 
 
 
@@ -362,20 +363,40 @@ class VnfNode(Node):
 
 
 
-"""
+
 class VnfNodeInstance:
 
     def __init__(self):
-        self.vnf_node_instance = VnfNode().allocate_vnfs_on_node()
+        self.vnf_node = VnfNode()
+        self.vnfs = VnfNode().allocate_vnfs_on_node
 
     def get_vnfs_on_node(self):
-        return self.vnf_node_instance
+        return self.vnfs
+
+    def get_vnf_node(self):
+        return self.vnf_node
+
+
+
 
 
 """
+node = VnfNode()
+nat = Nat()
+lb = LoadBalancer()
+fw = Firewall()
+en = Encrypter()
+de = Decrypter()
+wan = WanOptimizer()
+vnfs = [nat,fw]
+
+node.allocate_vnfs_on_node()
+#node.proc_vnf_on_node(vnfs)
+print(node.get_vnfs())
+print(node.get_rem_cpu())
 
 
-
+"""
 
 
 

@@ -101,7 +101,7 @@ class NetworkModel:
                 self.link_delay[(v,u)] = delay
 
 
-        nfv_nodes = {}
+
         for node in topology.nodes():
             stack_name, stack_props = fnss.get_stack(topology, node)
             if stack_name == 'ingress_node':
@@ -113,19 +113,12 @@ class NetworkModel:
                     self.egress_nodes[node] = stack_props['id']
 
             elif stack_name == 'nfv_node':
-                if 'node_specs' in stack_props:
-                    nfv_nodes[node] = stack_props['nfv_node_inst']
+                if 'nfv_node_inst' in stack_props:
+                    self.nfv_nodes[node] = stack_props['nfv_node_inst']
 
 
             elif stack_name == 'fw_node':
                 self.fw_nodes[node] = stack_props['id']
-
-        self.nvf_nodes = {node: VnfNode() for node in nfv_nodes}
-        
-
-
-
-
 
 
     # Compute the shortest path between ingress and egress node
@@ -157,7 +150,7 @@ class NetworkModel:
                 if stack_name == 'egress_node':
                     egr_nodes.append(node)
 
-        return egr_nodes
+            return egr_nodes
 
     def get_nfv_nodes(self, topology):
 
@@ -168,7 +161,7 @@ class NetworkModel:
                 if stack_name == 'nfv_node':
                     nfv_nodes.append(node)
 
-        return nfv_nodes
+            return nfv_nodes
 
     def select_ingress_node(self, topology):
         return random.choice(self.get_ingress_nodes(topology))
@@ -182,52 +175,6 @@ class NetworkModel:
     # Convert a path expressed as list of nodes into a path expressed as a list of edges.
     def path_links(self, path):
         return [(path[i], path[i + 1]) for i in range(len(path) - 1)]
-
-
-    
-    """
-        def proc_request_path(self, topology, request, path):
-
-        if not isinstance(topology, fnss.Topology):
-            raise ValueError('The provided topology must be an instance of'
-                             'fnss.Topology or any of its subclasses')
-
-        else:
-
-            sum_vnfs_cpu = self.sum_vnfs_cpu(request.get_sfc())
-            path_nodes = defaultdict(dict)
-            for node in path:
-                stack_name, stack_props = fnss.get_stack(topo, node)
-                if stack_name == 'nfv_node':
-                    if isinstance(node, VnfNode):
-                        if sum_vnfs_cpu > node.get_cpu():
-                            raise ValueError('The vnfs cannot be processed at one node')
-
-                        elif sum_vnfs_cpu <= node.get_cpu():
-                            vnfs = {vnf: vnf.get_cpu() for vnf in request.get_sfc()}
-                            max_val_cpu = max(vnfs.values())
-                            print(max_val_cpu)
-
-
-                        #max_vnfs_desc_cpu =print(rem) vnfs.sort(reverse=True)
-                            for vnf in request.get_sfc():
-                                vnf_cpu = getattr(vnf, 'cpu')[v for v in topology if  topology.node[v]['stack'][0] == 'ingress_node']
-                                #vnf_ram = getattr(vnf, 'ram')
-                                path_nodes[node]['node']=  node
-                                path_nodes[node]['proc_vnf']=  VnfNode().proc_vnf_cpu(vnf_cpu)
-                                path_nodes[node]['r_cpu'] = VnfNode().get_rem_cpu()
-
-
-
-                                #path_nodes[node]['ram'] = nfv_node.load_vnf_ram(vnf_ram)
-                                #path_nodes[node]['ram'] = nfv_node.get_rem_ram()
-
-
-                return  path_nodes
-
-
-    
-    """
 
 
 
@@ -259,18 +206,17 @@ class NetworkController:
 
 
 
-
-
-
     def get_sum_cpu_vnfs(self, vnfs):
         return sum(vnf.get_cpu() for vnf in vnfs)
 
 
     def is_vnf_on_node(self, node, vnf):
-        if node in self.model.VnfNodeInstance:
-            if vnf in self.model.VnfNodeInstance.get_vnfs_on_node():
-                return True
-        return False
+        if node in self.model.nfv_nodes:
+            if isinstance(self.model.nfv_nodes[node]['stack'][1]['nfv_node_inst'], VnfNode):
+                if self.model.nfv_nodes[node]['stack'][1]['nfv_node_inst'].is_vnf_on_vnf_node(vnf):
+                    return True
+            return False
+
 
     def proc_req_greedy(self, request, path):
 
@@ -280,12 +226,12 @@ class NetworkController:
                 sum_cpus_vnfs = self.get_sum_cpu_vnfs(vnfs)
                 is_proc = {vnf: False for vnf in vnfs}
                 stack_name, stack_props = fnss.get_stack(self.model.topology, node)
-                if stack_name == 'nfv_node':
-                    if isinstance(node, VnfNode):
-                        for vnf in vnfs:
-                            if sum_cpus_vnfs <= self.model.nfv_nodes[node].get_cpu():
-                                self.model.nfv_nodes[node].proc_vnf_on_node(vnf)
-        return self.model.nfv_nodes.items()
+                if stack_name == 'nfv_node' and node in self.model.nfv_nodes:
+                    for vnf in vnfs:
+                        if sum_cpus_vnfs <= self.model.nfv_nodes[node].get_cpu():
+                           self.model.nfv_nodes[node].proc_vnf_on_node(vnf)
+                return self.model.nfv_nodes[node].get_cpu()
+
 
 
     def forward_request_path(self, s, t, path=None, main_path=True):
@@ -328,15 +274,12 @@ all_path = view.model.calculate_all_shortest_paths(topo, ingress, egress)
 
 req = RequestRandomSfc()
 
+proc = contr.proc_req_greedy(req, path)
 
 vnfs = [Nat(), Firewall(), Encrypter()]
 
 
-print(path)
-print(contr.proc_req_greedy(req, path))
-
 print(view.model.nfv_nodes)
-
 
 
 
@@ -348,6 +291,7 @@ model = NetworkModel(topo)
 view = NetworkView(model)
 
 print(view.model.nfv_nodes)
+
 print(topo.nfv_nodes())
 
 """
