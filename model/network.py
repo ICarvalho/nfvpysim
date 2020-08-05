@@ -1,11 +1,12 @@
 import networkx as nx
 import fnss
 from topologies.topology import topology_geant, topology_datacenter_two_tier, topology_tatanld
-import random
+from model.registry import CACHE_POLICY
 from model.request import *
 from model.nodes import *
 from model.vnfs import *
-
+import logging
+logger = logging.getLogger('orchestration')
 
 def symmetrify_paths(shortest_paths):
     """Make paths symmetric
@@ -48,8 +49,22 @@ class NetworkView:
         return self.model.calculate_shortest_path[ingress_node][egress_node]
 
 
-    def all_pairs_shortest_paths(self, ingress_node, egress_node):
-        return  self.model.calculate_all_shortest_paths[ingress_node][egress_node]
+    def vnf_location(self, vnf):
+        loc = set(v for v in self.model.cache if self.model.cache[v].has(vnf))
+        source = self.vnf_source(vnf)
+        if source:
+            loc.add(source)
+        return loc
+
+
+    def vnf_source(self, vnf):
+        return self.model.vnf_source.get(vnf, None)
+
+
+
+
+    def all_pairs_shortest_paths(self):
+        return self.model.shortest_path
 
 
     def link_type(self, u, v):
@@ -64,6 +79,16 @@ class NetworkView:
         return self.model.topology
 
 
+    def nfv_nodes(self):
+        return {v:c.max_n_vnfs for v, c in self.model.cache.items()}
+
+    def vnf_lookup(self, node, vnf):
+        if node in self.model.cache:
+            return self.model.cache[node].has(vnf)
+
+    def vnf_dumps(self, node):
+        if node in self.model.cache:
+            return self.model.cache[node].dump()
 
 
 
@@ -76,15 +101,23 @@ class NetworkModel:
 
     """
 
-    def __init__(self, topology): #, policy, shortest_path=None):
+    def __init__(self, topology, cache_policy, shortest_path=None): #, policy, shortest_path=None):
 
         if not isinstance(topology, fnss.Topology):
             raise ValueError('The topology argument must be an'
                              'instance of fnss.Topology or any of its subclasses')
 
-        #self.shortest_path = shortest_path if shortest_path is not None \
-                            #else symmetrify_paths(nx.all_pairs_dijkstra_path(topology))
+        self.shortest_path = shortest_path if shortest_path is not None \
+                            else symmetrify_paths(nx.all_pairs_dijkstra_path(topology))
+
         self.topology = topology
+
+        # dict of location of vnfs  keyed by vnf ID
+        self.vnf_source = {}
+
+        # Dictionary mapping the reverse, i.e. nodes to set of vnfs stored
+        self.source_vnf = {}
+
         self.ingress_nodes = {}
         self.egress_nodes = {}
         self.nfv_nodes = {}
@@ -101,7 +134,7 @@ class NetworkModel:
                 self.link_delay[(v,u)] = delay
 
 
-
+        nfv_nodes = {}
         for node in topology.nodes():
             stack_name, stack_props = fnss.get_stack(topology, node)
             if stack_name == 'ingress_node':
@@ -113,12 +146,28 @@ class NetworkModel:
                     self.egress_nodes[node] = stack_props['id']
 
             elif stack_name == 'nfv_node':
-                if 'nfv_node_inst' in stack_props:
-                    self.nfv_nodes[node] = stack_props['nfv_node_inst']
+                if 'n_vnfs' in stack_props:
+                    nfv_nodes[node] = stack_props['nfv_node_inst']
 
 
             elif stack_name == 'fw_node':
                 self.fw_nodes[node] = stack_props['id']
+
+            if any(c < 7 for c in nfv_nodes.values()):
+                logger.warn('Some nfv_nodes have not enough room for vnfs '
+                            'I am setting them to 7 and run the experiment anyway')
+                for node in nfv_nodes:
+                    if nfv_nodes[node] < 7:
+                        nfv_nodes[node] = 7
+
+
+
+        policy_name = cache_policy['name']
+        policy_args = {k: v for k, v in cache_policy.items() if k != 'name'}
+        # The actual cache objects storing the content
+        self.nfv_enabled_nodes = {node: CACHE_POLICY[policy_name](nfv_nodes[node], **policy_args)
+                      for node in nfv_nodes}
+
 
 
     # Compute the shortest path between ingress and egress node

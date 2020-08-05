@@ -24,17 +24,18 @@ class NfvTopology(fnss.Topology):
         :return: return a set of nfv nodes
         """
 
-        return {v: self.node[v]['stack'][1]
+        return {v: self.node[v]['stack'][1]['n_vnfs']
                 for v in self
-                if self.node[v]['stack'][0] == 'nfv_node'
-                and 'nfv_node_inst' in self.node[v]['stack'][1]
+                if 'stack' in self.node[v]
+                and 'n_vnfs' in self.node[v]['stack'][1]
+                }
                 #and 'id' in self.node[v]['stack'][1]
                 #and 'cpu' in self.node[v]['stack'][1]
                 #and 'ram' in self.node[v]['stack'][1]
                 #and 'r_cpu' in self.node[v]['stack'][1]
                 #and 'r_ram' in self.node[v]['stack'][1]
                 #nd 'vnfs' in self.node[v]['stack'][1]
-                }
+
 
 
 
@@ -113,23 +114,14 @@ def topology_geant(**kwargs):
 
 
     # Add stacks to nodes
-
     for v in ingress_nodes:
         fnss.add_stack(topology, v, 'ingress_node')
 
-
-
     for v in nfv_nodes:
-        nfv_node = VnfNode()
-        fnss.add_stack(topology, v, 'nfv_node', {'nfv_node_inst': nfv_node})
-
-
+        fnss.add_stack(topology, v, 'nfv_node')
 
     for v in egress_nodes:
         fnss.add_stack(topology, v, 'egress_node')
-
-
-
 
     for v in forwarding_nodes:
         fnss.add_stack(topology, v, 'forwarding_node')
@@ -211,10 +203,6 @@ def topology_datacenter_two_tier():
     for v in egress_nodes:
         fnss.add_stack(topology, v, 'egress_node')
 
-
-
-
-
     # assign capacities
     # let's set links connecting servers to edge switches to 1 Gbps
     # and links connecting core and edge switches to 10 Gbps.
@@ -235,10 +223,3 @@ def topology_datacenter_two_tier():
     fnss.set_delays_constant(topology, 10, 'ns')
 
     return NfvTopology(topology)
-
-
-
-topo = topology_geant()
-topo_tata = topology_tatanld()
-
-#print(topo.nfv_nodes())
