@@ -153,12 +153,7 @@ class NetworkModel:
             elif stack_name == 'fw_node':
                 self.fw_nodes[node] = stack_props['id']
 
-            if any(c < 7 for c in nfv_nodes.values()):
-                logger.warn('Some nfv_nodes have not enough room for vnfs '
-                            'I am setting them to 7 and run the experiment anyway')
-                for node in nfv_nodes:
-                    if nfv_nodes[node] < 7:
-                        nfv_nodes[node] = 7
+
 
 
 
