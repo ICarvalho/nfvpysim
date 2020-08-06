@@ -81,7 +81,7 @@ class StationaryWorkloadVarLenSfc:
 
     """
 
-    def __init__(self, topology, n_vnfs=7, rate=1.0, n_warmup=0,  n_req=10 ** 3, seed=None, **kwargs):
+    def __init__(self, topology, n_vnfs=7, rate=1.0, n_warmup=0,  n_req=10 ** 9, seed=None, **kwargs):
 
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
@@ -112,7 +112,7 @@ class StationaryWorkloadVarLenSfc:
             ingress_node = random.choice(self.ingress_nodes)
             egress_node = random.choice(self.egress_nodes)
             sfc = StationaryWorkloadVarLenSfc.var_seq_len_sfc()
-            log = (req_counter >= self.n_warmup)
+            log = (req_counter < self.n_req)
             event = {'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
             yield (t_event, event)
             req_counter += 1
@@ -120,15 +120,15 @@ class StationaryWorkloadVarLenSfc:
 
 
 
-"""
+
 topo = topology_tatanld()
 
 print(len(topo.nodes()))
-workload = StationaryWorkloadRandomSfc(topo)
+workload = StationaryWorkloadVarLenSfc(topo)
 for i in workload:
     print(i)
 
-"""
+
 
 
 

@@ -147,7 +147,7 @@ class NetworkModel:
 
             elif stack_name == 'nfv_node':
                 if 'n_vnfs' in stack_props:
-                    nfv_nodes[node] = stack_props['nfv_node_inst']
+                    nfv_nodes[node] = stack_props['vnfs']
 
 
             elif stack_name == 'fw_node':
