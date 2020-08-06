@@ -146,7 +146,7 @@ class NetworkModel:
                     self.egress_nodes[node] = stack_props['id']
 
             elif stack_name == 'nfv_node':
-                if 'n_vnfs' in stack_props:
+                if 'vnfs' in stack_props:
                     nfv_nodes[node] = stack_props['vnfs']
 
 

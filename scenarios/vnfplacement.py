@@ -32,8 +32,8 @@ def select_target_vnfs():
         if target_vnf not in selected_vnfs:
             selected_vnfs.add(target_vnf)
             sum_vnfs_cpu += dict_vnfs_cpu_req[target_vnf]
-            if sum_vnfs_cpu > 100:
-                break
+        if sum_vnfs_cpu >= 100:
+            break
 
 
     return selected_vnfs
