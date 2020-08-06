@@ -25,18 +25,16 @@ def select_target_vnfs():
                          '7': 40   # decrypt
                         }
 
-    n_vnfs = random.randint(1, len(dict_vnfs_cpu_req))
     sum_vnfs_cpu = 0
     selected_vnfs = set()
-    for vnf in range(1, n_vnfs + 1):
-        while sum_vnfs_cpu <= 100:
-            target_vnf = random.choice(list(dict_vnfs_cpu_req.keys()))
-            if target_vnf not in selected_vnfs:
-                selected_vnfs.add(target_vnf)
-                sum_vnfs_cpu += dict_vnfs_cpu_req[target_vnf]
-            if sum_vnfs_cpu == 100:
+    while sum_vnfs_cpu <= 100:
+        target_vnf = random.choice(list(dict_vnfs_cpu_req.keys()))
+        if target_vnf not in selected_vnfs:
+            selected_vnfs.add(target_vnf)
+            sum_vnfs_cpu += dict_vnfs_cpu_req[target_vnf]
+            if sum_vnfs_cpu > 100:
                 break
-        break
+
 
     return selected_vnfs
 
