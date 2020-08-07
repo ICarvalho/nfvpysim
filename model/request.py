@@ -249,6 +249,14 @@ class RequestRandomSfc:
         return self.sfc
 
 
+
+    def get_vnfs_id(self, sfc):
+        vnf_list = []
+        for i in sfc:
+            vnf_list.append(i.get_id())
+        return vnf_list
+
+
 class RequestVarLenSFc:
 
     def __init__(self):
@@ -260,17 +268,6 @@ class RequestVarLenSFc:
         return self.sfc
 
 
-
-
-    # return the ids of the vnfs on the chain.
-    # It is also possible to get the vnfs themselves
-
-
-
-
-
-
-
     def get_vnfs_id(self, sfc):
         vnf_list = []
         for i in sfc:
@@ -280,12 +277,17 @@ class RequestVarLenSFc:
 
 
 
+"""
 req_01  = RequestVarLenSFc()
 req_02 = RequestRandomSfc()
 
 
 print(req_01.get_sfc())
+print(req_01.get_vnfs_id(req_01.get_sfc()))
 print(req_02.get_sfc())
+
+
+"""
 
 
 
