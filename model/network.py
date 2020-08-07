@@ -216,7 +216,15 @@ class NetworkModel:
         return sum(vnf_cpu)
 
 
-    
+    def process_sfcs_at_one_node(self, sfc, node):
+
+        sum_cpu = self.sum_vnfs_cpu(sfc)
+        if isinstance(node, VnfNode):
+            if sum_cpu <= node.get_cpu():
+                return True
+            return False
+
+
     
     
     def proc_request_path(self, topology, request, path):
@@ -233,22 +241,17 @@ class NetworkModel:
                 stack_name, stack_props = fnss.get_stack(topo, node)
                 if stack_name == 'nfv_node':
                     if isinstance(node, VnfNode):
-                        if sum_vnfs_cpu > node().get_cpu():
-                            raise ValueError('The vnfs cannot be processed at one node')
+                        if not self.process_sfcs_at_one_node(request.sfc, node):
+                            print('vnf cannot be processed only in one node')
 
-                        elif sum_vnfs_cpu <= node.get_cpu():
-                        vnfs = {vnf: vnf.get_cpu() for vnf in request.get_sfc()}
-                        max_val_cpu = max(vnfs.values())
-                        print(max_val_cpu)
+                        else:
 
-
-                        #max_vnfs_desc_cpu = vnfs.sort(reverse=True)
-                        for vnf in request.get_sfc():
-                            vnf_cpu = getattr(vnf, 'cpu')
-                            #vnf_ram = getattr(vnf, 'ram')
-                            path_nodes[node]['node']=  node
-                            path_nodes[node]['proc_vnf']=  VnfNode().proc_vnf_cpu(vnf_cpu)
-                            path_nodes[node]['r_cpu'] = VnfNode().get_rem_cpu()
+                            for vnf in request.get_sfc():
+                                vnf_cpu = vnf.get_cpu()
+                                #vnf_ram = getattr(vnf, 'ram')
+                                path_nodes[node]['node']=  node
+                                path_nodes[node]['proc_vnf']=  node.proc_vnf_cpu(vnf_cpu)
+                                path_nodes[node]['r_cpu'] = VnfNode().get_rem_cpu()
 
 
 
