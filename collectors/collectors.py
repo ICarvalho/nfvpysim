@@ -25,6 +25,10 @@ class DataCollector:
 
         pass
 
+    def sfc_acc(self, sfc ):
+
+        pass
+
 
 
     def end_session(self, success=True):
@@ -60,6 +64,11 @@ class CollectorProxy(DataCollector):
     def request_hop(self, u, v, path=True):
         for c in self.collectors['request_hop']:
             c.request_hop(u, v, path)
+
+
+    def sfc_acc(self, sfc ):
+        for c in self.collectors['sfc_acc']:
+            c.sfc_acc(sfc)
 
 
     def enabled_path(self, path):

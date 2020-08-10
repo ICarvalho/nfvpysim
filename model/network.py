@@ -264,9 +264,22 @@ class NetworkController:
         if self.collector is not None and self.session['log']:
             self.collector.request_hop(u, v, main_path)
 
-    def get_vnf(self, node):
+    def get_vnf(self, node, sfc):
 
         if node in self.model.cache:
+            is_vnf_proc = {vnf: False for vnf in sfc}
+            for vnf in sfc:
+                vnf_hit = self.model.cache[node].get(self.session)[vnf]
+                if vnf_hit:
+                    is_vnf_proc[vnf] = True
+                else:
+                    continue
+            if all(value == True for value in is_vnf_proc.values()):
+                self.collector.sfc_acc(sfc)
+
+
+
+
             cache_hit = self.model.cache[node].get(self.session['vnf'])
             if cache_hit:
                 if self.session['log']:
