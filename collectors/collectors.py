@@ -193,55 +193,27 @@ class AcceptanceRatio(DataCollector):
 
         self.view = view
         self.sess_count = 0
-        self.acc_req = 0
+        self.acc_sfc = 0
+
         if per_sfc:
             self.per_sfc_ratio = collections.defaultdict(int)
 
-        def start_session(self, timestamp, ingress_node, sfc):
+        def start_session(self, timestamp, ingress_node, egress_node):
             self.sess_count += 1
+            self.curr_path = self.view.shortest_path(ingress_node, egress_node)
 
 
+        def sfc_acc(self, sfc):
+            self.acc_sfc += 1
+            if self.per_sfc_ratio:
+                self.per_sfc_ratio[sfc] += 1
+
+        def results(self):
+            n_sess = self.acc_sfc
+            sfc_acc_ratio = self.acc_sfc / n_sess
+            results = Tree(**{'MEAN': sfc_acc_ratio})
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        return results
 
 

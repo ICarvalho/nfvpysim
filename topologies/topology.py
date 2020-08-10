@@ -27,7 +27,7 @@ class NfvTopology(fnss.Topology):
         return {v: self.node[v]['stack'][1]['n_vnfs']
                 for v in self
                 if 'stack' in self.node[v]
-                and 'vnfs' in self.node[v]['stack'][1]
+                and 'n_vnfs' in self.node[v]['stack'][1]
                 }
                 #and 'id' in self.node[v]['stack'][1]
                 #and 'cpu' in self.node[v]['stack'][1]
@@ -124,7 +124,7 @@ def topology_geant(**kwargs):
         fnss.add_stack(topology, v, 'egress_node', {'id': 'egress_node'})
 
     for v in forwarding_nodes:
-        fnss.add_stack(topology, v, 'forwarding_node', {'id': 'forwarding_node'})
+        fnss.add_stack(topology, v, 'forwarding_node', {'id': 'fw_node'})
 
 
     # Set weight and delay on all links
@@ -165,7 +165,7 @@ def topology_tatanld(**kwargs):
         fnss.add_stack(topology, v, 'egress_node')
 
     for v in forwarding_nodes:
-        fnss.add_stack(topology, v, 'forwarding_node')
+        fnss.add_stack(topology, v, 'fw_node')
 
 
     # Set weight and delay on all links

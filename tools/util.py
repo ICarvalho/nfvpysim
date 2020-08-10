@@ -674,3 +674,7 @@ def apportionment(n, fracs):
     for i in idx:
         ints[i] += 1
     return ints
+
+
+def path_links(self, path):
+    return [(path[i], path[i + 1]) for i in range(len(path) - 1)]

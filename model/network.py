@@ -5,6 +5,7 @@ from model.registry import CACHE_POLICY
 from model.request import *
 from model.cache import *
 from model.vnfs import *
+from tools.util import path_links
 import logging
 logger = logging.getLogger('orchestration')
 
@@ -49,6 +50,7 @@ class NetworkView:
         return self.model.calculate_shortest_path[ingress_node][egress_node]
 
 
+    """
     def vnf_location(self, vnf):
         loc = set(v for v in self.model.cache if self.model.cache[v].has(vnf))
         source = self.vnf_source(vnf)
@@ -60,7 +62,7 @@ class NetworkView:
     def vnf_source(self, vnf):
         return self.model.vnf_source.get(vnf, None)
 
-
+    """
 
 
     def all_pairs_shortest_paths(self):
@@ -147,8 +149,8 @@ class NetworkModel:
                     self.egress_nodes[node] = stack_props['id']
 
             elif stack_name == 'nfv_node':
-                if 'vnfs' in stack_props:
-                    nfv_nodes[node] = stack_props['vnfs']
+                if 'n_vnfs' in stack_props:
+                    nfv_nodes[node] = stack_props['n_vnfs']
 
 
             elif stack_name == 'fw_node':
@@ -218,8 +220,6 @@ class NetworkModel:
 
 
     # Convert a path expressed as list of nodes into a path expressed as a list of edges.
-    def path_links(self, path):
-        return [(path[i], path[i + 1]) for i in range(len(path) - 1)]
 
 
 
@@ -250,46 +250,54 @@ class NetworkController:
 
 
 
-
-    def get_sum_cpu_vnfs(self, vnfs):
-        return sum(vnf.get_cpu() for vnf in vnfs)
-
-
-    def is_vnf_on_node(self, node, vnf):
-        if node in self.model.nfv_nodes:
-            if isinstance(self.model.nfv_nodes[node]['stack'][1]['nfv_node_inst'], VnfNode):
-                if self.model.nfv_nodes[node]['stack'][1]['nfv_node_inst'].is_vnf_on_vnf_node(vnf):
-                    return True
-            return False
-
-
-    def proc_req_greedy(self, request, path):
-
-        for node in path:
-            if isinstance(request, (RequestRandomSfc, RequestVarLenSFc)):
-                vnfs = request.get_sfc()
-                sum_cpus_vnfs = self.get_sum_cpu_vnfs(vnfs)
-                is_proc = {vnf: False for vnf in vnfs}
-                stack_name, stack_props = fnss.get_stack(self.model.topology, node)
-                if stack_name == 'nfv_node' and node in self.model.nfv_nodes:
-                    for vnf in vnfs:
-                        if sum_cpus_vnfs <= self.model.nfv_nodes[node].get_cpu():
-                           self.model.nfv_nodes[node].proc_vnf_on_node(vnf)
-                return self.model.nfv_nodes[node].get_cpu()
-
-
-
-    def forward_request_path(self, s, t, path=None, main_path=True):
+    def forward_request_path(self, ingress_node, egress_node, path=None, main_path=True):
 
         if path is None:
-            path = self.model.shortest_path[s][t]
-        for u, v in NetworkModel.path_links(path):
+            path = self.model.shortest_path[ingress_node][egress_node]
+        for u, v in path_links(path):
             self.forward_request_hop(u, v, main_path)
+
+
 
     def forward_request_hop(self, u, v, main_path=True):
 
         if self.collector is not None and self.session['log']:
             self.collector.request_hop(u, v, main_path)
+
+    def get_vnf(self, node):
+
+        if node in self.model.cache:
+            cache_hit = self.model.cache[node].get(self.session['vnf'])
+            if cache_hit:
+                if self.session['log']:
+                    self.collector.cache_hit(node)
+            else:
+                if self.session['log']:
+                    self.collector.cache_miss(node)
+            return cache_hit
+        name, props = fnss.get_stack(self.model.topology, node)
+        if name == 'source' and self.session['content'] in props['contents']:
+            if self.collector is not None and self.session['log']:
+                self.collector.server_hit(node)
+            return True
+        else:
+            return False
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     def end_session(self, success=True):
