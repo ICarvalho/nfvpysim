@@ -27,13 +27,14 @@ def select_target_vnfs():
 
     sum_vnfs_cpu = 0
     selected_vnfs = set()
-    while sum_vnfs_cpu <= 100:
-        target_vnf = random.choice(list(dict_vnfs_cpu_req.keys()))
-        if target_vnf not in selected_vnfs:
-            selected_vnfs.add(target_vnf)
-            sum_vnfs_cpu += dict_vnfs_cpu_req[target_vnf]
-        if sum_vnfs_cpu >= 100:
-            break
+    for vnf in range(1, 8):
+        while sum_vnfs_cpu <= 100:
+            target_vnf = random.choice(list(dict_vnfs_cpu_req.keys()))
+            if target_vnf not in selected_vnfs:
+                selected_vnfs.add(target_vnf)
+                sum_vnfs_cpu += dict_vnfs_cpu_req[target_vnf]
+                if sum_vnfs_cpu >= 100:
+                    break
 
 
     return selected_vnfs

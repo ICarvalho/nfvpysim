@@ -3,7 +3,7 @@ import fnss
 from topologies.topology import topology_geant, topology_datacenter_two_tier, topology_tatanld
 from model.registry import CACHE_POLICY
 from model.request import *
-from model.nodes import *
+from model.cache import *
 from model.vnfs import *
 import logging
 logger = logging.getLogger('orchestration')
@@ -103,6 +103,7 @@ class NetworkModel:
 
     def __init__(self, topology, cache_policy, shortest_path=None): #, policy, shortest_path=None):
 
+        self.cache = None
         if not isinstance(topology, fnss.Topology):
             raise ValueError('The topology argument must be an'
                              'instance of fnss.Topology or any of its subclasses')

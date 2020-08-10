@@ -4,7 +4,7 @@ from os import path
 import networkx as nx
 import fnss
 import random
-from model.nodes import *
+from model.cache import *
 from model.vnfs import *
 
 
