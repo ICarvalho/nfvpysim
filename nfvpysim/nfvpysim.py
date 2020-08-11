@@ -24,7 +24,7 @@ def main():
     parser.add_argument("config",
                         help="configuration file")
     parser.add_argument('-v', '--version', action='version',
-                        version="icarus {}".format(__version__))
+                        version="nfvpysim {}".format(__version__))
     args = parser.parse_args()
     config_override = dict(c.split("=") for c in args.config_override) \
                       if args.config_override else None
