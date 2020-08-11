@@ -16,8 +16,8 @@ import nfvpysim
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 
-read = nfvpysim.registry.RESULTS_READER['PICKLE']
-write = nfvpysim.registry.RESULTS_WRITER['PICKLE']
+read = nfvpysim.model.registry.RESULTS_READER['PICKLE']
+write = nfvpysim.model.registry.RESULTS_WRITER['PICKLE']
 
 
 @click.group(context_settings=CONTEXT_SETTINGS)
@@ -35,7 +35,7 @@ def main():
 def run(results, config_override, config):
     """Run a set of simulations."""
     config_override = dict(c.split("=") for c in config_override) or None
-    icarus.run(config, results, config_override)
+    nfvpysim.run(config, results, config_override)
 
 
 @main.group(context_settings=CONTEXT_SETTINGS)
