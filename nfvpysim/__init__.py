@@ -41,4 +41,4 @@ del m
 # Imports
 from .model import *
 from .tools import *
-from .runner import run
+from nfvpysim.runner import run

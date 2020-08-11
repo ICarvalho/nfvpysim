@@ -9,8 +9,8 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 
-from tools.util import Tree, step_cdf
-from tools.stats import means_confidence_interval
+from nfvpysim.tools.util import Tree, step_cdf
+from nfvpysim.tools.stats import means_confidence_interval
 
 
 __all__ = ['plot_lines', 'plot_bar_chart', 'plot_cdf']

@@ -1,5 +1,5 @@
-from tools.util import Tree
-from tools.stats import cdf
+from nfvpysim.tools.util import Tree
+from nfvpysim.tools.stats import cdf
 import collections
 
 

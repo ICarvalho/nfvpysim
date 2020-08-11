@@ -1,4 +1,3 @@
-from model.cache import *
 import random
 
 

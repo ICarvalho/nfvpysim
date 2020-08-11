@@ -1,7 +1,7 @@
 from multiprocessing import cpu_count
 from collections import deque
 import copy
-from tools.util import Tree
+from nfvpysim.tools.util import Tree
 
 ############################## GENERAL SETTINGS ##############################
 

@@ -12,11 +12,11 @@ import sys
 import signal
 import traceback
 
-from execution.engine import exec_experiment
-from model.registry import TOPOLOGY_FACTORY, CACHE_PLACEMENT, CONTENT_PLACEMENT, \
+from nfvpysim.execution.engine import exec_experiment
+from nfvpysim.model.registry import TOPOLOGY_FACTORY, CACHE_PLACEMENT, CONTENT_PLACEMENT, \
                             CACHE_POLICY, WORKLOAD, DATA_COLLECTOR, STRATEGY
-from results.readwrite import ResultSet
-from tools.util import SequenceNumber, timestr
+from nfvpysim.results import ResultSet
+from nfvpysim.tools.util import SequenceNumber, timestr
 
 
 __all__ = ['Orchestrator', 'run_scenario']

@@ -1,12 +1,9 @@
 from __future__ import division
 
-from os import path
 import networkx as nx
 import fnss
-from model.registry import register_topology_factory
-from model.cache import *
-from model.vnfs import *
-
+from nfvpysim.model.registry import register_topology_factory
+from nfvpysim.model.cache import *
 
 __all__ = [
         'NfvTopology',

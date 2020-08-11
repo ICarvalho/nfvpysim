@@ -1,9 +1,6 @@
 from abc import ABC, abstractmethod
-from model.cache import *
-from model.cache import *
-from model.network import *
-from tools.util import path_links, inheritdoc
-from model.registry import register_policy
+from nfvpysim.tools.util import path_links
+from nfvpysim.model.registry import register_policy
 
 
 class Policy(ABC):

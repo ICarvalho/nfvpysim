@@ -2,11 +2,9 @@ from __future__ import division
 
 import numpy as np
 import abc
-import copy
-import random
-from collections import defaultdict, deque
-from model.registry import register_cache_policy
-from tools.util import apportionment, inheritdoc
+from collections import deque
+from nfvpysim.model.registry import register_cache_policy
+from nfvpysim.tools.util import apportionment, inheritdoc
 
 class LinkedSet(object):
     """A doubly-linked set, i.e., a set whose entries are ordered and stored

@@ -1,9 +1,6 @@
 from __future__ import division
-import random
-import networkx as nx
 
-from tools.util import iround
-from model.registry import register_vnf_allocation
+from nfvpysim.model.registry import register_vnf_allocation
 
 __all__ = [
     'uniform_cache_placement',

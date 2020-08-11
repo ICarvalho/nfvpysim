@@ -7,8 +7,8 @@ try:
     import cPickle as pickle
 except ImportError:
     import pickle
-from tools.util import Tree
-from model.registry import register_results_reader, register_results_writer
+from nfvpysim.tools.util import Tree
+from nfvpysim.model.registry import register_results_reader, register_results_writer
 
 
 __all__ = [

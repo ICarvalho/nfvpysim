@@ -1,11 +1,8 @@
 import networkx as nx
 import fnss
-from topologies.topology import topology_geant, topology_datacenter_two_tier, topology_tatanld
-from model.registry import CACHE_POLICY
-from model.request import *
-from model.cache import *
-from model.vnfs import *
-from tools.util import path_links
+from nfvpysim.model.registry import CACHE_POLICY
+from nfvpysim.model.request import *
+from nfvpysim.tools.util import path_links
 import logging
 logger = logging.getLogger('orchestration')
 
