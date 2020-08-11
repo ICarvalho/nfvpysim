@@ -10,18 +10,18 @@ Usage:
 """
 import click
 
-import TESE
+import nfvpysim
 
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 
-read = icarus.registry.RESULTS_READER['PICKLE']
-write = icarus.registry.RESULTS_WRITER['PICKLE']
+read = nfvpysim.registry.RESULTS_READER['PICKLE']
+write = nfvpysim.registry.RESULTS_WRITER['PICKLE']
 
 
 @click.group(context_settings=CONTEXT_SETTINGS)
-@click.version_option(icarus.__version__)
+@click.version_option(nfvpysim.__version__)
 def main():
     pass
 
