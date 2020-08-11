@@ -13,8 +13,8 @@ import signal
 import traceback
 
 from nfvpysim.execution.engine import exec_experiment
-from nfvpysim.model.registry import TOPOLOGY_FACTORY, CACHE_PLACEMENT, CONTENT_PLACEMENT, \
-                            CACHE_POLICY, WORKLOAD, DATA_COLLECTOR, STRATEGY
+from nfvpysim.model.registry import TOPOLOGY_FACTORY, VNF_ALLOCATION, VNF_PLACEMENT, \
+                            CACHE_POLICY, WORKLOAD, DATA_COLLECTOR, POLICY
 from nfvpysim.results import ResultSet
 from nfvpysim.tools.util import SequenceNumber, timestr
 

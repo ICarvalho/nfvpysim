@@ -1,6 +1,6 @@
 from nfvpysim.model.network import NetworkModel, NetworkView, NetworkController
 from nfvpysim.collectors.collectors import CollectorProxy
-from nfvpysim.model.registry import DATA_COLLECTOR, STRATEGY
+from nfvpysim.model.registry import DATA_COLLECTOR, POLICY
 
 
 __all__ = ['exec_experiment']

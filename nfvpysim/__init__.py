@@ -20,13 +20,13 @@ __license__ = release.license_short
 # This code ensures that the modules are imported and hence the decorators are
 # executed and the classes/functions registered.
 __modules_to_register = [
-     '.models.cache',
-     '.collectors.collectors',
-     '.results.readwrite',
-     '.topology.topology',
-     '.scenarios.vnfplacement',
-     '.scenarios.vnfallocation',
-     'model.workload',
+     'nfvpysim.model.cache',
+     'nfvpysim.collectors.collectors',
+     'nfvpysim.results.readwrite',
+     'nfvpysim.topologies.topology',
+     'nfvpysim.scenarios.vnfplacement',
+     'nfvpysim.scenarios.vnfallocation',
+     'nfvpysim.model.workload',
                          ]
 
 for m in __modules_to_register:

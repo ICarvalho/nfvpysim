@@ -58,5 +58,3 @@ def uniform_vnf_placement(topology, seed=None, **kwargs):
     apply_vnfs_placement(vnf_placement, topology)
 
 
-a = select_target_vnfs()
-print(a)
