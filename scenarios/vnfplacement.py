@@ -1,6 +1,6 @@
 from __future__ import division
 import random
-from model.registry import register_cache_placement
+from model.registry import register_vnf_placement
 from collections import defaultdict
 
 
@@ -46,7 +46,7 @@ def apply_vnfs_placement(placement, topology):
 
 
 
-@register_cache_placement('UNIFORM')
+@register_vnf_placement('UNIFORM')
 def uniform_vnf_placement(topology, seed=None, **kwargs):
 
     random.seed(seed)

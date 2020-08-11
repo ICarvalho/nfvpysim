@@ -3,6 +3,8 @@ from model.cache import *
 from model.cache import *
 from model.network import *
 from tools.util import path_links, inheritdoc
+from model.registry import register_policy
+
 
 class Policy(ABC):
 
@@ -17,7 +19,7 @@ class Policy(ABC):
 
 
 
-
+@register_policy('FIRST_FIT')
 class FistFit(Policy):
 
     def __init__(self, view, controller, **kwargs):

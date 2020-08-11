@@ -3,7 +3,7 @@ import random
 import networkx as nx
 
 from tools.util import iround
-from model.registry import register_cache_placement
+from model.registry import register_vnf_allocation
 
 __all__ = [
     'uniform_cache_placement',
@@ -16,7 +16,7 @@ def get_nfv_nodes(topology):
 
 
 
-@register_cache_placement('UNIFORM')
+@register_vnf_allocation('UNIFORM')
 def uniform_cache_placement(topology, **kwargs):
     """Places cache budget uniformly across cache nodes.
     Parameters
