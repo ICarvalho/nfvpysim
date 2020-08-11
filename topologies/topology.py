@@ -3,13 +3,25 @@ from __future__ import division
 from os import path
 import networkx as nx
 import fnss
-import random
+from model.registry import register_topology_factory
 from model.cache import *
 from model.vnfs import *
 
 
+__all__ = [
+        'NfvTopology',
+        'topology_geant',
+        'topology_tatanld',
+        'topology_datacenter_two_tier'
+        ]
+
+
+
+
+
 INTERNAL_LINK_DELAY = 2
 EXTERNAL_LINK_DELAY = 34
+
 
 
 class NfvTopology(fnss.Topology):
@@ -101,7 +113,7 @@ class NfvTopology(fnss.Topology):
 
 
 
-
+@register_topology_factory('GEANT')
 def topology_geant(**kwargs):
 
     topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/datasets/Geant2012.graphml').to_undirected() # 61 nodes
@@ -143,7 +155,7 @@ def topology_geant(**kwargs):
     return NfvTopology(topology)
 
 
-
+@register_topology_factory('TATANLD')
 def topology_tatanld(**kwargs):
 
     topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/datasets/TataNld.graphml').to_undirected() # 186 nodes
@@ -183,6 +195,8 @@ def topology_tatanld(**kwargs):
 
     return NfvTopology(topology)
 
+
+@register_topology_factory('DATACENTER_TWO_TIER')
 def topology_datacenter_two_tier():
     # create a topology with 10 core switches, 20 edge switches and 10 hosts
     # per switch (i.e. 200 hosts in total)

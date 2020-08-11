@@ -81,9 +81,6 @@ class NetworkView:
         return self.model.topology
 
 
-    def nfv_nodes(self):
-        return {v:c.max_n_vnfs for v, c in self.model.cache.items()}
-
     def vnf_lookup(self, node, vnf):
         if node in self.model.cache:
             return self.model.cache[node].has(vnf)
@@ -210,6 +207,20 @@ class NetworkModel:
 
             return nfv_nodes
 
+
+
+    def check_nfv_nodes_path(self, path):
+        for node in path:
+            if self.topology.node[node]['stack'][0] == 'nfv_node':
+                return True
+            else:
+                return False
+
+
+
+
+
+
     def select_ingress_node(self, topology):
         return random.choice(self.get_ingress_nodes(topology))
 
@@ -286,67 +297,3 @@ class NetworkController:
         if self.collector is not None and self.session['log']:
             self.collector.end_session(success)
         self.session = None
-
-
-
-
-
-
-
-topo = topology_geant()
-
-
-model = NetworkModel(topo)
-view = NetworkView(model)
-contr = NetworkController(model)
-
-ingress = model.select_ingress_node(topo)
-egress = model.select_egress_node(topo)
-
-path = view.model.calculate_shortest_path(topo, ingress, egress)
-all_path = view.model.calculate_all_shortest_paths(topo, ingress, egress)
-
-req = RequestRandomSfc()
-
-proc = contr.proc_req_greedy(req, path)
-
-vnfs = [Nat(), Firewall(), Encrypter()]
-
-
-print(view.model.nfv_nodes)
-
-
-
-
-"""
-
-topo = topology_geant()
-model = NetworkModel(topo)
-view = NetworkView(model)
-
-print(view.model.nfv_nodes)
-
-print(topo.nfv_nodes())
-
-"""
-
-
-
-
-#print(view.model.get_ingress_nodes(topo))
-#print(view.model.select_ingress_node(topo))
-
-#proc = view.model.proc_request_path(topo, req, path)
-
-
-
-#nfv_path = view.model.loc  ate_vnf_nodes_path(topo, path)
-
-
-#print(path)
-#print(rem)
-#print(topo.nfv_nodes())
-#print(all_path)
-#print(topo.nfv_nodes())
-#print(proc)
-
