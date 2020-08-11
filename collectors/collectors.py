@@ -25,7 +25,8 @@ class DataCollector:
 
         pass
 
-    def sfc_acc(self, sfc ):
+
+    def sfc_acc(self, sfc):
 
         pass
 
@@ -45,14 +46,13 @@ class DataCollector:
 class CollectorProxy(DataCollector):
 
 
-    EVENTS = ('start_session', 'enabled_path' 'end_session', 'request_hop', 'results')
+    EVENTS = ('start_session', 'sfc_acc' 'end_session', 'request_hop', 'results')
 
     def __init__(self, view, collectors):
 
         self.view = view
         self.collectors =  {e: [c for c in collectors if e in type(c).__dict__]
                              for e in self.EVENTS}
-
 
 
     def start_session(self, timestamp, ingress_node, sfc):
@@ -71,9 +71,6 @@ class CollectorProxy(DataCollector):
             c.sfc_acc(sfc)
 
 
-    def enabled_path(self, path):
-        for c in self.collectors['enabled_path']:
-            c.enable_path(path)
 
 
     def end_session(self, success=True):
@@ -223,6 +220,6 @@ class AcceptanceRatio(DataCollector):
             results = Tree(**{'MEAN': sfc_acc_ratio})
 
 
-        return results
+            return results
 
 

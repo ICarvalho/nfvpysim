@@ -239,14 +239,15 @@ class NetworkController:
         self.collector = None
 
 
-    def start_session(self, timestamp, ingress_node, request, log):
+    def start_session(self, timestamp, ingress_node, egress_node,  sfc, log):
         self.session = dict(timestamp=timestamp,
-                            receiver=ingress_node,
-                            request=request,
+                            ingress_node=ingress_node,
+                            egress_node=egress_node,
+                            sfc=sfc,
                             log=log)
 
         if self.collector is not None and self.session['log']:
-            self.collector.start_session(timestamp, ingress_node, request)
+            self.collector.start_session(timestamp, ingress_node, sfc)
 
 
 
@@ -264,6 +265,7 @@ class NetworkController:
         if self.collector is not None and self.session['log']:
             self.collector.request_hop(u, v, main_path)
 
+
     def get_vnf(self, node, sfc):
 
         if node in self.model.cache:
@@ -275,42 +277,8 @@ class NetworkController:
                 else:
                     continue
             if all(value == True for value in is_vnf_proc.values()):
-                self.collector.sfc_acc(sfc)
-
-
-
-
-            cache_hit = self.model.cache[node].get(self.session['vnf'])
-            if cache_hit:
-                if self.session['log']:
-                    self.collector.cache_hit(node)
-            else:
-                if self.session['log']:
-                    self.collector.cache_miss(node)
-            return cache_hit
-        name, props = fnss.get_stack(self.model.topology, node)
-        if name == 'source' and self.session['content'] in props['contents']:
-            if self.collector is not None and self.session['log']:
-                self.collector.server_hit(node)
-            return True
-        else:
-            return False
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                if self.collector is not None and self.session['log']:
+                    self.collector.sfc_acc(sfc)
 
 
     def end_session(self, success=True):
