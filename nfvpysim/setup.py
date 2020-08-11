@@ -20,13 +20,13 @@ requires = [
 # and some required dependencies were not installed, that would fail
 # This is the only way to access the release module without needing all
 # dependencies.
-sys.path.insert(0, 'icarus')
+sys.path.insert(0, 'nfvpysim')
 import release
 sys.path.pop(0)
 
 # Clean tasks
 if os.path.exists('MANIFEST'): os.remove('MANIFEST')
-if os.path.exists('icarus.egg-info'): rmtree('icarus.egg-info')
+if os.path.exists('nfvpysim.egg-info'): rmtree('nfvpysim.egg-info')
 
 
 # Main scripts
@@ -57,7 +57,7 @@ if __name__ == "__main__":
              'Programming Language :: Python :: 3.8',
              'Topic :: Scientific/Engineering',
         ],
-        entry_points={'console_scripts': {"{0} = {0}.main:main".format('icarus')}},
+        entry_points={'console_scripts': {"{0} = {0}.main:main".format('nfvpysim')}},
         description=release.description_short,
         long_description=release.description_long,
         python_requires='>=2.7.9, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*',
