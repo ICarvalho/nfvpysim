@@ -3,8 +3,10 @@ import networkx as nx
 from tools.stats import TruncatedZipfDist
 from topologies.topology import topology_tatanld
 from model.request import *
+from model.registry import register_workload
 
 
+@register_workload('STATIONARY_RANDOM_SFC')
 class StationaryWorkloadRandomSfc:
 
     """
@@ -63,6 +65,7 @@ class StationaryWorkloadRandomSfc:
         raise StopIteration()
 
 
+@register_workload('STATIONARY_VAR_LEN_SFC')
 class StationaryWorkloadVarLenSfc:
     """
     This function generates events on the fly, i.e. instead of creating an
@@ -113,14 +116,6 @@ class StationaryWorkloadVarLenSfc:
         raise StopIteration()
 
 
-
-
-topo = topology_tatanld()
-
-print(len(topo.nodes()))
-workload = StationaryWorkloadVarLenSfc(topo)
-for i in workload:
-    print(i)
 
 
 
