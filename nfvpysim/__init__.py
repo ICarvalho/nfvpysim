@@ -8,7 +8,7 @@ del sys
 
 
 # Import release information
-import icarus.release as release
+import nfvpysim.release as release
 
 __author__ = release.author
 __version__ = release.version
@@ -39,6 +39,6 @@ for m in __modules_to_register:
 del m
 
 # Imports
-from .model import *
-from .tools import *
+from nfvpysim.model import *
+from nfvpysim.tools import *
 from nfvpysim.runner import run
