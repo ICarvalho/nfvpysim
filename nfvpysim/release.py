@@ -5,14 +5,14 @@ information.
 """
 # author information.
 # Used by __init__, doc and setup
-author = 'Lorenzo Saino, Ioannis Psaras'
-author_email = 'icarus@ee.ucl.ac.uk'
+author = 'Igor Furtado Carvalho'
+author_email = 'igfuca@gmail.com'
 maintainer = author
 maintainer_email = author_email
 
 # version information
 # Used by __init__, doc and setup
-version = '0.7.0'
+version = '0.1.0'
 
 # License information
 # Used by __init__, doc and setup
@@ -31,5 +31,6 @@ with few lines of code.
 """
 
 # URL
-url = 'http://icarus_sim.github.io/'
+
+url = 'https://github.com/ICarvalho/TESE'
 download_url = url

@@ -28,6 +28,7 @@ __modules_to_register = [
      'nfvpysim.scenarios.vnfplacement',
      'nfvpysim.scenarios.vnfallocation',
      'nfvpysim.scenarios.workload',
+     'nfvpysim'
 
 
                          ]

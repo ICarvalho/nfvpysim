@@ -32,7 +32,7 @@ if os.path.exists('nfvpysim.egg-info'): rmtree('nfvpysim.egg-info')
 # Main scripts
 if __name__ == "__main__":
     setup(
-        name='icarus',
+        name='nfvpysim',
         version=release.version,
         author=release.author,
         author_email=release.author_email,

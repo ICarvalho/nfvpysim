@@ -1,64 +1,46 @@
-#!/usr/bin/env python
-"""Run the NFVPysim simulator.
-This script automatically adds NFVPysim source folder to the PYTHONPATH and then
-executes the simulator according to the settings specified in the provided
-configuration file.
-Usage:
-  nfvpysim run -r RESULTS [-c CONFIG_OVERRIDE] [-v] config
-  nfvpysim results print [--json] RESULTS
-  nfvpysim results merge -o OUTPUT INPUT_1 ... INPUT_N
-"""
-import click
+SHELL = /bin/bash -euo pipefail
 
-import nfvpysim
+DOC_DIR = doc
 
+PYTHON_VERSION ?= 3.7
 
-CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+.PHONY: install test doc doc-clean doc-upload clean dist-clean build-container docker-shell
 
+all: install
 
-read = nfvpysim.registry.RESULTS_READER['PICKLE']
-write = nfvpysim.registry.RESULTS_WRITER['PICKLE']
+build-container:
+	docker build --build-arg PYTHON_VERSION=$(PYTHON_VERSION) -t nfvpysim .
 
+docker-shell: build-container
+	docker run --rm -it nfvpysim
 
-@click.group(context_settings=CONTEXT_SETTINGS)
-@click.version_option(icarus.__version__)
-def main():
-    pass
+# Install all dependencies as well as Icarus in developer mode
+install:
+	pip install --upgrade pip setuptools
+	pip install --upgrade -r requirements.txt
+	pip install --upgrade -e .
 
+# Run all test cases
+#test:
+	#python -m pytest icarus
 
-@main.command(context_settings=CONTEXT_SETTINGS)
-@click.option('--results', '-r', required=True,
-              help='The file on which results will be saved')
-@click.option('--config-override', '-c', multiple=True,
-              help='Override specific key=value parameter of configuration file')
-@click.argument('config', nargs=1, required=True)
-def run(results, config_override, config):
-    """Run a set of simulations."""
-    config_override = dict(c.split("=") for c in config_override) or None
-    nfvpysim.run(config, results, config_override)
+# Build HTML documentation
+doc: doc-clean
+	make -C $(DOC_DIR) html
 
+# Clean documentation
+doc-clean:
+	make -C $(DOC_DIR) clean
 
-@main.group(context_settings=CONTEXT_SETTINGS)
-def results():
-    """Process results from a previous simulation"""
-    pass
+# Upload documentation to Icarus website
+# requires write permissions to icarus-sim/icarus-sim.github.io
+doc-upload:
+	make -C $(DOC_DIR) upload
 
+# Delete temp files
+clean: doc-clean dist-clean
+	find . -name "*.py[cod]" -o -name "*__pycache__" | xargs rm -rf
 
-@results.command('merge', context_settings=CONTEXT_SETTINGS)
-@click.option('--output', '-o', nargs=1, required=True, help='The output file')
-@click.argument('inputs', nargs=-1, required=True)
-def merge_results(output, inputs):
-    """Merge multiple results files into one."""
-    write(sum((read(i) for i in inputs[1:]), read(inputs[0])), output)
-
-
-@results.command('print', context_settings=CONTEXT_SETTINGS)
-@click.option('--json', '-j', is_flag=True, help='Print results in JSON format')
-@click.argument('path')
-def print_results(json, path):
-    """Print content of a results file."""
-    rs = read(path)
-    if json:
-        print(rs.json(indent=4))
-    else:
-        print(rs.prettyprint())
+# Delete build files
+dist-clean:
+	rm -rf nfvpysim.egg-info MANIFEST dist
