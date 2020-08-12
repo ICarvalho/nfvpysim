@@ -4,7 +4,7 @@ import numpy as np
 import abc
 from collections import deque
 from nfvpysim.registry import register_cache_policy
-from nfvpysim.tools.util import apportionment, inheritdoc
+from nfvpysim.util import apportionment, inheritdoc
 
 class LinkedSet(object):
     """A doubly-linked set, i.e., a set whose entries are ordered and stored

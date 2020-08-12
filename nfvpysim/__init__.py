@@ -21,13 +21,14 @@ __license__ = release.license_short
 # executed and the classes/functions registered.
 __modules_to_register = [
      'nfvpysim.model.cache',
-     'nfvpysim.collectors.collectors',
+     'nfvpysim.model.policy',
      'nfvpysim.results.readwrite',
-     'nfvpysim.topologies.topology',
+     'nfvpysim.execution.collectors',
+     'nfvpysim.scenarios.topology',
      'nfvpysim.scenarios.vnfplacement',
      'nfvpysim.scenarios.vnfallocation',
-     'nfvpysim.model.workload',
-     'nfvpysim.registry',
+     'nfvpysim.scenarios.workload',
+
                          ]
 
 for m in __modules_to_register:

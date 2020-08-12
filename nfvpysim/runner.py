@@ -8,7 +8,7 @@ import functools
 import logging
 import multiprocessing as mp
 
-from nfvpysim.tools.util import Settings, config_logging
+from nfvpysim.util import Settings, config_logging
 from nfvpysim.registry import RESULTS_WRITER
 from nfvpysim.orchestration import Orchestrator
 

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from nfvpysim.tools.util import path_links
+from nfvpysim.util import path_links
 from nfvpysim.registry import register_policy
 
 
