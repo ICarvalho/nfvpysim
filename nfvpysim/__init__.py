@@ -11,7 +11,7 @@ del sys
 import nfvpysim.release as release
 
 __author__ = release.author
-__version__ = release.version
+#__version__ = release.version
 __license__ = release.license_short
 
 
@@ -28,9 +28,6 @@ __modules_to_register = [
      'nfvpysim.scenarios.vnfplacement',
      'nfvpysim.scenarios.vnfallocation',
      'nfvpysim.scenarios.workload',
-     'nfvpysim'
-
-
                          ]
 
 for m in __modules_to_register:

@@ -12,7 +12,7 @@ import argparse
 def main():
     src_dir = os.path.abspath(os.path.dirname(__file__))
     sys.path.insert(0, src_dir)
-    from nfvpysim import __version__
+    #from nfvpysim import __version__
     from nfvpysim.runner import run
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("-r", "--results", dest="results",
@@ -23,8 +23,8 @@ def main():
                         required=False)
     parser.add_argument("config",
                         help="configuration file")
-    parser.add_argument('-v', '--version', action='version',
-                        version="nfvpysim {}".format(__version__))
+    #parser.add_argument('-v', '--version', action='version',
+                        #version="nfvpysim {}".format(__version__))
     args = parser.parse_args()
     config_override = dict(c.split("=") for c in args.config_override) \
                       if args.config_override else None
