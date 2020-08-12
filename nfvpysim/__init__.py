@@ -29,6 +29,7 @@ __modules_to_register = [
      'nfvpysim.scenarios.vnfallocation',
      'nfvpysim.scenarios.workload',
 
+
                          ]
 
 for m in __modules_to_register:
@@ -41,8 +42,9 @@ for m in __modules_to_register:
 del m
 
 # Imports
-from .model import *
-from .tools import *
-from .runner import run
+from nfvpysim.model import *
+from nfvpysim.tools import *
+from nfvpysim.runner import run
+from nfvpysim.registry import *
 
 
