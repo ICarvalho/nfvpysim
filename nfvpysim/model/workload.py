@@ -1,5 +1,5 @@
 from nfvpysim.model.request import *
-from nfvpysim.model.registry import register_workload
+from nfvpysim.registry import register_workload
 
 
 @register_workload('STATIONARY_RANDOM_SFC')

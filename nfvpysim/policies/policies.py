@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from nfvpysim.tools.util import path_links
-from nfvpysim.model.registry import register_policy
+from nfvpysim.registry import register_policy
 
 
 class Policy(ABC):

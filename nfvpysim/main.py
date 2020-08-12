@@ -16,8 +16,8 @@ import nfvpysim
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 
-read = nfvpysim.model.registry.RESULTS_READER['PICKLE']
-write = nfvpysim.model.registry.RESULTS_WRITER['PICKLE']
+read = nfvpysim.registry.RESULTS_READER['PICKLE']
+write = nfvpysim.registry.RESULTS_WRITER['PICKLE']
 
 
 @click.group(context_settings=CONTEXT_SETTINGS)

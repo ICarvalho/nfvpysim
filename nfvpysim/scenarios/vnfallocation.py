@@ -1,6 +1,6 @@
 from __future__ import division
 
-from nfvpysim.model.registry import register_vnf_allocation
+from nfvpysim.registry import register_vnf_allocation
 
 __all__ = [
     'uniform_cache_placement',

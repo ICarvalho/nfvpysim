@@ -3,7 +3,7 @@ from __future__ import division
 import numpy as np
 import abc
 from collections import deque
-from nfvpysim.model.registry import register_cache_policy
+from nfvpysim.registry import register_cache_policy
 from nfvpysim.tools.util import apportionment, inheritdoc
 
 class LinkedSet(object):

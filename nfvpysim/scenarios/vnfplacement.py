@@ -1,6 +1,6 @@
 from __future__ import division
 import random
-from nfvpysim.model.registry import register_vnf_placement
+from nfvpysim.registry import register_vnf_placement
 from collections import defaultdict
 
 
