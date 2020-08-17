@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 
 import sys
-
 if sys.version_info[:2] < (2, 7):
     m = "Python version 2.7 or later is required for Icarus (%d.%d detected)."
     raise ImportError(m % sys.version_info[:2])
@@ -12,7 +11,7 @@ del sys
 import nfvpysim.release as release
 
 __author__ = release.author
-__version__ = release.version
+#__version__ = release.version
 __license__ = release.license_short
 
 
@@ -29,7 +28,6 @@ __modules_to_register = [
      'nfvpysim.scenarios.vnfplacement',
      'nfvpysim.scenarios.vnfallocation',
      'nfvpysim.scenarios.workload',
-
                          ]
 
 for m in __modules_to_register:
@@ -42,6 +40,9 @@ for m in __modules_to_register:
 del m
 
 # Imports
-
+from nfvpysim.model import *
+from nfvpysim.tools import *
+from nfvpysim.runner import run
+from nfvpysim.registry import *
 
 

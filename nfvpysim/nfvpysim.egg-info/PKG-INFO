@@ -14,7 +14,7 @@ Description: Icarus is a Python-based discrete-event simulator for
         implement and evaluate new caching policies or caching and routing strategy
         with few lines of code.
         
-Keywords: vnf,simulation,Network Function Virtualization,Service Function Chaining
+Keywords: caching,simulation,Information-Centric Networking,Content Delivery Networks
 Platform: UNKNOWN
 Classifier: Development Status :: 5 - Production/Stable
 Classifier: Intended Audience :: Developers
