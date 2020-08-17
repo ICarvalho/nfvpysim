@@ -6,4 +6,4 @@ tox
 
 # Documentation
 numpydoc
-sphinx
+echo

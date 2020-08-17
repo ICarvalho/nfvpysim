@@ -63,9 +63,9 @@ if __name__ == "__main__":
         python_requires='>=2.7.9, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*',
         install_requires=requires,
         keywords=[
-            'caching',
+            'vnf',
             'simulation',
-            'Information-Centric Networking',
-            'Content Delivery Networks',
+            'Network Function Virtualization',
+            'Service Function Chaining',
         ],
     )
