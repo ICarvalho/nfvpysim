@@ -9,7 +9,6 @@ Usage:
   icarus results merge -o OUTPUT INPUT_1 ... INPUT_N
 """
 import click
-
 import nfvpysim
 
 
