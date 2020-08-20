@@ -1,10 +1,8 @@
-import random
-import networkx as nx
-from tools.stats import TruncatedZipfDist
-from topologies.topology import topology_tatanld
-from model.request import *
+from nfvpysim.model.request import *
+from nfvpysim.registry import register_workload
 
 
+@register_workload('STATIONARY_RANDOM_SFC')
 class StationaryWorkloadRandomSfc:
 
     """
@@ -21,13 +19,10 @@ class StationaryWorkloadRandomSfc:
 
     """
 
-    def __init__(self, topology, n_vnfs =7, rate=1.0, n_warmup=0,  n_req=10**3, seed=None, **kwargs):
+    def __init__(self, topology,  rate=1.0,  n_req=10**3, seed=None, **kwargs):
 
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
-        self.n_vnfs = n_vnfs
-        self.n_warmup = n_warmup
-        self.vnfs = range(1, n_vnfs + 1)
         self.rate = rate
         self.n_req = n_req
         random.seed(seed)
@@ -59,13 +54,14 @@ class StationaryWorkloadRandomSfc:
             ingress_node = random.choice(self.ingress_nodes)
             egress_node = random.choice(self.egress_nodes)
             sfc = StationaryWorkloadRandomSfc.select_random_sfc()
-            log = (req_counter >= self.n_warmup)
+            log = (req_counter < self.n_req)
             event = {'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
             yield (t_event, event)
             req_counter += 1
         raise StopIteration()
 
 
+@register_workload('STATIONARY_VAR_LEN_SFC')
 class StationaryWorkloadVarLenSfc:
     """
     This function generates events on the fly, i.e. instead of creating an
@@ -81,13 +77,10 @@ class StationaryWorkloadVarLenSfc:
 
     """
 
-    def __init__(self, topology, n_vnfs=7, rate=1.0, n_warmup=0,  n_req=10 ** 4, seed=None, **kwargs):
+    def __init__(self, topology, rate=1.0,  n_req=10 ** 3, seed=None, **kwargs):
 
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
-        self.n_vnfs = n_vnfs
-        self.n_warmup = n_warmup
-        self.vnfs = range(1, n_vnfs + 1)
         self.rate = rate
         self.n_req = n_req
         random.seed(seed)
@@ -119,14 +112,6 @@ class StationaryWorkloadVarLenSfc:
         raise StopIteration()
 
 
-
-
-topo = topology_tatanld()
-
-print(len(topo.nodes()))
-workload = StationaryWorkloadRandomSfc(topo)
-for i in workload:
-    print(i)
 
 
 

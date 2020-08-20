@@ -4,16 +4,16 @@
 CACHE_POLICY = {}
 
 # Dictionary storying all strategy implementations keyed by ID
-STRATEGY = {}
+POLICY = {}
 
 # Dictionary storying all network topologies keyed by ID
 TOPOLOGY_FACTORY = {}
 
 # Dictionary storying all cache placement functions keyed by ID
-CACHE_PLACEMENT = {}
+VNF_ALLOCATION = {}
 
 # Dictionary storying all content placement functions keyed by ID
-CONTENT_PLACEMENT = {}
+VNF_PLACEMENT = {}
 
 # Dictionary storying all workload generators keyed by ID
 WORKLOAD = {}
@@ -56,10 +56,10 @@ def register_decorator(register):
 
 
 register_cache_policy = register_decorator(CACHE_POLICY)
-register_strategy = register_decorator(STRATEGY)
+register_policy = register_decorator(POLICY)
 register_topology_factory = register_decorator(TOPOLOGY_FACTORY)
-register_cache_placement = register_decorator(CACHE_PLACEMENT)
-register_content_placement = register_decorator(CONTENT_PLACEMENT)
+register_vnf_allocation = register_decorator(VNF_ALLOCATION)
+register_vnf_placement = register_decorator(VNF_PLACEMENT)
 register_workload = register_decorator(WORKLOAD)
 register_data_collector = register_decorator(DATA_COLLECTOR)
 register_results_reader = register_decorator(RESULTS_READER)

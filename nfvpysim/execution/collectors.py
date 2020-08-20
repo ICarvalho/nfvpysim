@@ -1,5 +1,5 @@
-from tools.util import Tree
-from tools.stats import cdf
+from nfvpysim.util import Tree
+from nfvpysim.tools.stats import cdf
 import collections
 
 
@@ -26,6 +26,11 @@ class DataCollector:
         pass
 
 
+    def sfc_acc(self, sfc):
+
+        pass
+
+
 
     def end_session(self, success=True):
 
@@ -41,14 +46,13 @@ class DataCollector:
 class CollectorProxy(DataCollector):
 
 
-    EVENTS = ('start_session', 'enabled_path' 'end_session', 'request_hop', 'results')
+    EVENTS = ('start_session', 'sfc_acc' 'end_session', 'request_hop', 'results')
 
     def __init__(self, view, collectors):
 
         self.view = view
         self.collectors =  {e: [c for c in collectors if e in type(c).__dict__]
                              for e in self.EVENTS}
-
 
 
     def start_session(self, timestamp, ingress_node, sfc):
@@ -62,9 +66,11 @@ class CollectorProxy(DataCollector):
             c.request_hop(u, v, path)
 
 
-    def enabled_path(self, path):
-        for c in self.collectors['enabled_path']:
-            c.enable_path(path)
+    def sfc_acc(self, sfc ):
+        for c in self.collectors['sfc_acc']:
+            c.sfc_acc(sfc)
+
+
 
 
     def end_session(self, success=True):
@@ -101,7 +107,7 @@ class LinkLoadCollector(DataCollector):
         self.t_end = 1
 
 
-    def start_session(self, timestamp, ingress_node, sfc):
+    def start_session(self, timestamp, ingress_node, egress_node,  sfc):
         if self.t_start < 0:
             self.t_start = timestamp
         self.t_end = timestamp
@@ -157,7 +163,7 @@ class LatencyCollector(DataCollector):
             self.latency_data = collections.deque()
 
 
-    def start_session(self, timestamp, ingress_node, sfc):
+    def start_session(self, timestamp, ingress_node, egress_node, sfc):
         self.sess_count += 1
         self.sess_latency = 0.0
 
@@ -193,55 +199,26 @@ class AcceptanceRatio(DataCollector):
 
         self.view = view
         self.sess_count = 0
-        self.acc_req = 0
+        self.acc_sfc = 0
+
         if per_sfc:
             self.per_sfc_ratio = collections.defaultdict(int)
 
-        def start_session(self, timestamp, ingress_node, sfc):
+        def start_session(self, timestamp, ingress_node, egress_node, sfc):
             self.sess_count += 1
+            self.curr_path = self.view.shortest_path(ingress_node, egress_node)
 
 
+        def sfc_acc(self, sfc):
+            self.acc_sfc += 1
+            if self.per_sfc_ratio:
+                self.per_sfc_ratio[sfc] += 1
 
+        def results(self):
+            n_sess = self.acc_sfc
+            sfc_acc_ratio = self.acc_sfc / n_sess
+            results = Tree(**{'MEAN': sfc_acc_ratio})
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            return results
 
 

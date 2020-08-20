@@ -1,10 +1,8 @@
 import networkx as nx
 import fnss
-from topologies.topology import topology_geant, topology_datacenter_two_tier, topology_tatanld
-from model.registry import CACHE_POLICY
-from model.request import *
-from model.nodes import *
-from model.vnfs import *
+from nfvpysim.registry import CACHE_POLICY
+from nfvpysim.model.request import *
+from nfvpysim.util import path_links
 import logging
 logger = logging.getLogger('orchestration')
 
@@ -49,6 +47,7 @@ class NetworkView:
         return self.model.calculate_shortest_path[ingress_node][egress_node]
 
 
+    """
     def vnf_location(self, vnf):
         loc = set(v for v in self.model.cache if self.model.cache[v].has(vnf))
         source = self.vnf_source(vnf)
@@ -60,7 +59,7 @@ class NetworkView:
     def vnf_source(self, vnf):
         return self.model.vnf_source.get(vnf, None)
 
-
+    """
 
 
     def all_pairs_shortest_paths(self):
@@ -78,9 +77,6 @@ class NetworkView:
     def topology(self):
         return self.model.topology
 
-
-    def nfv_nodes(self):
-        return {v:c.max_n_vnfs for v, c in self.model.cache.items()}
 
     def vnf_lookup(self, node, vnf):
         if node in self.model.cache:
@@ -103,6 +99,7 @@ class NetworkModel:
 
     def __init__(self, topology, cache_policy, shortest_path=None): #, policy, shortest_path=None):
 
+        self.cache = None
         if not isinstance(topology, fnss.Topology):
             raise ValueError('The topology argument must be an'
                              'instance of fnss.Topology or any of its subclasses')
@@ -146,8 +143,8 @@ class NetworkModel:
                     self.egress_nodes[node] = stack_props['id']
 
             elif stack_name == 'nfv_node':
-                if 'vnfs' in stack_props:
-                    nfv_nodes[node] = stack_props['vnfs']
+                if 'n_vnfs' in stack_props:
+                    nfv_nodes[node] = stack_props['n_vnfs']
 
 
             elif stack_name == 'fw_node':
@@ -207,6 +204,20 @@ class NetworkModel:
 
             return nfv_nodes
 
+
+
+    def check_nfv_nodes_path(self, path):
+        for node in path:
+            if self.topology.node[node]['stack'][0] == 'nfv_node':
+                return True
+            else:
+                return False
+
+
+
+
+
+
     def select_ingress_node(self, topology):
         return random.choice(self.get_ingress_nodes(topology))
 
@@ -217,8 +228,6 @@ class NetworkModel:
 
 
     # Convert a path expressed as list of nodes into a path expressed as a list of edges.
-    def path_links(self, path):
-        return [(path[i], path[i + 1]) for i in range(len(path) - 1)]
 
 
 
@@ -238,52 +247,26 @@ class NetworkController:
         self.collector = None
 
 
-    def start_session(self, timestamp, ingress_node, request, log):
+    def start_session(self, timestamp, ingress_node, egress_node,  sfc, log):
         self.session = dict(timestamp=timestamp,
-                            receiver=ingress_node,
-                            request=request,
+                            ingress_node=ingress_node,
+                            egress_node=egress_node,
+                            sfc=sfc,
                             log=log)
 
         if self.collector is not None and self.session['log']:
-            self.collector.start_session(timestamp, ingress_node, request)
+            self.collector.start_session(timestamp, ingress_node, sfc)
 
 
 
-
-    def get_sum_cpu_vnfs(self, vnfs):
-        return sum(vnf.get_cpu() for vnf in vnfs)
-
-
-    def is_vnf_on_node(self, node, vnf):
-        if node in self.model.nfv_nodes:
-            if isinstance(self.model.nfv_nodes[node]['stack'][1]['nfv_node_inst'], VnfNode):
-                if self.model.nfv_nodes[node]['stack'][1]['nfv_node_inst'].is_vnf_on_vnf_node(vnf):
-                    return True
-            return False
-
-
-    def proc_req_greedy(self, request, path):
-
-        for node in path:
-            if isinstance(request, (RequestRandomSfc, RequestVarLenSFc)):
-                vnfs = request.get_sfc()
-                sum_cpus_vnfs = self.get_sum_cpu_vnfs(vnfs)
-                is_proc = {vnf: False for vnf in vnfs}
-                stack_name, stack_props = fnss.get_stack(self.model.topology, node)
-                if stack_name == 'nfv_node' and node in self.model.nfv_nodes:
-                    for vnf in vnfs:
-                        if sum_cpus_vnfs <= self.model.nfv_nodes[node].get_cpu():
-                           self.model.nfv_nodes[node].proc_vnf_on_node(vnf)
-                return self.model.nfv_nodes[node].get_cpu()
-
-
-
-    def forward_request_path(self, s, t, path=None, main_path=True):
+    def forward_request_path(self, ingress_node, egress_node, path=None, main_path=True):
 
         if path is None:
-            path = self.model.shortest_path[s][t]
-        for u, v in NetworkModel.path_links(path):
+            path = self.model.shortest_path[ingress_node][egress_node]
+        for u, v in path_links(path):
             self.forward_request_hop(u, v, main_path)
+
+
 
     def forward_request_hop(self, u, v, main_path=True):
 
@@ -291,72 +274,23 @@ class NetworkController:
             self.collector.request_hop(u, v, main_path)
 
 
+    def get_vnf(self, node, sfc):
+
+        if node in self.model.cache:
+            is_vnf_proc = {vnf: False for vnf in sfc}
+            for vnf in sfc:
+                vnf_hit = self.model.cache[node].get(self.session)[vnf]
+                if vnf_hit:
+                    is_vnf_proc[vnf] = True
+                else:
+                    continue
+            if all(value == True for value in is_vnf_proc.values()):
+                if self.collector is not None and self.session['log']:
+                    self.collector.sfc_acc(sfc)
+
+
     def end_session(self, success=True):
 
         if self.collector is not None and self.session['log']:
             self.collector.end_session(success)
         self.session = None
-
-
-
-
-
-
-
-topo = topology_geant()
-
-
-model = NetworkModel(topo)
-view = NetworkView(model)
-contr = NetworkController(model)
-
-ingress = model.select_ingress_node(topo)
-egress = model.select_egress_node(topo)
-
-path = view.model.calculate_shortest_path(topo, ingress, egress)
-all_path = view.model.calculate_all_shortest_paths(topo, ingress, egress)
-
-req = RequestRandomSfc()
-
-proc = contr.proc_req_greedy(req, path)
-
-vnfs = [Nat(), Firewall(), Encrypter()]
-
-
-print(view.model.nfv_nodes)
-
-
-
-
-"""
-
-topo = topology_geant()
-model = NetworkModel(topo)
-view = NetworkView(model)
-
-print(view.model.nfv_nodes)
-
-print(topo.nfv_nodes())
-
-"""
-
-
-
-
-#print(view.model.get_ingress_nodes(topo))
-#print(view.model.select_ingress_node(topo))
-
-#proc = view.model.proc_request_path(topo, req, path)
-
-
-
-#nfv_path = view.model.loc  ate_vnf_nodes_path(topo, path)
-
-
-#print(path)
-#print(rem)
-#print(topo.nfv_nodes())
-#print(all_path)
-#print(topo.nfv_nodes())
-#print(proc)
-
