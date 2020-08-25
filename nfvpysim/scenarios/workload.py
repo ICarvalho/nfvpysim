@@ -63,7 +63,7 @@ class StationaryWorkloadRandomSfc:
                     sfc = StationaryWorkloadRandomSfc.select_random_sfc()
                     log = (req_counter < self.n_req)
                     event = {'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
-                    file_lines = [str(i), '\t',  str(sfc), '\n']
+                    file_lines = [str(i),',', '\t',  str(sfc)[1:-1], '\n']
                     f.writelines(file_lines)
                     yield (t_event, event)
                     req_counter += 1
@@ -123,7 +123,7 @@ class StationaryWorkloadVarLenSfc:
                     sfc = StationaryWorkloadVarLenSfc.var_seq_len_sfc()
                     log = (req_counter < self.n_req)
                     event = {'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
-                    file_lines = [str(i), '\t', str(sfc), '\n']
+                    file_lines = [str(i),',', '\t',  str(sfc)[1:-1], '\n']
                     f.writelines(file_lines)
                     yield (t_event, event)
                     req_counter += 1
@@ -132,7 +132,7 @@ class StationaryWorkloadVarLenSfc:
 
 
 t = topology_geant()
-w = StationaryWorkloadVarLenSfc(t)
+w = StationaryWorkloadRandomSfc(t)
 iter = w.__iter__()
 for i in w:
     print(w)
