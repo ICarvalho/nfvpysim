@@ -9,6 +9,7 @@
       <w>geant</w>
       <w>maxlen</w>
       <w>netconf</w>
+      <w>nfvcache</w>
       <w>nfvpysim</w>
       <w>orch</w>
       <w>sfcs</w>
