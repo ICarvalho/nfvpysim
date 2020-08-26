@@ -3,6 +3,7 @@ from __future__ import division
 import networkx as nx
 import fnss
 from nfvpysim.registry import register_topology_factory
+import random
 
 __all__ = [
         'NfvTopology',
@@ -109,7 +110,7 @@ class NfvTopology(fnss.Topology):
 @register_topology_factory('GEANT')
 def topology_geant(**kwargs):
 
-    topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/datasets/Geant2012.graphml').to_undirected() # 61 nodes
+    topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/datasets/Geant2012.graphml').to_undirected() # 61 nodes
     deg = nx.degree(topology)
     ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 8 nodes
     nfv_nodes = [v for v in topology.nodes() if deg[v] > 2]   # 19 nodes
@@ -151,7 +152,7 @@ def topology_geant(**kwargs):
 @register_topology_factory('TATANLD')
 def topology_tatanld(**kwargs):
 
-    topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/datasets/TataNld.graphml').to_undirected() # 186 nodes
+    topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/datasets/TataNld.graphml').to_undirected() # 186 nodes
     deg = nx.degree(topology)
     ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 80 nodes
     nfv_nodes = [v for v in topology.nodes() if deg[v] > 2]   # 34 nodes
