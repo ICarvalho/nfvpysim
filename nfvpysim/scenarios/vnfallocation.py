@@ -23,9 +23,9 @@ def uniform_cache_placement(topology, **kwargs):
 
     """
     nfv_nodes = get_nfv_nodes(topology)
-    cache_size = 7  # the maximum number of vnfs on the system
+    n_vnfs = 7  # the maximum number of vnfs on the system
     for v in nfv_nodes:
-        topology.node[v]['stack'][1]['n_vnfs'] = cache_size
+        topology.node[v]['stack'][1]['n_vnfs'] = n_vnfs
 
 
 

@@ -30,10 +30,10 @@ N_REPLICATIONS = 3
 # The implementation of data collectors are located in ./icarus/execution/collectors.py
 # Remove collectors not needed
 DATA_COLLECTORS = [
-           'CACHE_HIT_RATIO',  # Measure cache hit ratio
+           'ACC_RATIO',  # Measure acceptance hit ratio
            'LATENCY',  # Measure request and response latency (based on static link delays)
            'LINK_LOAD',  # Measure link loads
-           'PATH_STRETCH',  # Measure path stretch
+
                    ]
 
 
@@ -43,11 +43,7 @@ DATA_COLLECTORS = [
 # Default experiment values, i.e. values shared by all experiments
 
 # Number of content objects
-N_CONTENTS = 7
-
-# Number of content requests generated to pre-populate the caches
-# These requests are not logged
-N_WARMUP_REQUESTS = 0
+N_VNFS = 7
 
 # Number of content requests that are measured after warmup
 N_MEASURED_REQUESTS = 10 ** 3

@@ -12,9 +12,6 @@ __all__ = [
         ]
 
 
-
-
-
 INTERNAL_LINK_DELAY = 2
 EXTERNAL_LINK_DELAY = 34
 
