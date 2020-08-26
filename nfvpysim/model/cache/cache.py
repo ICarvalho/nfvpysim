@@ -13,10 +13,23 @@ class Deque:
         return self.items == []
 
     def add_item(self, item):
-        self.items.append(item)
+        if item not in self.items:
+            self.items.append(item)
+        else:
+            pass
+
+    def add_items(self, items):
+        for item in items:
+            if item not in self.items:
+                self.items.append(item)
+            else:
+                pass
 
     def remove_item(self, item):
-        return self.items.remove(item)
+        if item not in self.items:
+            pass
+        else:
+            return self.items.remove(item)
 
     def size(self):
         return len(self.items)
@@ -37,9 +50,11 @@ class NfvCache:
     def add_vnf(self, vnf):
         return self._nfvcache.add_item(vnf)
 
+    def add_vnfs(self, vnfs):
+        return self._nfvcache.add_items(vnfs)
+
     def len_nfv_cache(self):
         return self._nfvcache.size()
-
 
     def has_vnf(self, vnf):
         return self._nfvcache.has_item(vnf)

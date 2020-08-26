@@ -1,4 +1,4 @@
-    from nfvpysim.util import Tree
+from nfvpysim.util import Tree
 from nfvpysim.tools.stats import cdf
 import collections
 
@@ -13,32 +13,22 @@ class DataCollector:
 
 
     def start_session(self, timestamp, ingress_node, sfc):
-
         pass
 
 
     def request_hop(self, u, v, path):
-
         pass
 
     def enabled_path(self, path):
-
         pass
-
 
     def sfc_acc(self, sfc):
-
         pass
-
-
 
     def end_session(self, success=True):
-
         pass
 
-
     def results(self):
-
         pass
 
 
