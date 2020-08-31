@@ -5,7 +5,7 @@ from collections import defaultdict
 
 
 __all__ = [
-    'uniform_vnf_placement',
+    'random_vnf_placement',
           ]
 
 
@@ -46,8 +46,8 @@ def apply_vnfs_placement(placement, topology):
 
 
 
-@register_vnf_placement('UNIFORM')
-def uniform_vnf_placement(topology, seed=None, **kwargs):
+@register_vnf_placement('RANDOM')
+def random_vnf_placement(topology, seed=None, **kwargs):
 
     random.seed(seed)
     nfv_nodes_candidates = get_nfv_nodes(topology)

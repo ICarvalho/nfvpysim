@@ -59,6 +59,9 @@ class NfvCache:
     def has_vnf(self, vnf):
         return self._nfvcache.has_item(vnf)
 
+    def get_vnf(self, vnf):
+        return self.has_vnf(vnf)
+
     def remove_vnf(self, vnf):
         return self._nfvcache.remove_item(vnf)
 
