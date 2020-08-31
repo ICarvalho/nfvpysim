@@ -11,7 +11,7 @@ del sys
 import nfvpysim.release as release
 
 __author__ = release.author
-#__version__ = release.version
+__version__ = release.version
 __license__ = release.license_short
 
 
@@ -43,6 +43,5 @@ del m
 from .model import *
 from .tools import *
 from .runner import run
-from .registry import *
 
 

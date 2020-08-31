@@ -20,7 +20,7 @@ write = nfvpysim.registry.RESULTS_WRITER['PICKLE']
 
 
 @click.group(context_settings=CONTEXT_SETTINGS)
-#@click.version_option(nfvpysim.__version__)
+@click.version_option(nfvpysim.__version__)
 def main():
     pass
 
@@ -61,3 +61,4 @@ def print_results(json, path):
         print(rs.json(indent=4))
     else:
         print(rs.prettyprint())
+

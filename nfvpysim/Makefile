@@ -2,7 +2,7 @@ SHELL = /bin/bash -euo pipefail
 
 DOC_DIR = doc
 
-PYTHON_VERSION ?= 3.7
+PYTHON_VERSION ?= 3.8
 
 .PHONY: install test doc doc-clean doc-upload clean dist-clean build-container docker-shell
 
