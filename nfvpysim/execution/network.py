@@ -194,28 +194,15 @@ class NetworkModel:
 
             return egr_nodes
 
-    def get_nfv_nodes(self, topology):
-
-        if isinstance(topology, fnss.Topology):
-            nfv_nodes = []
-            for node in topology.nodes():
-                stack_name, stack_props = fnss.get_stack(topology, node)
-                if stack_name == 'nfv_node':
-                    nfv_nodes.append(node)
-
-            return nfv_nodes
 
 
+    def get_nfv_nodes(self, path):
 
-    def check_nfv_nodes_path(self, path):
+        nfv_nodes = []
         for node in path:
             if self.topology.node[node]['stack'][0] == 'nfv_node':
-                return True
-            else:
-                return False
-
-
-
+                    nfv_nodes.append(node)
+        return nfv_nodes
 
 
 
@@ -225,10 +212,6 @@ class NetworkModel:
 
     def select_egress_node(self, topology):
         return random.choice(self.get_egress_nodes(topology))
-
-
-
-    # Convert a path expressed as list of nodes into a path expressed as a list of edges.
 
 
 
@@ -290,6 +273,33 @@ class NetworkController:
                 if self.collector is not None and self.session['log']:
                     self.collector.sfc_acc(sfc)
             return vnf_hit
+
+
+    def first_fit(self, path):
+        dict_vnfs_cpu_req = {1: 15,  # nat
+                             2: 25,  # fw
+                             3: 25,  # ids
+                             4: 20,  # wanopt
+                             5: 20,  # lb
+                             6: 25,  # encrypt
+                             7: 25  # decrypt
+                             }
+        dict_nodes_first_fit = defaultdict(dict)
+        for node in path:
+            for vnf, cpu_req in dict_vnfs_cpu_req.items():
+                if node in self.model.cache:
+                    if self.model.has_vnf(vnf):
+                        dict_nodes_first_fit[node][vnf] = cpu_req
+
+
+
+
+
+
+
+
+
+
 
 
     def end_session(self, success=True):

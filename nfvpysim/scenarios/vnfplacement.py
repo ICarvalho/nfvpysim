@@ -5,7 +5,7 @@ from collections import defaultdict
 
 
 __all__ = [
-    'random_vnf_placement',
+    'random_policy',
           ]
 
 
@@ -13,8 +13,7 @@ def get_nfv_nodes(topology):
     return [v for v in topology if topology.node[v]['stack'][0] == 'nfv_node']
 
 
-def select_target_vnfs():
-
+def random_placement():
     dict_vnfs_cpu_req = {1: 15,  # nat
                          2: 25,  # fw
                          3: 25,  # ids
@@ -24,37 +23,67 @@ def select_target_vnfs():
                          7: 25   # decrypt
                         }
 
-    sum_vnfs_cpu = 0
     selected_vnfs = set()
-    while sum_vnfs_cpu <= 100:
-        for vnf in range(1, 8):
-            target_vnf = random.choice(list(dict_vnfs_cpu_req.keys()))
-            if target_vnf not in selected_vnfs:
-                selected_vnfs.add(target_vnf)
-                sum_vnfs_cpu += dict_vnfs_cpu_req[target_vnf]
-            if sum_vnfs_cpu >= 100:
-                break
+    for vnf in range(1, random.randint(1,3)+1):
+        target_vnf = random.choice(list(dict_vnfs_cpu_req.keys()))
+        if target_vnf not in selected_vnfs:
+            selected_vnfs.add(target_vnf)
 
     return selected_vnfs
 
 
 
-def apply_vnfs_placement(placement, topology):
 
+def apply_vnfs_placement(placement, topology):
     for v, vnfs in placement.items():
         topology.node[v]['stack'][1]['n_vnfs'] = vnfs
 
 
+##################################  VNF PLACEMENT POLICIES #############################################################
 
 @register_vnf_placement('RANDOM')
-def random_vnf_placement(topology, seed=None, **kwargs):
-
+def random_policy(topology, seed=None, **kwargs):
     random.seed(seed)
     nfv_nodes_candidates = get_nfv_nodes(topology)
     vnf_placement = defaultdict(set)
-    vnfs = select_target_vnfs()
+    vnfs = random_placement()
     for v in nfv_nodes_candidates:
         topology.node[v]['stack'][1]['n_vnfs'] = vnfs
     apply_vnfs_placement(vnf_placement, topology)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
