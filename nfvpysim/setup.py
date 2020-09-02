@@ -1,6 +1,9 @@
 """Setup script"""
-import sys
-import os
+
+import os, sys
+dir_path = os.path.dirname(os.path.realpath(__file__))
+parent_dir_path = os.path.abspath(os.path.join(dir_path, os.pardir))
+sys.path.insert(0, parent_dir_path)
 from shutil import rmtree
 
 from setuptools import find_packages, setup
