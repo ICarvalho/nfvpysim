@@ -61,3 +61,4 @@ def print_results(json, path):
         print(rs.json(indent=4))
     else:
         print(rs.prettyprint())
+

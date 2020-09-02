@@ -21,7 +21,7 @@ class StationaryWorkloadRandomSfc:
 
     """
 
-    def __init__(self, topology,  rate=1.0,  n_req=10**4, seed=None, **kwargs):
+    def __init__(self, topology,  rate=1.0,  n_req=10**6, seed=None, **kwargs):
 
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']

@@ -15,13 +15,7 @@ def get_nfv_nodes(topology):
 
 @register_vnf_allocation('UNIFORM')
 def uniform_cache_placement(topology, **kwargs):
-    """Places cache budget uniformly across cache nodes.
-    Parameters
-    ----------
-    topology : Topology
-        The topology object
 
-    """
     nfv_nodes = get_nfv_nodes(topology)
     n_vnfs = 7  # the maximum number of vnfs on the system
     for v in nfv_nodes:

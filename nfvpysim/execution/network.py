@@ -4,6 +4,7 @@ from nfvpysim.registry import CACHE_POLICY
 from nfvpysim.model.request import *
 from nfvpysim.util import path_links
 import logging
+from collections import defaultdict
 logger = logging.getLogger('orchestration')
 
 def symmetrify_paths(shortest_paths):
@@ -193,28 +194,15 @@ class NetworkModel:
 
             return egr_nodes
 
-    def get_nfv_nodes(self, topology):
-
-        if isinstance(topology, fnss.Topology):
-            nfv_nodes = []
-            for node in topology.nodes():
-                stack_name, stack_props = fnss.get_stack(topology, node)
-                if stack_name == 'nfv_node':
-                    nfv_nodes.append(node)
-
-            return nfv_nodes
 
 
+    def get_nfv_nodes(self, path):
 
-    def check_nfv_nodes_path(self, path):
+        nfv_nodes = []
         for node in path:
             if self.topology.node[node]['stack'][0] == 'nfv_node':
-                return True
-            else:
-                return False
-
-
-
+                    nfv_nodes.append(node)
+        return nfv_nodes
 
 
 
@@ -227,10 +215,6 @@ class NetworkModel:
 
 
 
-    # Convert a path expressed as list of nodes into a path expressed as a list of edges.
-
-
-
 class NetworkController:
 
     def __init__(self, model):
@@ -238,6 +222,7 @@ class NetworkController:
         self.session = None
         self.model = model
         self.collector = None
+        self.sfc_status = defaultdict(dict)
 
     def attach_collector(self, collector):
         self.collector = collector
@@ -255,7 +240,8 @@ class NetworkController:
                             log=log)
 
         if self.collector is not None and self.session['log']:
-            self.collector.start_session(timestamp, ingress_node, sfc)
+            self.collector.start_session(timestamp, ingress_node, egress_node, sfc)
+            self.sfc_status[sfc] = {vnf: False for vnf in sfc}
 
 
 
@@ -277,16 +263,43 @@ class NetworkController:
     def get_vnf(self, node, sfc):
 
         if node in self.model.cache:
-            is_vnf_proc = {vnf: False for vnf in sfc}
             for vnf in sfc:
-                vnf_hit = self.model.cache[node].get(self.session)[vnf]
+                vnf_hit = self.model.cache[node].get_vnf(self.session)[vnf]
                 if vnf_hit:
-                    is_vnf_proc[vnf] = True
+                   self.sfc_status[sfc][vnf] = True
                 else:
                     continue
-            if all(value == True for value in is_vnf_proc.values()):
+            if all(value == True for value in self.sfc_status[sfc].values()):
                 if self.collector is not None and self.session['log']:
                     self.collector.sfc_acc(sfc)
+            return vnf_hit
+
+
+    def first_fit(self, path):
+        dict_vnfs_cpu_req = {1: 15,  # nat
+                             2: 25,  # fw
+                             3: 25,  # ids
+                             4: 20,  # wanopt
+                             5: 20,  # lb
+                             6: 25,  # encrypt
+                             7: 25  # decrypt
+                             }
+        dict_nodes_first_fit = defaultdict(dict)
+        for node in path:
+            for vnf, cpu_req in dict_vnfs_cpu_req.items():
+                if node in self.model.cache:
+                    if self.model.has_vnf(vnf):
+                        dict_nodes_first_fit[node][vnf] = cpu_req
+
+
+
+
+
+
+
+
+
+
 
 
     def end_session(self, success=True):
