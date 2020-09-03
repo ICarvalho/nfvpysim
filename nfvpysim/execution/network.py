@@ -298,40 +298,18 @@ class NetworkController:
         dict_node_cpu = defaultdict()
         if node in self.model.cache:
             for vnf in sfc:
-                if self.has_vnf(vnf) and vnf in self.dict_vnfs_cpu_req.keys():
+                if self.model.has_vnf(vnf) and vnf in self.dict_vnfs_cpu_req.keys():
                     dict_node_cpu[node] = self.dict_vnfs_cpu_req.get(vnf)
 
         return sum(dict_node_cpu.values())
 
 
 
-
-
-
-
     def first_fit(self, path, sfc):
-        node_asc_cpu = []
-        dict_nodes_first_fit = defaultdict(list)
-        for node in path:
-            for vnf in sfc:
-                if node in self.model.cache:
+        target_node = min(self.sum_vnfs_cpu_node(node, sfc) for node in path \
+                    if self.sum_vnfs_cpu_node(node, sfc) <= self.sum_cpu_req_sfc(sfc))
 
-
-
-
-
-                    if not self.model.has_vnf(vnf):
-                        dict_nodes_first_fit[node].append(cpu_req)
-                    else:
-                        continue
-        sum_nodes_cpu = {k: sum(v) for (k, v) in dict_nodes_first_fit.items()}
-        min_nodes_cpu = min(sum_nodes_cpu, key=sum_nodes_cpu.get)
-
-
-
-
-
-
+        return target_node
 
 
 

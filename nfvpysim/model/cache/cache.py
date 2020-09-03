@@ -4,6 +4,7 @@ from nfvpysim.util import apportionment, inheritdoc
 
 
 
+
 class Deque:
 
     def __init__(self):
