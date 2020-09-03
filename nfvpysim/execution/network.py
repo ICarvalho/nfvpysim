@@ -223,6 +223,14 @@ class NetworkController:
         self.model = model
         self.collector = None
         self.sfc_status = defaultdict(dict)
+        self.dict_vnfs_cpu_req = {1: 15,  # nat
+                                  2: 25,  # fw
+                                  3: 25,  # ids
+                                  4: 20,  # wanopt
+                                  5: 20,  # lb
+                                  6: 25,  # encrypt
+                                  7: 25   # decrypt
+                                 }
 
     def attach_collector(self, collector):
         self.collector = collector
@@ -275,21 +283,49 @@ class NetworkController:
             return vnf_hit
 
 
-    def first_fit(self, path):
-        dict_vnfs_cpu_req = {1: 15,  # nat
-                             2: 25,  # fw
-                             3: 25,  # ids
-                             4: 20,  # wanopt
-                             5: 20,  # lb
-                             6: 25,  # encrypt
-                             7: 25  # decrypt
-                             }
-        dict_nodes_first_fit = defaultdict(dict)
+
+
+    def sum_cpu_req_sfc(self, sfc):
+        dict_vnf_cpu = defaultdict()
+        for vnf in sfc:
+            if vnf in self.dict_vnfs_cpu_req.keys():
+                dict_vnf_cpu[vnf] = self.dict_vnfs_cpu_req.get(vnf)
+
+        return sum(dict_vnf_cpu.values())
+
+
+    def sum_vnfs_cpu_node(self, node, sfc):
+        dict_node_cpu = defaultdict()
+        if node in self.model.cache:
+            for vnf in sfc:
+                if self.has_vnf(vnf) and vnf in self.dict_vnfs_cpu_req.keys():
+                    dict_node_cpu[node] = self.dict_vnfs_cpu_req.get(vnf)
+
+        return sum(dict_node_cpu.values())
+
+
+
+
+
+
+
+    def first_fit(self, path, sfc):
+        node_asc_cpu = []
+        dict_nodes_first_fit = defaultdict(list)
         for node in path:
-            for vnf, cpu_req in dict_vnfs_cpu_req.items():
+            for vnf in sfc:
                 if node in self.model.cache:
-                    if self.model.has_vnf(vnf):
-                        dict_nodes_first_fit[node][vnf] = cpu_req
+
+
+
+
+
+                    if not self.model.has_vnf(vnf):
+                        dict_nodes_first_fit[node].append(cpu_req)
+                    else:
+                        continue
+        sum_nodes_cpu = {k: sum(v) for (k, v) in dict_nodes_first_fit.items()}
+        min_nodes_cpu = min(sum_nodes_cpu, key=sum_nodes_cpu.get)
 
 
 
