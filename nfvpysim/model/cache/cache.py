@@ -11,25 +11,24 @@ class Dictionary:
         self.items = defaultdict()
 
     def isEmpty(self):
-        return self.items == []
+        return self.items == {}
 
-    def add_item(self, **item):
-        if not self.has_item(**item):
+    def add_item(self, item):
+        if not self.has_item(item):
             for key, value in item.items():
                 self.items[key] = value
 
-
-    def remove_item(self, **item):
-        if item not in self.items:
-            pass
-        else:
+    def remove_item(self, item):
             return self.items.pop(item, None)
 
     def size(self):
         return len(self.items)
 
-    def has_item(self, **item):
+    def has_item(self, item):
         return item in self.items
+
+    def get_item_values(self):
+        return sum(self.items.values())
 
 
 @register_cache_policy('NFV_CACHE')
@@ -41,7 +40,7 @@ class NfvCache:
         if self._maxlen <= 0:
             raise ValueError('maxlen must be positive')
 
-    def add_vnf(self, **vnf):
+    def add_vnf(self, vnf):
         return self._nfvcache.add_item(vnf)
 
 
@@ -56,6 +55,9 @@ class NfvCache:
 
     def remove_vnf(self, vnf):
         return self._nfvcache.remove_item(vnf)
+
+    def get_sum_vnfs_cpu(self):
+        return self.get_item_values()
 
 
 

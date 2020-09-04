@@ -23,11 +23,12 @@ def random_placement():
                          7: 25   # decrypt
                         }
 
-    selected_vnfs = set()
+    selected_vnfs = defaultdict()
     for vnf in range(1, random.randint(1,3)+1):
-        target_vnf = random.choice(list(dict_vnfs_cpu_req.keys()))
+        target_vnf = random.choice(list(dict_vnfs_cpu_req.items()))
         if target_vnf not in selected_vnfs:
-            selected_vnfs.add(target_vnf)
+            for vnf, cpu in dict_vnfs_cpu_req.items():
+                selected_vnfs[vnf] = cpu
 
     return selected_vnfs
 
@@ -48,7 +49,7 @@ def random_policy(topology, seed=None, **kwargs):
     vnf_placement = defaultdict(set)
     vnfs = random_placement()
     for v in nfv_nodes_candidates:
-        topology.node[v]['stack'][1]['n_vnfs'] = vnfs
+        vnf_placement[v] = vnfs
     apply_vnfs_placement(vnf_placement, topology)
 
 

@@ -286,22 +286,16 @@ class NetworkController:
 
 
     def sum_cpu_req_sfc(self, sfc):
-        dict_vnf_cpu = defaultdict()
-        for vnf in sfc:
-            if vnf in self.dict_vnfs_cpu_req.keys():
-                dict_vnf_cpu[vnf] = self.dict_vnfs_cpu_req.get(vnf)
-
-        return sum(dict_vnf_cpu.values())
+        return sum(sfc.values())
 
 
-    def sum_vnfs_cpu_node(self, node, sfc):
-        dict_node_cpu = defaultdict()
-        if node in self.model.cache:
-            for vnf in sfc:
-                if self.model.has_vnf(vnf) and vnf in self.dict_vnfs_cpu_req.keys():
-                    dict_node_cpu[node] = self.dict_vnfs_cpu_req.get(vnf)
+    def sum_vnfs_cpu_node(self, node):
+        return self.model.cache[node].get_sum_vnfs_cpu()
 
-        return sum(dict_node_cpu.values())
+
+
+
+
 
 
 
