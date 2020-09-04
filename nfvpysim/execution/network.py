@@ -280,7 +280,7 @@ class NetworkController:
             if all(value == True for value in self.sfc_status[sfc].values()):
                 if self.collector is not None and self.session['log']:
                     self.collector.sfc_acc(sfc)
-            return vnf_hit
+                    return vnf_hit
 
 
 
@@ -294,16 +294,13 @@ class NetworkController:
 
 
 
-
-
-
-
-
     def first_fit(self, path, sfc):
-        target_node = min(self.sum_vnfs_cpu_node(node, sfc) for node in path \
-                    if self.sum_vnfs_cpu_node(node, sfc) <= self.sum_cpu_req_sfc(sfc))
+        target_node = min(self.sum_vnfs_cpu_node(node) for node in path \
+                    if self.sum_vnfs_cpu_node(node) <= self.sum_cpu_req_sfc(sfc))
 
         return target_node
+
+
 
 
 
