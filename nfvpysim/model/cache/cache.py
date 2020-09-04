@@ -1,41 +1,34 @@
 from __future__ import division
 from nfvpysim.registry import register_cache_policy
 from nfvpysim.util import apportionment, inheritdoc
+from collections import defaultdict
 
 
 
-
-class Deque:
+class Dictionary:
 
     def __init__(self):
-        self.items = []
+        self.items = defaultdict()
 
     def isEmpty(self):
         return self.items == []
 
-    def add_item(self, item):
-        if item not in self.items:
-            self.items.append(item)
-        else:
-            pass
+    def add_item(self, **item):
+        if not self.has_item(**item):
+            for key, value in item.items():
+                self.items[key] = value
 
-    def add_items(self, items):
-        for item in items:
-            if item not in self.items:
-                self.items.append(item)
-            else:
-                pass
 
-    def remove_item(self, item):
+    def remove_item(self, **item):
         if item not in self.items:
             pass
         else:
-            return self.items.remove(item)
+            return self.items.pop(item, None)
 
     def size(self):
         return len(self.items)
 
-    def has_item(self, item):
+    def has_item(self, **item):
         return item in self.items
 
 
@@ -43,16 +36,14 @@ class Deque:
 class NfvCache:
 
     def __init__(self, maxlen, **kwargs):
-        self._nfvcache = Deque()
+        self._nfvcache = Dictionary()
         self._maxlen = int(maxlen)
         if self._maxlen <= 0:
             raise ValueError('maxlen must be positive')
 
-    def add_vnf(self, vnf):
+    def add_vnf(self, **vnf):
         return self._nfvcache.add_item(vnf)
 
-    def add_vnfs(self, vnfs):
-        return self._nfvcache.add_items(vnfs)
 
     def len_nfv_cache(self):
         return self._nfvcache.size()
