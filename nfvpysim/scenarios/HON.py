@@ -21,7 +21,7 @@ import itertools
 
 ## Initialize algorithm parameters
 MaxOrder = 7
-MinSupport = 2
+MinSupport = 100
 
 #/home/igor/PycharmProjects/HON/hon-master/data/sfc.csv
 
@@ -44,7 +44,7 @@ OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/random_sfc
 OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/random_sfcs_output.csv'
 
 LastStepsHoldOutForTesting = 0
-MinimumLengthForTraining = 2
+MinimumLengthForTraining = 3
 InputFileDeliminator = ' '
 Verbose = True
 
@@ -105,7 +105,7 @@ def DumpRules(Rules, OutputRulesFile):
     with open(OutputRulesFile, 'w') as f:
         for Source in Rules:
             for Target in Rules[Source]:
-                f.write(' '.join([' '.join([str(x) for x in Source]), '=>', Target, str(Rules[Source][Target])]) + '\n')
+                f.write(' '.join([' '.join([str(x) for x in Source]), '-->', Target, str(Rules[Source][Target])]) + '\n')
 
 def DumpNetwork(Network, OutputNetworkFile):
     VPrint('Dumping network to file')
