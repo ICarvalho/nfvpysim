@@ -21,7 +21,7 @@ import itertools
 
 ## Initialize algorithm parameters
 MaxOrder = 7
-MinSupport = 100
+MinSupport = 10
 
 #/home/igor/PycharmProjects/HON/hon-master/data/sfc.csv
 
@@ -44,7 +44,7 @@ OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/random_sfc
 OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/random_sfcs_output.csv'
 
 LastStepsHoldOutForTesting = 0
-MinimumLengthForTraining = 3
+MinimumLengthForTraining = 2
 InputFileDeliminator = ' '
 Verbose = True
 

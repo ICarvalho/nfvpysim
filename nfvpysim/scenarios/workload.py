@@ -98,10 +98,10 @@ class StationaryWorkloadVarLenSfc:
 
 
     @staticmethod
-    def var_seq_len_sfc():
+    def var_len_seq_sfc():
         sfc = []
         vnfs = [1, 2, 3, 4, 5, 6, 7]  # vnfs available for service function chaining
-        n = random.randint(1, 8)  # n_vnfs + 1
+        n = random.randint(1, 8)
         for i in range(1, n + 1):
             vnf = random.choice(vnfs)
             if vnf not in sfc:
@@ -120,7 +120,7 @@ class StationaryWorkloadVarLenSfc:
                     t_event += (random.expovariate(self.rate))
                     ingress_node = random.choice(self.ingress_nodes)
                     egress_node = random.choice(self.egress_nodes)
-                    sfc = StationaryWorkloadVarLenSfc.var_seq_len_sfc()
+                    sfc = StationaryWorkloadVarLenSfc.var_len_seq_sfc()
                     log = (req_counter < self.n_req)
                     event = {'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
                     file_lines = [str(i),',', '\t',  str(sfc)[1:-1], '\n']
