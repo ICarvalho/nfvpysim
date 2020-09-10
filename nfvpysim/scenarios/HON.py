@@ -21,7 +21,7 @@ import itertools
 
 ## Initialize algorithm parameters
 MaxOrder = 7
-MinSupport = 10
+MinSupport = 100
 
 #/home/igor/PycharmProjects/HON/hon-master/data/sfc.csv
 
@@ -42,8 +42,10 @@ InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/random_sfcs.
 #InputFileName = '../data/traces-lloyds.csv'
 OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/random_sfcs_rules.csv'
 OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/random_sfcs_output.csv'
+#OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/var_len_sfcs_rules.csv'
+#OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/var_len_sfcs_output.csv'
 
-LastStepsHoldOutForTesting = 0
+LastStepsHoldOutForTesting =1
 MinimumLengthForTraining = 2
 InputFileDeliminator = ' '
 Verbose = True
@@ -70,7 +72,7 @@ def ReadSequentialData(InputFileName):
             movements = fields[1:]
 
             LoopCounter += 1
-            if LoopCounter % 10000 == 0:
+            if LoopCounter % 1000 == 0:
                 VPrint(LoopCounter)
 
             ## Other preprocessing or metadata processing can be added here
@@ -105,7 +107,7 @@ def DumpRules(Rules, OutputRulesFile):
     with open(OutputRulesFile, 'w') as f:
         for Source in Rules:
             for Target in Rules[Source]:
-                f.write(' '.join([' '.join([str(x) for x in Source]), '-->', Target, str(Rules[Source][Target])]) + '\n')
+                f.write(' '.join([' '.join([str(x) for x in Source]), '|', Target, str(Rules[Source][Target])]) + '\n')
 
 def DumpNetwork(Network, OutputNetworkFile):
     VPrint('Dumping network to file')
@@ -146,7 +148,7 @@ def BuildHON(InputFileName, OutputNetworkFile):
     VPrint('Done: '+InputFileName)
 
 def BuildHONfreq(InputFileName, OutputNetworkFile):
-    print('FREQ mode!!!!!!')
+    print('FREQ mode!')
     RawTrajectories = ReadSequentialData(InputFileName)
     TrainingTrajectory, TestingTrajectory = BuildTrainingAndTesting(RawTrajectories)
     VPrint(len(TrainingTrajectory))
@@ -161,11 +163,12 @@ def BuildHONfreq(InputFileName, OutputNetworkFile):
 ###########################################
 
 if __name__ == "__main__":
-    print('FREQ mode!!!!!!')
+    print('FREQ mode!')
     RawTrajectories = ReadSequentialData(InputFileName)
     TrainingTrajectory, TestingTrajectory = BuildTrainingAndTesting(RawTrajectories)
     VPrint(len(TrainingTrajectory))
     Rules = BuildRulesFastParameterFreeFreq.ExtractRules(TrainingTrajectory, MaxOrder, MinSupport)
     DumpRules(Rules, OutputRulesFile)
     Network = BuildNetwork.BuildNetwork(Rules)
+    #VPrint(Network)
     DumpNetwork(Network, OutputNetworkFile)

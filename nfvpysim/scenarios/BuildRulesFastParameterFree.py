@@ -29,7 +29,7 @@ divergences = []
 Verbose = True
 StartingPoints = defaultdict(set)
 Trajectory = []
-MinSupport = 2
+MinSupport = 10
 
 def Initialize():
     global Count
