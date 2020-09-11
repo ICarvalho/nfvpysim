@@ -21,7 +21,7 @@ import itertools
 
 ## Initialize algorithm parameters
 MaxOrder = 7
-MinSupport = 10
+MinSupport = 100
 
 #/home/igor/PycharmProjects/HON/hon-master/data/sfc.csv
 
