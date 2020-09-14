@@ -63,6 +63,7 @@ class NetworkView:
     """
 
 
+
     def all_pairs_shortest_paths(self):
         return self.model.shortest_path
 
@@ -105,8 +106,9 @@ class NetworkModel:
             raise ValueError('The topology argument must be an'
                              'instance of fnss.Topology or any of its subclasses')
 
-        self.shortest_path = shortest_path if shortest_path is not None \
+        self.shortest_path = dict(shortest_path) if shortest_path is not None \
                             else symmetrify_paths(nx.all_pairs_dijkstra_path(topology))
+
 
         self.topology = topology
 
@@ -215,6 +217,16 @@ class NetworkModel:
 
 
 
+    def get_shortest_path_between_two_nodes(self, source, target):
+        if self.topology[source]['stack'][0] == 'nfv_node':
+            return nx.shortest_path_length(source, target)
+
+
+
+
+
+
+
 class NetworkController:
 
     def __init__(self, model):
@@ -281,6 +293,23 @@ class NetworkController:
                 if self.collector is not None and self.session['log']:
                     self.collector.sfc_acc(sfc)
                     return vnf_hit
+
+
+
+    def get_target_nfv_node(self, ingress_node, egress_node):
+
+        dist_nfv_node_egress_node = {}
+        path = self.model.shortest_path[ingress_node][egress_node]
+        nfv_nodes_candidates = self.model.get_nfv_nodes(path)
+        for nfv_node in nfv_nodes_candidates:
+            dist_nfv_node_egress_node[nfv_node] = self.model.get_shortest_path_between_two_nodes(nfv_node, egress_node)
+        closest_nfv_node = min(dist_nfv_node_egress_node.values())
+        return closest_nfv_node
+
+
+
+
+
 
 
 

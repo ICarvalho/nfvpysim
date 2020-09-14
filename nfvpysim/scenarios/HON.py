@@ -45,9 +45,9 @@ OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/random_s
 #OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/var_len_sfcs_rules.csv'
 #OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/var_len_sfcs_output.csv'
 
-LastStepsHoldOutForTesting =1
+LastStepsHoldOutForTesting = 0
 MinimumLengthForTraining = 2
-InputFileDeliminator = ' '
+InputFileDeliminator = ','
 Verbose = True
 
 
@@ -167,7 +167,7 @@ if __name__ == "__main__":
     RawTrajectories = ReadSequentialData(InputFileName)
     TrainingTrajectory, TestingTrajectory = BuildTrainingAndTesting(RawTrajectories)
     VPrint(len(TrainingTrajectory))
-    Rules = BuildRulesFastParameterFreeFreq.ExtractRules(TrainingTrajectory, MaxOrder, MinSupport)
+    Rules = BuildRulesFastParameterFree.ExtractRules(TrainingTrajectory, MaxOrder, MinSupport)
     DumpRules(Rules, OutputRulesFile)
     Network = BuildNetwork.BuildNetwork(Rules)
     #VPrint(Network)
