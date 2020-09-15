@@ -235,6 +235,7 @@ class NetworkController:
         self.model = model
         self.collector = None
         self.sfc_status = defaultdict(dict)
+        self.missed_vnfs = []
         self.dict_vnfs_cpu_req = {1: 15,  # nat
                                   2: 25,  # fw
                                   3: 25,  # ids
@@ -280,19 +281,37 @@ class NetworkController:
             self.collector.request_hop(u, v, main_path)
 
 
-    def get_vnf(self, node, sfc):
+
+    def get_vnf(self, node, vnf):
 
         if node in self.model.cache:
-            for vnf in sfc:
-                vnf_hit = self.model.cache[node].get_vnf(self.session)[vnf]
-                if vnf_hit:
-                   self.sfc_status[sfc][vnf] = True
-                else:
-                    continue
-            if all(value == True for value in self.sfc_status[sfc].values()):
+            vnf_hit = self.model.cache[node].get_vnf(self.session)[vnf]
+            if vnf_hit:
+                return True
+            else:
+                return False
+
+
+
+
+    def get_vnf_path(self, path, sfc):
+
+        for node in path:
+            if node in self.model.cache:
+                for vnf in sfc:
+                    if self.get_vnf(node, vnf):
+                        self.sfc_status[node][vnf] = True
+                    else:
+                        self.missed_vnfs.append(vnf)
+                        continue
+            if all(value == True for value in self.sfc_status.values()):
+                sfc_hit = False
                 if self.collector is not None and self.session['log']:
                     self.collector.sfc_acc(sfc)
-                    return vnf_hit
+                    sfc_hit = True
+                return sfc_hit
+
+
 
 
 

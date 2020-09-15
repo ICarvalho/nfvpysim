@@ -32,18 +32,18 @@ MinSupport = 100
 
 ## Initialize user parameters
 #InputFileName = '../../../../C2/data/synthetic/1098_ModifyMixedOrder.csv'
-InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/random_sfcs.csv'
-#InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/var_seq_len_sfc.csv'
+#InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/random_sfcs.csv'
+InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/var_seq_len_sfc.csv'
 
 
 #InputFileName = '../data/synthetic-major/9999.csv'
 #InputFileName = '../data/synthetic-major/1000_ModifyMixedOrder.csv'
 #InputFileName = '../data/traces-test.csv'
 #InputFileName = '../data/traces-lloyds.csv'
-OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/random_sfcs_rules.csv'
-OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/random_sfcs_output.csv'
-#OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/var_len_sfcs_rules.csv'
-#OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/var_len_sfcs_output.csv'
+#OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/random_sfcs_rules.csv'
+#OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/random_sfcs_output.csv'
+OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/var_len_sfcs_rules.csv'
+OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/var_len_sfcs_output.csv'
 
 LastStepsHoldOutForTesting = 0
 MinimumLengthForTraining = 2
@@ -107,7 +107,7 @@ def DumpRules(Rules, OutputRulesFile):
     with open(OutputRulesFile, 'w') as f:
         for Source in Rules:
             for Target in Rules[Source]:
-                f.write(' '.join([' '.join([str(x) for x in Source]), '|', Target, str(Rules[Source][Target])]) + '\n')
+                f.write(' '.join([','.join([str(x) for x in Source]),'-->',Target, '=', str(Rules[Source][Target])]) + '\n')
 
 def DumpNetwork(Network, OutputNetworkFile):
     VPrint('Dumping network to file')
