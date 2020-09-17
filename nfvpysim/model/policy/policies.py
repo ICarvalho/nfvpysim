@@ -26,14 +26,13 @@ class FistFit(Policy):
     def process_event(self, time, ingress_node, egress_node, sfc, log):
         path = self.view.shortest_path(ingress_node, egress_node)
         self.controller.start_session(time, ingress_node, egress_node, sfc, log)
-        for u,v in path_links(path):
-            self.controller.forward_request_hop(u,v)
-            if self.controller.get_vnf(v, sfc):
+        self.controller.forward_request_path(ingress_node, egress_node, path)
+        if self.controller.get_vnf_path(path, sfc):
                 return True
             else:
                 self.controller.forward_request_path(v, egress_node)
 
-            break
+
 
 
 

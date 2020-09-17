@@ -234,8 +234,6 @@ class NetworkController:
         self.session = None
         self.model = model
         self.collector = None
-        self.sfc_status = defaultdict(dict)
-        self.missed_vnfs = []
         self.dict_vnfs_cpu_req = {1: 15,  # nat
                                   2: 25,  # fw
                                   3: 25,  # ids
@@ -295,23 +293,33 @@ class NetworkController:
 
 
     def get_vnf_path(self, path, sfc):
-
+        vnf_status = {}
+        missed_vnfs = []
         for node in path:
             if node in self.model.cache:
                 for vnf in sfc:
-                    if self.get_vnf(node, vnf):
-                        self.sfc_status[node][vnf] = True
-                    else:
-                        self.missed_vnfs.append(vnf)
+                    vnf_status = {vnf: False for vnf in sfc}
+                    if self.get_vnf(node, vnf) and vnf_status[vnf] == False: # vnf on node and processed
+                        vnf_status[vnf] = True
+                    elif self.get_vnf(node, vnf) and vnf_status[vnf] == True: # vnf has already been processed in previous node
                         continue
-            if all(value == True for value in self.sfc_status.values()):
-                sfc_hit = False
+                    elif not self.get_vnf(node, vnf) and vnf_status[vnf] == False: # vnf not on node and not processed yet
+                        missed_vnfs.append(vnf)
+                        continue
+                    break
+            for missed_vnf in missed_vnfs:
+                if self.get_vnf(node, missed_vnf):
+                    vnf_status[missed_vnf] = True
+                else:
+                    continue
+
+        if all(value == True for value in vnf_status.values()):
+                fc_hit = False
                 if self.collector is not None and self.session['log']:
                     self.collector.sfc_acc(sfc)
-                    sfc_hit = True
-                return sfc_hit
-
-
+                return True
+        else:
+            return False
 
 
 
@@ -324,13 +332,6 @@ class NetworkController:
             dist_nfv_node_egress_node[nfv_node] = self.model.get_shortest_path_between_two_nodes(nfv_node, egress_node)
         closest_nfv_node = min(dist_nfv_node_egress_node.values())
         return closest_nfv_node
-
-
-
-
-
-
-
 
 
     def sum_cpu_req_sfc(self, sfc):
