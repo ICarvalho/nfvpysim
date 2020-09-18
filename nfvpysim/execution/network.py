@@ -290,8 +290,6 @@ class NetworkController:
                 return False
 
 
-
-
     def get_vnf_path(self, path, sfc):
         vnf_status = {}
         missed_vnfs = []
@@ -314,7 +312,6 @@ class NetworkController:
                     continue
 
         if all(value == True for value in vnf_status.values()):
-                fc_hit = False
                 if self.collector is not None and self.session['log']:
                     self.collector.sfc_acc(sfc)
                 return True
