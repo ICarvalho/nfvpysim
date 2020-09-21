@@ -295,8 +295,9 @@ class NetworkController:
 
 
 
-    def get_vnf_path(self, path, sfc):
+    def get_vnf_path_without_vnf_placement(self, ingress_node, egress_node, sfc):
         vnf_status = {}
+        path = self.model.shortest_path[ingress_node][egress_node]
         for node in path:
             if node in self.model.cache:
                 for vnf in sfc:
@@ -308,6 +309,45 @@ class NetworkController:
                         continue
                     elif not self.get_vnf(node, vnf): # vnf not on node and not processed yet
                         continue
+        if all(value == True for value in vnf_status.values()):
+                if self.collector is not None and self.session['log']:
+                    self.collector.sfc_acc(sfc)
+                return True
+        else:
+            return False
+
+
+
+    def get_vnf_path_with_vnf_placement(self, ingress_node, egress_node, sfc):
+        vnf_status = {}
+        missed_vnfs = []
+        path = self.model.shortest_path[ingress_node][egress_node]
+        for node in path:
+            if node in self.model.cache:
+                for vnf in sfc:
+                    vnf_status = {vnf: False for vnf in sfc}
+                    if self.get_vnf(node, vnf) and vnf_status[vnf] == False: # vnf on node and processed
+                        vnf_status[vnf] = True
+                        continue
+                    elif self.get_vnf(node, vnf) and vnf_status[vnf] == True: # vnf has already been processed in previous node
+                        continue
+                    elif not self.get_vnf(node, vnf): # vnf not on node and not processed yet
+                        missed_vnfs.append(vnf)
+                        continue
+
+        if len(missed_vnfs) <= 0:
+            pass
+        else:
+            for vnf in missed_vnfs:
+                target_nfv_node = self.get_target_nfv_node(ingress_node, egress_node)
+                if target_nfv_node in self.model.cache:
+                    if not self.model.cache.has_vnf(vnf):
+                        if
+
+
+
+
+
         if all(value == True for value in vnf_status.values()):
                 if self.collector is not None and self.session['log']:
                     self.collector.sfc_acc(sfc)

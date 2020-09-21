@@ -1,6 +1,5 @@
 from __future__ import division
 from nfvpysim.registry import register_cache_policy
-from nfvpysim.util import apportionment, inheritdoc
 from collections import defaultdict
 
 
@@ -19,22 +18,25 @@ class Dictionary:
                 self.items[key] = value
 
     def remove_item(self, item):
-            return self.items.pop(item, None)
+        return self.items.pop(item, None)
 
     def size(self):
         return len(self.items)
 
+    def get_item_value(self, item):
+        return self.items[item]
+
     def has_item(self, item):
         return item in self.items
 
-    def get_item_values(self):
+    def get_sum_item_values(self):
         return sum(self.items.values())
 
 
 @register_cache_policy('NFV_CACHE')
 class NfvCache:
 
-    def __init__(self, maxlen, **kwargs):
+    def __init__(self, maxlen):
         self._nfvcache = Dictionary()
         self._maxlen = int(maxlen)
         if self._maxlen <= 0:
@@ -57,7 +59,10 @@ class NfvCache:
         return self._nfvcache.remove_item(vnf)
 
     def get_sum_vnfs_cpu(self):
-        return self.get_item_values()
+        return self._nfvcache.get_sum_item_values()
+
+    def get_vnf_cpu_value(self, vnf):
+        return self._nfvcache.get_item_value(vnf)
 
 
 
