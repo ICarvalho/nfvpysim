@@ -16,7 +16,7 @@ class Policy(ABC):
 
 
 
-@register_policy('FIRST_FIT')
+@register_policy('GREEDY')
 class FistFit(Policy):
 
     def __init__(self, view, controller, **kwargs):
@@ -26,16 +26,7 @@ class FistFit(Policy):
     def process_event(self, time, ingress_node, egress_node, sfc, log):
         path = self.view.shortest_path(ingress_node, egress_node)
         self.controller.start_session(time, ingress_node, egress_node, sfc, log)
-        self.controller.forward_request_path(ingress_node, egress_node, path)
-        if self.controller.get_vnf_path(path, sfc):
-                return True
-            else:
-                self.controller.forward_request_path(v, egress_node)
-
-
-
-
-
+        self.controller.get_vnf_path(path, sfc)
         self.controller.end_session()
 
 

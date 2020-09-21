@@ -260,7 +260,6 @@ class NetworkController:
 
         if self.collector is not None and self.session['log']:
             self.collector.start_session(timestamp, ingress_node, egress_node, sfc)
-            self.sfc_status[sfc] = {vnf: False for vnf in sfc}
 
 
 
@@ -281,7 +280,6 @@ class NetworkController:
 
 
     def get_vnf(self, node, vnf):
-
         if node in self.model.cache:
             vnf_hit = self.model.cache[node].get_vnf(self.session)[vnf]
             if vnf_hit:
@@ -290,27 +288,26 @@ class NetworkController:
                 return False
 
 
+
+    def put_vnf(self, node, vnf):
+        if node in self.model.cache:
+            return self.model.cache[node].add_vnf(vnf)
+
+
+
     def get_vnf_path(self, path, sfc):
         vnf_status = {}
-        missed_vnfs = []
         for node in path:
             if node in self.model.cache:
                 for vnf in sfc:
                     vnf_status = {vnf: False for vnf in sfc}
                     if self.get_vnf(node, vnf) and vnf_status[vnf] == False: # vnf on node and processed
                         vnf_status[vnf] = True
+                        continue
                     elif self.get_vnf(node, vnf) and vnf_status[vnf] == True: # vnf has already been processed in previous node
                         continue
-                    elif not self.get_vnf(node, vnf) and vnf_status[vnf] == False: # vnf not on node and not processed yet
-                        missed_vnfs.append(vnf)
+                    elif not self.get_vnf(node, vnf): # vnf not on node and not processed yet
                         continue
-                    break
-            for missed_vnf in missed_vnfs:
-                if self.get_vnf(node, missed_vnf):
-                    vnf_status[missed_vnf] = True
-                else:
-                    continue
-
         if all(value == True for value in vnf_status.values()):
                 if self.collector is not None and self.session['log']:
                     self.collector.sfc_acc(sfc)
