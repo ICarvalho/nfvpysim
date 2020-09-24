@@ -63,6 +63,7 @@ class NetworkView:
     """
 
 
+
     def all_pairs_shortest_paths(self):
         return self.model.shortest_path
 
@@ -105,8 +106,9 @@ class NetworkModel:
             raise ValueError('The topology argument must be an'
                              'instance of fnss.Topology or any of its subclasses')
 
-        self.shortest_path = shortest_path if shortest_path is not None \
-                            else symmetrify_paths(nx.all_pairs_dijkstra_path(topology))
+        self.shortest_path = dict(shortest_path) if shortest_path is not None \
+            else symmetrify_paths(nx.all_pairs_dijkstra_path(topology))
+
 
         self.topology = topology
 
@@ -159,7 +161,7 @@ class NetworkModel:
         policy_args = {k: v for k, v in cache_policy.items() if k != 'name'}
         # The actual cache objects storing the content
         self.nfv_enabled_nodes = {node: CACHE_POLICY[policy_name](nfv_nodes[node], **policy_args)
-                      for node in nfv_nodes}
+                                  for node in nfv_nodes}
 
 
 
@@ -201,7 +203,7 @@ class NetworkModel:
         nfv_nodes = []
         for node in path:
             if self.topology.node[node]['stack'][0] == 'nfv_node':
-                    nfv_nodes.append(node)
+                nfv_nodes.append(node)
         return nfv_nodes
 
 
@@ -215,6 +217,16 @@ class NetworkModel:
 
 
 
+    def get_shortest_path_between_two_nodes(self, source, target):
+        if self.topology[source]['stack'][0] == 'nfv_node':
+            return nx.shortest_path_length(source, target)
+
+
+
+
+
+
+
 class NetworkController:
 
     def __init__(self, model):
@@ -222,7 +234,6 @@ class NetworkController:
         self.session = None
         self.model = model
         self.collector = None
-        self.sfc_status = defaultdict(dict)
         self.dict_vnfs_cpu_req = {1: 15,  # nat
                                   2: 25,  # fw
                                   3: 25,  # ids
@@ -230,7 +241,7 @@ class NetworkController:
                                   5: 20,  # lb
                                   6: 25,  # encrypt
                                   7: 25   # decrypt
-                                 }
+                                  }
 
     def attach_collector(self, collector):
         self.collector = collector
@@ -249,7 +260,6 @@ class NetworkController:
 
         if self.collector is not None and self.session['log']:
             self.collector.start_session(timestamp, ingress_node, egress_node, sfc)
-            self.sfc_status[sfc] = {vnf: False for vnf in sfc}
 
 
 
@@ -268,21 +278,94 @@ class NetworkController:
             self.collector.request_hop(u, v, main_path)
 
 
-    def get_vnf(self, node, sfc):
 
+    def get_vnf(self, node, vnf):
         if node in self.model.cache:
-            for vnf in sfc:
-                vnf_hit = self.model.cache[node].get_vnf(self.session)[vnf]
-                if vnf_hit:
-                   self.sfc_status[sfc][vnf] = True
-                else:
-                    continue
-            if all(value == True for value in self.sfc_status[sfc].values()):
-                if self.collector is not None and self.session['log']:
-                    self.collector.sfc_acc(sfc)
-                    return vnf_hit
+            vnf_hit = self.model.cache[node].get_vnf(self.session)[vnf]
+            if vnf_hit:
+                return True
+            else:
+                return False
 
 
+
+    def put_vnf(self, node, vnf):
+        if node in self.model.cache:
+            return self.model.cache[node].add_vnf(vnf)
+
+
+
+    def get_vnf_path_without_vnf_placement(self, ingress_node, egress_node, sfc):
+        vnf_status = {}
+        path = self.model.shortest_path[ingress_node][egress_node]
+        for node in path:
+            if node in self.model.cache:
+                for vnf in sfc:
+                    vnf_status = {vnf: False for vnf in sfc}
+                    if self.get_vnf(node, vnf) and vnf_status[vnf] == False: # vnf on node and processed
+                        vnf_status[vnf] = True
+                        continue
+                    elif self.get_vnf(node, vnf) and vnf_status[vnf] == True: # vnf has already been processed in previous node
+                        continue
+                    elif not self.get_vnf(node, vnf): # vnf not on node and not processed yet
+                        continue
+        if all(value == True for value in vnf_status.values()):
+            if self.collector is not None and self.session['log']:
+                self.collector.sfc_acc(sfc)
+            return True
+        else:
+            return False
+
+
+
+    def get_vnf_path_with_vnf_placement(self, ingress_node, egress_node, sfc):
+        vnf_status = {}
+        missed_vnfs = []
+        path = self.model.shortest_path[ingress_node][egress_node]
+        for node in path:
+            if node in self.model.cache:
+                for vnf in sfc:
+                    vnf_status = {vnf: False for vnf in sfc}
+                    if self.get_vnf(node, vnf) and vnf_status[vnf] == False: # vnf on node and processed
+                        vnf_status[vnf] = True
+                        continue
+                    elif self.get_vnf(node, vnf) and vnf_status[vnf] == True: # vnf has already been processed in previous node
+                        continue
+                    elif not self.get_vnf(node, vnf): # vnf not on node and not processed yet
+                        missed_vnfs.append(vnf)
+                        continue
+
+        if len(missed_vnfs) <= 0:
+            pass
+        else:
+            for vnf in missed_vnfs:
+                target_nfv_node = self.get_target_nfv_node(ingress_node, egress_node)
+                if target_nfv_node in self.model.cache:
+                    if not self.model.cache.has_vnf(vnf):
+                        if
+
+
+
+
+
+        if all(value == True for value in vnf_status.values()):
+            if self.collector is not None and self.session['log']:
+                self.collector.sfc_acc(sfc)
+            return True
+        else:
+            return False
+
+
+
+    def get_target_nfv_node(self, ingress_node, egress_node):
+
+        dist_nfv_node_egress_node = {}
+        path = self.model.shortest_path[ingress_node][egress_node]
+        nfv_nodes_candidates = self.model.get_nfv_nodes(path)
+        for nfv_node in nfv_nodes_candidates:
+            dist_nfv_node_egress_node[nfv_node] = self.model.get_shortest_path_between_two_nodes(nfv_node, egress_node)
+        closest_nfv_node = min(dist_nfv_node_egress_node.values())
+        return closest_nfv_node
 
 
     def sum_cpu_req_sfc(self, sfc):
@@ -296,7 +379,7 @@ class NetworkController:
 
     def first_fit(self, path, sfc):
         target_node = min(self.sum_vnfs_cpu_node(node) for node in path \
-                    if self.sum_vnfs_cpu_node(node) <= self.sum_cpu_req_sfc(sfc))
+                          if self.sum_vnfs_cpu_node(node) <= self.sum_cpu_req_sfc(sfc))
 
         return target_node
 
