@@ -17,10 +17,10 @@ class Policy(ABC):
 
 
 @register_policy('GREEDY_WITHOUT_PLACEMENT')
-class FistFit(Policy):
+class GreedyWithoutPlacement(Policy):
 
     def __init__(self, view, controller, **kwargs):
-        super(FistFit, self).__init__(view, controller)
+        super(GreedyWithoutPlacement, self).__init__(view, controller)
 
 
     def process_event(self, time, ingress_node, egress_node, sfc, log):
@@ -39,9 +39,10 @@ class FistFit(Policy):
                 elif not self.get_vnf(v, vnf): # vnf not on node and not processed yet
                     continue
             if all(value == True for value in vnf_status.values() and v == egress_node):
-                if self.collector is not None and self.session['log']:
-                    self.collector.sfc_acc(sfc)
-                 return True
+                break
+            if self.collector is not None and self.session['log']:
+                self.collector.sfc_acc(sfc)
+                return True
             else:
                 return False
 
@@ -49,7 +50,29 @@ class FistFit(Policy):
 
 
 
+@register_policy('GREEDY_WITH_ONLINE_PLACEMENT')
+class GreedyWithOnlinePlacementPolicy(Policy):
 
+    def __init__(self, view, controller, **kwargs):
+        super(GreedyWithOnlinePlacementPolicy, self).__init__(view, controller)
+
+    def process_event(self, time, ingress_node, egress_node, sfc, log):
+        path = self.view.shortest_path(ingress_node, egress_node)
+        self.controller.start_session(time, ingress_node, egress_node, sfc, log)
+        vnf_status = {}
+        missed_vnfs = []
+        for (u, v) in path_links(path):
+            self.controller.forward_request_hop(u, v)
+            for vnf in sfc:
+                vnf_status = {vnf: False for vnf in sfc}
+                if self.get_vnf(v, vnf) and vnf_status[vnf] == False: # vnf on node and processed
+                    vnf_status[vnf] = True
+                    continue
+                elif self.get_vnf(v, vnf) and vnf_status[vnf] == True: # vnf has already been processed in previous node
+                    continue
+                elif not self.get_vnf(v, vnf): # vnf not on node and not processed yet
+                    missed_vnfs.append(vnf)
+                    continue
 
 
 
