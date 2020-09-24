@@ -38,16 +38,12 @@ class FistFit(Policy):
                     continue
                 elif not self.get_vnf(v, vnf): # vnf not on node and not processed yet
                     continue
-        if all(value == True for value in vnf_status.values() and v == egress_node):
-            if self.collector is not None and self.session['log']:
-                self.collector.sfc_acc(sfc)
-            return True
-        else:
-            return False
-
-
-
-
+            if all(value == True for value in vnf_status.values() and v == egress_node):
+                if self.collector is not None and self.session['log']:
+                    self.collector.sfc_acc(sfc)
+                 return True
+            else:
+                return False
 
         self.controller.end_session()
 
