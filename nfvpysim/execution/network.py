@@ -215,6 +215,15 @@ class NetworkModel:
     def select_egress_node(self, topology):
         return random.choice(self.get_egress_nodes(topology))
 
+    def get_ingress_node_path(self, path):
+        for node in path:
+            return self.topology.node[node]['stack'][0] == 'ingress_node'
+
+
+    def get_egress_node_path(self, path):
+        for node in path:
+            return self.topology.node[node]['stack'][0] == 'egress_node'
+
 
 
     def get_shortest_path_between_two_nodes(self, source, target):
@@ -357,10 +366,10 @@ class NetworkController:
 
 
 
-    def get_target_nfv_node(self, ingress_node, egress_node):
+    def get_target_nfv_node(self, path):
 
         dist_nfv_node_egress_node = {}
-        path = self.model.shortest_path[ingress_node][egress_node]
+        egress_node = self.model.get_egress_nodes(path)
         nfv_nodes_candidates = self.model.get_nfv_nodes(path)
         for nfv_node in nfv_nodes_candidates:
             dist_nfv_node_egress_node[nfv_node] = self.model.get_shortest_path_between_two_nodes(nfv_node, egress_node)
