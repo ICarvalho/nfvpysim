@@ -21,7 +21,7 @@ import math
 
 ThresholdMultiplier = 1
 
-Count = defaultdict(lambda: defaultdict())
+Count = defaultdict(Counter)
 Rules = defaultdict(dict)
 Distribution = defaultdict(dict)
 SourceToExtSource = defaultdict(set)
@@ -29,7 +29,7 @@ divergences = []
 Verbose = True
 StartingPoints = defaultdict(set)
 Trajectory = []
-MinSupport = 2
+MinSupport = 10
 
 def Initialize():
     global Count
@@ -38,7 +38,7 @@ def Initialize():
     global SourceToExtSource
     global StartingPoints
 
-    Count = defaultdict()
+    Count = defaultdict(Counter)
     Rules = defaultdict(dict)
     Distribution = defaultdict(dict)
     SourceToExtSource = defaultdict(set)

@@ -1,7 +1,7 @@
 from nfvpysim.model.request import *
 from nfvpysim.registry import register_workload
 import csv
-from .topology import topology_geant
+from scenarios.topology import topology_geant
 
 
 @register_workload('STATIONARY_RANDOM_SFC')
@@ -21,7 +21,7 @@ class StationaryWorkloadRandomSfc:
 
     """
 
-    def __init__(self, topology,  rate=1.0,  n_req=10**3, seed=None, **kwargs):
+    def __init__(self, topology,  rate=1.0,  n_req=10**5, seed=None, **kwargs):
 
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
@@ -63,12 +63,12 @@ class StationaryWorkloadRandomSfc:
                     sfc = StationaryWorkloadRandomSfc.select_random_sfc()
                     log = (req_counter < self.n_req)
                     event = {'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
-                    file_lines = [str(i),',', '\t',  str(sfc)[1:-1], '\n']
+                    file_lines = [str(i),',', str(sfc)[1:-1], '\n']
                     f.writelines(file_lines)
                     yield (t_event, event)
                     req_counter += 1
-            f.close()
-            raise StopIteration()
+                f.close()
+                raise StopIteration()
 
 
 
@@ -88,7 +88,7 @@ class StationaryWorkloadVarLenSfc:
 
     """
 
-    def __init__(self, topology, rate=1.0,  n_req=10 **3, seed=None, **kwargs):
+    def __init__(self, topology, rate=1.0,  n_req=10 ** 5, seed=None, **kwargs):
 
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
@@ -123,30 +123,18 @@ class StationaryWorkloadVarLenSfc:
                     sfc = StationaryWorkloadVarLenSfc.var_len_seq_sfc()
                     log = (req_counter < self.n_req)
                     event = {'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
-                    file_lines = [str(i),',', '\t',  str(sfc)[1:-1], '\n']
+                    file_lines = [str(i),',', str(sfc)[1:-1], '\n']
                     f.writelines(file_lines)
                     yield (t_event, event)
                     req_counter += 1
-            f.close()
-        raise StopIteration()
+                f.close()
+                raise StopIteration()
 
 
 t = topology_geant()
 w = StationaryWorkloadRandomSfc(t)
 iter = w.__iter__()
 for i in w:
-    print(w)
-
-"""
-topo = topology_geant()
-s = StationaryWorkloadVarLenSfc(topo)
-iterator = w.__iter__()
-for i in s:
-    print(s)
-
-
-"""
-
-
+    print(i)
 
 
