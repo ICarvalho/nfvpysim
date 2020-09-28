@@ -355,7 +355,7 @@ class NetworkController:
 
 
 
-    def get_target_nfv_node(self, path):
+    def get_closest__nfv_node(self, path):
 
         dist_nfv_node_egress_node = {}
         egress_node = self.model.get_egress_nodes(path)
@@ -366,8 +366,8 @@ class NetworkController:
         return closest_nfv_node
 
 
-    def sum_cpu_req_sfc(self, sfc):
-        return sum(sfc.values())
+    def sum_cpu_req_vnfs(self, vnfs):
+        return sum(vnf.values() for vnf in vnfs)
 
 
     def sum_vnfs_cpu_node(self, node):
@@ -375,9 +375,9 @@ class NetworkController:
 
 
 
-    def first_fit(self, path, sfc):
+    def find_target_nfv_node(self, path, vnfs):
         target_node = min(self.sum_vnfs_cpu_node(node) for node in path \
-                          if self.sum_vnfs_cpu_node(node) <= self.sum_cpu_req_sfc(sfc))
+                          if self.sum_vnfs_cpu_node(node) <= self.sum_cpu_req_vnfs(vnfs))
 
         return target_node
 
