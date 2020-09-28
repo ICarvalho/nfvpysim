@@ -151,6 +151,4 @@ class GreedyWithOnlinePlacementPolicy(Policy):
                 elif not self.get_vnf(v, vnf): # vnf not on node and not processed yet
                     missed_vnfs.append(vnf)
                     continue
-
-
-
+            if len(missed_vnfs) >= 1 and any(value == False for value in vnf_status.values()):

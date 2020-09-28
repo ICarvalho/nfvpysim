@@ -104,7 +104,7 @@ class NetworkModel:
         self.cache = None
         if not isinstance(topology, fnss.Topology):
             raise ValueError('The topology argument must be an'
-                             'instance of fnss.Topology or any of its subclasses')
+                             'instance of fnss.Topology or   of its subclasses')
 
         self.shortest_path = dict(shortest_path) if shortest_path is not None \
             else symmetrify_paths(nx.all_pairs_dijkstra_path(topology))
@@ -343,17 +343,6 @@ class NetworkController:
                     elif not self.get_vnf(node, vnf): # vnf not on node and not processed yet
                         missed_vnfs.append(vnf)
                         continue
-
-        if len(missed_vnfs) <= 0:
-            pass
-        else:
-            for vnf in missed_vnfs:
-                target_nfv_node = self.get_target_nfv_node(ingress_node, egress_node)
-                if target_nfv_node in self.model.cache:
-                    if not self.model.cache.has_vnf(vnf):
-                        if
-
-
 
 
 
