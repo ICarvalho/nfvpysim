@@ -112,11 +112,15 @@ class NetworkModel:
 
         self.topology = topology
 
-        # dict of location of vnfs  keyed by vnf ID
-        self.vnf_source = {}
-
-        # Dictionary mapping the reverse, i.e. nodes to set of vnfs stored
-        self.source_vnf = {}
+        self.dict_vnfs_cpu_req_proc_delay = {1: 15,   # nat
+                                             2: 25,   # fw
+                                             3: 25,   # ids
+                                             4: 20,   # wanopt
+                                             5: 20,   # lb
+                                             6: 25,   # encrypt
+                                             7: 25,   # decrypt
+                                             8: 25,   # decrypt
+                                  }
 
         self.ingress_nodes = {}
         self.egress_nodes = {}
@@ -138,20 +142,17 @@ class NetworkModel:
         for node in topology.nodes():
             stack_name, stack_props = fnss.get_stack(topology, node)
             if stack_name == 'ingress_node':
-                if 'id' in stack_props:
-                    self.ingress_nodes[node] = stack_props['id']
+               pass
 
             elif stack_name == 'egress_node':
-                if 'id' in stack_props:
-                    self.egress_nodes[node] = stack_props['id']
+                pass
 
             elif stack_name == 'nfv_node':
                 if 'n_vnfs' in stack_props:
                     nfv_nodes[node] = stack_props['n_vnfs']
 
-
             elif stack_name == 'fw_node':
-                self.fw_nodes[node] = stack_props['id']
+                pass
 
 
 
@@ -243,14 +244,7 @@ class NetworkController:
         self.session = None
         self.model = model
         self.collector = None
-        self.dict_vnfs_cpu_req = {1: 15,  # nat
-                                  2: 25,  # fw
-                                  3: 25,  # ids
-                                  4: 20,  # wanopt
-                                  5: 20,  # lb
-                                  6: 25,  # encrypt
-                                  7: 25   # decrypt
-                                  }
+
 
     def attach_collector(self, collector):
         self.collector = collector

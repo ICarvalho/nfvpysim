@@ -12,7 +12,7 @@ class DataCollector:
         self.view = view
 
 
-    def start_session(self, timestamp, ingress_node, sfc):
+    def start_session(self, timestamp, ingress_node, egress_node, sfc):
         pass
 
 
@@ -25,6 +25,10 @@ class DataCollector:
     def sfc_acc(self, sfc):
         pass
 
+    def vnf_proc_delay(self, vnf):
+        pass
+
+
     def end_session(self, success=True):
         pass
 
@@ -36,16 +40,17 @@ class DataCollector:
 class CollectorProxy(DataCollector):
 
 
-    EVENTS = ('start_session', 'sfc_acc' 'end_session', 'request_hop', 'results')
+    EVENTS = ('start_session', 'sfc_acc' 'end_session', 'request_hop', 'vnf_proc_delay', 'results')
 
-    def __init__(self, view, collectors):
+    def __init__(self, view, collectors, **params):
 
+        super().__init__(view, **params)
         self.view = view
         self.collectors =  {e: [c for c in collectors if e in type(c).__dict__]
                              for e in self.EVENTS}
 
 
-    def start_session(self, timestamp, ingress_node, sfc):
+    def start_session(self, timestamp, ingress_node, egress_node, sfc):
         for c in self.collectors['start_session']:
             c.start_session(timestamp, ingress_node, sfc)
 
@@ -61,6 +66,9 @@ class CollectorProxy(DataCollector):
             c.sfc_acc(sfc)
 
 
+    def vnf_proc_delay(self, vnf):
+        for c in self.collectors['vnf_proc_delay']:
+            c.vnf_proc_delay(vnf)
 
 
     def end_session(self, success=True):
@@ -76,7 +84,7 @@ class LinkLoadCollector(DataCollector):
     """Data collector measuring the link load
     """
 
-    def __init__(self, view, req_size=1500):
+    def __init__(self, view, req_size=1500, **params):
         """Constructor
         Parameters
         ----------
@@ -87,6 +95,7 @@ class LinkLoadCollector(DataCollector):
         content_size : int
             Average size (in byte) of a content
         """
+        super().__init__(view, **params)
         self.view = view
         self.req_count = collections.defaultdict(int)
         if req_size <= 0:
@@ -149,6 +158,18 @@ class LatencyCollector(DataCollector):
         self.req_latency = 0.0
         self.sess_count = 0
         self.latency = 0.0
+        self.vnf_proc_time = 0.0
+        self.dict_vnfs_cpu_req_proc_delay = {1: 15,  # nat
+                                             2: 25,  # fw
+                                             3: 25,  # ids
+                                             4: 20,  # wanopt
+                                             5: 20,  # lb
+                                             6: 25,  # encrypt
+                                             7: 25,  # decrypt
+                                             8: 25,  # decrypt
+
+                                             }
+
         if cdf:
             self.latency_data = collections.deque()
 
@@ -161,6 +182,13 @@ class LatencyCollector(DataCollector):
     def request_hop(self, u, v, path=True):
         if path:
             self.sess_latency += self.view.link_delay(u, v)
+
+    def vnf_proc_delay(self, vnf):
+        if vnf in self.dict_vnfs_cpu_req_proc_delay.keys():
+            self.vnf_proc_time += self.dict_vnfs_cpu_req_proc_delay[vnf]
+
+
+
 
 
     def end_session(self, success=True):

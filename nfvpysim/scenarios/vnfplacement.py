@@ -20,7 +20,8 @@ def random_placement():
                          4: 20,  # wanopt
                          5: 20,  # lb
                          6: 25,  # encrypt
-                         7: 25   # decrypt
+                         7: 25,  # decrypt
+                         8: 30,  # dpi
                         }
 
     selected_vnfs = defaultdict()
@@ -46,7 +47,7 @@ def apply_vnfs_placement(placement, topology):
 def random_policy(topology, seed=None, **kwargs):
     random.seed(seed)
     nfv_nodes_candidates = get_nfv_nodes(topology)
-    vnf_placement = defaultdict(set)
+    vnf_placement = defaultdict()
     vnfs = random_placement()
     for v in nfv_nodes_candidates:
         vnf_placement[v] = vnfs
