@@ -167,7 +167,6 @@ class LatencyCollector(DataCollector):
                                              6: 25,  # encrypt
                                              7: 25,  # decrypt
                                              8: 25,  # decrypt
-
                                              }
 
         if cdf:
@@ -185,10 +184,7 @@ class LatencyCollector(DataCollector):
 
     def vnf_proc_delay(self, vnf):
         if vnf in self.dict_vnfs_cpu_req_proc_delay.keys():
-            self.vnf_proc_time += self.dict_vnfs_cpu_req_proc_delay[vnf]
-
-
-
+            self.sess_latency += self.dict_vnfs_cpu_req_proc_delay[vnf]
 
 
     def end_session(self, success=True):

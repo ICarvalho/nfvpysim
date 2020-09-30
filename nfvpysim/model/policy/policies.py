@@ -32,6 +32,7 @@ class GreedyWithoutPlacement(Policy):
             for vnf in sfc:
                 vnf_status = {vnf: False for vnf in sfc}
                 if self.controller.get_vnf(v, vnf) and vnf_status[vnf] == False: # vnf on node and processed
+                    self.controller.vnf_proc(vnf)
                     vnf_status[vnf] = True
                     continue
                 elif self.controller.get_vnf(v, vnf) and vnf_status[vnf] == True: # vnf has already been processed in previous node
@@ -66,6 +67,7 @@ class GreedyWithOnlinePlacementPolicy(Policy):
             for vnf in sfc:
                 vnf_status = {vnf: False for vnf in sfc}
                 if self.controller.get_vnf(v, vnf) and vnf_status[vnf] == False: # vnf on node and processed
+                    self.controller.vnf_proc(vnf)
                     vnf_status[vnf] = True
                     continue
                 elif self.controller.get_vnf(v, vnf) and vnf_status[vnf] == True: # vnf has already been processed in previous node

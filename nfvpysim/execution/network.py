@@ -282,6 +282,16 @@ class NetworkController:
 
 
 
+
+    def vnf_proc(self, vnf):
+
+        if self.collector is not None and self.session['log']:
+            self.collector.vnf_proc_delay(vnf)
+
+
+
+
+
     def get_vnf(self, node, vnf):
         if node in self.model.cache:
             vnf_hit = self.model.cache[node].get_vnf(self.session)[vnf]
