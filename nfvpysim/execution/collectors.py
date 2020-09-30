@@ -166,7 +166,7 @@ class LatencyCollector(DataCollector):
                                              5: 20,  # lb
                                              6: 25,  # encrypt
                                              7: 25,  # decrypt
-                                             8: 25,  # decrypt
+                                             8: 30,  # dpi
                                              }
 
         if cdf:
