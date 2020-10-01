@@ -26,6 +26,7 @@ def main():
 
 
 @main.command(context_settings=CONTEXT_SETTINGS)
+
 @click.option('--results', '-r', required=True,
               help='The file on which results will be saved')
 @click.option('--config-override', '-c', multiple=True,
@@ -33,6 +34,7 @@ def main():
 @click.argument('config', nargs=1, required=True)
 def run(results, config_override, config):
     """Run a set of simulations."""
+
     config_override = dict(c.split("=") for c in config_override) or None
     nfvpysim.run(config, results, config_override)
 
