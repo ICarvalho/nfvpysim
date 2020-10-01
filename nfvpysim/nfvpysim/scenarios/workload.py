@@ -1,7 +1,6 @@
-from nfvpysim.model.request import *
 from nfvpysim.registry import register_workload
 import csv
-from scenarios.topology import topology_geant
+from nfvpysim.scenarios import topology_geant
 
 
 @register_workload('STATIONARY_RANDOM_SFC')

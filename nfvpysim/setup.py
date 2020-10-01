@@ -1,6 +1,7 @@
 """Setup script"""
 
 import os, sys
+
 dir_path = os.path.dirname(os.path.realpath(__file__))
 parent_dir_path = os.path.abspath(os.path.join(dir_path, os.pardir))
 sys.path.insert(0, parent_dir_path)
@@ -25,12 +26,12 @@ requires = [
 # dependencies.
 sys.path.insert(0, 'nfvpysim')
 import release
+
 sys.path.pop(0)
 
 # Clean tasks
 if os.path.exists('MANIFEST'): os.remove('MANIFEST')
 if os.path.exists('nfvpysim.egg-info'): rmtree('nfvpysim.egg-info')
-
 
 # Main scripts
 if __name__ == "__main__":
@@ -44,21 +45,21 @@ if __name__ == "__main__":
         download_url=release.download_url,
         license=release.license_long,
         classifiers=[
-             'Development Status :: 5 - Production/Stable',
-             'Intended Audience :: Developers',
-             'Intended Audience :: Science/Research',
-             'Intended Audience :: Telecommunications Industry',
-             'License :: OSI Approved :: BSD License',
-             'Natural Language :: English',
-             'Operating System :: OS Independent',
-             'Programming Language :: Python :: 2',
-             'Programming Language :: Python :: 2.7',
-             'Programming Language :: Python :: 3',
-             'Programming Language :: Python :: 3.5',
-             'Programming Language :: Python :: 3.6',
-             'Programming Language :: Python :: 3.7',
-             'Programming Language :: Python :: 3.8',
-             'Topic :: Scientific/Engineering',
+            'Development Status :: 5 - Production/Stable',
+            'Intended Audience :: Developers',
+            'Intended Audience :: Science/Research',
+            'Intended Audience :: Telecommunications Industry',
+            'License :: OSI Approved :: BSD License',
+            'Natural Language :: English',
+            'Operating System :: OS Independent',
+            'Programming Language :: Python :: 2',
+            'Programming Language :: Python :: 2.7',
+            'Programming Language :: Python :: 3',
+            'Programming Language :: Python :: 3.5',
+            'Programming Language :: Python :: 3.6',
+            'Programming Language :: Python :: 3.7',
+            'Programming Language :: Python :: 3.8',
+            'Topic :: Scientific/Engineering',
         ],
         entry_points={'console_scripts': {"{0} = {0}.main:main".format('nfvpysim')}},
         description=release.description_short,
@@ -66,9 +67,9 @@ if __name__ == "__main__":
         python_requires='>=2.7.9, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*',
         install_requires=requires,
         keywords=[
-            'caching',
+            'nfv',
             'simulation',
-            'Information-Centric Networking',
-            'Content Delivery Networks',
+            'service function chaining',
+            'higher-order networks',
         ],
     )

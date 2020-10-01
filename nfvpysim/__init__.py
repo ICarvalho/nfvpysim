@@ -40,8 +40,6 @@ for m in __modules_to_register:
 del m
 
 # Imports
-from .model import *
-from .tools import *
-from .runner import run
+from nfvpysim.model import *
 
 
