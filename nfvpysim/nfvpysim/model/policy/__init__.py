@@ -1,1 +1,1 @@
-from .policies import *
+from .policy import *

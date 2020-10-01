@@ -1,5 +1,5 @@
 from __future__ import division
-from nfvpysim import register_cache_policy
+from nfvpysim.registry import register_cache_policy
 from collections import defaultdict
 
 

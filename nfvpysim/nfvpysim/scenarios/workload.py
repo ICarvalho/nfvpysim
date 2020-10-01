@@ -1,6 +1,7 @@
 from nfvpysim.registry import register_workload
 import csv
 from nfvpysim.scenarios import topology_geant
+import random
 
 
 @register_workload('STATIONARY_RANDOM_SFC')
@@ -131,10 +132,5 @@ class StationaryWorkloadVarLenSfc:
                 raise StopIteration()
 
 
-t = topology_geant()
-w = StationaryWorkloadRandomSfc(t)
-iter = w.__iter__()
-for i in w:
-    print(i)
 
 

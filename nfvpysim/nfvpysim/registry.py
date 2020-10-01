@@ -1,6 +1,5 @@
 """Registry keeping track of all registered pluggable components"""
 
-# Dictionary storying all cache policy implementations keyed by ID
 CACHE_POLICY = {}
 
 # Dictionary storying all strategy implementations keyed by ID

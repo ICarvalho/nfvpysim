@@ -1,7 +1,6 @@
 import networkx as nx
 import fnss
 from nfvpysim.registry import CACHE_POLICY
-from nfvpysim.model.request import *
 from nfvpysim.util import path_links
 import logging
 from collections import defaultdict

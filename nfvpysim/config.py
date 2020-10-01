@@ -58,6 +58,8 @@ REQ_RATE = 1.0
 # vnf allocation policy
 VNF_ALLOCATION_POLICY = 'STATIC'
 
+CACHE_POLICY = ''
+
 
 # Total size for nfv nodes to store vnfs to be used in the sfcs
 NFV_NODE_CACHE = 8
