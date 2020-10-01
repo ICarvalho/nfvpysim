@@ -43,7 +43,7 @@ DATA_COLLECTORS = [
 # Default experiment values, i.e. values shared by all experiments
 
 # Number of content objects
-N_VNFS = 7
+N_VNFS = 8
 
 # Number of content requests that are measured after warmup
 N_MEASURED_REQUESTS = 10 ** 3

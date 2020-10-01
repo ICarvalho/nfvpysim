@@ -1,6 +1,17 @@
 from nfvpysim.util import Tree
+from nfvpysim.registry import register_data_collector
 from nfvpysim.tools.stats import cdf
 import collections
+
+
+
+__all__ = [
+    'DataCollector',
+    'CollectorProxy',
+    'AcceptanceRatioCollector',
+    'LinkLoadCollector',
+    'LatencyCollector'
+           ]
 
 
 
@@ -61,7 +72,7 @@ class CollectorProxy(DataCollector):
             c.request_hop(u, v, path)
 
 
-    def sfc_acc(self, sfc ):
+    def sfc_acc(self, sfc):
         for c in self.collectors['sfc_acc']:
             c.sfc_acc(sfc)
 
@@ -80,6 +91,7 @@ class CollectorProxy(DataCollector):
         return Tree(**{c.name: c.results() for c in self.collectors['results']})
 
 
+@register_data_collector('LINK_LOAD')
 class LinkLoadCollector(DataCollector):
     """Data collector measuring the link load
     """
@@ -138,6 +150,7 @@ class LinkLoadCollector(DataCollector):
 
 
 
+@register_data_collector('LATENCY')
 
 class LatencyCollector(DataCollector):
     """Data collector measuring latency, i.e. the delay taken to delivery a
@@ -202,8 +215,8 @@ class LatencyCollector(DataCollector):
         return results
 
 
-
-class AcceptanceRatio(DataCollector):
+@register_data_collector('ACCEPTANCE_RATIO')
+class AcceptanceRatioCollector(DataCollector):
     """
     Data Collector measuring the Acceptance Ratio of requested VNFs
 
@@ -218,21 +231,21 @@ class AcceptanceRatio(DataCollector):
         if per_sfc:
             self.per_sfc_ratio = collections.defaultdict(int)
 
-        def start_session(self, timestamp, ingress_node, egress_node, sfc):
-            self.sess_count += 1
-            self.curr_path = self.view.shortest_path(ingress_node, egress_node)
+    def start_session(self, timestamp, ingress_node, egress_node, sfc):
+        self.sess_count += 1
+        self.curr_path = self.view.shortest_path(ingress_node, egress_node)
 
 
-        def sfc_acc(self, sfc):
-            self.acc_sfc += 1
-            if self.per_sfc_ratio:
-                self.per_sfc_ratio[sfc] += 1
+    def sfc_acc(self, sfc):
+        self.acc_sfc += 1
+        if self.per_sfc_ratio:
+            self.per_sfc_ratio[sfc] += 1
 
-        def results(self):
-            n_sess = self.acc_sfc
-            sfc_acc_ratio = self.acc_sfc / n_sess
-            results = Tree(**{'MEAN': sfc_acc_ratio})
+    def results(self):
+        n_sess = self.acc_sfc
+        sfc_acc_ratio = self.acc_sfc / n_sess
+        results = Tree(**{'MEAN': sfc_acc_ratio})
 
-            return results
+        return results
 
 
