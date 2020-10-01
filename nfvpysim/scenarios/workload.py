@@ -40,9 +40,10 @@ class StationaryWorkloadRandomSfc:
                     [1, 5, 4],  # [nat - lb - wanopt]
                     [5, 2, 1],  # [lb - fw - nat]
                     [2, 3, 5, 6],  # [fw - ids - lb - encrypt]
-                    [3, 2, 5, 4],  # [ids - fw - lb - wanopt]
+                    [3, 2, 5, 8],  # [ids - fw - lb - wanopt]
                     [5, 4, 6, 2, 3],  # [lb - wanopt - encrypt - fw - ids]
-                    [5, 4, 1, 2, 6, 7]  # [lb - wanopt - nat - fw - encrypt - decrypt]
+                    [5, 4, 1, 2, 6, 8],   # [lb - wanopt - nat - fw - encrypt - decrypt]
+                    [5, 4, 1, 3, 6, 8]
                     ]
 
         return random.choice(services)
@@ -100,8 +101,8 @@ class StationaryWorkloadVarLenSfc:
     @staticmethod
     def var_len_seq_sfc():
         sfc = []
-        vnfs = [1, 2, 3, 4, 5, 6, 7]  # vnfs available for service function chaining
-        n = random.randint(1, 8)
+        vnfs = [1, 2, 3, 4, 5, 6, 7, 8]  # vnfs available for service function chaining
+        n = random.randint(1, 9)
         for i in range(1, n + 1):
             vnf = random.choice(vnfs)
             if vnf not in sfc:

@@ -5,7 +5,7 @@ from collections import defaultdict
 
 
 __all__ = [
-    'random_policy',
+    'random_placement',
           ]
 
 
@@ -44,7 +44,7 @@ def apply_vnfs_placement(placement, topology):
 ##################################  VNF PLACEMENT POLICIES #############################################################
 
 @register_vnf_placement('RANDOM')
-def random_policy(topology, seed=None, **kwargs):
+def random_placement(topology, seed=None, **kwargs):
     random.seed(seed)
     nfv_nodes_candidates = get_nfv_nodes(topology)
     vnf_placement = defaultdict()

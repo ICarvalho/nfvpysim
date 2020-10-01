@@ -42,24 +42,25 @@ DATA_COLLECTORS = [
 
 # Default experiment values, i.e. values shared by all experiments
 
-# Number of content objects
+# Number of vnfs available in the environment
 N_VNFS = 8
 
+
+# Length of sfc
+SFC_LENGTH = [2, 3, 4, 5, 6, 7, 8]
+
 # Number of content requests that are measured after warmup
-N_MEASURED_REQUESTS = 10 ** 3
+N_REQ = 10 ** 3
 
 # Number of requests per second (over the whole network)
 REQ_RATE = 1.0
 
-# Cache eviction policy
-CACHE_POLICY = 'LRU'
+# vnf allocation policy
+VNF_ALLOCATION_POLICY = 'STATIC'
 
-# Zipf alpha parameter, remove parameters not needed
-ALPHA = []
 
-# Total size of network cache as a fraction of content population
-# Remove sizes not needed
-NETWORK_CACHE = []
+# Total size for nfv nodes to store vnfs to be used in the sfcs
+NFV_NODE_CACHE = 8
 
 
 # List of topologies tested
@@ -70,7 +71,7 @@ TOPOLOGIES = ['GEANT']
 # List of caching and routing strategies
 # The code is located in ./icarus/models/strategy/*.py
 # Remove strategies not needed
-POLICIES = ['FIRST_FIT']
+POLICIES = ['GREEDY_WITHOUT_PLACEMENT']
 
 # Instantiate experiment queue
 EXPERIMENT_QUEUE = deque()
@@ -79,24 +80,22 @@ EXPERIMENT_QUEUE = deque()
 # experiments of the campaign
 default = Tree()
 default['workload'] = {'name':       'STATIONARY_RANDOM_SFC',
-                       'n_contents': N_CONTENTS,
-                       'n_warmup':   N_WARMUP_REQUESTS,
-                       'n_measured': N_MEASURED_REQUESTS,
+                       'n_vnfs': N_VNFS,
+                       'n_measured': N_REQ,
                        'rate':       REQ_RATE}
-default['cache_placement']['name'] = 'UNIFORM'
-default['content_placement']['name'] = 'UNIFORM'
-default['cache_policy']['name'] = CACHE_POLICY
+default['vnf_placement']['name'] = 'RANDOM'
+default['vnf_allocation']['name'] = 'STATIC'
 
 # Create experiments multiplexing all desired parameters
-for alpha in ALPHA:
-    for strategy in POLICIES:
+for n_req in N_REQ:
+    for policy in POLICIES:
         for topology in TOPOLOGIES:
-            for network_cache in NETWORK_CACHE:
+            for nfv_node_cache in NFV_NODE_CACHE:
                 experiment = copy.deepcopy(default)
-                experiment['workload']['alpha'] = alpha
-                experiment['strategy']['name'] = strategy
+                experiment['workload']['n_req'] = N_REQ
+                experiment['policy']['name'] = policy
                 experiment['topology']['name'] = topology
-                experiment['cache_placement']['network_cache'] = network_cache
+                experiment['vnf_policy_allocation']['nfv_node_cache'] = nfv_node_cache
                 experiment['desc'] = "Alpha: %s, strategy: %s, topology: %s, network cache: %s" \
-                                     % (str(alpha), strategy, topology, str(network_cache))
+                                     % (str(n_req), policy, topology, str(nfv_node_cache))
                 EXPERIMENT_QUEUE.append(experiment)
