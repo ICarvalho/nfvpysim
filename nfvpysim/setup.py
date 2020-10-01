@@ -25,7 +25,7 @@ requires = [
 # This is the only way to access the release module without needing all
 # dependencies.
 sys.path.insert(0, 'nfvpysim')
-import release
+from nfvpysim import release
 
 sys.path.pop(0)
 
