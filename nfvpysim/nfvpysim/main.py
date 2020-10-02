@@ -32,10 +32,11 @@ def main():
 @click.option('--config-override', '-c', multiple=True,
               help='Override specific key=value parameter of configuration file')
 @click.argument('config', nargs=1, required=True)
+
 def run(results, config_override, config):
     """Run a set of simulations."""
 
-    config_override = dict(c.split("=") for c in config_override) or None
+    #config_override = dict(c.split("=") for c in config_override) or None
     nfvpysim.run(config, results, config_override)
 
 

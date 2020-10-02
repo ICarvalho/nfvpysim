@@ -12,10 +12,10 @@ import sys
 import signal
 import traceback
 
-from nfvpysim import exec_experiment
-from nfvpysim import TOPOLOGY_FACTORY, CACHE_POLICY, WORKLOAD, DATA_COLLECTOR
-from nfvpysim import ResultSet
-from nfvpysim import SequenceNumber, timestr
+from nfvpysim.execution import exec_experiment
+from nfvpysim.registry import TOPOLOGY_FACTORY, CACHE_POLICY, WORKLOAD, DATA_COLLECTOR
+from nfvpysim.results import ResultSet
+from nfvpysim.util import SequenceNumber, timestr
 
 
 __all__ = ['Orchestrator', 'run_scenario']

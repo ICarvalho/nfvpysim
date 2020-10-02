@@ -8,9 +8,9 @@ import functools
 import logging
 import multiprocessing as mp
 
-from nfvpysim import Settings, config_logging
-from nfvpysim import RESULTS_WRITER
-from nfvpysim import Orchestrator
+from nfvpysim.util import Settings, config_logging
+from nfvpysim.registry import RESULTS_WRITER
+from nfvpysim.orchestration import Orchestrator
 
 
 __all__ = ['run', 'handler']
