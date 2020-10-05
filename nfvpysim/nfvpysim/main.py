@@ -11,9 +11,7 @@ Usage:
 import click
 import nfvpysim
 
-
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
-
 
 read = nfvpysim.registry.RESULTS_READER['PICKLE']
 write = nfvpysim.registry.RESULTS_WRITER['PICKLE']
@@ -26,17 +24,15 @@ def main():
 
 
 @main.command(context_settings=CONTEXT_SETTINGS)
-
 @click.option('--results', '-r', required=True,
               help='The file on which results will be saved')
 @click.option('--config-override', '-c', multiple=True,
               help='Override specific key=value parameter of configuration file')
 @click.argument('config', nargs=1, required=True)
-
 def run(results, config_override, config):
     """Run a set of simulations."""
 
-    #config_override = dict(c.split("=") for c in config_override) or None
+    config_override = dict(c.split("=") for c in config_override) or None
     nfvpysim.run(config, results, config_override)
 
 
@@ -64,4 +60,3 @@ def print_results(json, path):
         print(rs.json(indent=4))
     else:
         print(rs.prettyprint())
-

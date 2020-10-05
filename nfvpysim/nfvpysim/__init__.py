@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from nfvpysim.util import Tree
 
 import sys
 if sys.version_info[:2] < (2, 7):
@@ -43,3 +44,4 @@ del m
 from .model import *
 from .tools import *
 from .runner import run
+
