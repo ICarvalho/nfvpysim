@@ -62,7 +62,7 @@ CACHE_POLICY = ''
 
 
 # Total size for nfv nodes to store vnfs to be used in the sfcs
-NFV_NODE_CACHE = 8
+NFV_NODE_CACHE = [8]
 
 
 # List of topologies tested
@@ -89,15 +89,14 @@ default['vnf_placement']['name'] = 'RANDOM'
 default['vnf_allocation']['name'] = 'STATIC'
 
 # Create experiments multiplexing all desired parameters
-for n_req in N_REQ:
-    for policy in POLICIES:
-        for topology in TOPOLOGIES:
-            for nfv_node_cache in NFV_NODE_CACHE:
-                experiment = copy.deepcopy(default)
-                experiment['workload']['n_req'] = N_REQ
-                experiment['policy']['name'] = policy
-                experiment['topology']['name'] = topology
-                experiment['vnf_policy_allocation']['nfv_node_cache'] = nfv_node_cache
-                experiment['desc'] = "Alpha: %s, strategy: %s, topology: %s, network cache: %s" \
-                                     % (str(n_req), policy, topology, str(nfv_node_cache))
-                EXPERIMENT_QUEUE.append(experiment)
+for policy in POLICIES:
+    for topology in TOPOLOGIES:
+        for nfv_node_cache in NFV_NODE_CACHE:
+            experiment = copy.deepcopy(default)
+            experiment['workload']['n_req'] = N_REQ
+            experiment['policy']['name'] = policy
+            experiment['topology']['name'] = topology
+            experiment['vnf_policy_allocation']['nfv_node_cache'] = nfv_node_cache
+            experiment['desc'] = "strategy: %s, topology: %s, network cache: %s" \
+                                % (policy, topology, str(nfv_node_cache))
+            EXPERIMENT_QUEUE.append(experiment)

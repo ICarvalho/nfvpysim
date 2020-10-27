@@ -1,7 +1,5 @@
-"""Setup script"""
-
-import os, sys
-
+import os
+import sys
 from shutil import rmtree
 
 from setuptools import find_packages, setup
@@ -22,7 +20,7 @@ requires = [
 # This is the only way to access the release module without needing all
 # dependencies.
 sys.path.insert(0, 'nfvpysim')
-from nfvpysim import release
+import release
 
 sys.path.pop(0)
 
@@ -58,6 +56,7 @@ if __name__ == "__main__":
             'Programming Language :: Python :: 3.8',
             'Topic :: Scientific/Engineering',
         ],
+
         entry_points={'console_scripts': {"{0} = {0}.main:main".format('nfvpysim')}},
         description=release.description_short,
         long_description=release.description_long,

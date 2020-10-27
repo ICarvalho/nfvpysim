@@ -2,6 +2,7 @@ from __future__ import absolute_import
 from nfvpysim.util import Tree
 
 import sys
+
 if sys.version_info[:2] < (2, 7):
     m = "Python version 2.7 or later is required for Icarus (%d.%d detected)."
     raise ImportError(m % sys.version_info[:2])

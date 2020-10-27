@@ -1,5 +1,5 @@
 """This package contains the code for the execution of a single experiment.
 """
-from .network import *
-from .collectors import *
-from .engine import *
+from nfvpysim.execution.network import *
+from nfvpysim.execution.collectors import *
+from nfvpysim.execution.engine import *
