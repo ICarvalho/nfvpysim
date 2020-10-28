@@ -13,7 +13,7 @@ import signal
 import traceback
 
 from nfvpysim.execution import exec_experiment
-from nfvpysim.registry import TOPOLOGY_FACTORY, CACHE_POLICY, WORKLOAD, DATA_COLLECTOR
+from nfvpysim.registry import TOPOLOGY_FACTORY, CACHE_POLICY, POLICY, VNF_PLACEMENT, VNF_ALLOCATION,  WORKLOAD, DATA_COLLECTOR
 from nfvpysim.results import ResultSet
 from nfvpysim.util import SequenceNumber, timestr
 
@@ -215,35 +215,35 @@ def run_scenario(settings, params, curr_exp, n_exp):
         workload = WORKLOAD[workload_name](topology, **workload_spec)
 
         # Assign caches to nodes
-        if 'cache_placement' in tree:
-            cachepl_spec = tree['cache_placement']
-            cachepl_name = cachepl_spec.pop('name')
-            if cachepl_name not in CACHE_PLACEMENT:
+        if 'vnf_placement' in tree:
+            vnfpl_spec = tree['vnf_placement']
+            vnfpl_name = vnfpl_spec.pop('name')
+            if vnfpl_name not in VNF_PLACEMENT:
                 logger.error('No cache placement named %s was found.'
-                             % cachepl_name)
+                             % vnfpl_name)
                 return None
-            network_cache = cachepl_spec.pop('network_cache')
+            network_cache = vnfpl_spec.pop('network_cache')
             # Cache budget is the cumulative number of cache entries across
             # the whole network
-            cachepl_spec['cache_budget'] = workload.n_contents * network_cache
-            CACHE_PLACEMENT[cachepl_name](topology, **cachepl_spec)
+            vnfpl_spec['cache_budget'] = workload.n_contents * network_cache
+            VNF_PLACEMENT[vnfpl_name](topology, **vnfpl_spec)
 
         # Assign contents to sources
         # If there are many contents, after doing this, performing operations
         # requiring a topology deep copy, i.e. to_directed/undirected, will
         # take long.
-        contpl_spec = tree['content_placement']
-        contpl_name = contpl_spec.pop('name')
-        if contpl_name not in CONTENT_PLACEMENT:
+        vnf_allocation_spec = tree['content_placement']
+        vnf_allocation_name = vnf_allocation_spec.pop('name')
+        if vnf_allocation_name not in VNF_ALLOCATION:
             logger.error('No content placement implementation named %s was found.'
-                         % contpl_name)
+                         % vnf_allocation_name)
             return None
-        CONTENT_PLACEMENT[contpl_name](topology, workload.contents, **contpl_spec)
+        VNF_ALLOCATION[vnf_allocation_name](topology, workload.contents, **vnf_allocation_spec)
 
         # caching and routing strategy definition
-        strategy = tree['strategy']
-        if strategy['name'] not in STRATEGY:
-            logger.error('No implementation of strategy %s was found.' % strategy['name'])
+        policy = tree['strategy']
+        if policy['name'] not in POLICY:
+            logger.error('No implementation of strategy %s was found.' % policy['name'])
             return None
 
         # cache eviction policy definition
@@ -267,7 +267,7 @@ def run_scenario(settings, params, curr_exp, n_exp):
         collectors = {m: {} for m in metrics}
 
         logger.info('Experiment %d/%d | Start simulation', curr_exp, n_exp)
-        results = exec_experiment(topology, workload, netconf, strategy, cache_policy, collectors)
+        results = exec_experiment(topology, workload, netconf, policy, cache_policy, collectors)
 
         duration = time.time() - start_time
         logger.info('Experiment %d/%d | End simulation | Duration %s.',

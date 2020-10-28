@@ -50,7 +50,7 @@ N_VNFS = 8
 SFC_LENGTH = [2, 3, 4, 5, 6, 7, 8]
 
 # Number of content requests that are measured after warmup
-N_REQ = 10 ** 3
+N_REQ = 10 ** 5
 
 # Number of requests per second (over the whole network)
 REQ_RATE = 1.0
@@ -58,7 +58,7 @@ REQ_RATE = 1.0
 # vnf allocation policy
 VNF_ALLOCATION_POLICY = 'STATIC'
 
-CACHE_POLICY = ''
+CACHE_POLICY = ['NFV_CACHE']
 
 
 # Total size for nfv nodes to store vnfs to be used in the sfcs
@@ -81,10 +81,9 @@ EXPERIMENT_QUEUE = deque()
 # Build a default experiment configuration which is going to be used by all
 # experiments of the campaign
 default = Tree()
-default['workload'] = {'name':       'STATIONARY_RANDOM_SFC',
+default['workload'] = {'name': 'STATIONARY_RANDOM_SFC',
                        'n_vnfs': N_VNFS,
-                       'n_measured': N_REQ,
-                       'rate':       REQ_RATE}
+                       'rate': REQ_RATE}
 default['vnf_placement']['name'] = 'RANDOM'
 default['vnf_allocation']['name'] = 'STATIC'
 
