@@ -32,7 +32,7 @@ N_REPLICATIONS = 3
 DATA_COLLECTORS = [
            'ACC_RATIO',  # Measure acceptance hit ratio
            'LATENCY',  # Measure request and response latency (based on static link delays)
-           'LINK_LOAD',  # Measure link loads
+           'LINK_LOAD'  # Measure link loads
 
                    ]
 
@@ -46,11 +46,14 @@ DATA_COLLECTORS = [
 N_VNFS = 8
 
 
-# Length of sfc
-SFC_LENGTH = [2, 3, 4, 5, 6, 7, 8]
 
 # Number of content requests that are measured after warmup
 N_REQ = 10 ** 5
+
+# Number of warmup requests
+N_WARMUP_REQUESTS = 0
+
+
 
 # Number of requests per second (over the whole network)
 REQ_RATE = 1.0
@@ -58,11 +61,12 @@ REQ_RATE = 1.0
 # vnf allocation policy
 VNF_ALLOCATION_POLICY = 'STATIC'
 
-CACHE_POLICY = ['NFV_CACHE']
 
-
-# Total size for nfv nodes to store vnfs to be used in the sfcs
+# cache size of an nfv_nodes
 NFV_NODE_CACHE = [8]
+
+# NFV cache policy for storing VNFs
+NFV_NODE_CACHE_POLICY = ['NFV_CACHE']
 
 
 # List of topologies tested
@@ -78,24 +82,26 @@ POLICIES = ['GREEDY_WITHOUT_PLACEMENT']
 # Instantiate experiment queue
 EXPERIMENT_QUEUE = deque()
 
-# Build a default experiment configuration which is going to be used by all
-# experiments of the campaign
+# Create tree of experiment configuration
 default = Tree()
-default['workload'] = {'name': 'STATIONARY_RANDOM_SFC',
-                       'n_vnfs': N_VNFS,
+default['workload'] = {'name':       'STATIONARY_RANDOM_SFC',
+                       'n_req': N_REQ,
+                       'n_warmup': N_WARMUP_REQUESTS,
                        'rate': REQ_RATE}
+
+default['vnf_placement']['network_cache'] = NFV_NODE_CACHE
 default['vnf_placement']['name'] = 'RANDOM'
 default['vnf_allocation']['name'] = 'STATIC'
+default['nfv_cache_policy']['name'] = NFV_NODE_CACHE_POLICY
+
+
 
 # Create experiments multiplexing all desired parameters
 for policy in POLICIES:
     for topology in TOPOLOGIES:
         for nfv_node_cache in NFV_NODE_CACHE:
             experiment = copy.deepcopy(default)
-            experiment['workload']['n_req'] = N_REQ
             experiment['policy']['name'] = policy
             experiment['topology']['name'] = topology
-            experiment['vnf_policy_allocation']['nfv_node_cache'] = nfv_node_cache
-            experiment['desc'] = "strategy: %s, topology: %s, network cache: %s" \
-                                % (policy, topology, str(nfv_node_cache))
+            experiment['desc'] = "Policy: %s" % policy
             EXPERIMENT_QUEUE.append(experiment)

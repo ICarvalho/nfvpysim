@@ -3,6 +3,9 @@ from nfvpysim.registry import register_cache_policy
 from collections import defaultdict
 
 
+__all__ = [
+    'NfvCache'
+    ]
 
 class Dictionary:
 

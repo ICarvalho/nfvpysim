@@ -155,9 +155,6 @@ class NetworkModel:
                 pass
 
 
-
-
-
         policy_name = cache_policy['name']
         policy_args = {k: v for k, v in cache_policy.items() if k != 'name'}
         # The actual cache objects storing the content
@@ -291,7 +288,6 @@ class NetworkController:
 
 
 
-
     def get_vnf(self, node, vnf):
         if node in self.model.cache:
             vnf_hit = self.model.cache[node].get_vnf(self.session)[vnf]
@@ -360,7 +356,6 @@ class NetworkController:
 
 
     def get_closest__nfv_node(self, path):
-
         dist_nfv_node_egress_node = {}
         egress_node = self.model.get_egress_nodes(path)
         nfv_nodes_candidates = self.model.get_nfv_nodes(path)
@@ -384,12 +379,6 @@ class NetworkController:
                           if self.sum_vnfs_cpu_node(node) <= self.sum_cpu_req_vnfs(vnfs))
 
         return target_node
-
-
-
-
-
-
 
 
     def end_session(self, success=True):

@@ -121,16 +121,16 @@ def topology_geant(**kwargs):
 
     # Add stacks to nodes
     for v in ingress_nodes:
-        fnss.add_stack(topology, v, 'ingress_node', {'id': 'ingress_node'})
+        fnss.add_stack(topology, v, 'ingress_node')
 
     for v in nfv_nodes:
         fnss.add_stack(topology, v, 'nfv_node')
 
     for v in egress_nodes:
-        fnss.add_stack(topology, v, 'egress_node', {'id': 'egress_node'})
+        fnss.add_stack(topology, v, 'egress_node')
 
     for v in forwarding_nodes:
-        fnss.add_stack(topology, v, 'forwarding_node', {'id': 'fw_node'})
+        fnss.add_stack(topology, v, 'forwarding_node')
 
 
     # Set weight and delay on all links
@@ -152,7 +152,7 @@ def topology_geant(**kwargs):
 @register_topology_factory('TATANLD')
 def topology_tatanld(**kwargs):
 
-    topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/datasets/TataNld.graphml').to_undirected() # 186 nodes
+    topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/TataNld.graphml').to_undirected() # 186 nodes
     deg = nx.degree(topology)
     ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 80 nodes
     nfv_nodes = [v for v in topology.nodes() if deg[v] > 2]   # 34 nodes
