@@ -14,7 +14,7 @@ def get_nfv_nodes(topology):
 
 
 @register_vnf_allocation('STATIC')
-def static_vnf_allocation(topology, n_vnfs_entries,  **kwargs):
+def static_vnf_allocation(topology, n_vnfs_entries, **kwargs):
 
     nfv_nodes = get_nfv_nodes(topology)
     for v in nfv_nodes:

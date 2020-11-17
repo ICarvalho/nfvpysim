@@ -42,10 +42,6 @@ DATA_COLLECTORS = [
 
 # Default experiment values, i.e. values shared by all experiments
 
-# Number of vnfs available in the environment
-N_VNFS = 8
-
-
 
 # Number of content requests that are measured after warmup
 N_SFCS = 10 ** 5
