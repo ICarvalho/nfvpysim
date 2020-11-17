@@ -62,7 +62,7 @@ class StationaryWorkloadRandomSfc:
                     ingress_node = random.choice(self.ingress_nodes)
                     egress_node = random.choice(self.egress_nodes)
                     sfc = StationaryWorkloadRandomSfc.select_random_sfc()
-                    log = (req_counter < self.n_req)
+                    log = (req_counter <= self.n_req)
                     event = {'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
                     file_lines = [str(i),',', str(sfc)[1:-1], '\n']
                     f.writelines(file_lines)

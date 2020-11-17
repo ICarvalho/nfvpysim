@@ -225,7 +225,7 @@ def run_scenario(settings, params, curr_exp, n_exp):
             network_cache = vnfpl_spec.pop('network_cache')
             # Cache budget is the cumulative number of cache entries across
             # the whole network
-            vnfpl_spec['cache_budget'] = workload.n_contents * network_cache
+            vnfpl_spec['n_vnfs_entries'] = workload.n_contents * network_cache
             VNF_PLACEMENT[vnfpl_name](topology, **vnfpl_spec)
 
         # Assign contents to sources

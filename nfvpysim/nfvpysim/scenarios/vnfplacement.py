@@ -25,7 +25,7 @@ def random_placement():
                         }
 
     selected_vnfs = defaultdict()
-    for vnf in range(1, random.randint(1,3)+1):
+    for vnf in range(1, random.randint(1,9)):
         target_vnf = random.choice(list(dict_vnfs_cpu_req.items()))
         if target_vnf not in selected_vnfs:
             for vnf, cpu in dict_vnfs_cpu_req.items():

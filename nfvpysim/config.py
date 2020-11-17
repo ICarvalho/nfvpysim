@@ -58,11 +58,11 @@ REQ_RATE = 1.0
 # vnf allocation policy
 VNF_ALLOCATION_POLICY = 'STATIC'
 
-CACHE_POLICY = ['NFV_CACHE']
+NFV_CACHE_POLICY = ['NFV_CACHE']
 
 
 # Total size for nfv nodes to store vnfs to be used in the sfcs
-NFV_NODE_CACHE = [8]
+NETWORK_CACHE = [1]
 
 
 # List of topologies tested
@@ -73,7 +73,7 @@ TOPOLOGIES = ['GEANT']
 # List of caching and routing strategies
 # The code is located in ./icarus/models/strategy/*.py
 # Remove strategies not needed
-POLICIES = ['GREEDY_WITHOUT_PLACEMENT']
+POLICIES = ['GREEDY_WITHOUT_PLACEMENT', 'GREEDY_WITH_ONLINE_PLACEMENT' ]
 
 # Instantiate experiment queue
 EXPERIMENT_QUEUE = deque()
@@ -86,16 +86,18 @@ default['workload'] = {'name': 'STATIONARY_RANDOM_SFC',
                        'rate': REQ_RATE}
 default['vnf_placement']['name'] = 'RANDOM'
 default['vnf_allocation']['name'] = 'STATIC'
+default['cache_policy']['name'] = 'NFV_CACHE_POLICY'
+
 
 # Create experiments multiplexing all desired parameters
 for policy in POLICIES:
     for topology in TOPOLOGIES:
-        for nfv_node_cache in NFV_NODE_CACHE:
+        for network_cache in NETWORK_CACHE:
             experiment = copy.deepcopy(default)
             experiment['workload']['n_req'] = N_REQ
             experiment['policy']['name'] = policy
             experiment['topology']['name'] = topology
-            experiment['vnf_policy_allocation']['nfv_node_cache'] = nfv_node_cache
+            experiment['vnf_allocation']['network_cache'] = network_cache
             experiment['desc'] = "strategy: %s, topology: %s, network cache: %s" \
-                                % (policy, topology, str(nfv_node_cache))
+                                % (policy, topology, str(network_cache))
             EXPERIMENT_QUEUE.append(experiment)
