@@ -7,6 +7,14 @@ import logging
 from collections import defaultdict
 logger = logging.getLogger('orchestration')
 
+
+__all__ = [
+    'NetworkModel',
+    'NetworkView',
+    'NetworkController'
+]
+
+
 def symmetrify_paths(shortest_paths):
     """Make paths symmetric
 
@@ -45,7 +53,7 @@ class NetworkView:
 
 
     def shortest_path(self, ingress_node, egress_node):
-        return self.model.calculate_shortest_path[ingress_node][egress_node]
+        return self.model.shortest_path[ingress_node][egress_node]
 
 
     """
@@ -101,7 +109,7 @@ class NetworkModel:
 
     def __init__(self, topology, cache_policy, shortest_path=None): #, policy, shortest_path=None):
 
-        self.cache = None
+
         if not isinstance(topology, fnss.Topology):
             raise ValueError('The topology argument must be an'
                              'instance of fnss.Topology or   of its subclasses')
@@ -153,9 +161,6 @@ class NetworkModel:
 
             elif stack_name == 'fw_node':
                 pass
-
-
-
 
 
         policy_name = cache_policy['name']
@@ -291,7 +296,6 @@ class NetworkController:
 
 
 
-
     def get_vnf(self, node, vnf):
         if node in self.model.cache:
             vnf_hit = self.model.cache[node].get_vnf(self.session)[vnf]
@@ -360,7 +364,6 @@ class NetworkController:
 
 
     def get_closest__nfv_node(self, path):
-
         dist_nfv_node_egress_node = {}
         egress_node = self.model.get_egress_nodes(path)
         nfv_nodes_candidates = self.model.get_nfv_nodes(path)
@@ -384,12 +387,6 @@ class NetworkController:
                           if self.sum_vnfs_cpu_node(node) <= self.sum_cpu_req_vnfs(vnfs))
 
         return target_node
-
-
-
-
-
-
 
 
     def end_session(self, success=True):

@@ -1,11 +1,11 @@
 from nfvpysim.execution.network import NetworkModel, NetworkView, NetworkController
 from nfvpysim.execution.collectors import CollectorProxy
-from nfvpysim.registry import DATA_COLLECTOR
+from nfvpysim.registry import DATA_COLLECTOR, POLICY
 
 __all__ = ['exec_experiment']
 
 
-def exec_experiment(topology, workload, netconf, strategy, cache_policy, collectors):
+def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, collectors):
     """Execute the simulation of a specific scenario.
     Parameters
     ----------
@@ -34,7 +34,7 @@ def exec_experiment(topology, workload, netconf, strategy, cache_policy, collect
     results : Tree
         A tree with the aggregated simulation results from all collectors
     """
-    model = NetworkModel(topology, cache_policy, **netconf)
+    model = NetworkModel(topology, nfv_cache_policy, **netconf)
     view = NetworkView(model)
     controller = NetworkController(model)
 
@@ -43,10 +43,10 @@ def exec_experiment(topology, workload, netconf, strategy, cache_policy, collect
     collector = CollectorProxy(view, collectors_inst)
     controller.attach_collector(collector)
 
-    strategy_name = strategy['name']
-    strategy_args = {k: v for k, v in strategy.items() if k != 'name'}
-    strategy_inst = STRATEGY[strategy_name](view, controller, **strategy_args)
+    policy_name = policy['name']
+    strategy_args = {k: v for k, v in policy.items() if k != 'name'}
+    policy_inst = POLICY[policy_name](view, controller, **strategy_args)
 
     for time, event in workload:
-        strategy_inst.process_event(time, **event)
+        policy_inst.process_event(time, **event)
     return collector.results()

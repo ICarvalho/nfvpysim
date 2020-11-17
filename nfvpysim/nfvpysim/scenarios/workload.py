@@ -2,7 +2,14 @@ from nfvpysim.registry import register_workload
 import csv
 from nfvpysim.scenarios import topology_geant
 import random
+from nfvpysim.tools import TruncatedZipfDist
 
+
+
+__all__ = [
+    'StationaryWorkloadRandomSfc',
+    'StationaryWorkloadVarLenSfc'
+]
 
 @register_workload('STATIONARY_RANDOM_SFC')
 class StationaryWorkloadRandomSfc:
@@ -21,18 +28,23 @@ class StationaryWorkloadRandomSfc:
 
     """
 
-    def __init__(self, topology,  rate=1.0,  n_req=10**5, seed=None, **kwargs):
+    def __init__(self, topology,  n_sfcs, alpha, rate=1.0, n_warmup=0, n_measured = 10 **5,  seed=None, **kwargs):
 
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
+        self.zipf = TruncatedZipfDist(alpha, n_sfcs)
+        self.sfcs = StationaryWorkloadRandomSfc.select_random_sfc(n_sfcs)
+        self.alpha = alpha
         self.rate = rate
-        self.n_req = n_req
+        self.n_warmup = n_warmup
+        self.n_measured = n_measured
         random.seed(seed)
 
 
     @staticmethod
-    def select_random_sfc():
+    def select_random_sfc(n_sfcs):
 
+        sfc_requests = []
         services = [[1, 2],  # [nat - fw]
                     [4, 5],  # [wanopt - lb]
                     [1, 2, 3],  # [nat - fw - ids]
@@ -46,30 +58,34 @@ class StationaryWorkloadRandomSfc:
                     [5, 4, 1, 3, 6, 8]
                     ]
 
-        return random.choice(services)
+        for i in range(len(n_sfcs)):
+            sfc = random.choice(services)
+            sfc_requests.append(sfc)
+
+        return sfc_requests
 
 
     def __iter__(self):
         req_counter = 0
         t_event = 0.0
-        header = ['id', 'sfc']
-        with open('random_sfcs.csv', 'w', newline='\n') as f:
-            writer = csv.writer(f)
-            writer.writerow(header)
-            while req_counter < self.n_req:
-                for i in range(1, self.n_req):
-                    t_event += (random.expovariate(self.rate))
-                    ingress_node = random.choice(self.ingress_nodes)
-                    egress_node = random.choice(self.egress_nodes)
-                    sfc = StationaryWorkloadRandomSfc.select_random_sfc()
-                    log = (req_counter <= self.n_req)
-                    event = {'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
-                    file_lines = [str(i),',', str(sfc)[1:-1], '\n']
-                    f.writelines(file_lines)
-                    yield (t_event, event)
-                    req_counter += 1
-                f.close()
-                raise StopIteration()
+        #header = ['id', 'sfc']
+        #with open('random_sfcs.csv', 'w', newline='\n') as f:
+            #writer = csv.writer(f)
+            #writer.writerow(header)
+        while req_counter < self.n_warmup + self.n_measured:
+            #for i in range(1, self.n_req-1):
+            t_event += (random.expovariate(self.rate))
+            ingress_node = random.choice(self.ingress_nodes)
+            egress_node = random.choice(self.egress_nodes)
+            sfc = StationaryWorkloadRandomSfc.select_random_sfc()
+            log = (req_counter >= self.n_warmup)
+            event = {'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
+            #file_lines = [str(i),',', str(sfc)[1:-1], '\n']
+            #f.writelines(file_lines)
+            yield (t_event, event)
+            req_counter += 1
+            #f.close()
+        return
 
 
 
@@ -89,47 +105,54 @@ class StationaryWorkloadVarLenSfc:
 
     """
 
-    def __init__(self, topology, rate=1.0,  n_req=10 ** 5, seed=None, **kwargs):
+    def __init__(self, topology, n_sfcs, alpha, rate=1.0, n_warmup=0,  n_measured=10 ** 5, seed=None, **kwargs):
 
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
+        self.zipf = TruncatedZipfDist(alpha, n_sfcs)
+        self.sfcs = StationaryWorkloadVarLenSfc.var_len_seq_sfc(n_sfcs)
+        self.alpha = alpha
         self.rate = rate
-        self.n_req = n_req
+        self.n_measured = n_measured
+        self.n_warmup = n_warmup
         random.seed(seed)
 
 
     @staticmethod
-    def var_len_seq_sfc():
-        sfc = []
-        vnfs = [1, 2, 3, 4, 5, 6, 7, 8]  # vnfs available for service function chaining
-        n = random.randint(1, 9)
-        for i in range(1, n + 1):
-            vnf = random.choice(vnfs)
-            if vnf not in sfc:
-                sfc.append(vnf)
-        return sfc
+    def var_len_seq_sfc(n_sfcs):
+
+        var_len_sfc = []
+        for i in range(len(n_sfcs)):
+            vnfs = [1, 2, 3, 4, 5, 6, 7, 8]  # vnfs available for service function chaining
+            n = random.choice(vnfs)
+            for vnf in range(1, n+1 ):
+                vnf = random.choice(vnfs)
+                if vnf not in var_len_sfc:
+                    var_len_sfc.append(vnf)
+
+        return var_len_sfc
 
     def __iter__(self):
         req_counter = 0
         t_event = 0.0
-        header = ['id', 'sfc']
-        with open('var_seq_len_sfc.csv', 'w', newline='\n') as f:
-            writer = csv.writer(f)
-            writer.writerow(header)
-            while req_counter < self.n_req:
-                for i in range(1, self.n_req):
-                    t_event += (random.expovariate(self.rate))
-                    ingress_node = random.choice(self.ingress_nodes)
-                    egress_node = random.choice(self.egress_nodes)
-                    sfc = StationaryWorkloadVarLenSfc.var_len_seq_sfc()
-                    log = (req_counter < self.n_req)
-                    event = {'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
-                    file_lines = [str(i),',', str(sfc)[1:-1], '\n']
-                    f.writelines(file_lines)
-                    yield (t_event, event)
-                    req_counter += 1
-                f.close()
-                raise StopIteration()
+        #header = ['id', 'sfc']
+        #with open('var_seq_len_sfc.csv', 'w', newline='\n') as f:
+        #writer = csv.writer(f)
+        #writer.writerow(header)
+        while req_counter < self.n_warmup + self.n_measured:
+            #for i in range(0, self.n_req):
+            t_event += (random.expovariate(self.rate))
+            ingress_node = random.choice(self.ingress_nodes)
+            egress_node = random.choice(self.egress_nodes)
+            sfc = StationaryWorkloadVarLenSfc.var_len_seq_sfc()
+            log = (req_counter >= self.n_warmup)
+            event = {'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
+            #file_lines = [str(i),',', str(sfc)[1:-1], '\n']
+            #f.writelines(file_lines)
+            yield (t_event, event)
+            req_counter += 1
+            #f.close()
+        return
 
 
 

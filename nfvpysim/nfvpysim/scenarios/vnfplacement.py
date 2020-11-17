@@ -25,11 +25,14 @@ def random_placement():
                         }
 
     selected_vnfs = defaultdict()
-    for vnf in range(1, random.randint(1,9)):
-        target_vnf = random.choice(list(dict_vnfs_cpu_req.items()))
+    sum_cpu = 0
+    for vnf, cpu in dict_vnfs_cpu_req.items():
+        target_vnf = random.choice(list(dict_vnfs_cpu_req.keys()))
         if target_vnf not in selected_vnfs:
-            for vnf, cpu in dict_vnfs_cpu_req.items():
-                selected_vnfs[vnf] = cpu
+            selected_vnfs[target_vnf] = cpu
+            sum_cpu += cpu
+        if sum_cpu > 100:
+            break
 
     return selected_vnfs
 
