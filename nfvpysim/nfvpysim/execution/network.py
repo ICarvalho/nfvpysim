@@ -107,7 +107,7 @@ class NetworkModel:
 
     """
 
-    def __init__(self, topology, cache_policy, shortest_path=None): #, policy, shortest_path=None):
+    def __init__(self, topology, nfv_cache_policy, shortest_path=None):
 
 
         if not isinstance(topology, fnss.Topology):
@@ -163,8 +163,8 @@ class NetworkModel:
                 pass
 
 
-        policy_name = cache_policy['name']
-        policy_args = {k: v for k, v in cache_policy.items() if k != 'name'}
+        policy_name = nfv_cache_policy['name']
+        policy_args = {k: v for k, v in nfv_cache_policy.items() if k != 'name'}
         # The actual cache objects storing the content
         self.nfv_enabled_nodes = {node: CACHE_POLICY[policy_name](nfv_nodes[node], **policy_args)
                                   for node in nfv_nodes}
@@ -172,15 +172,18 @@ class NetworkModel:
 
 
     # Compute the shortest path between ingress and egress node
-    def calculate_shortest_path(self, topology, ingress_node, egress_node):
+    @staticmethod
+    def calculate_shortest_path(topology, ingress_node, egress_node):
         return nx.shortest_path(topology, ingress_node,egress_node)
 
 
-    def calculate_all_shortest_paths(self, topology, ingress_node, egress_node):
+    @staticmethod
+    def calculate_all_shortest_paths(topology, ingress_node, egress_node):
         return [p for p in nx.all_shortest_paths(topology, ingress_node, egress_node)]
 
 
-    def get_ingress_nodes(self, topology):
+    @staticmethod
+    def get_ingress_nodes(topology):
 
         if isinstance(topology, fnss.Topology):
             ing_nodes = []

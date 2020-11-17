@@ -58,7 +58,7 @@ class StationaryWorkloadRandomSfc:
                     [5, 4, 1, 3, 6, 8]
                     ]
 
-        for i in range(len(n_sfcs)):
+        for i in range(n_sfcs):
             sfc = random.choice(services)
             sfc_requests.append(sfc)
 
@@ -68,10 +68,10 @@ class StationaryWorkloadRandomSfc:
     def __iter__(self):
         req_counter = 0
         t_event = 0.0
-        #header = ['id', 'sfc']
-        #with open('random_sfcs.csv', 'w', newline='\n') as f:
-            #writer = csv.writer(f)
-            #writer.writerow(header)
+        # header = ['id', 'sfc']
+        # with open('random_sfcs.csv', 'w', newline='\n') as f:
+            # writer = csv.writer(f)
+            # writer.writerow(header)
         while req_counter < self.n_warmup + self.n_measured:
             #for i in range(1, self.n_req-1):
             t_event += (random.expovariate(self.rate))
@@ -122,10 +122,10 @@ class StationaryWorkloadVarLenSfc:
     def var_len_seq_sfc(n_sfcs):
 
         var_len_sfc = []
-        for i in range(len(n_sfcs)):
+        for i in range(n_sfcs):
             vnfs = [1, 2, 3, 4, 5, 6, 7, 8]  # vnfs available for service function chaining
             n = random.choice(vnfs)
-            for vnf in range(1, n+1 ):
+            for vnf in range(n):
                 vnf = random.choice(vnfs)
                 if vnf not in var_len_sfc:
                     var_len_sfc.append(vnf)

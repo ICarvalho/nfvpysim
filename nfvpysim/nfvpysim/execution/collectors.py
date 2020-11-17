@@ -157,7 +157,7 @@ class LatencyCollector(DataCollector):
     content.
     """
 
-    def __init__(self, view, cdf=False):
+    def __init__(self, view, cdf=False, **params):
         """Constructor
         Parameters
         ----------
@@ -166,6 +166,7 @@ class LatencyCollector(DataCollector):
         cdf : bool, optional
             If *True*, also collects a cdf of the latency
         """
+        super().__init__(view, **params)
         self.cdf = cdf
         self.view = view
         self.req_latency = 0.0
@@ -222,8 +223,9 @@ class AcceptanceRatioCollector(DataCollector):
 
     """
 
-    def __init__(self, view, per_sfc=True ):
+    def __init__(self, view, per_sfc=True, **params):
 
+        super().__init__(view, **params)
         self.view = view
         self.sess_count = 0
         self.acc_sfc = 0

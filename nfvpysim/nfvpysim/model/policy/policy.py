@@ -85,7 +85,7 @@ class GreedyWithOnlinePlacementPolicy(Policy):
                 if len(missed_vnfs) >= 1 and any(value == False for value in vnf_status.values()):
                     target_nfv_node = self.controller.find_target_nfv_node(path, missed_vnfs)
                     closest_nfv_node = self.controller.get_closest_nfv_node(path)
-                    if v == closest_nfv_node and v ==  target_nfv_node:
+                    if v == closest_nfv_node and v == target_nfv_node:
                         for missed_vnf in missed_vnfs:
                             self.model.add_vnf(missed_vnf)
                             vnf_status = {missed_vnf: True for missed_vnf in missed_vnfs}

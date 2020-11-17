@@ -44,8 +44,8 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
     controller.attach_collector(collector)
 
     policy_name = policy['name']
-    strategy_args = {k: v for k, v in policy.items() if k != 'name'}
-    policy_inst = POLICY[policy_name](view, controller, **strategy_args)
+    policy_args = {k: v for k, v in policy.items() if k != 'name'}
+    policy_inst = POLICY[policy_name](view, controller, **policy_args)
 
     for time, event in workload:
         policy_inst.process_event(time, **event)
