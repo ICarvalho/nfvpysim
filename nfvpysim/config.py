@@ -48,7 +48,7 @@ N_VNFS = 8
 
 
 # Number of content requests that are measured after warmup
-N_REQ = 10 ** 5
+N_SFCS = 10 ** 5
 
 # Number of warmup requests
 N_WARMUP_REQUESTS = 0
@@ -61,12 +61,13 @@ REQ_RATE = 1.0
 # vnf allocation policy
 VNF_ALLOCATION_POLICY = 'STATIC'
 
+ALPHA = [0.6, 0.8, 1.0]
 
 # cache size of an nfv_nodes
-NFV_NODE_CACHE = [8]
+NFV_NODE_CACHE_SIZE = [8]
 
 # NFV cache policy for storing VNFs
-NFV_NODE_CACHE_POLICY = ['NFV_CACHE']
+NFV_NODE_CACHE_POLICY = 'NFV_CACHE'
 
 
 # List of topologies tested
@@ -84,24 +85,27 @@ EXPERIMENT_QUEUE = deque()
 
 # Create tree of experiment configuration
 default = Tree()
-default['workload'] = {'name':       'STATIONARY_RANDOM_SFC',
-                       'n_req': N_REQ,
+default['workload'] = {'name':  'STATIONARY_RANDOM_SFC',
+                       'n_sfcs': N_SFCS,
                        'n_warmup': N_WARMUP_REQUESTS,
                        'rate': REQ_RATE}
 
-default['vnf_placement']['network_cache'] = NFV_NODE_CACHE
 default['vnf_placement']['name'] = 'RANDOM'
-default['vnf_allocation']['name'] = 'STATIC'
+default['vnf_allocation']['name'] = VNF_ALLOCATION_POLICY
 default['nfv_cache_policy']['name'] = NFV_NODE_CACHE_POLICY
 
 
 
 # Create experiments multiplexing all desired parameters
-for policy in POLICIES:
-    for topology in TOPOLOGIES:
-        for nfv_node_cache in NFV_NODE_CACHE:
-            experiment = copy.deepcopy(default)
-            experiment['policy']['name'] = policy
-            experiment['topology']['name'] = topology
-            experiment['desc'] = "Policy: %s" % policy
-            EXPERIMENT_QUEUE.append(experiment)
+for alpha in ALPHA:
+    for policy in POLICIES:
+        for topology in TOPOLOGIES:
+            for nfv_node_cache_size in NFV_NODE_CACHE_SIZE:
+                experiment = copy.deepcopy(default)
+                experiment['workload']['alpha'] = alpha
+                experiment['policy']['name'] = policy
+                experiment['topology']['name'] = topology
+                experiment['vnf_allocation']['network_cache'] = nfv_node_cache_size
+                experiment['desc'] = "Alpha: %s, policy: %s, topology: %s, network cache: %s" \
+                                     % (str(alpha), policy, topology, str(nfv_node_cache_size))
+                EXPERIMENT_QUEUE.append(experiment)

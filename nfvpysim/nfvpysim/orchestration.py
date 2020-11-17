@@ -222,11 +222,11 @@ def run_scenario(settings, params, curr_exp, n_exp):
                 logger.error('No cache placement named %s was found.'
                              % vnf_allocation_name)
                 return None
-            network_cache = vnf_allocation_spec.pop('network_cache')
+                network_cache = vnf_allocation_spec.pop('network_cache')
             # Cache budget is the cumulative number of cache entries across
             # the whole network
             vnf_allocation_spec['cache_budget'] = workload * network_cache
-            VNF_PLACEMENT[vnf_allocation_name](topology, **vnf_allocation_spec)
+            VNF_ALLOCATION[vnf_allocation_name](topology, **vnf_allocation_spec)
 
         # Assign contents to sources
         # If there are many contents, after doing this, performing operations
@@ -234,7 +234,7 @@ def run_scenario(settings, params, curr_exp, n_exp):
         # take long.
         vnf_plc_spec = tree['vnf_placement']
         vnf_plc_name = vnf_plc_spec.pop('name')
-        if vnf_plc_name not in VNF_ALLOCATION:
+        if vnf_plc_name not in VNF_PLACEMENT:
             logger.error('No content placement implementation named %s was found.'
                          % vnf_plc_name)
             return None
