@@ -31,8 +31,8 @@ def random_placement():
         if target_vnf not in selected_vnfs:
             selected_vnfs.append(target_vnf)
             sum_cpu += cpu
-        if sum_cpu > 100:
-            break
+            if sum_cpu > 100:
+                break
 
     return selected_vnfs
 

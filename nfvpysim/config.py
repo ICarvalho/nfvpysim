@@ -32,7 +32,7 @@ N_REPLICATIONS = 3
 DATA_COLLECTORS = [
            'ACC_RATIO',  # Measure acceptance hit ratio
            'LATENCY',  # Measure request and response latency (based on static link delays)
-           'LINK_LOAD'  # Measure link loads
+           'LINK_LOAD',  # Measure link loads
 
                    ]
 
@@ -48,6 +48,10 @@ N_SFCS = 10 ** 5
 
 # Number of warmup requests
 N_WARMUP_REQUESTS = 0
+
+# Number of measured requests
+
+N_MEASURED_REQUESTS = 4 * 10 ** 5
 
 
 
@@ -84,6 +88,7 @@ default = Tree()
 default['workload'] = {'name':  'STATIONARY_RANDOM_SFC',
                        'n_sfcs': N_SFCS,
                        'n_warmup': N_WARMUP_REQUESTS,
+                       'n_measured': N_MEASURED_REQUESTS,
                        'rate': REQ_RATE}
 
 default['vnf_placement']['name'] = 'RANDOM'
