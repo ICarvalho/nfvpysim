@@ -58,7 +58,7 @@ class StationaryWorkloadRandomSfc:
                     [5, 4, 1, 3, 6, 8]
                     ]
 
-        for i in range(n_sfcs):
+        for i in range(n_sfcs+1):
             sfc = random.choice(services)
             sfc_requests.append(sfc)
 
@@ -122,7 +122,7 @@ class StationaryWorkloadVarLenSfc:
     def var_len_seq_sfc(n_sfcs):
 
         var_len_sfc = []
-        for i in range(n_sfcs):
+        for i in range(n_sfcs+1):
             vnfs = [1, 2, 3, 4, 5, 6, 7, 8]  # vnfs available for service function chaining
             n = random.choice(vnfs)
             for vnf in range(n):

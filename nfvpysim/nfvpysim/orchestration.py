@@ -222,7 +222,7 @@ def run_scenario(settings, params, curr_exp, n_exp):
                 logger.error('No cache placement named %s was found.'
                              % vnf_allocation_name)
                 return None
-                network_cache = vnf_allocation_spec.pop('network_cache')
+            network_cache = vnf_allocation_spec.pop('network_cache')
             # Cache budget is the cumulative number of cache entries across
             # the whole network
             vnf_allocation_spec['cache_budget'] = workload * network_cache
@@ -238,7 +238,7 @@ def run_scenario(settings, params, curr_exp, n_exp):
             logger.error('No content placement implementation named %s was found.'
                          % vnf_plc_name)
             return None
-        VNF_PLACEMENT[vnf_plc_name](topology, workload.sfc, **vnf_plc_spec)
+        VNF_PLACEMENT[vnf_plc_name](topology, workload.sfcs, **vnf_plc_spec)
 
         # caching and routing strategy definition
         policy = tree['policy']

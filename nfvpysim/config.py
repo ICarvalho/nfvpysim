@@ -30,7 +30,7 @@ N_REPLICATIONS = 3
 # The implementation of data collectors are located in ./icarus/execution/collectors.py
 # Remove collectors not needed
 DATA_COLLECTORS = [
-           'ACC_RATIO',  # Measure acceptance hit ratio
+           'ACCEPTANCE_RATIO',  # Measure acceptance hit ratio
            'LATENCY',  # Measure request and response latency (based on static link delays)
            'LINK_LOAD',  # Measure link loads
 
@@ -78,7 +78,7 @@ TOPOLOGIES = ['GEANT']
 # List of caching and routing strategies
 # The code is located in ./icarus/models/strategy/*.py
 # Remove strategies not needed
-POLICIES = ['GREEDY_WITHOUT_PLACEMENT']
+POLICIES = ['GREEDY_WITH_ONLINE_PLACEMENT'] # ['GREEDY_WITHOUT_PLACEMENT',
 
 # Instantiate experiment queue
 EXPERIMENT_QUEUE = deque()
