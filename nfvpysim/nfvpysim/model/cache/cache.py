@@ -48,7 +48,6 @@ class NfvCache:
     def add_vnf(self, vnf):
         return self._nfvcache.add_item(vnf)
 
-
     def len_nfv_cache(self):
         return self._nfvcache.size()
 

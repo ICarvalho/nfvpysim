@@ -72,24 +72,23 @@ class GreedyWithOnlinePlacementPolicy(Policy):
             self.controller.forward_request_hop(u, v)
             for vnf in sfc:
                 vnf_status = {vnf: False for vnf in sfc}
-                if self.controller.get_vnf(v, vnf) and not vnf_status[vnf]: # vnf on node and processed
+                if self.controller.get_vnf(v, vnf) and vnf_status[vnf] == False: # vnf on node and processed
                     self.controller.vnf_proc(vnf)
                     vnf_status[vnf] = True
                     continue
-                elif self.controller.get_vnf(v, vnf):
-                    if vnf_status[vnf]: # vnf has already been processed in previous node
-                        continue
+                elif self.controller.get_vnf(v, vnf) and vnf_status[vnf] == True: # vnf has already been processed in previous node
+                    continue
                 elif not self.controller.get_vnf(v, vnf): # vnf not on node and not processed yet
                     missed_vnfs.append(vnf)
                     continue
 
-            if len(missed_vnfs) >= 1 and any(value == False for value in vnf_status.values()):
-                target_nfv_node = self.controller.find_target_nfv_node(path, missed_vnfs)
-                closest_nfv_node = self.controller.get_closest_nfv_node(path)
-                if v == closest_nfv_node and v == target_nfv_node:
-                     for missed_vnf in missed_vnfs:
-                        self.model.add_vnf(missed_vnf)
-                        vnf_status = {missed_vnf: True for missed_vnf in missed_vnfs}
+                if len(missed_vnfs) >= 1 and any(value == False for value in vnf_status.values()):
+                    target_nfv_node = self.controller.find_target_nfv_node(path, missed_vnfs)
+                    closest_nfv_node = self.controller.get_closest_nfv_node(path)
+                    if v == closest_nfv_node and v == target_nfv_node:
+                        for missed_vnf in missed_vnfs:
+                            self.model.add_vnf(missed_vnf)
+                            vnf_status = {missed_vnf: True for missed_vnf in missed_vnfs}
                 if all(value == True for value in vnf_status.values() and v == egress_node):
                     break
             if self.collector is not None and self.session['log']:

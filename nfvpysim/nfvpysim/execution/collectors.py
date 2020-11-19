@@ -57,7 +57,7 @@ class CollectorProxy(DataCollector):
 
         super().__init__(view, **params)
         self.view = view
-        self.collectors =  {e: [c for c in collectors if e in type(c).__dict__]
+        self.collectors = {e: [c for c in collectors if e in type(c).__dict__]
                              for e in self.EVENTS}
 
 
