@@ -28,13 +28,13 @@ class StationaryWorkloadRandomSfc:
 
     """
 
-    def __init__(self, topology,  n_sfcs, alpha, rate=1.0, n_warmup=0, n_measured= 10 **2,  seed=None, **kwargs):
+    def __init__(self, topology, n_sfcs, rate=1.0, n_warmup=0, n_measured= 10 **1,  seed=None, **kwargs):
 
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
-        self.zipf = TruncatedZipfDist(alpha, n_sfcs)
+        #self.zipf = TruncatedZipfDist(alpha, n_sfcs)
         self.sfcs = n_sfcs
-        self.alpha = alpha
+        #self.alpha = alpha
         self.rate = rate
         self.n_warmup = n_warmup
         self.n_measured = n_measured
@@ -105,13 +105,13 @@ class StationaryWorkloadVarLenSfc:
 
     """
 
-    def __init__(self, topology, n_sfcs, alpha, rate=1.0, n_warmup=0,  n_measured=10 ** 5, seed=None, **kwargs):
+    def __init__(self, topology, n_sfcs,  rate=1.0, n_warmup=0,  n_measured=10 ** 5, seed=None, **kwargs):
 
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
-        self.zipf = TruncatedZipfDist(alpha, n_sfcs)
+        #self.zipf = TruncatedZipfDist(alpha, n_sfcs)
         self.sfcs = n_sfcs
-        self.alpha = alpha
+        #self.alpha = alpha
         self.rate = rate
         self.n_measured = n_measured
         self.n_warmup = n_warmup
@@ -154,13 +154,17 @@ class StationaryWorkloadVarLenSfc:
             #f.close()
         return
 
+
 """
 topo= topology_geant()
-var_len = StationaryWorkloadRandomSfc(topo, 10**2, 0.4)
+var_len = StationaryWorkloadRandomSfc(topo, 10**1, 0.4)
 
 for i in var_len:
     print(i)
 
+
 """
+
+
 
 

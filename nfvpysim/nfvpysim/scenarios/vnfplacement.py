@@ -27,11 +27,11 @@ def random_vnf_placement():
 
     selected_vnfs = []
     sum_cpu = 0
-    for vnf, cpu in dict_vnfs_cpu_req.items():
+    while sum_cpu < 100:
         target_vnf = random.choice(list(dict_vnfs_cpu_req.keys()))
         if target_vnf not in selected_vnfs:
             selected_vnfs.append(target_vnf)
-            sum_cpu += cpu
+            sum_cpu += dict_vnfs_cpu_req[target_vnf]
             if sum_cpu > 100:
                 break
 
@@ -56,7 +56,14 @@ def random_placement(topology, seed=None, **kwargs):
         vnf_placement[v] = random_vnf_placement()
     apply_vnfs_placement(vnf_placement, topology)
 
-
+"""
+topo = topology_geant()
+nfv_node = get_nfv_nodes(topo)
+b = random_vnf_placement()
+a = random_placement(topo)
+print(a)
+print(b)
+"""
 
 
 

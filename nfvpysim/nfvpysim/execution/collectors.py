@@ -30,9 +30,6 @@ class DataCollector:
     def request_hop(self, u, v, path):
         pass
 
-    def enabled_path(self, path):
-        pass
-
     def sfc_acc(self, sfc):
         pass
 
@@ -63,7 +60,7 @@ class CollectorProxy(DataCollector):
 
     def start_session(self, timestamp, ingress_node, egress_node, sfc):
         for c in self.collectors['start_session']:
-            c.start_session(timestamp, ingress_node, sfc)
+            c.start_session(timestamp, ingress_node, egress_node, sfc)
 
 
 
@@ -167,6 +164,7 @@ class LatencyCollector(DataCollector):
             If *True*, also collects a cdf of the latency
         """
         super().__init__(view, **params)
+        self.sess_latency = 0.0
         self.cdf = cdf
         self.view = view
         self.req_latency = 0.0
@@ -189,8 +187,6 @@ class LatencyCollector(DataCollector):
 
     def start_session(self, timestamp, ingress_node, egress_node, sfc):
         self.sess_count += 1
-        self.sess_latency = 0.0
-
 
     def request_hop(self, u, v, path=True):
         if path:

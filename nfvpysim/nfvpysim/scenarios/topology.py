@@ -1,5 +1,4 @@
 from __future__ import division
-
 import networkx as nx
 import fnss
 from nfvpysim.registry import register_topology_factory

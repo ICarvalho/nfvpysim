@@ -4,7 +4,6 @@ import random
 from nfvpysim.registry import CACHE_POLICY
 from nfvpysim.util import path_links
 import logging
-from collections import defaultdict
 logger = logging.getLogger('orchestration')
 
 

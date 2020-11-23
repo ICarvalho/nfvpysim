@@ -44,7 +44,7 @@ DATA_COLLECTORS = [
 
 
 # Number of content requests that are measured after warmup
-N_SFCS = 10 ** 5
+N_SFCS = 10 ** 3
 
 # Number of warmup requests
 N_WARMUP_REQUESTS = 0
@@ -61,7 +61,7 @@ REQ_RATE = 1.0
 # vnf allocation policy
 VNF_ALLOCATION_POLICY = 'STATIC'
 
-ALPHA = [0.6, 0.8, 1.0]
+#ALPHA = [0.6, 0.8, 1.0]
 
 # cache size of an nfv_nodes
 NFV_NODE_CACHE_SIZE = [8]
@@ -98,15 +98,14 @@ default['nfv_cache_policy']['name'] = NFV_NODE_CACHE_POLICY
 
 
 # Create experiments multiplexing all desired parameters
-for alpha in ALPHA:
-    for policy in POLICIES:
-        for topology in TOPOLOGIES:
-            for nfv_node_cache_size in NFV_NODE_CACHE_SIZE:
-                experiment = copy.deepcopy(default)
-                experiment['workload']['alpha'] = alpha
-                experiment['policy']['name'] = policy
-                experiment['topology']['name'] = topology
-                experiment['vnf_allocation']['network_cache'] = nfv_node_cache_size
-                experiment['desc'] = "Alpha: %s, policy: %s, topology: %s, network cache: %s" \
-                                     % (str(alpha), policy, topology, str(nfv_node_cache_size))
-                EXPERIMENT_QUEUE.append(experiment)
+for policy in POLICIES:
+    for topology in TOPOLOGIES:
+        for nfv_node_cache_size in NFV_NODE_CACHE_SIZE:
+            experiment = copy.deepcopy(default)
+            experiment['workload']['n_sfcs'] = N_SFCS
+            experiment['policy']['name'] = policy
+            experiment['topology']['name'] = topology
+            experiment['vnf_allocation']['network_cache'] = nfv_node_cache_size
+            experiment['desc'] = "n_sfcs: %s, policy: %s, topology: %s, network cache: %s" \
+                                     % (str(N_SFCS), policy, topology, str(nfv_node_cache_size))
+            EXPERIMENT_QUEUE.append(experiment)
