@@ -39,11 +39,8 @@ class Dictionary:
 @register_cache_policy('NFV_CACHE')
 class NfvCache:
 
-    def __init__(self, maxlen):
+    def __init__(self):
         self._nfvcache = Dictionary()
-        self._maxlen = int(maxlen)
-        if self._maxlen <= 0:
-            raise ValueError('maxlen must be positive')
 
     def add_vnf(self, vnf):
         return self._nfvcache.add_item(vnf)
