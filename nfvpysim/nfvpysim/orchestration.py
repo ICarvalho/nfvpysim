@@ -272,7 +272,7 @@ def run_scenario(settings, params, curr_exp, n_exp):
         duration = time.time() - start_time
         logger.info('Experiment %d/%d | End simulation | Duration %s.',
                     curr_exp, n_exp, timestr(duration, True))
-        return (params, results, duration)
+        return params, results, duration
     except KeyboardInterrupt:
         logger.error('Received keyboard interrupt. Terminating')
         sys.exit(-signal.SIGINT)
