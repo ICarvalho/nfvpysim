@@ -238,7 +238,7 @@ def run_scenario(settings, params, curr_exp, n_exp):
             logger.error('No content placement implementation named %s was found.'
                          % vnf_plc_name)
             return None
-        VNF_PLACEMENT[vnf_plc_name](topology, workload.sfcs, **vnf_plc_spec)
+        VNF_PLACEMENT[vnf_plc_name](topology, **vnf_plc_spec)
 
         # caching and routing strategy definition
         policy = tree['policy']
@@ -248,6 +248,7 @@ def run_scenario(settings, params, curr_exp, n_exp):
 
         # cache eviction policy definition
         nfv_cache_policy = tree['nfv_cache_policy']
+
         if nfv_cache_policy['name'] not in CACHE_POLICY:
             logger.error('No implementation of cache policy %s was found.' % nfv_cache_policy['name'])
             return None

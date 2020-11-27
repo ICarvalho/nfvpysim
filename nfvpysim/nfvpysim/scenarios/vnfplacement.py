@@ -63,8 +63,10 @@ b = random_vnf_placement()
 a = random_placement(topo)
 print(a)
 print(b)
-"""
 
+
+
+"""
 
 
 
