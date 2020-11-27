@@ -206,6 +206,8 @@ def run_scenario(settings, params, curr_exp, n_exp):
             return None
         topology = TOPOLOGY_FACTORY[topology_name](**topology_spec)
 
+
+
         workload_spec = tree['workload']
         workload_name = workload_spec.pop('name')
         if workload_name not in WORKLOAD:
@@ -214,19 +216,21 @@ def run_scenario(settings, params, curr_exp, n_exp):
             return None
         workload = WORKLOAD[workload_name](topology, **workload_spec)
 
-        # Assign caches to nodes
-        if 'vnf_allocation_spec' in tree:
-            vnf_allocation_spec = tree['vnf_allocation']
-            vnf_allocation_name = vnf_allocation_spec.pop('name')
-            if vnf_allocation_name not in VNF_ALLOCATION:
-                logger.error('No cache placement named %s was found.'
-                             % vnf_allocation_name)
-                return None
-            network_cache = vnf_allocation_spec.pop('network_cache')
-            # Cache budget is the cumulative number of cache entries across
-            # the whole network
-            vnf_allocation_spec['cache_budget'] = network_cache
-            VNF_ALLOCATION[vnf_allocation_name](topology, **vnf_allocation_spec)
+
+        # perform allocation space t vnfs on nfv_nodes
+        vnf_allocation_spec = tree['vnf_allocation']
+        vnf_allocation_name = vnf_allocation_spec.pop('name')
+        if vnf_allocation_name not in VNF_ALLOCATION:
+            logger.error('No cache placement named %s was found.'
+                         % vnf_allocation_name)
+            return None
+        network_cache = vnf_allocation_spec.pop('network_cache')
+        # Cache budget is the cumulative number of cache entries across
+        # the whole network
+        vnf_allocation_spec['cache_budget'] = network_cache
+        VNF_ALLOCATION[vnf_allocation_name](topology, **vnf_allocation_spec)
+
+
 
         # Assign contents to sources
         # If there are many contents, after doing this, performing operations
@@ -273,7 +277,7 @@ def run_scenario(settings, params, curr_exp, n_exp):
         duration = time.time() - start_time
         logger.info('Experiment %d/%d | End simulation | Duration %s.',
                     curr_exp, n_exp, timestr(duration, True))
-        return (params, results, duration)
+        return params, results, duration
     except KeyboardInterrupt:
         logger.error('Received keyboard interrupt. Terminating')
         sys.exit(-signal.SIGINT)

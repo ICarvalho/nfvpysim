@@ -44,7 +44,7 @@ DATA_COLLECTORS = [
 
 
 # Number of content requests that are measured after warmup
-N_SFCS = 10 ** 3
+N_VNFS = 8
 
 # Number of warmup requests
 N_WARMUP_REQUESTS = 0
@@ -78,7 +78,7 @@ TOPOLOGIES = ['GEANT']
 # List of caching and routing strategies
 # The code is located in ./icarus/models/strategy/*.py
 # Remove strategies not needed
-POLICIES = ['GREEDY_WITH_ONLINE_PLACEMENT'] # ['GREEDY_WITHOUT_PLACEMENT',
+POLICIES = ['GREEDY_WITHOUT_PLACEMENT']  # 'GREEDY_WITHOUT_PLACEMENT',
 
 # Instantiate experiment queue
 EXPERIMENT_QUEUE = deque()
@@ -86,7 +86,7 @@ EXPERIMENT_QUEUE = deque()
 # Create tree of experiment configuration
 default = Tree()
 default['workload'] = {'name':  'STATIONARY_RANDOM_SFC',
-                       'n_sfcs': N_SFCS,
+                       'n_vnfs': N_VNFS,
                        'n_warmup': N_WARMUP_REQUESTS,
                        'n_measured': N_MEASURED_REQUESTS,
                        'rate': REQ_RATE}
@@ -102,10 +102,10 @@ for policy in POLICIES:
     for topology in TOPOLOGIES:
         for nfv_node_cache_size in NFV_NODE_CACHE_SIZE:
             experiment = copy.deepcopy(default)
-            experiment['workload']['n_sfcs'] = N_SFCS
+            experiment['workload']['n_vnfs'] = N_VNFS
             experiment['policy']['name'] = policy
             experiment['topology']['name'] = topology
             experiment['vnf_allocation']['network_cache'] = nfv_node_cache_size
             experiment['desc'] = "n_sfcs: %s, policy: %s, topology: %s, network cache: %s" \
-                                     % (str(N_SFCS), policy, topology, str(nfv_node_cache_size))
+                                     % (str(N_VNFS), policy, topology, str(nfv_node_cache_size))
             EXPERIMENT_QUEUE.append(experiment)
