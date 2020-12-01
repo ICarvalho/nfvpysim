@@ -28,13 +28,11 @@ class StationaryWorkloadRandomSfc:
 
     """
 
-    def __init__(self, topology, n_vnfs, rate=1.0, n_warmup=0, n_measured= 10 **1,  seed=None, **kwargs):
+    def __init__(self, topology, rate=1.0, n_warmup=0, n_measured= 10 **1,  seed=None, **kwargs):
 
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
         #self.zipf = TruncatedZipfDist(alpha, n_sfcs)
-        self.n_vnfs = n_vnfs
-        self.vnfs = range(1, n_vnfs + 1)
         #self.alpha = alpha
         self.rate = rate
         self.n_warmup = n_warmup
@@ -99,13 +97,12 @@ class StationaryWorkloadVarLenSfc:
 
     """
 
-    def __init__(self, topology, n_vnfs,  rate=1.0, n_warmup=0,  n_measured=10 ** 1, seed=None, **kwargs):
+    def __init__(self, topology, rate=1.0, n_warmup=0,  n_measured=10 ** 1, seed=None, **kwargs):
 
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
         #self.zipf = TruncatedZipfDist(alpha, n_sfcs)
-        self.n_vnfs = n_vnfs
-        self.vnfs = range(1, n_vnfs + 1)
+
         #self.alpha = alpha
         self.rate = rate
         self.n_measured = n_measured
@@ -125,11 +122,20 @@ class StationaryWorkloadVarLenSfc:
                 7: 25,  # decrypts
                 8: 30,  # dpi
                 }
-        sfc_len = random.choice(random.randint(1, 6))
-        for i in range(1, sfc_len):
-            vnf, cpu = random.choice(sfcs.items())
-            if vnf not in var_len_sfc:
+        sfc_len = random.randint(1, 8)
+        sum_cpu = 0
+        while sfc_len != 0:
+            vnf, cpu = random.choice(list(sfcs.items()))
+            if vnf not in var_len_sfc.keys():
                 var_len_sfc[vnf] = cpu
+                sfc_len -= 1
+                sum_cpu += cpu
+                if sum_cpu > 100 or sfc_len == 0:
+                    break
+                elif sum_cpu <= 100 and sfc_len != 0:
+                    sfc_len -= 1
+
+
 
         return var_len_sfc
 
@@ -155,12 +161,14 @@ class StationaryWorkloadVarLenSfc:
             #f.close()
         return
 
-
+"""
 topo= topology_geant()
-var_len = StationaryWorkloadVarLenSfc(topo, 10**1)
+var_len = StationaryWorkloadVarLenSfc(topo, 10**5)
 
 for i in var_len:
     print(i)
+
+"""
 
 """
 services = [

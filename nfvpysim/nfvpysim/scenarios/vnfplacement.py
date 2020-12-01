@@ -57,13 +57,13 @@ def random_placement(topology, seed=None, **kwargs):
     apply_vnfs_placement(vnf_placement, topology)
 
 
-"""
 topo = topology_geant()
+b = {}
 b = random_vnf_placement()
-a = random_placement(topo)
+
 print(b)
-#print(b)
-"""
+
+
 
 
 
