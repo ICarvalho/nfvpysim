@@ -102,7 +102,6 @@ class StationaryWorkloadVarLenSfc:
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
         #self.zipf = TruncatedZipfDist(alpha, n_sfcs)
-
         #self.alpha = alpha
         self.rate = rate
         self.n_measured = n_measured

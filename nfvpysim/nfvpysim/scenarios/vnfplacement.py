@@ -43,6 +43,7 @@ def random_vnf_placement():
 def apply_vnfs_placement(placement, topology):
     for v, vnfs in placement.items():
         topology.node[v]['stack'][1]['n_vnfs'] = vnfs
+        #print(v, vnfs)
 
 
 ##################################  VNF PLACEMENT POLICIES #############################################################
@@ -56,12 +57,15 @@ def random_placement(topology, seed=None, **kwargs):
         vnf_placement[v] = random_vnf_placement()
     apply_vnfs_placement(vnf_placement, topology)
 
+"""
 
 topo = topology_geant()
-b = {}
-b = random_vnf_placement()
-
+b = random_placement(topo)
 print(b)
+"""
+
+
+
 
 
 

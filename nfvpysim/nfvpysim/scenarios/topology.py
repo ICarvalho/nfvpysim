@@ -74,15 +74,6 @@ class NfvTopology(fnss.Topology):
 
 
 
-    def forwarding_nodes(self):
-        """
-        :return: return a set of forwarding nodes (generic nodes for general topology)
-        """
-
-        return set (v for v in self
-                    if 'stack' in self.node[v]
-                    and self.node[v]['stack'][0] == 'fw_node')
-
 
     def router_nodes(self):
         """
@@ -230,3 +221,6 @@ def topology_datacenter_two_tier():
     fnss.set_delays_constant(topology, 10, 'ns')
 
     return NfvTopology(topology)
+
+topo = topology_geant()
+print(topo.adjacency())
