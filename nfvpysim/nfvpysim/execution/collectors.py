@@ -115,7 +115,7 @@ class LinkLoadCollector(DataCollector):
         self.t_end = 1
 
 
-    def start_session(self, timestamp, ingress_node, egress_node,  sfc):
+    def start_session(self, timestamp, ingress_node, egress_node, sfc):
         if self.t_start < 0:
             self.t_start = timestamp
         self.t_end = timestamp

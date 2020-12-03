@@ -1,7 +1,7 @@
 import fnss
 import networkx as nx
 
-topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/datasets/Geant2012.gml').to_undirected()
+topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/Geant2012.gml').to_undirected()
 
 deg = nx.degree(topology)
 
@@ -40,4 +40,4 @@ print(len(egress_nodes))
 
 for node in topology.nodes:
     stack_name, stack_props = fnss.get_stack(topology, node)
-    print(topology.node[node]['stack'][1]['id'])
+    print(topology.node[node]['stack'][1])

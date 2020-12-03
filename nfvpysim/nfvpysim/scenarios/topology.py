@@ -24,7 +24,7 @@ class NfvTopology(fnss.Topology):
     ingress_nodes and egress_nodes.
     """
 
-    def nfv_nodes(self):
+    def nfv_nodes_candidates(self):
         """
         :return: return a set of nfv nodes
         """
@@ -40,12 +40,6 @@ class NfvTopology(fnss.Topology):
                 #and 'r_cpu' in self.node[v]['stack'][1]
                 #and 'r_ram' in self.node[v]['stack'][1]
                 #nd 'vnfs' in self.node[v]['stack'][1]
-
-
-
-
-
-
 
 
 
@@ -75,14 +69,14 @@ class NfvTopology(fnss.Topology):
 
 
 
-    def router_nodes(self):
+    def nfv_nodes(self):
         """
         :return: return a set of router nodes (for datacenter topology)
         """
 
         return set (v for v in self
                     if 'stack' in self.node[v]
-                    and self.node[v]['stack'][0] == 'router_node')
+                    and self.node[v]['stack'][0] == 'nfv_node')
 
 
 
@@ -105,8 +99,8 @@ def topology_geant(**kwargs):
     ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 8 nodes
     nfv_nodes = [v for v in topology.nodes() if deg[v] > 2]   # 19 nodes
     egress_nodes = [v for v in topology.nodes() if deg[v] == 2] # 13 nodes
-    forwarding_nodes = [v for v in topology.nodes() if v not in ingress_nodes + nfv_nodes+ egress_nodes] # 14 nodes
-
+    #forwarding_nodes = [v for v in topology.nodes() if v not in ingress_nodes + nfv_nodes+ egress_nodes] # 14 nodes
+    topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
 
 
     # Add stacks to nodes
@@ -119,8 +113,6 @@ def topology_geant(**kwargs):
     for v in egress_nodes:
         fnss.add_stack(topology, v, 'egress_node')
 
-    for v in forwarding_nodes:
-        fnss.add_stack(topology, v, 'forwarding_node')
 
 
     # Set weight and delay on all links
@@ -142,12 +134,14 @@ def topology_geant(**kwargs):
 @register_topology_factory('TATANLD')
 def topology_tatanld(**kwargs):
 
-    topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/pytdatasets/TataNld.graphml').to_undirected() # 186 nodes
+    topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/TataNld.graphml').to_undirected() # 186 nodes
     deg = nx.degree(topology)
     ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 80 nodes
     nfv_nodes = [v for v in topology.nodes() if deg[v] > 2]   # 34 nodes
     egress_nodes = [v for v in topology.nodes() if deg[v] == 2] # 22 nodes
-    forwarding_nodes = [v for v in topology.nodes() if v not in ingress_nodes + nfv_nodes + egress_nodes] # 9 nodes
+    #forwarding_nodes = [v for v in topology.nodes() if v not in ingress_nodes + nfv_nodes + egress_nodes] # 9 nodes
+    topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
+
 
     # Add stacks to nodes
 
@@ -160,8 +154,7 @@ def topology_tatanld(**kwargs):
     for v in egress_nodes:
         fnss.add_stack(topology, v, 'egress_node')
 
-    for v in forwarding_nodes:
-        fnss.add_stack(topology, v, 'fw_node')
+
 
 
     # Set weight and delay on all links
@@ -181,7 +174,7 @@ def topology_tatanld(**kwargs):
 
 
 @register_topology_factory('DATACENTER_TWO_TIER')
-def topology_datacenter_two_tier():
+def topology_datacenter_two_tier(**kwargs):
     # create a topology with 10 core switches, 20 edge switches and 10 hosts
     # per switch (i.e. 200 hosts in total)
     topology = fnss.two_tier_topology(n_core=10, n_edge=20, n_hosts=10)
@@ -222,5 +215,10 @@ def topology_datacenter_two_tier():
 
     return NfvTopology(topology)
 
+
+"""
 topo = topology_geant()
-print(topo.adjacency())
+#nodes_deg = nx.degree(topo)
+print(topo.stacks())
+print()
+"""

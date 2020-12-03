@@ -148,18 +148,10 @@ class NetworkModel:
         nfv_nodes = {}
         for node in topology.nodes():
             stack_name, stack_props = fnss.get_stack(topology, node)
-            if stack_name == 'ingress_node':
-               pass
-
-            elif stack_name == 'egress_node':
-                pass
-
-            elif stack_name == 'nfv_node':
+            if stack_name == 'nfv_node':
                 if 'n_vnfs' in stack_props:
                     nfv_nodes[node] = stack_props['n_vnfs']
 
-            elif stack_name == 'fw_node':
-                pass
 
 
         policy_name = nfv_cache_policy['name']
