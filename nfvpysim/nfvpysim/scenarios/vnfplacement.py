@@ -25,12 +25,12 @@ def random_vnf_placement():
                          8: 30,  # dpi
                         }
 
-    selected_vnfs = []
+    selected_vnfs = {}
     sum_cpu = 0
     while sum_cpu < 100:
-        target_vnf = random.choice(list(dict_vnfs_cpu_req.keys()))
-        if target_vnf not in selected_vnfs:
-            selected_vnfs.append(target_vnf)
+        target_vnf, cpu = random.choice(list((dict_vnfs_cpu_req.items())))
+        if target_vnf not in selected_vnfs.items():
+            selected_vnfs[target_vnf] = cpu
             sum_cpu += dict_vnfs_cpu_req[target_vnf]
             if sum_cpu > 100:
                 break
@@ -43,6 +43,7 @@ def random_vnf_placement():
 def apply_vnfs_placement(placement, topology):
     for v, vnfs in placement.items():
         topology.node[v]['stack'][1]['n_vnfs'] = vnfs
+        #print(v, vnfs)
 
 
 ##################################  VNF PLACEMENT POLICIES #############################################################
@@ -51,22 +52,28 @@ def apply_vnfs_placement(placement, topology):
 def random_placement(topology, seed=None, **kwargs):
     random.seed(seed)
     nfv_nodes_candidates = get_nfv_nodes(topology)
-    vnf_placement = defaultdict(list)
+    vnf_placement = defaultdict()
     for v in nfv_nodes_candidates:
         vnf_placement[v] = random_vnf_placement()
-    apply_vnfs_placement(vnf_placement, topology)
+        #print(v, vnf_placement[v])
+    print(apply_vnfs_placement(vnf_placement, topology))
+
 
 """
 topo = topology_geant()
-nfv_node = get_nfv_nodes(topo)
-b = random_vnf_placement()
-a = random_placement(topo)
-print(a)
+b = random_placement(topo)
 print(b)
 
-
-
 """
+
+
+
+
+
+
+
+
+
 
 
 

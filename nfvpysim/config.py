@@ -1,7 +1,7 @@
 from multiprocessing import cpu_count
 from collections import deque
 import copy
-from nfvpysim import Tree
+from nfvpysim.util import Tree
 
 ############################## GENERAL SETTINGS ##############################
 
@@ -86,7 +86,6 @@ EXPERIMENT_QUEUE = deque()
 # Create tree of experiment configuration
 default = Tree()
 default['workload'] = {'name':  'STATIONARY_RANDOM_SFC',
-                       'n_vnfs': N_VNFS,
                        'n_warmup': N_WARMUP_REQUESTS,
                        'n_measured': N_MEASURED_REQUESTS,
                        'rate': REQ_RATE}
@@ -102,10 +101,10 @@ for policy in POLICIES:
     for topology in TOPOLOGIES:
         for nfv_node_cache_size in NFV_NODE_CACHE_SIZE:
             experiment = copy.deepcopy(default)
-            experiment['workload']['n_vnfs'] = N_VNFS
+            #experiment['workload']['n_vnfs'] = N_VNFS
             experiment['policy']['name'] = policy
             experiment['topology']['name'] = topology
             experiment['vnf_allocation']['network_cache'] = nfv_node_cache_size
-            experiment['desc'] = "n_sfcs: %s, policy: %s, topology: %s, network cache: %s" \
-                                     % (str(N_VNFS), policy, topology, str(nfv_node_cache_size))
+            experiment['desc'] = "policy: %s, topology: %s, network cache: %s" \
+                                     % (policy, topology, str(nfv_node_cache_size))
             EXPERIMENT_QUEUE.append(experiment)
