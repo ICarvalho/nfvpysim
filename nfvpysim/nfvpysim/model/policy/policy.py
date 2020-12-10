@@ -31,7 +31,7 @@ class GreedyWithoutPlacement(Policy):
 
     def process_event(self, time, ingress_node, egress_node, sfc, log):
         path = self.view.shortest_path(ingress_node, egress_node)
-        print(path)
+        #print(path)
         self.controller.start_session(time, ingress_node, egress_node, sfc, log)
         for u, v in path_links(path):
             self.controller.forward_request_hop(u, v)
