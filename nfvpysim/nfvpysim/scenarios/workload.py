@@ -160,12 +160,14 @@ class StationaryWorkloadVarLenSfc:
             #f.close()
         return
 
-
+"""
 topo= topology_geant()
 var_len = StationaryWorkloadVarLenSfc(topo, 10**5)
 
 for i in var_len:
     print(i)
+"""
+
 
 
 """
