@@ -32,26 +32,31 @@ class GreedyWithoutPlacement(Policy):
     def process_event(self, time, ingress_node, egress_node, sfc, log):
         path = self.view.shortest_path(ingress_node, egress_node)
         #print(path)
-        self.controller.start_session(time, ingress_node, egress_node, sfc, log)
+        self.controller.start_session(time, ingress_node, egress_node, sfc)
+        vnf_status = {vnf: False for vnf in sfc}
         for u, v in path_links(path):
             self.controller.forward_request_hop(u, v)
-            for vnf in sfc.keys():
-                vnf_status = {vnf: False for vnf in sfc}
-                if self.controller.get_vnf(v, vnf) and vnf_status[vnf] is False: # vnf on node and processed
-                    vnf_status[vnf] = True
-                    self.controller.vnf_proc(vnf)
-                    continue
-                elif self.controller.get_vnf(v, vnf) and vnf_status[vnf] is True: # vnf has already been processed in previous node
-                    continue
-                elif not self.controller.get_vnf(v, vnf): # vnf not on node and not processed yet
-                    continue
-                if all(value is True for value in vnf_status.values() and v == egress_node):
-                    break
-                if self.collector is not None and self.session['log']:
-                    self.collector.sfc_acc(sfc)
-                    return True
-                else:
-                    return False
+            if self.model.is_nfv_node(v):
+                for vnf in sfc:
+                    if self.controller.get_vnf(v, vnf):
+                        if vnf_status[vnf] ==  False: # vnf on node and processed
+                            vnf_status[vnf] = True
+                            self.controller.vnf_proc(vnf)
+                            continue
+                    elif self.controller.get_vnf(v, vnf):
+                        if vnf_status[vnf] == True: # vnf has already been processed in previous node
+                            continue
+                    elif not self.controller.get_vnf(v, vnf): # vnf not on node and not processed yet
+                        continue
+            else:
+                continue
+            if all(value == True for value in vnf_status.values()) and v == egress_node:
+                break
+            if self.collector is not None and self.session['log']:
+                self.collector.sfc_acc(sfc)
+                return True
+            else:
+                return False
 
         self.controller.end_session()
 
