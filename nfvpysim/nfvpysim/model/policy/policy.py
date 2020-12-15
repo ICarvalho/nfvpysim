@@ -25,7 +25,7 @@ class Policy:
 @register_policy('GREEDY_WITHOUT_PLACEMENT')
 class GreedyWithoutPlacement(Policy):
 
-    def __init__(self, view, controller):
+    def __init__(self, view, controller, **kwargs):
         super(GreedyWithoutPlacement, self).__init__(view, controller)
 
 
@@ -38,20 +38,17 @@ class GreedyWithoutPlacement(Policy):
             self.controller.forward_request_hop(u, v)
             if self.model.is_nfv_node(v):
                 for vnf in sfc:
-                    if self.controller.get_vnf(v, vnf):
-                        if vnf_status[vnf] ==  False: # vnf on node and processed
+                    if self.controller.get_vnf(v, vnf) and vnf_status[vnf] == False: # vnf on node and processed
                             vnf_status[vnf] = True
                             self.controller.vnf_proc(vnf)
+                    elif self.controller.get_vnf(v, vnf) and vnf_status[vnf] == True: # vnf has already been processed in previous node
                             continue
-                    elif self.controller.get_vnf(v, vnf):
-                        if vnf_status[vnf] == True: # vnf has already been processed in previous node
-                            continue
-                    elif not self.controller.get_vnf(v, vnf): # vnf not on node and not processed yet
+                    elif not self.controller.get_vnf(v, vnf) and vnf_status[vnf] == False: # vnf not on node and not processed yet
                         continue
-            else:
-                continue
-            if all(value == True for value in vnf_status.values()) and v == egress_node:
-                break
+
+                    if all(value == True for value in vnf_status.values()) and v == egress_node:
+                        break
+
             if self.collector is not None and self.session['log']:
                 self.collector.sfc_acc(sfc)
                 return True

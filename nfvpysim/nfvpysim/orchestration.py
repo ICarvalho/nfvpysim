@@ -208,6 +208,8 @@ def run_scenario(settings, params, curr_exp, n_exp):
 
 
 
+
+        # set workload
         workload_spec = tree['workload']
         workload_name = workload_spec.pop('name')
         if workload_name not in WORKLOAD:
