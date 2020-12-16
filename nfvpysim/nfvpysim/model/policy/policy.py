@@ -67,11 +67,11 @@ class GreedyWithOnlinePlacementPolicy(Policy):
 
     def process_event(self, time, ingress_node, egress_node, sfc, log):
         path = self.view.shortest_path(ingress_node, egress_node)
-        self.controller.start_session(time, ingress_node, egress_node, sfc, log)
+        self.controller.start_session(time, ingress_node, egress_node, sfc)
         missed_vnfs = []
         for u, v in path_links(path):
             self.controller.forward_request_hop(u, v)
-            for vnf in sfc.keys():
+            for vnf in sfc:
                 vnf_status = {vnf: False for vnf in sfc}
                 if self.controller.get_vnf(v, vnf) and vnf_status[vnf] is False: # vnf on node and processed
                     self.controller.vnf_proc(vnf)
