@@ -25,29 +25,29 @@ class Policy:
 @register_policy('GREEDY_WITHOUT_PLACEMENT')
 class GreedyWithoutPlacement(Policy):
 
-    def __init__(self, view, controller):
+    def __init__(self, view, controller, **kwargs):
         super(GreedyWithoutPlacement, self).__init__(view, controller)
 
 
     def process_event(self, time, ingress_node, egress_node, sfc, log):
         path = self.view.shortest_path(ingress_node, egress_node)
         #print(path)
-        self.controller.start_session(time, ingress_node, egress_node, sfc, log)
-        vnf_status = {vnf: False for vnf in sfc.keys()}
+        self.controller.start_session(time, ingress_node, egress_node, sfc)
+        vnf_status = {vnf: False for vnf in sfc}
         for u, v in path_links(path):
             self.controller.forward_request_hop(u, v)
-            for vnf in sfc.keys():
+            if self.model.is_nfv_node(v):
+                for vnf in sfc:
+                    if self.controller.get_vnf(v, vnf) and vnf_status[vnf] == False: # vnf on node and processed
+                            vnf_status[vnf] = True
+                            self.controller.vnf_proc(vnf)
+                    elif self.controller.get_vnf(v, vnf) and vnf_status[vnf] == True: # vnf has already been processed in previous node
+                            continue
+                    elif not self.controller.get_vnf(v, vnf) and vnf_status[vnf] == False: # vnf not on node and not processed yet
+                        continue
 
-                if self.controller.get_vnf(v, vnf) and vnf_status[vnf] is False: # vnf on node and processed
-                    vnf_status[vnf] = True
-                    self.controller.vnf_proc(vnf)
-                    continue
-                elif self.controller.get_vnf(v, vnf) and vnf_status[vnf] is True: # vnf has already been processed in previous node
-                    continue
-                elif not self.controller.get_vnf(v, vnf): # vnf not on node and not processed yet
-                    continue
-            if all(value is True for value in vnf_status.values() and v == egress_node):
-                break
+                    if all(value == True for value in vnf_status.values()) and v == egress_node:
+                        break
 
             if self.collector is not None and self.session['log']:
                 self.collector.sfc_acc(sfc)
@@ -67,29 +67,31 @@ class GreedyWithOnlinePlacementPolicy(Policy):
 
     def process_event(self, time, ingress_node, egress_node, sfc, log):
         path = self.view.shortest_path(ingress_node, egress_node)
-        self.controller.start_session(time, ingress_node, egress_node, sfc, log)
+        self.controller.start_session(time, ingress_node, egress_node, sfc)
         missed_vnfs = []
+        vnf_status = {vnf: False for vnf in sfc}
         for u, v in path_links(path):
             self.controller.forward_request_hop(u, v)
-            for vnf in sfc.keys():
-                vnf_status = {vnf: False for vnf in sfc}
-                if self.controller.get_vnf(v, vnf) and vnf_status[vnf] is False: # vnf on node and processed
-                    self.controller.vnf_proc(vnf)
-                    vnf_status[vnf] = True
-                    continue
-                elif self.controller.get_vnf(v, vnf) and vnf_status[vnf] is True: # vnf has already been processed in previous node
-                    continue
-                elif not self.controller.get_vnf(v, vnf): # vnf not on node and not processed yet
-                    missed_vnfs.append(vnf)
-                    continue
+            if self.model.is_nfv_node(v):
+                for vnf in sfc:
+                    if self.controller.get_vnf(v, vnf) and vnf_status[vnf] is False: # vnf on node and processed
+                        self.controller.vnf_proc(vnf)
+                        vnf_status[vnf] = True
 
-                if len(missed_vnfs) >= 1 and any(value is False for value in vnf_status.values()):
-                    target_nfv_node = self.controller.find_target_nfv_node(path, missed_vnfs)
-                    closest_nfv_node = self.controller.get_closest_nfv_node(path)
-                    if v == closest_nfv_node and v == target_nfv_node:
-                        for missed_vnf in missed_vnfs:
-                            self.model.add_vnf(missed_vnf)
-                            vnf_status = {missed_vnf: True for missed_vnf in missed_vnfs}
+                    elif self.controller.get_vnf(v, vnf) and vnf_status[vnf] is True: # vnf has already been processed in previous node
+                        continue
+
+                    elif not self.controller.get_vnf(v, vnf) and vnf_status[vnf] == False: # vnf not on node and not processed yet
+                        missed_vnfs.append(vnf)
+                        continue
+
+            if len(missed_vnfs) >= 1 and any(value is False for value in vnf_status.values()):
+                target_nfv_node = self.controller.find_target_nfv_node(path, missed_vnfs)
+                closest_nfv_node = self.controller.get_closest_nfv_node(path)
+                if v == closest_nfv_node and v == target_nfv_node:
+                    for missed_vnf in missed_vnfs:
+                        self.model.put_vnf(missed_vnf)
+                        vnf_status[missed_vnf] = True
                 if all(value is True for value in vnf_status.values() and v == egress_node):
                     break
             if self.collector is not None and self.session['log']:

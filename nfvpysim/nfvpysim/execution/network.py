@@ -6,6 +6,8 @@ from nfvpysim.util import path_links
 import logging
 logger = logging.getLogger('orchestration')
 
+from nfvpysim.scenarios import topology_geant
+
 
 __all__ = [
     'NetworkModel',
@@ -114,7 +116,7 @@ class NetworkModel:
                              'instance of fnss.Topology or   of its subclasses')
 
         self.shortest_path = dict(shortest_path) if shortest_path is not None \
-            else symmetrify_paths(nx.all_pairs_dijkstra_path(topology))
+            else symmetrify_paths(dict(nx.all_pairs_dijkstra_path(topology)))
 
 
         self.topology = topology
@@ -210,6 +212,9 @@ class NetworkModel:
                 nfv_nodes.append(node)
         return nfv_nodes
 
+
+    def is_nfv_node(self, node):
+        return self.topology.node[node]['stack'][0] == 'nfv_node'
 
 
     def select_ingress_node(self, topology):
@@ -409,3 +414,4 @@ class NetworkController:
         if self.collector is not None and self.session['log']:
             self.collector.end_session(success)
         self.session = None
+

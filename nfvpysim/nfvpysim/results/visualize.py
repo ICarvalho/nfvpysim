@@ -43,7 +43,7 @@ def stack_map(topology):
             elif vnfs:
                 name = 'n_vnfs'
             else:
-                name = 'nfv_node'
+                name = 'nfv_nodes_candidates'
         stack[v] = name
     return stack
 

@@ -43,17 +43,19 @@ class StationaryWorkloadRandomSfc:
     @staticmethod
     def select_random_sfc():
 
-        sfcs = [{1: 15, 2: 25}, # [nat - fw]
-                {4: 20, 5: 20}, # [wanopt - lb]
-                {1: 15, 2: 25, 3: 25}, # [nat - fw - ids]
-                {2: 25, 3: 25, 5: 20}, # [fw - ids - lb]
-                {1: 15, 5: 20, 4: 20}, # [nat - lb - wanopt]
-                {5: 20, 2: 25, 1: 15}, # [lb - fw - nat]
-                {2: 25, 3: 25, 5: 20, 6: 25}, # [fw - ids - lb - encrypt]
-                {3: 25, 2: 25, 5: 20, 8: 30}, # [ids - fw - lb - wanopt]
-                {5: 20, 4: 20, 6: 25, 2: 25, 3: 25} # [lb - wanopt - encrypt - fw - ids]
-                ]
-        return random.choice(sfcs)
+        services = [
+            [1, 2],  # [nat - fw]
+            [4, 5],  # [wanopt - lb]
+            [1, 2, 3],  # [nat - fw - ids]
+            [2, 3, 5],  # [fw - ids - lb]
+            [1, 5, 4],  # [nat - lb - wanopt]
+            [5, 2, 1],  # [lb - fw - nat]
+            [2, 3, 5, 6],  # [fw - ids - lb - encrypt]
+            [3, 2, 5, 8],  # [ids - fw - lb - wanopt]
+            [5, 4, 6, 2, 3],  # [lb - wanopt - encrypt - fw - ids]
+        ]
+
+        return random.choice(services)
 
 
 
@@ -111,7 +113,7 @@ class StationaryWorkloadVarLenSfc:
 
     @staticmethod
     def var_len_seq_sfc():
-        var_len_sfc = {}
+        var_len_sfc = []
         sfcs = {1: 15,  # nat
                 2: 25,  # fw
                 3: 25,  # ids
@@ -125,8 +127,8 @@ class StationaryWorkloadVarLenSfc:
         sum_cpu = 0
         while sfc_len != 0:
             vnf, cpu = random.choice(list(sfcs.items()))
-            if vnf not in var_len_sfc.keys():
-                var_len_sfc[vnf] = cpu
+            if vnf not in var_len_sfc:
+                var_len_sfc.append(vnf)
                 sfc_len -= 1
                 sum_cpu += cpu
                 if sum_cpu > 100 or sfc_len == 0:
@@ -160,13 +162,16 @@ class StationaryWorkloadVarLenSfc:
             #f.close()
         return
 
+
 """
 topo= topology_geant()
-var_len = StationaryWorkloadVarLenSfc(topo, 10**5)
+var_len = StationaryWorkloadRandomSfc(topo, 10**5)
 
 for i in var_len:
     print(i)
+
 """
+
 
 
 
@@ -182,6 +187,18 @@ services = [
                     [3, 2, 5, 8],  # [ids - fw - lb - wanopt]
                     [5, 4, 6, 2, 3],  # [lb - wanopt - encrypt - fw - ids]
             ]
+            
+            
+sfcs = [{1: 15, 2: 25}, # [nat - fw]
+                {4: 20, 5: 20}, # [wanopt - lb]
+                {1: 15, 2: 25, 3: 25}, # [nat - fw - ids]
+                {2: 25, 3: 25, 5: 20}, # [fw - ids - lb]
+                {1: 15, 5: 20, 4: 20}, # [nat - lb - wanopt]
+                {5: 20, 2: 25, 1: 15}, # [lb - fw - nat]
+                {2: 25, 3: 25, 5: 20, 6: 25}, # [fw - ids - lb - encrypt]
+                {3: 25, 2: 25, 5: 20, 8: 30}, # [ids - fw - lb - wanopt]
+                {5: 20, 4: 20, 6: 25, 2: 25, 3: 25} # [lb - wanopt - encrypt - fw - ids]
+                ]
 
 
 
