@@ -26,7 +26,7 @@ class List:
         return len(self.items)
 
     def get_item_value(self, item):
-        return self.items[item]
+        return self.items.index(item)
 
     def has_item(self, item):
         return item in self.items
@@ -43,6 +43,15 @@ class NfvCache:
 
     def __init__(self):
         self._nfvcache = List()
+        self.dict_vnfs_cpu_req =  {1: 15,   # nat
+                                   2: 25,   # fw
+                                   3: 25,   # ids
+                                   4: 20,   # wanopt
+                                   5: 20,   # lb
+                                   6: 25,   # encrypt
+                                   7: 25,   # decrypt
+                                   8: 25,   # decrypt
+                                   }
 
     def add_vnf(self, vnf):
         return self._nfvcache.add_item(vnf)
@@ -62,8 +71,15 @@ class NfvCache:
     def list_vnfs(self):
         return self._nfvcache.list_items()
 
-    #def get_sum_vnfs_cpu(self):
-       # return self._nfvcache.get_sum_item_values()
+    def get_sum_vnfs_cpu(self):
+        vnfs = self.list_vnfs()
+        sum_cpu_vnfs = 0
+        for vnf in vnfs:
+            if vnf in self.dict_vnfs_cpu_req.keys():
+                sum_cpu_vnfs += self.dict_vnfs_cpu_req[vnf]
+
+        return sum_cpu_vnfs
+
 
     #def get_vnf_cpu_value(self, vnf):
         #return self._nfvcache.get_item_value(vnf)

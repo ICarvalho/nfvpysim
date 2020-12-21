@@ -151,6 +151,10 @@ class NetworkModel:
             if stack_name == 'nfv_node':
                 if 'n_vnfs' in stack_props:
                     nfv_nodes[node] = stack_props['n_vnfs']
+            if stack_name == 'ingress_node':
+                self.ingress_nodes[node] = stack_props['ingress_node']
+            if stack_name == 'egress_node':
+                self.egress_nodes[node] = stack_props['egress_node']
 
 
 
@@ -243,6 +247,7 @@ class NetworkController:
         self.session = None
         self.model = model
         self.collector = None
+
 
 
     def attach_collector(self, collector):
@@ -362,12 +367,29 @@ class NetworkController:
         nfv_nodes_candidates = self.model.get_nfv_nodes(path)
         for nfv_node in nfv_nodes_candidates:
             dist_nfv_node_egress_node[nfv_node] = self.model.get_shortest_path_between_two_nodes(nfv_node, egress_node)
-        closest_nfv_node = min(dist_nfv_node_egress_node.values())
+        closest_nfv_node = min(dist_nfv_node_egress_node.keys())
         return closest_nfv_node
 
 
     def sum_cpu_req_vnfs(self, vnfs):
-        return sum(vnf.values() for vnf in vnfs)
+        dict_vnfs_cpu_req = {1: 15,   # nat
+                            2: 25,   # fw
+                            3: 25,   # ids
+                            4: 20,   # wanopt
+                            5: 20,   # lb
+                            6: 25,   # encrypt
+                            7: 25,   # decrypt
+                            8: 25,  # decrypt
+                            }
+
+        sum_cpu_vnfs = 0
+        for vnf in vnfs:
+            if vnf in dict_vnfs_cpu_req.keys():
+                sum_cpu_vnfs += dict_vnfs_cpu_req[vnf]
+
+        return sum_cpu_vnfs
+
+
 
 
     def sum_vnfs_cpu_node(self, node):
