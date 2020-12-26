@@ -49,13 +49,13 @@ def apply_vnfs_placement(placement, topology):
 ##################################  VNF PLACEMENT POLICIES #############################################################
 
 @register_vnf_placement('RANDOM')
-def random_placement(topology, seed=None, **kwargs):
+def random_placement(topology, seed=None):
     random.seed(seed)
     nfv_nodes_candidates = get_nfv_nodes(topology)
     vnf_placement = defaultdict(list)
     for v in nfv_nodes_candidates:
         vnf_placement[v] = random_vnf_placement()
-        print(v, vnf_placement[v])
+        #print(v, vnf_placement[v])
     apply_vnfs_placement(vnf_placement, topology)
 
 """

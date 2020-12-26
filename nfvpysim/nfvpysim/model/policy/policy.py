@@ -48,6 +48,8 @@ class GreedyWithoutPlacement(Policy):
 
                     if all(value == True for value in vnf_status.values()) and v == egress_node:
                         break
+            else:
+                continue
 
             if self.collector is not None and self.session['log']:
                 self.collector.sfc_acc(sfc)
@@ -62,7 +64,7 @@ class GreedyWithoutPlacement(Policy):
 @register_policy('GREEDY_WITH_ONLINE_PLACEMENT')
 class GreedyWithOnlinePlacementPolicy(Policy):
 
-    def __init__(self, view, controller):
+    def __init__(self, view, controller, **kwargs):
         super(GreedyWithOnlinePlacementPolicy, self).__init__(view, controller)
 
     def process_event(self, time, ingress_node, egress_node, sfc, log):
@@ -85,15 +87,15 @@ class GreedyWithOnlinePlacementPolicy(Policy):
                         missed_vnfs.append(vnf)
                         continue
 
-            if len(missed_vnfs) >= 1 and any(value is False for value in vnf_status.values()):
-                target_nfv_node = self.controller.find_target_nfv_node(path, missed_vnfs)
-                closest_nfv_node = self.controller.get_closest_nfv_node(path)
-                if v == closest_nfv_node and v == target_nfv_node:
-                    for missed_vnf in missed_vnfs:
-                        self.model.put_vnf(missed_vnf)
-                        vnf_status[missed_vnf] = True
-                if all(value is True for value in vnf_status.values() and v == egress_node):
-                    break
+                if len(missed_vnfs) >= 1 and any(value is False for value in vnf_status.values()):
+                    target_nfv_node = self.controller.find_target_nfv_node(path, missed_vnfs)
+                    closest_nfv_node = self.controller.get_closest_nfv_node(path)
+                    if v == closest_nfv_node and v == target_nfv_node:
+                        for missed_vnf in missed_vnfs:
+                            self.model.put_vnf(missed_vnf)
+                            vnf_status[missed_vnf] = True
+                    if all(value is True for value in vnf_status.values() and v == egress_node):
+                        break
             if self.collector is not None and self.session['log']:
                 self.collector.sfc_acc(sfc)
                 return True

@@ -14,7 +14,7 @@ def get_nfv_nodes(topology):
 
 
 @register_vnf_allocation('STATIC')
-def static_vnf_allocation(topology, cache_budget, **kwargs):
+def static_vnf_allocation(topology, cache_budget):
 
     nfv_nodes = get_nfv_nodes(topology)
     cache_size = cache_budget / 1

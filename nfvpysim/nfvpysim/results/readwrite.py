@@ -84,7 +84,7 @@ class ResultSet(object):
             passed as argument
         """
         if self.attr != resultset.attr:
-            raise ValueError('The resultsets cannot be merged because '
+            raise ValueError('The result sets cannot be merged because '
                              'they have different global attributes')
         rs = copy.deepcopy(self)
         for i in iter(resultset):
