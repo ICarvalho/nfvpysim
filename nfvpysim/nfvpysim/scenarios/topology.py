@@ -3,6 +3,7 @@ import networkx as nx
 import fnss
 from nfvpysim.registry import register_topology_factory
 import random
+import matplotlib.pyplot as plt
 
 __all__ = [
         'NfvTopology',
@@ -24,10 +25,9 @@ class NfvTopology(fnss.Topology):
     ingress_nodes and egress_nodes.
     """
 
+    """
     def nfv_nodes_candidates(self):
-        """
-        :return: return a set of nfv nodes
-        """
+        
 
         return {v: self.node[v]['stack'][1]['n_vnfs']
                 for v in self
@@ -42,18 +42,17 @@ class NfvTopology(fnss.Topology):
                 #nd 'vnfs' in self.node[v]['stack'][1]
 
 
+    """
+
+
 
     def ingress_nodes(self):
         """
         :return: return a set of ingress nodes
         """
-
         return set (v for v in self
                 if 'stack' in self.node[v]
                 and self.node[v]['stack'][0] == 'ingress_node')
-
-
-
 
 
 
@@ -68,26 +67,89 @@ class NfvTopology(fnss.Topology):
 
 
 
-
-    def nfv_nodes(self):
+    def nat_nodes(self):
         """
-        :return: return a set of router nodes (for datacenter topology)
+                :return: return a set of egress nodes
+                """
+
+        return set(v for v in self
+                   if 'stack' in self.node[v]
+                   and self.node[v]['stack'][0] == 'nat_node')
+
+
+    def fw_nodes(self):
         """
+                :return: return a set of egress nodes
+                """
 
-        return set (v for v in self
-                    if 'stack' in self.node[v]
-                    and self.node[v]['stack'][0] == 'nfv_node')
+        return set(v for v in self
+                   if 'stack' in self.node[v]
+                   and self.node[v]['stack'][0] == 'fw_node')
 
 
 
-    def switch_nodes(self):
+    def ids_nodes(self):
         """
-        :return: return a set of router nodes (for datacenter topology)
-        """
+                :return: return a set of egress nodes
+                """
 
-        return set (v for v in self
-                    if 'stack' in self.node[v]
-                    and self.node[v]['stack'][0] == 'switch_node')
+        return set(v for v in self
+                   if 'stack' in self.node[v]
+                   and self.node[v]['stack'][0] == 'ids_node')
+
+    def wanopt_nodes(self):
+        """
+                :return: return a set of egress nodes
+                """
+
+        return set(v for v in self
+                   if 'stack' in self.node[v]
+                   and self.node[v]['stack'][0] == 'wanopt_node')
+
+
+    def lb_nodes(self):
+        """
+                :return: return a set of egress nodes
+                """
+
+        return set(v for v in self
+                   if 'stack' in self.node[v]
+                   and self.node[v]['stack'][0] == 'lb_node')
+
+
+
+    def encrypt_nodes(self):
+        """
+                :return: return a set of egress nodes
+                """
+
+        return set(v for v in self
+                   if 'stack' in self.node[v]
+                   and self.node[v]['stack'][0] == 'encrypt_node')
+
+
+
+    def decrypt_nodes(self):
+        """
+                :return: return a set of egress nodes
+                """
+
+        return set(v for v in self
+                   if 'stack' in self.node[v]
+                   and self.node[v]['stack'][0] == 'decrypt_node')
+
+
+
+    def dpi_nodes(self):
+        """
+                :return: return a set of egress nodes
+                """
+
+        return set(v for v in self
+                   if 'stack' in self.node[v]
+                   and self.node[v]['stack'][0] == 'dpi_node')
+
+
 
 
 
@@ -216,9 +278,12 @@ def topology_datacenter_two_tier(**kwargs):
     return NfvTopology(topology)
 
 
-"""
+
 topo = topology_geant()
-#nodes_deg = nx.degree(topo)
-print(topo.stacks())
-print()
-"""
+
+
+pos = nx.spring_layout(topo)
+nx.draw(topo, pos)
+
+plt.savefig('this.png')
+plt.show()

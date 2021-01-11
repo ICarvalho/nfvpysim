@@ -187,6 +187,7 @@ class LatencyCollector(DataCollector):
 
     def start_session(self, timestamp, ingress_node, egress_node, sfc):
         self.sess_count += 1
+        self.sess_latency = 0.0
 
     def request_hop(self, u, v, path=True):
         if path:

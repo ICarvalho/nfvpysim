@@ -55,15 +55,14 @@ def random_placement(topology, seed=None, **kwargs):
     vnf_placement = defaultdict(list)
     for v in nfv_nodes_candidates:
         vnf_placement[v] = random_vnf_placement()
-        print(v, vnf_placement[v])
+        #print(v, vnf_placement[v])
     apply_vnfs_placement(vnf_placement, topology)
 
-"""
+
 topo = topology_geant()
 b = random_placement(topo)
 print(b)
 
-"""
 
 
 
