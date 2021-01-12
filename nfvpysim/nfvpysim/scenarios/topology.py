@@ -25,25 +25,6 @@ class NfvTopology(fnss.Topology):
     ingress_nodes and egress_nodes.
     """
 
-    """
-    def nfv_nodes_candidates(self):
-        
-
-        return {v: self.node[v]['stack'][1]['n_vnfs']
-                for v in self
-                if 'stack' in self.node[v]
-                and 'n_vnfs' in self.node[v]['stack'][1]
-                }
-                #and 'id' in self.node[v]['stack'][1]
-                #and 'cpu' in self.node[v]['stack'][1]
-                #and 'ram' in self.node[v]['stack'][1]
-                #and 'r_cpu' in self.node[v]['stack'][1]
-                #and 'r_ram' in self.node[v]['stack'][1]
-                #nd 'vnfs' in self.node[v]['stack'][1]
-
-
-    """
-
 
 
     def ingress_nodes(self):
@@ -67,87 +48,6 @@ class NfvTopology(fnss.Topology):
 
 
 
-    def nat_nodes(self):
-        """
-                :return: return a set of egress nodes
-                """
-
-        return set(v for v in self
-                   if 'stack' in self.node[v]
-                   and self.node[v]['stack'][0] == 'nat_node')
-
-
-    def fw_nodes(self):
-        """
-                :return: return a set of egress nodes
-                """
-
-        return set(v for v in self
-                   if 'stack' in self.node[v]
-                   and self.node[v]['stack'][0] == 'fw_node')
-
-
-
-    def ids_nodes(self):
-        """
-                :return: return a set of egress nodes
-                """
-
-        return set(v for v in self
-                   if 'stack' in self.node[v]
-                   and self.node[v]['stack'][0] == 'ids_node')
-
-    def wanopt_nodes(self):
-        """
-                :return: return a set of egress nodes
-                """
-
-        return set(v for v in self
-                   if 'stack' in self.node[v]
-                   and self.node[v]['stack'][0] == 'wanopt_node')
-
-
-    def lb_nodes(self):
-        """
-                :return: return a set of egress nodes
-                """
-
-        return set(v for v in self
-                   if 'stack' in self.node[v]
-                   and self.node[v]['stack'][0] == 'lb_node')
-
-
-
-    def encrypt_nodes(self):
-        """
-                :return: return a set of egress nodes
-                """
-
-        return set(v for v in self
-                   if 'stack' in self.node[v]
-                   and self.node[v]['stack'][0] == 'encrypt_node')
-
-
-
-    def decrypt_nodes(self):
-        """
-                :return: return a set of egress nodes
-                """
-
-        return set(v for v in self
-                   if 'stack' in self.node[v]
-                   and self.node[v]['stack'][0] == 'decrypt_node')
-
-
-
-    def dpi_nodes(self):
-        """
-                :return: return a set of egress nodes
-                """
-
-        return set(v for v in self
-                   if 'stack' in self.node[v]
-                   and self.node[v]['stack'][0] == 'dpi_node')
 
 
 
@@ -171,6 +71,7 @@ def topology_geant(**kwargs):
 
     for v in nfv_nodes:
         fnss.add_stack(topology, v, 'nfv_node')
+
 
     for v in egress_nodes:
         fnss.add_stack(topology, v, 'egress_node')
@@ -280,10 +181,5 @@ def topology_datacenter_two_tier(**kwargs):
 
 
 topo = topology_geant()
-
-
-pos = nx.spring_layout(topo)
-nx.draw(topo, pos)
-
-plt.savefig('this.png')
-plt.show()
+#nodes_deg = nx.degree(topo)
+nx.draw(topo)
