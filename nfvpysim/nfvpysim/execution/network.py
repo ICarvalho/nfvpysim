@@ -1,7 +1,7 @@
 import networkx as nx
 import fnss
 import random
-from nfvpysim.registry import CACHE_POLICY
+#from nfvpysim.registry import CACHE_POLICY
 from nfvpysim.util import path_links
 import logging
 logger = logging.getLogger('orchestration')
@@ -89,16 +89,6 @@ class NetworkView:
         return self.model.topology
 
 
-    def vnf_lookup(self, node, vnf):
-        if node in self.model.cache:
-            return self.model.cache[node].has(vnf)
-
-    def vnf_dumps(self, node):
-        if node in self.model.cache:
-            return self.model.cache[node].dump()
-
-
-
 
 class NetworkModel:
     """
@@ -108,15 +98,14 @@ class NetworkModel:
 
     """
 
-    def __init__(self, topology, nfv_cache_policy, shortest_path=None):
+    def __init__(self, topology): #nfv_cache_policy , shortest_path=None
 
 
         if not isinstance(topology, fnss.Topology):
             raise ValueError('The topology argument must be an'
                              'instance of fnss.Topology or   of its subclasses')
 
-        self.shortest_path = dict(shortest_path) if shortest_path is not None \
-            else symmetrify_paths(dict(nx.all_pairs_dijkstra_path(topology)))
+        self.shortest_path = nx.all_pairs_dijkstra_path(topology)
 
 
         self.topology = topology
@@ -147,20 +136,20 @@ class NetworkModel:
                 self.link_delay[(v,u)] = delay
 
 
-        nfv_nodes = {}
         for node in topology.nodes():
             stack_name, stack_props = fnss.get_stack(topology, node)
             if stack_name == 'nfv_node':
-                if 'n_vnfs' in stack_props:
-                    nfv_nodes[node] = stack_props['n_vnfs']
+                if 'vnfs' in stack_props:
+                    vnfs = stack_props['vnfs']
+                    self.nfv_nodes[node] = vnfs
 
 
 
-        policy_name = nfv_cache_policy['name']
-        policy_args = {k: v for k, v in nfv_cache_policy.items() if k != 'name'}
+        #policy_name = nfv_cache_policy['name']
+        #policy_args = {k: v for k, v in nfv_cache_policy.items() if k != 'name'}
         # The actual cache objects storing the content
-        self.nfv_enabled_nodes = {node: CACHE_POLICY[policy_name](nfv_nodes[node], **policy_args)
-                                  for node in nfv_nodes}
+        #self.nfv_enabled_nodes = {node: CACHE_POLICY[policy_name](nfv_nodes[node], **policy_args)
+                                  #for node in nfv_nodes}
 
 
 
@@ -213,12 +202,11 @@ class NetworkModel:
         return self.topology.node[node]['stack'][0] == 'nfv_node'
 
 
-    def select_ingress_node(self, topology):
-        return random.choice(self.get_ingress_nodes(topology))
 
 
-    def select_egress_node(self, topology):
-        return random.choice(self.get_egress_nodes(topology))
+
+
+
 
     def get_ingress_node_path(self, path):
         for node in path:
@@ -296,7 +284,14 @@ class NetworkController:
 
 
     def get_vnf(self, node, vnf):
-        if node in self.model.cache:
+
+        name, props = fnss.get_stack(self.model.topology, node)
+        if name == 'nfv_node' and self.session['vnf'] in props['vnfs']:
+            if self.collector is not None and self.session['log']:
+
+
+
+        if self.model.is_vnf_node(node):
             vnf_hit = self.model.cache[node].get_vnf(self.session)[vnf]
             if vnf_hit:
                 return True

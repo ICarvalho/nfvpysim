@@ -1,6 +1,6 @@
 """Registry keeping track of all registered pluggable components"""
 
-CACHE_POLICY = {}
+#CACHE_POLICY = {}
 
 # Dictionary storying all strategy implementations keyed by ID
 POLICY = {}
@@ -54,7 +54,7 @@ def register_decorator(register):
     return decorator
 
 
-register_cache_policy = register_decorator(CACHE_POLICY)
+#register_cache_policy = register_decorator(CACHE_POLICY)
 register_policy = register_decorator(POLICY)
 register_topology_factory = register_decorator(TOPOLOGY_FACTORY)
 register_vnf_allocation = register_decorator(VNF_ALLOCATION)

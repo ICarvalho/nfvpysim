@@ -1,5 +1,5 @@
 from __future__ import division
-from nfvpysim.registry import register_cache_policy
+#from nfvpysim.registry import register_cache_policy
 from collections import defaultdict
 
 
@@ -38,7 +38,7 @@ class List:
         #return sum(self.items.values())
 
 
-@register_cache_policy('NFV_CACHE')
+#@register_cache_policy('NFV_CACHE')
 class NfvCache:
 
     def __init__(self):
