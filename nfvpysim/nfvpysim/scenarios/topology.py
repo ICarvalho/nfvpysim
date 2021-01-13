@@ -47,46 +47,26 @@ class NfvTopology(fnss.Topology):
                     and self.node[v]['stack'][0] == 'egress_node')
 
 
+
+    def forwarding_nodes(self):
+        """
+        :return: return a set of ingress nodes
+        """
+        return set (v for v in self
+                if 'stack' in self.node[v]
+                and self.node[v]['stack'][0] == 'forwarding_node')
+
+
     def nfv_nodes(self):
         """
-        :return: return a set of egress nodes
+        :return: return a set of nfv nodes
         """
 
-        return set (v for v in self
-                    if 'stack' in self.node[v]
-                    and self.node[v]['stack'][0] == 'nfv_node')
-
-
-
-
-
-    @staticmethod
-    def rand_var_len_seq_sfc():
-        var_len_sfc = []
-        sfcs = {1: 15,  # nat
-                2: 25,  # fw
-                3: 25,  # ids
-                4: 20,  # wanopt
-                5: 20,  # lb
-                6: 25,  # encrypt
-                7: 25,  # decrypts
-                8: 30,  # dpi
+        return {v: self.node[v]['stack'][1]['cache_size']
+                for v in self
+                if 'stack' in self.node[v]
+                and 'cache_size' in self.node[v]['stack'][1]
                 }
-        sfc_len = random.randint(1, 8)
-        sum_cpu = 0
-        while sfc_len != 0:
-            vnf, cpu = random.choice(list(sfcs.items()))
-            if vnf not in var_len_sfc:
-                var_len_sfc.append(vnf)
-                var_len_sfc.append(cpu)
-                sum_cpu += cpu
-                sfc_len -= 1
-                if sum_cpu > 100 or sfc_len == 0:
-                    break
-                elif sum_cpu <= 100 and sfc_len != 0:
-                    sfc_len -= 1
-
-        return var_len_sfc
 
 
 
@@ -98,19 +78,9 @@ def topology_geant(**kwargs):
     deg = nx.degree(topology)
     ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 8 nodes
     egress_nodes = [v for v in topology.nodes() if deg[v] == 2] # 13 nodes
-    nfv_nodes = [v for v in topology.nodes() if v not in ingress_nodes + egress_nodes] #  19 nodes
-
-
-    vnfs_on_nfv_nodes = dict((v, []) for v in nfv_nodes)
-    vnfs = NfvTopology.rand_var_len_seq_sfc()
-    nfv_node = random.choice(nfv_nodes)
-    for vnf in vnfs:
-        vnfs_on_nfv_nodes[nfv_node].append(vnf)
-
-
-
-
-
+    nfv_nodes_candidates = [v for v in topology.nodes() if deg[v] > 2] #  19 nodes
+    forwarding_nodes = [v for v in topology.nodes() if v not in ingress_nodes + egress_nodes]
+    topology.graph['nfv_nodes_candidates'] = set(nfv_nodes_candidates)
     # Add stacks to nodes
     for v in ingress_nodes:
         fnss.add_stack(topology, v, 'ingress_node')
@@ -118,8 +88,8 @@ def topology_geant(**kwargs):
     for v in egress_nodes:
         fnss.add_stack(topology, v, 'egress_node')
 
-    for v in nfv_nodes:
-        fnss.add_stack(topology, v, 'nfv_node', {'vnfs': vnfs_on_nfv_nodes[v]})
+    for v in forwarding_nodes:
+        fnss.add_stack(topology, v, 'forwarding_node')
 
 
 
@@ -145,15 +115,11 @@ def topology_tatanld(**kwargs):
     topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/TataNld.graphml').to_undirected() # 186 nodes
     deg = nx.degree(topology)
     ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 80 nodes
-    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2]   # 34 nodes
-    egress_nodes = [v for v in topology.nodes() if deg[v] == 2] # 22 nodes
+    egress_nodes = [v for v in topology.nodes() if deg[v] == 2]  # 22 nodes
+    nfv_nodes_candidates = [v for v in topology.nodes() if deg[v] > 2]   # 34 nodes
+    forwarding_nodes = [v for v in topology.nodes()]
+    topology.graph['nfv_nodes_candidates'] = set(nfv_nodes_candidates)
 
-
-    vnfs_on_nfv_nodes = dict((v, []) for v in nfv_nodes)
-    vnfs = NfvTopology.rand_var_len_seq_sfc()
-    nfv_node = random.choice(nfv_nodes)
-    for vnf in vnfs:
-        vnfs_on_nfv_nodes[nfv_node].append(vnf)
 
     # Add stacks to nodes
     for v in ingress_nodes:
@@ -162,8 +128,8 @@ def topology_tatanld(**kwargs):
     for v in egress_nodes:
         fnss.add_stack(topology, v, 'egress_node')
 
-    for v in nfv_nodes:
-        fnss.add_stack(topology, v, 'nfv_node', {'vnfs': vnfs_on_nfv_nodes[v]})
+    for v in forwarding_nodes:
+        fnss.add_stack(topology, v, 'forwarding_node')
 
 
 

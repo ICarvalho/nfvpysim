@@ -30,7 +30,7 @@ class DataCollector:
     def request_hop(self, u, v, path):
         pass
 
-    def sfc_acc(self, sfc):
+    def vnf_hit(self, sfc):
         pass
 
     def vnf_proc_delay(self, vnf):
@@ -48,7 +48,7 @@ class DataCollector:
 class CollectorProxy(DataCollector):
 
 
-    EVENTS = ('start_session', 'sfc_acc' 'end_session', 'request_hop', 'vnf_proc_delay', 'results')
+    EVENTS = ('start_session', 'vnf_hit' 'end_session', 'request_hop', 'vnf_proc_delay', 'results')
 
     def __init__(self, view, collectors, **params):
 
@@ -69,9 +69,9 @@ class CollectorProxy(DataCollector):
             c.request_hop(u, v, path)
 
 
-    def sfc_acc(self, sfc):
+    def vnf_hit(self, sfc):
         for c in self.collectors['sfc_acc']:
-            c.sfc_acc(sfc)
+            c.vnf_hit(sfc)
 
 
     def vnf_proc_delay(self, vnf):
@@ -225,7 +225,7 @@ class AcceptanceRatioCollector(DataCollector):
         super().__init__(view, **params)
         self.view = view
         self.sess_count = 0
-        self.acc_sfc = 0
+        self.vnf_hit = 0
 
         if per_sfc:
             self.per_sfc_ratio = collections.defaultdict(int)
@@ -235,15 +235,15 @@ class AcceptanceRatioCollector(DataCollector):
         self.curr_path = self.view.shortest_path(ingress_node, egress_node)
 
 
-    def sfc_acc(self, sfc):
-        self.acc_sfc += 1
+    def vnf_hit(self, vnf):
+        self.vnf_hit += 1
         if self.per_sfc_ratio:
-            self.per_sfc_ratio[sfc] += 1
+            self.per_sfc_ratio[vnf] += 1
 
     def results(self):
-        n_sess = self.acc_sfc
-        sfc_acc_ratio = self.acc_sfc / n_sess
-        results = Tree(**{'MEAN': sfc_acc_ratio})
+        n_sess = self.vnf_hit
+        vnf_hit_ratio = self.vnf_hit / n_sess
+        results = Tree(**{'MEAN': vnf_hit_ratio})
 
         return results
 

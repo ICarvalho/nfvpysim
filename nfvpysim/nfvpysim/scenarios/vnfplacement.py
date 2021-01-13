@@ -3,18 +3,23 @@ import random
 from nfvpysim.registry import register_vnf_placement
 from collections import defaultdict
 from nfvpysim.scenarios.topology import topology_geant
+from nfvpysim.model import cache
 
 
-__all__ = [
+"""
+_all__ = [
     'random_placement'
           ]
+"""
+_
 
 
 def get_nfv_nodes(topology):
-    return [v for v in topology if topology.node[v]['stack'][0] == 'nfv_node']
+    nfv_nodes_candidates = topology.graph['nfv_nodes_candidates']
+    return nfv_nodes_candidates
 
 
-def random_vnf_placement():
+def select_vnfs():
     dict_vnfs_cpu_req = {1: 15,  # nat
                          2: 25,  # fw
                          3: 25,  # ids
@@ -37,17 +42,7 @@ def random_vnf_placement():
 
     return selected_vnfs
 
-
-
-
-def apply_vnfs_placement(placement, topology):
-    for v, vnfs in placement.items():
-        topology.node[v]['stack'][1]['n_vnfs'] = vnfs
-        #print(v, vnfs)
-
-
-##################################  VNF PLACEMENT POLICIES #############################################################
-
+"""
 @register_vnf_placement('RANDOM')
 def random_placement(topology, seed=None, **kwargs):
     random.seed(seed)
@@ -62,6 +57,9 @@ def random_placement(topology, seed=None, **kwargs):
 topo = topology_geant()
 b = random_placement(topo)
 print(b)
+
+
+"""
 
 
 

@@ -98,14 +98,15 @@ class NetworkModel:
 
     """
 
-    def __init__(self, topology): #nfv_cache_policy , shortest_path=None
+    def __init__(self,topology, nfv_cache_policy , shortest_path=None): #
 
 
         if not isinstance(topology, fnss.Topology):
             raise ValueError('The topology argument must be an'
                              'instance of fnss.Topology or   of its subclasses')
 
-        self.shortest_path = nx.all_pairs_dijkstra_path(topology)
+        self.shortest_path = dict(shortest_path) if shortest_path is not None \
+            else symmetrify_paths(dict(nx.all_pairs_dijkstra_path(topology)))
 
 
         self.topology = topology
@@ -203,11 +204,6 @@ class NetworkModel:
 
 
 
-
-
-
-
-
     def get_ingress_node_path(self, path):
         for node in path:
             return self.topology.node[node]['stack'][0] == 'ingress_node'
@@ -286,17 +282,12 @@ class NetworkController:
     def get_vnf(self, node, vnf):
 
         name, props = fnss.get_stack(self.model.topology, node)
-        if name == 'nfv_node' and self.session['vnf'] in props['vnfs']:
+        if name == 'nfv_node' and self.session[vnf] in props[vnf]:
             if self.collector is not None and self.session['log']:
-
-
-
-        if self.model.is_vnf_node(node):
-            vnf_hit = self.model.cache[node].get_vnf(self.session)[vnf]
-            if vnf_hit:
-                return True
-            else:
-                return False
+                self.collector.vnf_hit(node)
+            return  True
+        else:
+            return False
 
 
 
