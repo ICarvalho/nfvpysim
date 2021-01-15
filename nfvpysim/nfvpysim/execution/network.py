@@ -57,24 +57,13 @@ class NetworkView:
         return self.model.shortest_path[ingress_node][egress_node]
 
 
-    """
-    def vnf_location(self, vnf):
-        loc = set(v for v in self.model.cache if self.model.cache[v].has(vnf))
-        source = self.vnf_source(vnf)
-        if source:
-            loc.add(source)
-        return loc
-
-
-    def vnf_source(self, vnf):
-        return self.model.vnf_source.get(vnf, None)
-
-    """
-
-
-
     def all_pairs_shortest_paths(self):
         return self.model.shortest_path
+
+
+    def nfv_cache_nodes(self, size=False):
+        return {v: c.maxlen for v, c in self.model.nfv_cache.items()} if size \
+                else list(self.model.nfv_cache.keys())
 
 
     def link_type(self, u, v):
@@ -121,11 +110,7 @@ class NetworkModel:
                                              8: 25,   # decrypt
                                   }
 
-        self.ingress_nodes = {}
-        self.egress_nodes = {}
-        self.nfv_nodes = {}
-        self.fw_nodes = {}
-
+        self.nfv_cache = {}
         self.link_type = nx.get_edge_attributes(topology, 'type')
         self.link_delay = fnss.get_delays(topology)
 
@@ -136,13 +121,18 @@ class NetworkModel:
             for (u,v), delay in list(self.link_delay.items()):
                 self.link_delay[(v,u)] = delay
 
-
+        nfv_node_size = {}
         for node in topology.nodes():
             stack_name, stack_props = fnss.get_stack(topology, node)
-            if stack_name == 'nfv_node':
-                if 'vnfs' in stack_props:
-                    vnfs = stack_props['vnfs']
-                    self.nfv_nodes[node] = vnfs
+            if stack_name == 'forwarding_node':
+                if 'cache_size' in stack_props:
+                    nfv_node_size[node] = stack_props['cache_size']
+        if any(c < 8 for c in nfv_node_size.values()):
+            logger.warn('Some nfv node caches have size less than 8. '
+                        'I am setting them to 8 and run the experiment anyway')
+            for node in nfv_node_size:
+                if nfv_node_size[node] < 8:
+                    nfv_node_size[node] = 8
 
 
 
