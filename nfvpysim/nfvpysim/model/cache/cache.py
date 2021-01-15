@@ -12,6 +12,9 @@ class NfvCache:
 
     def __init__(self, max_size):
         self.nfvcache = deque(maxlen=int(max_size))
+        self.max_size = max_size
+        if self.max_size <= 0:
+            raise ValueError('max_size must be positive')
 
     def add_vnf(self, vnf):
         if not self.has_vnf(vnf):

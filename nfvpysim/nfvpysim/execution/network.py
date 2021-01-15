@@ -1,7 +1,8 @@
 import networkx as nx
 import fnss
 import random
-#from nfvpysim.registry import CACHE_POLICY
+from nfvpysim.registry import CACHE_POLICY
+from nfvpysim.model.cache import NfvCache
 from nfvpysim.util import path_links
 import logging
 logger = logging.getLogger('orchestration')
@@ -61,7 +62,7 @@ class NetworkView:
         return self.model.shortest_path
 
 
-    def nfv_cache_nodes(self, size=False):
+    def nfv_cache_nodes(self, size=True):
         return {v: c.maxlen for v, c in self.model.nfv_cache.items()} if size \
                 else list(self.model.nfv_cache.keys())
 
@@ -128,7 +129,7 @@ class NetworkModel:
                 if 'cache_size' in stack_props:
                     nfv_node_size[node] = stack_props['cache_size']
         if any(c < 8 for c in nfv_node_size.values()):
-            logger.warn('Some nfv node caches have size less than 8. '
+            logger.warning('Some nfv node caches have size less than 8. '
                         'I am setting them to 8 and run the experiment anyway')
             for node in nfv_node_size:
                 if nfv_node_size[node] < 8:
@@ -136,11 +137,62 @@ class NetworkModel:
 
 
 
-        #policy_name = nfv_cache_policy['name']
-        #policy_args = {k: v for k, v in nfv_cache_policy.items() if k != 'name'}
+        policy_name = nfv_cache_policy['name']
+        policy_args = {k: v for k, v in nfv_cache_policy.items() if k != 'name'}
         # The actual cache objects storing the content
-        #self.nfv_enabled_nodes = {node: CACHE_POLICY[policy_name](nfv_nodes[node], **policy_args)
-                                  #for node in nfv_nodes}
+        self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_node_size[node], **policy_args)
+                                  for node in nfv_node_size}
+
+
+
+    # Method to allocate statically a random sfc on an nfv cache node
+    @staticmethod
+    def select_random_sfc():
+        services = [
+            [1, 2],  # [nat - fw]
+            [4, 5],  # [wanopt - lb]
+            [1, 2, 3],  # [nat - fw - ids]
+            [2, 3, 5],  # [fw - ids - lb]
+            [1, 5, 4],  # [nat - lb - wanopt]
+            [5, 2, 1],  # [lb - fw - nat]
+            [2, 3, 5, 6],  # [fw - ids - lb - encrypt]
+            [3, 2, 5, 8],  # [ids - fw - lb - wanopt]
+            [5, 4, 6, 2, 3],  # [lb - wanopt - encrypt - fw - ids]
+        ]
+        return random.choice(services)
+
+    # Method to generate a variable-length sfc in order to be allocated on an nfv cache node
+    @staticmethod
+    def var_len_seq_sfc():
+        var_len_sfc = []
+        sfcs = {1: 15,  # nat
+                2: 25,  # fw
+                3: 25,  # ids
+                4: 20,  # wanopt
+                5: 20,  # lb
+                6: 25,  # encrypt
+                7: 25,  # decrypts
+                8: 30,  # dpi
+                }
+        sfc_len = random.randint(1, 8)
+        sum_cpu = 0
+        while sfc_len != 0:
+            vnf, cpu = random.choice(list(sfcs.items()))
+            if vnf not in var_len_sfc:
+                var_len_sfc.append(vnf)
+                sfc_len -= 1
+                sum_cpu += cpu
+                if sum_cpu > 100 or sfc_len == 0:
+                    break
+                elif sum_cpu <= 100 and sfc_len != 0:
+                    sfc_len -= 1
+
+        return var_len_sfc
+
+
+
+
+
 
 
 
@@ -282,8 +334,15 @@ class NetworkController:
 
 
     def put_vnf(self, node, vnf):
-        if node in self.model.cache:
-            return self.model.cache[node].add_vnf(vnf)
+        if node in self.model.nfv_cache:
+            return self.model.nfv_cache[node].add_vnf(vnf)
+
+
+    def put_sfc(self, node, sfc):
+        if node in self.model.nfv_cache:
+            for vnf in sfc:
+                self.model.nfv_cache[node].add_vnf(vnf)
+
 
 
 
