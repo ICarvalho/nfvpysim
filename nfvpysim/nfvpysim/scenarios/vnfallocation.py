@@ -1,5 +1,4 @@
 from __future__ import division
-from nfvpysim.scenarios.topology import topology_geant
 from nfvpysim.registry import register_vnf_allocation
 
 __all__ = [
@@ -8,28 +7,11 @@ __all__ = [
 
 
 
-def get_nfv_nodes(topology):
-    return [v for v in topology if topology.node[v]['stack'][0] == 'nfv_node']
-
-
-
 @register_vnf_allocation('STATIC')
-def static_vnf_allocation(topology, cache_budget):
+def static_vnf_allocation(topology, cache_budget, **kwargs):
 
-    nfv_nodes = get_nfv_nodes(topology)
-    cache_size = cache_budget / 1
-    for v in nfv_nodes:
-        topology.node[v]['stack'][1]['n_vnfs'] = cache_size
-
-
-"""
-topo = topology_geant()
-nfv_nodes = get_nfv_nodes(topo)
-cache = static_vnf_allocation(topo, cache_budget=8)
-for v in topo.nodes:
-    print(topo.node[v]['stack'][1])
-"""
-
-
-
+    nfv_nodes_candidates = topology.graph['nfv_nodes_candidates']
+    cache_size = cache_budget
+    for v in nfv_nodes_candidates:
+        topology.node[v]['stack'][1]['cache_size'] = cache_size
 

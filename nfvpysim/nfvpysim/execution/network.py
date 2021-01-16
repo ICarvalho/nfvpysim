@@ -2,6 +2,7 @@ import networkx as nx
 import fnss
 import random
 from nfvpysim.registry import CACHE_POLICY
+from nfvpysim.model.cache import NfvCache
 from nfvpysim.util import path_links
 import logging
 logger = logging.getLogger('orchestration')
@@ -57,24 +58,13 @@ class NetworkView:
         return self.model.shortest_path[ingress_node][egress_node]
 
 
-    """
-    def vnf_location(self, vnf):
-        loc = set(v for v in self.model.cache if self.model.cache[v].has(vnf))
-        source = self.vnf_source(vnf)
-        if source:
-            loc.add(source)
-        return loc
-
-
-    def vnf_source(self, vnf):
-        return self.model.vnf_source.get(vnf, None)
-
-    """
-
-
-
     def all_pairs_shortest_paths(self):
         return self.model.shortest_path
+
+
+    def nfv_cache_nodes(self, size=True):
+        return {v: c.maxlen for v, c in self.model.nfv_cache.items()} if size \
+                else list(self.model.nfv_cache.keys())
 
 
     def link_type(self, u, v):
@@ -89,16 +79,6 @@ class NetworkView:
         return self.model.topology
 
 
-    def vnf_lookup(self, node, vnf):
-        if node in self.model.cache:
-            return self.model.cache[node].has(vnf)
-
-    def vnf_dumps(self, node):
-        if node in self.model.cache:
-            return self.model.cache[node].dump()
-
-
-
 
 class NetworkModel:
     """
@@ -108,7 +88,7 @@ class NetworkModel:
 
     """
 
-    def __init__(self, topology, nfv_cache_policy, shortest_path=None):
+    def __init__(self,topology, nfv_cache_policy , shortest_path=None): #
 
 
         if not isinstance(topology, fnss.Topology):
@@ -131,11 +111,7 @@ class NetworkModel:
                                              8: 25,   # decrypt
                                   }
 
-        self.ingress_nodes = {}
-        self.egress_nodes = {}
-        self.nfv_nodes = {}
-        self.fw_nodes = {}
-
+        self.nfv_cache = {}
         self.link_type = nx.get_edge_attributes(topology, 'type')
         self.link_delay = fnss.get_delays(topology)
 
@@ -146,25 +122,77 @@ class NetworkModel:
             for (u,v), delay in list(self.link_delay.items()):
                 self.link_delay[(v,u)] = delay
 
-
-        nfv_nodes = {}
+        nfv_node_size = {}
         for node in topology.nodes():
             stack_name, stack_props = fnss.get_stack(topology, node)
-            if stack_name == 'nfv_node':
-                if 'n_vnfs' in stack_props:
-                    nfv_nodes[node] = stack_props['n_vnfs']
-            if stack_name == 'ingress_node':
-                self.ingress_nodes[node] = stack_props['ingress_node']
-            if stack_name == 'egress_node':
-                self.egress_nodes[node] = stack_props['egress_node']
+            if stack_name == 'forwarding_node':
+                if 'cache_size' in stack_props:
+                    nfv_node_size[node] = stack_props['cache_size']
+        if any(c < 8 for c in nfv_node_size.values()):
+            logger.warning('Some nfv node caches have size less than 8. '
+                        'I am setting them to 8 and run the experiment anyway')
+            for node in nfv_node_size:
+                if nfv_node_size[node] < 8:
+                    nfv_node_size[node] = 8
 
 
 
         policy_name = nfv_cache_policy['name']
         policy_args = {k: v for k, v in nfv_cache_policy.items() if k != 'name'}
         # The actual cache objects storing the content
-        self.nfv_enabled_nodes = {node: CACHE_POLICY[policy_name](nfv_nodes[node], **policy_args)
-                                  for node in nfv_nodes}
+        self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_node_size[node], **policy_args)
+                                  for node in nfv_node_size}
+
+
+
+    # Method to allocate statically a random sfc on an nfv cache node
+    @staticmethod
+    def select_random_sfc():
+        services = [
+            [1, 2],  # [nat - fw]
+            [4, 5],  # [wanopt - lb]
+            [1, 2, 3],  # [nat - fw - ids]
+            [2, 3, 5],  # [fw - ids - lb]
+            [1, 5, 4],  # [nat - lb - wanopt]
+            [5, 2, 1],  # [lb - fw - nat]
+            [2, 3, 5, 6],  # [fw - ids - lb - encrypt]
+            [3, 2, 5, 8],  # [ids - fw - lb - wanopt]
+            [5, 4, 6, 2, 3],  # [lb - wanopt - encrypt - fw - ids]
+        ]
+        return random.choice(services)
+
+    # Method to generate a variable-length sfc in order to be allocated on an nfv cache node
+    @staticmethod
+    def var_len_seq_sfc():
+        var_len_sfc = []
+        sfcs = {1: 15,  # nat
+                2: 25,  # fw
+                3: 25,  # ids
+                4: 20,  # wanopt
+                5: 20,  # lb
+                6: 25,  # encrypt
+                7: 25,  # decrypts
+                8: 30,  # dpi
+                }
+        sfc_len = random.randint(1, 8)
+        sum_cpu = 0
+        while sfc_len != 0:
+            vnf, cpu = random.choice(list(sfcs.items()))
+            if vnf not in var_len_sfc:
+                var_len_sfc.append(vnf)
+                sfc_len -= 1
+                sum_cpu += cpu
+                if sum_cpu > 100 or sfc_len == 0:
+                    break
+                elif sum_cpu <= 100 and sfc_len != 0:
+                    sfc_len -= 1
+
+        return var_len_sfc
+
+
+
+
+
 
 
 
@@ -217,12 +245,6 @@ class NetworkModel:
         return self.topology.node[node]['stack'][0] == 'nfv_node'
 
 
-    def select_ingress_node(self, topology):
-        return random.choice(self.get_ingress_nodes(topology))
-
-
-    def select_egress_node(self, topology):
-        return random.choice(self.get_egress_nodes(topology))
 
     def get_ingress_node_path(self, path):
         for node in path:
@@ -254,7 +276,6 @@ class NetworkController:
         self.collector = None
 
 
-
     def attach_collector(self, collector):
         self.collector = collector
 
@@ -263,11 +284,12 @@ class NetworkController:
         self.collector = None
 
 
-    def start_session(self, timestamp, ingress_node, egress_node, sfc):
+    def start_session(self, timestamp, ingress_node, egress_node,  sfc, log):
         self.session = dict(timestamp=timestamp,
                             ingress_node=ingress_node,
                             egress_node=egress_node,
-                            sfc=sfc)
+                            sfc=sfc,
+                            log=log)
 
         if self.collector is not None and self.session['log']:
             self.collector.start_session(timestamp, ingress_node, egress_node, sfc)
@@ -300,18 +322,27 @@ class NetworkController:
 
 
     def get_vnf(self, node, vnf):
-        if node in self.model.cache:
-            vnf_hit = self.model.cache[node].get_vnf(self.session)[vnf]
-            if vnf_hit:
-                return True
-            else:
-                return False
+
+        name, props = fnss.get_stack(self.model.topology, node)
+        if name == 'nfv_node' and self.session[vnf] in props[vnf]:
+            if self.collector is not None and self.session['log']:
+                self.collector.vnf_hit(node)
+            return  True
+        else:
+            return False
 
 
 
     def put_vnf(self, node, vnf):
-        if node in self.model.cache:
-            return self.model.cache[node].add_vnf(vnf)
+        if node in self.model.nfv_cache:
+            return self.model.nfv_cache[node].add_vnf(vnf)
+
+
+    def put_sfc(self, node, sfc):
+        if node in self.model.nfv_cache:
+            for vnf in sfc:
+                self.model.nfv_cache[node].add_vnf(vnf)
+
 
 
 
@@ -372,29 +403,12 @@ class NetworkController:
         nfv_nodes_candidates = self.model.get_nfv_nodes(path)
         for nfv_node in nfv_nodes_candidates:
             dist_nfv_node_egress_node[nfv_node] = self.model.get_shortest_path_between_two_nodes(nfv_node, egress_node)
-        closest_nfv_node = min(dist_nfv_node_egress_node.keys())
+        closest_nfv_node = min(dist_nfv_node_egress_node.values())
         return closest_nfv_node
 
 
     def sum_cpu_req_vnfs(self, vnfs):
-        dict_vnfs_cpu_req = {1: 15,   # nat
-                            2: 25,   # fw
-                            3: 25,   # ids
-                            4: 20,   # wanopt
-                            5: 20,   # lb
-                            6: 25,   # encrypt
-                            7: 25,   # decrypt
-                            8: 25,  # decrypt
-                            }
-
-        sum_cpu_vnfs = 0
-        for vnf in vnfs:
-            if vnf in dict_vnfs_cpu_req.keys():
-                sum_cpu_vnfs += dict_vnfs_cpu_req[vnf]
-
-        return sum_cpu_vnfs
-
-
+        return sum(vnf.values() for vnf in vnfs)
 
 
     def sum_vnfs_cpu_node(self, node):

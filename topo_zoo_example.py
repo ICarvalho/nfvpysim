@@ -17,20 +17,22 @@ fnss.set_delays_constant(topology, 2, 'ms')
 # Deploy stacks on nodes
 
 for v in ingress_nodes:
-    fnss.add_stack(topology, v, 'ingress_node', {'id': '1', 'name': 'vnf_ing_node'})
+    fnss.add_stack(topology, v, 'fw_node', {'id': '1', 'name': 'vnf_ing_node'})
+    fnss.add_stack(topology, v, 'nat_node', {'id': '1', 'name': 'nat_node'})
 
 for v in vnf_nodes:
-    fnss.add_stack(topology, v, 'vnf_node', {'id': '2', 'name': 'vnf_nfv_node'})
+    fnss.add_stack(topology, v, 'vnf_node', {'id': '2', 'name': 'nfv_node'})
 
 for v in egress_nodes:
-    fnss.add_stack(topology, v, 'egress_node', { 'id': '3', 'name': 'vnf_egr_node'})
+    fnss.add_stack(topology, v, 'egress_node', { 'id': '3', 'name': 'egr_node'})
 
 for v in forwarding_nodes:
-    fnss.add_stack(topology, v, 'forwarding_node', { 'id': '4', 'name': 'vnf_fw_node'})
+    fnss.add_stack(topology, v, 'forwarding_node', { 'id': '4', 'name': 'fw_node'})
 
 
 
-
+"""
+"""
 print(topology.size())
 print(len(ingress_nodes))
 print(len(vnf_nodes))

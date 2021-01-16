@@ -3,6 +3,7 @@ import networkx as nx
 import fnss
 from nfvpysim.registry import register_topology_factory
 import random
+import matplotlib.pyplot as plt
 
 __all__ = [
         'NfvTopology',
@@ -24,36 +25,15 @@ class NfvTopology(fnss.Topology):
     ingress_nodes and egress_nodes.
     """
 
-    def nfv_nodes_candidates(self):
-        """
-        :return: return a set of nfv nodes
-        """
-
-        return {v: self.node[v]['stack'][1]['n_vnfs']
-                for v in self
-                if 'stack' in self.node[v]
-                and 'n_vnfs' in self.node[v]['stack'][1]
-                }
-                #and 'id' in self.node[v]['stack'][1]
-                #and 'cpu' in self.node[v]['stack'][1]
-                #and 'ram' in self.node[v]['stack'][1]
-                #and 'r_cpu' in self.node[v]['stack'][1]
-                #and 'r_ram' in self.node[v]['stack'][1]
-                #nd 'vnfs' in self.node[v]['stack'][1]
-
 
 
     def ingress_nodes(self):
         """
         :return: return a set of ingress nodes
         """
-
         return set (v for v in self
                 if 'stack' in self.node[v]
                 and self.node[v]['stack'][0] == 'ingress_node')
-
-
-
 
 
 
@@ -68,26 +48,26 @@ class NfvTopology(fnss.Topology):
 
 
 
+    def forwarding_nodes(self):
+        """
+        :return: return a set of ingress nodes
+        """
+        return set (v for v in self
+                if 'stack' in self.node[v]
+                and self.node[v]['stack'][0] == 'forwarding_node')
+
 
     def nfv_nodes(self):
         """
-        :return: return a set of router nodes (for datacenter topology)
+        :return: return a set of nfv nodes
         """
 
-        return set (v for v in self
-                    if 'stack' in self.node[v]
-                    and self.node[v]['stack'][0] == 'nfv_node')
+        return {v: self.node[v]['stack'][1]['cache_size']
+                for v in self
+                if 'stack' in self.node[v]
+                and 'cache_size' in self.node[v]['stack'][1]
+                }
 
-
-
-    def switch_nodes(self):
-        """
-        :return: return a set of router nodes (for datacenter topology)
-        """
-
-        return set (v for v in self
-                    if 'stack' in self.node[v]
-                    and self.node[v]['stack'][0] == 'switch_node')
 
 
 
@@ -97,21 +77,19 @@ def topology_geant(**kwargs):
     topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/Geant2012.graphml').to_undirected() # 61 nodes
     deg = nx.degree(topology)
     ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 8 nodes
-    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2]   # 19 nodes
     egress_nodes = [v for v in topology.nodes() if deg[v] == 2] # 13 nodes
-    #forwarding_nodes = [v for v in topology.nodes() if v not in ingress_nodes + nfv_nodes+ egress_nodes] # 14 nodes
-    topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
-
-
+    nfv_nodes_candidates = [v for v in topology.nodes() if deg[v] > 2] #  19 nodes
+    forwarding_nodes = [v for v in topology.nodes() if v not in ingress_nodes + egress_nodes]
+    topology.graph['nfv_nodes_candidates'] = set(nfv_nodes_candidates)
     # Add stacks to nodes
     for v in ingress_nodes:
         fnss.add_stack(topology, v, 'ingress_node')
 
-    for v in nfv_nodes:
-        fnss.add_stack(topology, v, 'nfv_node')
-
     for v in egress_nodes:
         fnss.add_stack(topology, v, 'egress_node')
+
+    for v in forwarding_nodes:
+        fnss.add_stack(topology, v, 'forwarding_node')
 
 
 
@@ -137,22 +115,21 @@ def topology_tatanld(**kwargs):
     topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/TataNld.graphml').to_undirected() # 186 nodes
     deg = nx.degree(topology)
     ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 80 nodes
-    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2]   # 34 nodes
-    egress_nodes = [v for v in topology.nodes() if deg[v] == 2] # 22 nodes
-    #forwarding_nodes = [v for v in topology.nodes() if v not in ingress_nodes + nfv_nodes + egress_nodes] # 9 nodes
-    topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
+    egress_nodes = [v for v in topology.nodes() if deg[v] == 2]  # 22 nodes
+    nfv_nodes_candidates = [v for v in topology.nodes() if deg[v] > 2]   # 34 nodes
+    forwarding_nodes = [v for v in topology.nodes()]
+    topology.graph['nfv_nodes_candidates'] = set(nfv_nodes_candidates)
 
 
     # Add stacks to nodes
-
     for v in ingress_nodes:
         fnss.add_stack(topology, v, 'ingress_node')
 
-    for v in nfv_nodes:
-        fnss.add_stack(topology, v, 'nfv_node')
-
     for v in egress_nodes:
         fnss.add_stack(topology, v, 'egress_node')
+
+    for v in forwarding_nodes:
+        fnss.add_stack(topology, v, 'forwarding_node')
 
 
 
@@ -216,9 +193,7 @@ def topology_datacenter_two_tier(**kwargs):
     return NfvTopology(topology)
 
 
-"""
+
 topo = topology_geant()
 #nodes_deg = nx.degree(topo)
-print(topo.stacks())
-print()
-"""
+nx.draw(topo)
