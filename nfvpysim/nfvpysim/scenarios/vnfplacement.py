@@ -11,7 +11,7 @@ _all__ = [
     'random_placement'
           ]
 """
-_
+
 
 
 def get_nfv_nodes(topology):

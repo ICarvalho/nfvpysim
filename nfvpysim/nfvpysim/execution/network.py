@@ -144,6 +144,11 @@ class NetworkModel:
                                   for node in nfv_node_size}
 
 
+        for node in self.nfv_cache:
+            vnfs = NetworkModel.select_random_sfc()
+            for vnf in vnfs:
+                self.nfv_cache[node].add_vnf(vnf)
+
 
     # Method to allocate statically a random sfc on an nfv cache node
     @staticmethod
@@ -188,11 +193,6 @@ class NetworkModel:
                     sfc_len -= 1
 
         return var_len_sfc
-
-
-
-
-
 
 
 
@@ -263,14 +263,9 @@ class NetworkModel:
 
 
 
-
-
-
-
 class NetworkController:
 
     def __init__(self, model):
-
         self.session = None
         self.model = model
         self.collector = None
@@ -306,23 +301,16 @@ class NetworkController:
 
 
     def forward_request_hop(self, u, v, main_path=True):
-
         if self.collector is not None and self.session['log']:
             self.collector.request_hop(u, v, main_path)
 
 
-
-
     def vnf_proc(self, vnf):
-
         if self.collector is not None and self.session['log']:
             self.collector.vnf_proc_delay(vnf)
 
 
-
-
     def get_vnf(self, node, vnf):
-
         name, props = fnss.get_stack(self.model.topology, node)
         if name == 'nfv_node' and self.session[vnf] in props[vnf]:
             if self.collector is not None and self.session['log']:
@@ -330,7 +318,6 @@ class NetworkController:
             return  True
         else:
             return False
-
 
 
     def put_vnf(self, node, vnf):
