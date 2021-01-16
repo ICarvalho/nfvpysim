@@ -170,9 +170,9 @@ def run_scenario(settings, params, curr_exp, n_exp):
     Parameters
     ----------
     settings : Settings
+        experiment parameters tree
         The simulator settings
     params : Tree
-        experiment parameters tree
     curr_exp : int
         sequence number of the experiment
     n_exp : int

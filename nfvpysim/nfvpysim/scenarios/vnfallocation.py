@@ -22,14 +22,14 @@ def static_vnf_allocation(topology, cache_budget):
         topology.node[v]['stack'][1]['n_vnfs'] = cache_size
 
 
-
 """
 topo = topology_geant()
 nfv_nodes = get_nfv_nodes(topo)
 cache = static_vnf_allocation(topo, cache_budget=8)
 for v in topo.nodes:
     print(topo.node[v]['stack'][1])
-
 """
+
+
 
 

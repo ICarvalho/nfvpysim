@@ -263,7 +263,7 @@ class NetworkController:
         self.collector = None
 
 
-    def start_session(self, timestamp, ingress_node, egress_node,  sfc):
+    def start_session(self, timestamp, ingress_node, egress_node, sfc):
         self.session = dict(timestamp=timestamp,
                             ingress_node=ingress_node,
                             egress_node=egress_node,
