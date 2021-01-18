@@ -86,6 +86,7 @@ EXPERIMENT_QUEUE = deque()
 # Create tree of experiment configuration
 default = Tree()
 default['workload'] = {'name':  'STATIONARY_RANDOM_SFC',
+                       'n_sfcs': N_SFCS,
                        'n_warmup': N_WARMUP_REQUESTS,
                        'n_measured': N_MEASURED_REQUESTS,
                        'rate': REQ_RATE}
@@ -100,7 +101,6 @@ for policy in POLICIES:
     for topology in TOPOLOGIES:
         for vnf_allocation_space in VNF_ALLOCATION_SPACE:
             experiment = copy.deepcopy(default)
-            experiment['workload']['n_sfcs'] = N_SFCS
             experiment['policy']['name'] = policy
             experiment['topology']['name'] = topology
             experiment['vnf_allocation']['network_cache'] = vnf_allocation_space

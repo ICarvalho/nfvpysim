@@ -25,7 +25,7 @@ class Policy:
 @register_policy('GREEDY_WITHOUT_PLACEMENT')
 class GreedyWithoutPlacement(Policy):
 
-    def __init__(self, view, controller, **kwargs):
+    def __init__(self, view, controller):
         super(GreedyWithoutPlacement, self).__init__(view, controller)
         self.vnf_status = {}
 
