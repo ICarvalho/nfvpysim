@@ -179,11 +179,15 @@ class StationaryWorkloadVarLenSfc:
         return
 
 
+"""
 topo= topology_geant()
 var_len = StationaryWorkloadRandomSfc(topo, 10*7)
 
 for i in var_len:
     print(i)
+
+"""
+
 
 
 

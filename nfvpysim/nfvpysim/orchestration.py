@@ -221,17 +221,18 @@ def run_scenario(settings, params, curr_exp, n_exp):
 
 
         # perform allocation space t vnfs on nfv_nodes
-        vnf_allocation_spec = tree['vnf_allocation']
-        vnf_allocation_name = vnf_allocation_spec.pop('name')
-        if vnf_allocation_name not in VNF_ALLOCATION:
-            logger.error('No cache placement named %s was found.'
+        if 'vnf_allocation' in tree:
+            vnf_allocation_spec = tree['vnf_allocation']
+            vnf_allocation_name = vnf_allocation_spec.pop('name')
+            if vnf_allocation_name not in VNF_ALLOCATION:
+                logger.error('No cache placement named %s was found.'
                          % vnf_allocation_name)
-            return None
-        network_cache = vnf_allocation_spec.pop('network_cache')
-        # Cache budget is the cumulative number of cache entries across
-        # the whole network
-        vnf_allocation_spec['cache_budget'] = network_cache
-        VNF_ALLOCATION[vnf_allocation_name](topology, **vnf_allocation_spec)
+                return None
+            network_cache = vnf_allocation_spec.pop('network_cache')
+            # Cache budget is the cumulative number of cache entries across
+            # the whole network
+            vnf_allocation_spec['cache_budget'] = network_cache
+            VNF_ALLOCATION[vnf_allocation_name](topology, **vnf_allocation_spec)
 
 
 
