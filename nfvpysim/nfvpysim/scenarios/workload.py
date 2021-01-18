@@ -28,12 +28,11 @@ class StationaryWorkloadRandomSfc:
 
     """
 
-    def __init__(self, topology, rate=1.0, n_warmup=0, n_measured= 10 **1,  seed=None, **kwargs):
+    def __init__(self, topology, n_sfcs, rate=1.0, n_warmup=0, n_measured= 10 **7,  seed=None, **kwargs):
 
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
-        #self.zipf = TruncatedZipfDist(alpha, n_sfcs)
-        #self.alpha = alpha
+        self.sfcs = StationaryWorkloadRandomSfc.generate_random_sfc(n_sfcs)
         self.rate = rate
         self.n_warmup = n_warmup
         self.n_measured = n_measured
@@ -57,6 +56,15 @@ class StationaryWorkloadRandomSfc:
 
         return random.choice(services)
 
+    @staticmethod
+    def generate_random_sfc(n_sfcs):
+        sfcs = []
+        for i in range(1, n_sfcs + 1):
+            sfc = StationaryWorkloadRandomSfc.select_random_sfc()
+            sfcs.append(sfc)
+
+        return sfcs
+
 
 
     def __iter__(self):
@@ -71,7 +79,7 @@ class StationaryWorkloadRandomSfc:
             t_event += (random.expovariate(self.rate))
             ingress_node = random.choice(self.ingress_nodes)
             egress_node = random.choice(self.egress_nodes)
-            sfc = StationaryWorkloadRandomSfc.select_random_sfc()
+            sfc = random.choice(self.sfcs)
             log = (req_counter >= self.n_warmup)
             event = {'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
             #file_lines = [str(i),',', str(sfc)[1:-1], '\n']
@@ -99,12 +107,11 @@ class StationaryWorkloadVarLenSfc:
 
     """
 
-    def __init__(self, topology, rate=1.0, n_warmup=0,  n_measured=10 ** 1, seed=None, **kwargs):
+    def __init__(self, topology, n_sfcs, rate=1.0, n_warmup=0,  n_measured=10 ** 1, seed=None, **kwargs):
 
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
-        #self.zipf = TruncatedZipfDist(alpha, n_sfcs)
-        #self.alpha = alpha
+        self.sfcs = StationaryWorkloadVarLenSfc.generate_var_len_seq_sfc(n_sfcs)
         self.rate = rate
         self.n_measured = n_measured
         self.n_warmup = n_warmup
@@ -137,8 +144,17 @@ class StationaryWorkloadVarLenSfc:
                     sfc_len -= 1
 
 
-
         return var_len_sfc
+
+    @staticmethod
+    def generate_var_len_seq_sfc(n_sfcs):
+        sfcs = []
+        for i in range(1, n_sfcs + 1):
+            sfc = StationaryWorkloadVarLenSfc.var_len_seq_sfc()
+            sfcs.append(sfc)
+
+        return sfcs
+
 
     def __iter__(self):
         req_counter = 0
@@ -152,7 +168,7 @@ class StationaryWorkloadVarLenSfc:
             t_event += (random.expovariate(self.rate))
             ingress_node = random.choice(self.ingress_nodes)
             egress_node = random.choice(self.egress_nodes)
-            sfc = StationaryWorkloadVarLenSfc.var_len_seq_sfc()
+            sfc = random.choice(self.sfcs)
             log = (req_counter >= self.n_warmup)
             event = {'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
             #file_lines = [str(i),',', str(sfc)[1:-1], '\n']
@@ -163,14 +179,14 @@ class StationaryWorkloadVarLenSfc:
         return
 
 
-"""
 topo= topology_geant()
-var_len = StationaryWorkloadRandomSfc(topo, 10**5)
+var_len = StationaryWorkloadRandomSfc(topo, 10*7)
 
 for i in var_len:
     print(i)
 
-"""
+
+
 
 
 

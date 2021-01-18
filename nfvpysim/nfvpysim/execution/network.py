@@ -143,6 +143,11 @@ class NetworkModel:
         self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_node_size[node], **policy_args)
                                   for node in nfv_node_size}
 
+        for node in self.nfv_cache:
+            #vnfs = NetworkModel.var_len_seq_sfc()
+            vnfs = NetworkModel.select_random_sfc()
+            for vnf in vnfs:
+                self.nfv_cache[node].add_vnf(vnf)
 
 
     # Method to allocate statically a random sfc on an nfv cache node
@@ -260,9 +265,6 @@ class NetworkModel:
     def get_shortest_path_between_two_nodes(self, source, target):
         if self.topology[source]['stack'][0] == 'nfv_node':
             return nx.shortest_path_length(source, target)
-
-
-
 
 
 
