@@ -13,8 +13,7 @@ import signal
 import traceback
 
 from nfvpysim.execution import exec_experiment
-from nfvpysim.registry import TOPOLOGY_FACTORY, POLICY, VNF_PLACEMENT, VNF_ALLOCATION,  WORKLOAD, DATA_COLLECTOR
-#CACHE_POLICY
+from nfvpysim.registry import TOPOLOGY_FACTORY, POLICY, VNF_ALLOCATION,  WORKLOAD, DATA_COLLECTOR, CACHE_POLICY
 from nfvpysim.results import ResultSet
 from nfvpysim.util import SequenceNumber, timestr
 
@@ -207,9 +206,6 @@ def run_scenario(settings, params, curr_exp, n_exp):
             return None
         topology = TOPOLOGY_FACTORY[topology_name](**topology_spec)
 
-
-
-
         # set workload
         workload_spec = tree['workload']
         workload_name = workload_spec.pop('name')
@@ -235,18 +231,6 @@ def run_scenario(settings, params, curr_exp, n_exp):
             VNF_ALLOCATION[vnf_allocation_name](topology, **vnf_allocation_spec)
 
 
-
-        # Assign contents to sources
-        # If there are many contents, after doing this, performing operations
-        # requiring a topology deep copy, i.e. to_directed/undirected, will
-        # take long.
-        vnf_plc_spec = tree['vnf_placement']
-        vnf_plc_name = vnf_plc_spec.pop('name')
-        if vnf_plc_name not in VNF_PLACEMENT:
-            logger.error('No content placement implementation named %s was found.'
-                         % vnf_plc_name)
-            return None
-        VNF_PLACEMENT[vnf_plc_name](topology, **vnf_plc_spec)
 
         # caching and routing strategy definition
         policy = tree['policy']

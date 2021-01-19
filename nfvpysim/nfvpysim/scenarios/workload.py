@@ -28,7 +28,7 @@ class StationaryWorkloadRandomSfc:
 
     """
 
-    def __init__(self, topology, n_sfcs, rate=1.0, n_warmup=0, n_measured= 10 **7,  seed=None, **kwargs):
+    def __init__(self, topology, n_sfcs, rate=1.0, n_warmup=0, n_measured= 10 **3,  seed=None, **kwargs):
 
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
@@ -181,12 +181,14 @@ class StationaryWorkloadVarLenSfc:
 
 """
 topo= topology_geant()
-var_len = StationaryWorkloadRandomSfc(topo, 10*7)
+var_len = StationaryWorkloadRandomSfc(topo, 10*3)
 
 for i in var_len:
     print(i)
-
 """
+
+
+
 
 
 

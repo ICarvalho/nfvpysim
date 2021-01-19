@@ -28,7 +28,7 @@ def exec_experiment(topology, nfv_cache_policy,  workload, netconf, policy, coll
     collectors: dict
         The collectors to be used. It is a dictionary in which keys are the
         names of collectors to use and values are dictionaries of attributes
-        for the collector they refer to.
+
     Returns
     -------
     results : Tree
