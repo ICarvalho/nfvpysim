@@ -56,7 +56,7 @@ N_MEASURED_REQUESTS = 4 * 10 ** 5
 N_SFCS = 10**5
 
 # Number of requests per second (over the whole network)
-REQ_RATE = 1.0
+REQ_RATE = 10.0
 
 # vnf allocation policy
 VNF_ALLOCATION_POLICY = 'STATIC'

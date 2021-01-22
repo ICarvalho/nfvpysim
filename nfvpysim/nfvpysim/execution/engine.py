@@ -5,7 +5,7 @@ from nfvpysim.registry import DATA_COLLECTOR, POLICY
 __all__ = ['exec_experiment']
 
 
-def exec_experiment(topology, nfv_cache_policy,  workload, netconf, policy, collectors):
+def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, collectors):
     """Execute the simulation of a specific scenario.
     Parameters
     ----------
