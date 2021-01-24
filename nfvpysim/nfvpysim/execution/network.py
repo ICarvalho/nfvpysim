@@ -143,8 +143,8 @@ class NetworkModel:
         self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_node_size[node], **policy_args)
                                   for node in nfv_node_size}
 
-
         for node in self.nfv_cache:
+            #vnfs = NetworkModel.var_len_seq_sfc()
             vnfs = NetworkModel.select_random_sfc()
             for vnf in vnfs:
                 self.nfv_cache[node].add_vnf(vnf)
@@ -196,6 +196,11 @@ class NetworkModel:
 
 
 
+
+
+
+
+
     # Compute the shortest path between ingress and egress node
     @staticmethod
     def calculate_shortest_path(topology, ingress_node, egress_node):
@@ -241,9 +246,6 @@ class NetworkModel:
         return nfv_nodes
 
 
-    def is_nfv_node(self, node):
-        return self.topology.node[node]['stack'][0] == 'nfv_node'
-
 
 
     def get_ingress_node_path(self, path):
@@ -263,9 +265,11 @@ class NetworkModel:
 
 
 
+
 class NetworkController:
 
     def __init__(self, model):
+
         self.session = None
         self.model = model
         self.collector = None
@@ -301,23 +305,30 @@ class NetworkController:
 
 
     def forward_request_hop(self, u, v, main_path=True):
+
         if self.collector is not None and self.session['log']:
             self.collector.request_hop(u, v, main_path)
 
 
+
+
     def vnf_proc(self, vnf):
+
         if self.collector is not None and self.session['log']:
             self.collector.vnf_proc_delay(vnf)
 
 
+
+
     def get_vnf(self, node, vnf):
-        name, props = fnss.get_stack(self.model.topology, node)
-        if name == 'nfv_node' and self.session[vnf] in props[vnf]:
-            if self.collector is not None and self.session['log']:
-                self.collector.vnf_hit(node)
-            return  True
-        else:
-            return False
+        if node in self.model.nfv_cache:
+            vnf_hit = self.model.nfv_cache[node].get_vnf(vnf)
+            if vnf_hit:
+                if self.session['log']:
+                    self.collector.vnf_hit(vnf)
+            return vnf_hit
+
+
 
 
     def put_vnf(self, node, vnf):
@@ -329,6 +340,10 @@ class NetworkController:
         if node in self.model.nfv_cache:
             for vnf in sfc:
                 self.model.nfv_cache[node].add_vnf(vnf)
+
+
+    def is_nfv_node(self, node):
+        return node in self.model.nfv_cache
 
 
 

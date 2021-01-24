@@ -5,7 +5,7 @@ from nfvpysim.registry import DATA_COLLECTOR, POLICY
 __all__ = ['exec_experiment']
 
 
-def exec_experiment(topology, workload, netconf, policy, collectors): #nfv_cache_policy
+def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, collectors):
     """Execute the simulation of a specific scenario.
     Parameters
     ----------
@@ -28,13 +28,13 @@ def exec_experiment(topology, workload, netconf, policy, collectors): #nfv_cache
     collectors: dict
         The collectors to be used. It is a dictionary in which keys are the
         names of collectors to use and values are dictionaries of attributes
-        for the collector they refer to.
+
     Returns
     -------
     results : Tree
         A tree with the aggregated simulation results from all collectors
     """
-    model = NetworkModel(topology)
+    model = NetworkModel(topology, nfv_cache_policy, **netconf)
     view = NetworkView(model)
     controller = NetworkController(model)
 

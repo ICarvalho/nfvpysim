@@ -27,7 +27,6 @@ __modules_to_register = [
      'nfvpysim.results.readwrite',
      'nfvpysim.execution.collectors',
      'nfvpysim.scenarios.topology',
-     'nfvpysim.scenarios.vnfplacement',
      'nfvpysim.scenarios.vnfallocation',
      'nfvpysim.scenarios.workload',
                          ]
