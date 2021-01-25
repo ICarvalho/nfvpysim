@@ -57,7 +57,7 @@ class NfvTopology(fnss.Topology):
                 and self.node[v]['stack'][0] == 'forwarding_node')
 
 
-    def nfv_nodes(self):
+    def nfv_cache_nodes(self):
         """
         :return: return a set of nfv nodes
         """
@@ -78,9 +78,9 @@ def topology_geant(**kwargs):
     deg = nx.degree(topology)
     ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 8 nodes
     egress_nodes = [v for v in topology.nodes() if deg[v] == 2] # 13 nodes
-    nfv_nodes_candidates = [v for v in topology.nodes() if deg[v] > 2] #  19 nodes
+    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2] #  19 nodes
     forwarding_nodes = [v for v in topology.nodes() if v not in ingress_nodes + egress_nodes]
-    topology.graph['nfv_nodes_candidates'] = set(nfv_nodes_candidates)
+    topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
     # Add stacks to nodes
     for v in ingress_nodes:
         fnss.add_stack(topology, v, 'ingress_node')
@@ -195,5 +195,3 @@ def topology_datacenter_two_tier(**kwargs):
 
 
 topo = topology_geant()
-#nodes_deg = nx.degree(topo)
-nx.draw(topo)

@@ -111,7 +111,7 @@ class NetworkModel:
                                              8: 25,   # decrypt
                                   }
 
-        self.nfv_cache = {}
+
         self.link_type = nx.get_edge_attributes(topology, 'type')
         self.link_delay = fnss.get_delays(topology)
 
@@ -122,26 +122,26 @@ class NetworkModel:
             for (u,v), delay in list(self.link_delay.items()):
                 self.link_delay[(v,u)] = delay
 
-        nfv_node_size = {}
+        nfv_cache_size = {}
         for node in topology.nodes():
             stack_name, stack_props = fnss.get_stack(topology, node)
-            if stack_name == 'forwarding_node':
+            if stack_name == 'nfv_node':
                 if 'cache_size' in stack_props:
-                    nfv_node_size[node] = stack_props['cache_size']
-        if any(c < 8 for c in nfv_node_size.values()):
+                    nfv_cache_size[node] = stack_props['cache_size']
+        if any(c < 8 for c in nfv_cache_size.values()):
             logger.warning('Some nfv node caches have size less than 8. '
                         'I am setting them to 8 and run the experiment anyway')
-            for node in nfv_node_size:
-                if nfv_node_size[node] < 8:
-                    nfv_node_size[node] = 8
+            for node in nfv_cache_size:
+                if nfv_cache_size[node] < 8:
+                    nfv_cache_size[node] = 8
 
 
 
         policy_name = nfv_cache_policy['name']
         policy_args = {k: v for k, v in nfv_cache_policy.items() if k != 'name'}
-        # The actual cache objects storing the content
-        self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_node_size[node], **policy_args)
-                                  for node in nfv_node_size}
+        # The actual cache objects storing the vnfs
+        self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_cache_size[node], **policy_args)
+                                  for node in nfv_cache_size}
 
         for node in self.nfv_cache:
             #vnfs = NetworkModel.var_len_seq_sfc()
@@ -193,13 +193,6 @@ class NetworkModel:
                     sfc_len -= 1
 
         return var_len_sfc
-
-
-
-
-
-
-
 
     # Compute the shortest path between ingress and egress node
     @staticmethod
@@ -300,24 +293,26 @@ class NetworkController:
         if path is None:
             path = self.model.shortest_path[ingress_node][egress_node]
         for u, v in path_links(path):
-            self.forward_request_hop(u, v, main_path)
+            self.forward_request_vnf_hop(u, v, main_path)
 
 
 
-    def forward_request_hop(self, u, v, main_path=True):
+    def forward_request_vnf_hop(self, u, v, main_path=True):
 
         if self.collector is not None and self.session['log']:
-            self.collector.request_hop(u, v, main_path)
+            self.collector.request_vnf_hop(u, v, main_path)
 
 
+    def forward_vnf_hop(self, u, v, main_path=True):
+
+        if self.collector is not None and self.session['log']:
+            self.collector.vnf_proc_hop(u, v, main_path)
 
 
     def vnf_proc(self, vnf):
 
         if self.collector is not None and self.session['log']:
             self.collector.vnf_proc_delay(vnf)
-
-
 
 
     def get_vnf(self, node, vnf):
