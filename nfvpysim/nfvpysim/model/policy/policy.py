@@ -1,7 +1,7 @@
-from abc import ABC, abstractmethod
-from nfvpysim.util import path_links
-from nfvpysim.registry import register_policy
+from abc import abstractmethod
 
+from nfvpysim.registry import register_policy
+from nfvpysim.util import path_links
 
 __all__ = [
     'Policy',
@@ -25,7 +25,7 @@ class Policy:
 @register_policy('GREEDY_WITHOUT_PLACEMENT')
 class GreedyWithoutPlacement(Policy):
 
-    def __init__(self, view, controller):
+    def __init__(self, view, controller, **kwargs):
         super(GreedyWithoutPlacement, self).__init__(view, controller)
     def process_event(self, time, ingress_node, egress_node, sfc, log):
         path = self.view.shortest_path(ingress_node, egress_node)
@@ -57,7 +57,7 @@ class GreedyWithoutPlacement(Policy):
 @register_policy('GREEDY_WITH_ONLINE_PLACEMENT')
 class GreedyWithOnlinePlacementPolicy(Policy):
 
-    def __init__(self, view, controller):
+    def __init__(self, view, controller, **kwargs):
         super(GreedyWithOnlinePlacementPolicy, self).__init__(view, controller)
 
     def process_event(self, time, ingress_node, egress_node, sfc, log):
