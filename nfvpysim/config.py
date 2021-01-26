@@ -47,7 +47,7 @@ DATA_COLLECTORS = [
 VNF_ALLOCATION_SPACE = [8]
 
 # Number of warmup requests
-N_WARMUP_REQUESTS = 1*10**5
+N_WARMUP_REQUESTS = 0
 
 # Number of measured requests
 

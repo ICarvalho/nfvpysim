@@ -66,6 +66,9 @@ class NetworkView:
         return {v: c.maxlen for v, c in self.model.nfv_cache.items()} if size \
                 else list(self.model.nfv_cache.keys())
 
+    def is_nfv_node(self, node):
+        return node in self.model.nfv_cache
+
 
     def link_type(self, u, v):
         return self.model.link_type[(u, v)]
@@ -337,8 +340,7 @@ class NetworkController:
                 self.model.nfv_cache[node].add_vnf(vnf)
 
 
-    def is_nfv_node(self, node):
-        return node in self.model.nfv_cache
+
 
 
 
