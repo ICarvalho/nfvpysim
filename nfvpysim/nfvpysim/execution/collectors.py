@@ -26,16 +26,17 @@ class DataCollector:
     def start_session(self, timestamp, ingress_node, egress_node, sfc):
         pass
 
-
-    def request_hop(self, u, v, path):
+    def request_vnf_hop(self, u, v, main_path=True):
         pass
 
-    def vnf_hit(self, sfc):
+    def vnf_proc_hop(self, u, v, main_path=True):
+        pass
+
+    def sfc_hit(self, sfc):
         pass
 
     def vnf_proc_delay(self, vnf):
         pass
-
 
     def end_session(self, success=True):
         pass
@@ -48,7 +49,7 @@ class DataCollector:
 class CollectorProxy(DataCollector):
 
 
-    EVENTS = ('start_session', 'vnf_hit' 'end_session', 'request_hop', 'vnf_proc_delay', 'results')
+    EVENTS = ('start_session', 'request_vnf_hop', 'vnf_proc_hop', 'sfc_hit', 'vnf_proc_delay', 'end_session',  'results')
 
     def __init__(self, view, collectors, **params):
 
@@ -64,13 +65,17 @@ class CollectorProxy(DataCollector):
 
 
 
-    def request_hop(self, u, v, path=True):
+    def request_vnf_hop(self, u, v, main_path=True):
         for c in self.collectors['request_hop']:
-            c.request_hop(u, v, path)
+            c.request_vnf_hop(u, v, main_path)
+
+    def vnf_proc_hop(self, u, v, main_path=True):
+        for c in self.collectors['vnf_proc_hop']:
+            c.vnf_proc_hop(u, v, main_path)
 
 
-    def vnf_hit(self, sfc):
-        for c in self.collectors['sfc_acc']:
+    def sfc_hit(self, sfc):
+        for c in self.collectors['sfc_hit']:
             c.vnf_hit(sfc)
 
 
@@ -93,7 +98,7 @@ class LinkLoadCollector(DataCollector):
     """Data collector measuring the link load
     """
 
-    def __init__(self, view, req_size=1500, **params):
+    def __init__(self, view, req_vnf_size=150, vnf_size=1500, **params):
         """Constructor
         Parameters
         ----------
@@ -106,10 +111,12 @@ class LinkLoadCollector(DataCollector):
         """
         super().__init__(view, **params)
         self.view = view
-        self.req_count = collections.defaultdict(int)
-        if req_size <= 0:
+        self.req_vnf_count = collections.defaultdict(int)
+        self.vnf_size_count = collections.defaultdict(int)
+        if req_vnf_size <= 0:
             raise ValueError('req_size  must be positive')
-        self.req_size = req_size
+        self.req_vnf_size = req_vnf_size
+        self.vnf_size = vnf_size
 
         self.t_start = -1
         self.t_end = 1
@@ -120,15 +127,19 @@ class LinkLoadCollector(DataCollector):
             self.t_start = timestamp
         self.t_end = timestamp
 
-    def request_hop(self, u, v, path=True):
-        self.req_count[(u, v)] += 1
+    def request_vnf_hop(self, u, v, path=True):
+        self.req_vnf_count[(u, v)] += 1
+
+    def vnf_proc_hop(self, u, v, path=True):
+        self.vnf_size_count[(u, v)] += 1
 
 
 
     def results(self):
         duration = self.t_end - self.t_start
-        used_links = set(self.req_count.keys())
-        link_loads = {link: (self.req_size * self.req_count[link]) / duration
+        used_links = set(self.req_vnf_count.keys()).union(set(self.vnf_size_count.keys()))
+        link_loads = {link: (self.req_vnf_size * self.req_vnf_count[link] +
+                             self.vnf_size * self.vnf_size_count[link]) / duration
                       for link in used_links}
         link_loads_int = {link: load
                           for link, load in link_loads.items()
@@ -164,9 +175,9 @@ class LatencyCollector(DataCollector):
             If *True*, also collects a cdf of the latency
         """
         super().__init__(view, **params)
-        self.sess_latency = 0.0
         self.cdf = cdf
         self.view = view
+        self.sess_latency = 0.0
         self.req_latency = 0.0
         self.sess_count = 0
         self.latency = 0.0
@@ -189,7 +200,7 @@ class LatencyCollector(DataCollector):
         self.sess_count += 1
         self.sess_latency = 0.0
 
-    def request_hop(self, u, v, path=True):
+    def request_vnf_hop(self, u, v, path=True):
         if path:
             self.sess_latency += self.view.link_delay(u, v)
 
@@ -225,7 +236,7 @@ class AcceptanceRatioCollector(DataCollector):
         super().__init__(view, **params)
         self.view = view
         self.sess_count = 0
-        self.vnf_hit = 0
+        self.sfc_hit = 0
 
         if per_sfc:
             self.per_sfc_ratio = collections.defaultdict(int)
@@ -235,15 +246,15 @@ class AcceptanceRatioCollector(DataCollector):
         self.curr_path = self.view.shortest_path(ingress_node, egress_node)
 
 
-    def vnf_hit(self, vnf):
-        self.vnf_hit += 1
+    def sfc_hit(self, sfc):
+        self.sfc_hit += 1
         if self.per_sfc_ratio:
-            self.per_sfc_ratio[vnf] += 1
+            self.per_sfc_ratio[sfc] += 1
 
     def results(self):
-        n_sess = self.vnf_hit
-        vnf_hit_ratio = self.vnf_hit / n_sess
-        results = Tree(**{'MEAN': vnf_hit_ratio})
+        n_sess = self.sfc_hit
+        sfc_hit_ratio = self.sfc_hit / n_sess
+        results = Tree(**{'MEAN': sfc_hit_ratio})
 
         return results
 

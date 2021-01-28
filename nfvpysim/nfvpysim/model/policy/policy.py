@@ -1,7 +1,7 @@
-from abc import ABC, abstractmethod
-from nfvpysim.util import path_links
-from nfvpysim.registry import register_policy
+from abc import abstractmethod
 
+from nfvpysim.registry import register_policy
+from nfvpysim.util import path_links
 
 __all__ = [
     'Policy',
@@ -32,7 +32,7 @@ class GreedyWithoutPlacement(Policy):
         self.controller.start_session(time, ingress_node, egress_node, sfc, log)
         vnf_status = {vnf: False for vnf in sfc}
         for u, v in path_links(path):
-            self.controller.forward_request_hop(u, v)
+            self.controller.forward_request_vnf_hop(u, v)
             if self.controller.is_nfv_node(v) and v != egress_node:
                 for vnf in sfc:
                     if self.controller.get_vnf(v, vnf) and vnf_status[vnf] == False: # vnf on node and processed
@@ -57,7 +57,7 @@ class GreedyWithoutPlacement(Policy):
 @register_policy('GREEDY_WITH_ONLINE_PLACEMENT')
 class GreedyWithOnlinePlacementPolicy(Policy):
 
-    def __init__(self, view, controller):
+    def __init__(self, view, controller, **kwargs):
         super(GreedyWithOnlinePlacementPolicy, self).__init__(view, controller)
 
     def process_event(self, time, ingress_node, egress_node, sfc, log):
@@ -66,7 +66,7 @@ class GreedyWithOnlinePlacementPolicy(Policy):
         missed_vnfs = []
         vnf_status = {vnf: False for vnf in sfc}
         for u, v in path_links(path):
-            self.controller.forward_request_hop(u, v)
+            self.controller.forward_request_vnf_hop(u, v)
             if self.controller.is_nfv_node(v) and v != egress_node:
                 for vnf in sfc:
                     if self.controller.get_vnf(v, vnf) and vnf_status[vnf] == False: # vnf on node and processed
