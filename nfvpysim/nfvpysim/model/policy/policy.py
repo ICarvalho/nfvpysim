@@ -25,11 +25,11 @@ class Policy:
 @register_policy('GREEDY_WITHOUT_PLACEMENT')
 class GreedyWithoutPlacement(Policy):
 
-    def __init__(self, view, controller):
+    def __init__(self, view, controller, **kwargs):
         super(GreedyWithoutPlacement, self).__init__(view, controller)
     def process_event(self, time, ingress_node, egress_node, sfc, log):
         path = self.view.shortest_path(ingress_node, egress_node)
-        self.controller.start_session(time, ingress_node, egress_node, sfc)
+        self.controller.start_session(time, ingress_node, egress_node, sfc, log)
         vnf_status = {vnf: False for vnf in sfc}
         for u, v in path_links(path):
             self.controller.forward_request_hop(u, v)
