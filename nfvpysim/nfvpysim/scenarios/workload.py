@@ -173,7 +173,7 @@ class StationaryWorkloadVarLenSfc:
             event = {'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
             #file_lines = [str(i),',', str(sfc)[1:-1], '\n']
             #f.writelines(file_lines)
-            yield t_event, event
+            yield (t_event, event)
             req_counter += 1
             #f.close() n_warmup=0,  n_measured=4 * 10 ** 5,
         return
@@ -186,6 +186,8 @@ var_len = StationaryWorkloadRandomSfc(topo, 10*3)
 for i in var_len:
     print(i)
 """
+
+
 
 
 
