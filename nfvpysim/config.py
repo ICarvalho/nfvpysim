@@ -47,7 +47,7 @@ DATA_COLLECTORS = [
 VNF_ALLOCATION_SPACE = [8]
 
 # Number of warmup requests
-N_WARMUP_REQUESTS = 1*10**5
+N_WARMUP_REQUESTS = 0
 
 # Number of measured requests
 
@@ -105,5 +105,5 @@ for policy in POLICIES:
             experiment['topology']['name'] = topology
             experiment['vnf_allocation']['network_cache'] = vnf_allocation_space
             experiment['desc'] = "policy: %s, topology: %s, network cache: %s" \
-                                     % (policy, topology, str(vnf_allocation_space))
+                                     % (policy, topology, vnf_allocation_space)
             EXPERIMENT_QUEUE.append(experiment)

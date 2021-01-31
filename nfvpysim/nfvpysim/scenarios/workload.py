@@ -28,7 +28,7 @@ class StationaryWorkloadRandomSfc:
 
     """
 
-    def __init__(self, topology, n_sfcs, rate=1.0,  n_warmup=0,  n_measured=4 * 10 ** 5,  seed=None, **kwargs):
+    def __init__(self, topology, n_sfcs, rate=1.0, n_warmup=0, n_measured=4 * 10 ** 5, seed=None):
 
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
@@ -107,7 +107,7 @@ class StationaryWorkloadVarLenSfc:
 
     """
 
-    def __init__(self, topology, n_sfcs, rate=1.0, n_warmup=0,  n_measured=4 * 10 ** 5, seed=None, **kwargs):
+    def __init__(self, topology, n_sfcs, rate=1.0, n_warmup=0, n_measured=4 * 10 ** 5, seed=None):
 
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
@@ -173,7 +173,7 @@ class StationaryWorkloadVarLenSfc:
             event = {'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
             #file_lines = [str(i),',', str(sfc)[1:-1], '\n']
             #f.writelines(file_lines)
-            yield t_event, event
+            yield (t_event, event)
             req_counter += 1
             #f.close() n_warmup=0,  n_measured=4 * 10 ** 5,
         return

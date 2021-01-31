@@ -17,32 +17,6 @@ __all__ = [
 ]
 
 
-def symmetrify_paths(shortest_paths):
-    """Make paths symmetric
-
-    Given a dictionary of all-pair shortest paths, it edits shortest paths to
-    ensure that all path are symmetric, e.g., path(u,v) = path(v,u)
-
-    Parameters
-    ----------
-    shortest_paths : dict of dict
-        All pairs shortest paths
-
-    Returns
-    -------
-    shortest_paths : dict of dict
-        All pairs shortest paths, with all paths symmetric
-
-    Notes
-    -----
-    This function modifies the shortest paths dictionary provided
-    """
-    for u in shortest_paths:
-        for v in shortest_paths[u]:
-            shortest_paths[u][v] = list(reversed(shortest_paths[v][u]))
-    return shortest_paths
-
-
 class NetworkView:
 
     def __init__(self, model):
@@ -65,6 +39,9 @@ class NetworkView:
     def nfv_cache_nodes(self, size=True):
         return {v: c.maxlen for v, c in self.model.nfv_cache.items()} if size \
                 else list(self.model.nfv_cache.keys())
+
+    def is_nfv_node(self, node):
+        return node in self.model.nfv_cache
 
 
     def link_type(self, u, v):
@@ -96,7 +73,7 @@ class NetworkModel:
                              'instance of fnss.Topology or   of its subclasses')
 
         self.shortest_path = dict(shortest_path) if shortest_path is not None \
-            else symmetrify_paths(dict(nx.all_pairs_dijkstra_path(topology)))
+            else (dict(nx.all_pairs_dijkstra_path(topology)))
 
 
         self.topology = topology
@@ -196,7 +173,7 @@ class NetworkModel:
 
     # Compute the shortest path between ingress and egress node
     @staticmethod
-    def calculate_shortest_path(topology, ingress_node, egress_node):
+    def shortest_path(topology, ingress_node, egress_node):
         return nx.shortest_path(topology, ingress_node,egress_node)
 
 
@@ -337,8 +314,7 @@ class NetworkController:
                 self.model.nfv_cache[node].add_vnf(vnf)
 
 
-    def is_nfv_node(self, node):
-        return node in self.model.nfv_cache
+
 
 
 
