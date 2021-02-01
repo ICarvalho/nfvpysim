@@ -2,7 +2,6 @@ import networkx as nx
 import fnss
 import random
 from nfvpysim.registry import CACHE_POLICY
-from nfvpysim.model.cache import NfvCache
 from nfvpysim.util import path_links
 import logging
 logger = logging.getLogger('orchestration')

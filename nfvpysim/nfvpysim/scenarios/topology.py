@@ -54,19 +54,21 @@ class NfvTopology(fnss.Topology):
         """
         return set (v for v in self
                 if 'stack' in self.node[v]
-                and self.node[v]['stack'][0] == 'nvf_node')
+                and self.node[v]['stack'][0] == 'nfv_node'
+                and 'cache_size' in self.node[v]['stack'][1])
 
 
-    def nfv_cache_nodes(self):
-        """
-        :return: return a set of nfv nodes
-        """
-
+    """
+        def nfv_cache_nodes(self):
+    
         return {v: self.node[v]['stack'][1]['cache_size']
                 for v in self
                 if 'stack' in self.node[v]
                 and 'cache_size' in self.node[v]['stack'][1]
                 }
+    
+    """
+
 
 
 
@@ -78,7 +80,7 @@ def topology_geant(**kwargs):
     deg = nx.degree(topology)
     ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 8 nodes
     egress_nodes = [v for v in topology.nodes() if deg[v] == 2] # 13 nodes
-    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2] #  19 nodes
+    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2 and v not in ingress_nodes + egress_nodes] #  19 nodes
     #forwarding_nodes = [v for v in topology.nodes() if v not in ingress_nodes + egress_nodes]
     topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
     # Add stacks to nodes
@@ -89,8 +91,7 @@ def topology_geant(**kwargs):
         fnss.add_stack(topology, v, 'egress_node')
 
     for v in nfv_nodes:
-        size = 8
-        fnss.add_stack(topology, v, 'nfv_node')
+        fnss.add_stack(topology, v, 'nfv_node', {'cache_size': {}})
 
 
 
@@ -196,6 +197,9 @@ def topology_datacenter_two_tier(**kwargs):
 
 """
 topo = topology_geant()
-print(topo.stacks())
-print()
+#print(topo.stacks())
+for v in topo.nodes:
+    print(topo.node[v]['stack'][1])
+
 """
+

@@ -31,7 +31,10 @@ class GreedyWithoutPlacement(Policy):
         path = self.view.shortest_path(ingress_node, egress_node)
         self.controller.start_session(time, ingress_node, egress_node, sfc)
         vnf_status = {vnf: False for vnf in sfc}
-        for u, v in path_links(path):
+        #for u, v in path_links(path):
+        for hop in range(1, len(path)):
+            u = path[hop - 1]
+            v = path[hop]
             self.controller.forward_request_vnf_hop(u, v)
             if self.view.is_nfv_node(v):
                 for vnf in sfc:
@@ -44,6 +47,7 @@ class GreedyWithoutPlacement(Policy):
                     return True
                 else:
                     return False
+
 
         self.controller.end_session()
 
