@@ -186,6 +186,7 @@ def run_scenario(settings, params, curr_exp, n_exp):
         integer expressing the wall-clock duration of the experiment (in
         seconds)
     """
+    global logger
     try:
         start_time = time.time()
         proc_name = mp.current_process().name
