@@ -66,7 +66,7 @@ class CollectorProxy(DataCollector):
 
 
     def request_vnf_hop(self, u, v, main_path=True):
-        for c in self.collectors['request_hop']:
+        for c in self.collectors['request_vnf_hop']:
             c.request_vnf_hop(u, v, main_path)
 
     def vnf_proc_hop(self, u, v, main_path=True):
