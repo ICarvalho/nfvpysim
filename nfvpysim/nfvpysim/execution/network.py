@@ -181,8 +181,7 @@ class NetworkModel:
         return [p for p in nx.all_shortest_paths(topology, ingress_node, egress_node)]
 
 
-    @staticmethod
-    def get_ingress_nodes(topology):
+    def get_ingress_nodes(self, topology):
 
         if isinstance(topology, fnss.Topology):
             ing_nodes = []

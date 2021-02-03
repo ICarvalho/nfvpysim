@@ -70,9 +70,6 @@ class NfvTopology(fnss.Topology):
     """
 
 
-
-
-
 @register_topology_factory('GEANT')
 def topology_geant(**kwargs):
 
@@ -194,12 +191,12 @@ def topology_datacenter_two_tier(**kwargs):
 
     return NfvTopology(topology)
 
-
 """
 topo = topology_geant()
 #print(topo.stacks())
 for v in topo.nodes:
-    print(topo.node[v]['stack'][1])
-
+    print(topo.node[v]['stack'][0])
 """
+
+
 

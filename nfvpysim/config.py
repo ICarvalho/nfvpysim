@@ -73,7 +73,7 @@ NFV_NODE_CACHE_POLICY = 'NFV_CACHE'
 # List of topologies tested
 # Topology implementations are located in ./icarus/scenarios/topology.py
 # Remove topologies not needed
-TOPOLOGIES = ['GEANT']
+TOPOLOGIES = ['GEANT', 'TATANLD']
 
 # List of caching and routing strategies
 # The code is located in ./icarus/models/strategy/*.py
@@ -105,5 +105,5 @@ for policy in POLICIES:
             experiment['topology']['name'] = topology
             experiment['vnf_allocation']['network_cache'] = vnf_allocation_space
             experiment['desc'] = "policy: %s, topology: %s, network cache: %s" \
-                                     % (policy, topology, vnf_allocation_space)
+                                     % (policy, topology, str(vnf_allocation_space))
             EXPERIMENT_QUEUE.append(experiment)

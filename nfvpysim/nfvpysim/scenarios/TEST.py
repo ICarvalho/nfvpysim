@@ -26,13 +26,9 @@ def place_vnfs(G):
         else:
             G.nodes[node]['name'] = 'other_node'
 
-    return G
+    return G.nodes.data()
 
 
 G = nx.barbell_graph(10,10)
-place_vnfs(G)
+print(place_vnfs(G))
 
-for node in G.nodes:
-    if G.nodes[node]['name'] == 'nfv_node':
-           for vnf in G.nodes[node]['vnfs']:
-               print(node, G.nodes[node]['vnfs'][:])
