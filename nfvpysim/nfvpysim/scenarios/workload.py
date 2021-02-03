@@ -59,7 +59,7 @@ class StationaryWorkloadRandomSfc:
     @staticmethod
     def generate_random_sfc(n_sfcs):
         sfcs = []
-        for i in range(1, n_sfcs + 1):
+        for i in range(1, n_sfcs):
             sfc = StationaryWorkloadRandomSfc.select_random_sfc()
             sfcs.append(sfc)
 

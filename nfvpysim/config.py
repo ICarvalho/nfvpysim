@@ -44,7 +44,7 @@ DATA_COLLECTORS = [
 
 
 # Number of content requests that are measured after warmup
-VNF_ALLOCATION_SPACE = [8,9,10]
+VNF_ALLOCATION_SPACE = [8]
 
 # Number of warmup requests
 N_WARMUP_REQUESTS = 0
@@ -54,6 +54,7 @@ N_WARMUP_REQUESTS = 0
 N_MEASURED_REQUESTS = 4 * 10 ** 5
 
 N_SFCS = 10**5
+
 
 # Number of requests per second (over the whole network)
 REQ_RATE = 10.0
