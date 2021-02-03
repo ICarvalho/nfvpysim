@@ -42,11 +42,8 @@ class GreedyWithoutPlacement(Policy):
                             vnf_status[vnf] = True
                             self.controller.vnf_proc(vnf)
             if all(value is True for value in vnf_status.values())and v!= egress_node:
-                if self.collector is not None and self.session['log']:
-                    self.collector.sfc_acc(sfc)
-                    return True
-                else:
-                    return False
+                self.controller.sfc_hit(sfc)
+
 
 
         self.controller.end_session()

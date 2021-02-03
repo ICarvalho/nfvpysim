@@ -76,7 +76,7 @@ class CollectorProxy(DataCollector):
 
     def sfc_hit(self, sfc):
         for c in self.collectors['sfc_hit']:
-            c.vnf_hit(sfc)
+            c.sfc_hit(sfc)
 
 
     def vnf_proc_delay(self, vnf):

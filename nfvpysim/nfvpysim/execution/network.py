@@ -292,12 +292,15 @@ class NetworkController:
 
     def get_vnf(self, node, vnf):
         if node in self.model.nfv_cache:
-            vnf_hit = self.model.nfv_cache[node].get_vnf(vnf)
-            if vnf_hit:
-                if self.session['log']:
-                    self.collector.vnf_hit(vnf)
-            return vnf_hit
+            has_vnf = self.model.nfv_cache[node].get_vnf(vnf)
+            if has_vnf:
+                return  True
+            else:
+                return False
 
+    def sfc_hit(self, sfc):
+        if self.collector is not None and self.session['log']:
+            self.collector.sfc_hit(sfc)
 
 
 
