@@ -42,7 +42,9 @@ class GreedyWithoutPlacement(Policy):
                             vnf_status[vnf] = True
                             self.controller.vnf_proc(vnf)
             if all(value is True for value in vnf_status.values())and v!= egress_node:
-                self.controller.sfc_hit(sfc)
+                return True
+                #self.controller.sfc_hit(sfc)
+
 
 
 
