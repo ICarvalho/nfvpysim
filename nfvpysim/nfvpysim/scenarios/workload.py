@@ -11,6 +11,86 @@ __all__ = [
     'StationaryWorkloadVarLenSfc'
 ]
 
+
+def select_random_sfc():
+    services = [
+        [1, 2],  # [nat - fw]
+        [4, 5],  # [wanopt - lb]
+        [1, 2, 3],  # [nat - fw - ids]
+        [2, 3, 5],  # [fw - ids - lb]
+        [1, 5, 4],  # [nat - lb - wanopt]
+        [5, 2, 1],  # [lb - fw - nat]
+        [2, 3, 5, 6],  # [fw - ids - lb - encrypt]
+        [3, 2, 5, 8],  # [ids - fw - lb - wanopt]
+        [5, 4, 6, 2, 3],  # [lb - wanopt - encrypt - fw - ids]
+    ]
+
+    return random.choice(services)
+
+
+def generate_random_sfc(n_sfcs):
+    sfcs = []
+    for i in range(1, n_sfcs):
+        sfc = select_random_sfc()
+        if sfc not in sfcs:
+            sfcs.append(sfc)
+
+    return sfcs
+
+
+###########################################
+
+
+def var_len_seq_sfc():
+    var_len_sfc = []
+    sfcs = {1: 15,  # nat
+            2: 25,  # fw
+            3: 25,  # ids
+            4: 20,  # wanopt
+            5: 20,  # lb
+            6: 25,  # encryptsfc_len
+            7: 25,  # decrypts
+            8: 30,  # dpi
+            }
+    sfc_len = random.randint(1, 8)
+    sum_cpu = 0
+    while sfc_len != 0:
+        vnf, cpu = random.choice(list(sfcs.items()))
+        if vnf not in var_len_sfc:
+            var_len_sfc.append(vnf)
+            sfc_len -= 1
+            sum_cpu += cpu
+            if sum_cpu > 100 or sfc_len == 0:
+                break
+            elif sum_cpu <= 100 and sfc_len != 0:
+                sfc_len -= 1
+    return var_len_sfc
+
+
+def generate_var_len_seq_sfc(n_sfcs):
+    sfcs = []
+    for i in range(1, n_sfcs + 1):
+        sfc = var_len_seq_sfc()
+        sfcs.append(sfc)
+    return sfcs
+
+
+##############################################
+
+
+
+def gen_sfc_by_len(sfc_len):
+    vnfs = [1, 2, 3, 4, 5, 6, 7, 8]
+    sfc_by_len = []
+    for i in range(1, sfc_len + 1):
+        vnf = random.choice(vnfs)
+        if vnf not in sfc_by_len:
+            sfc_by_len.append(vnf)
+    return sfc_by_len
+
+
+
+
 @register_workload('STATIONARY_RANDOM_SFC')
 class StationaryWorkloadRandomSfc:
 
@@ -30,48 +110,15 @@ class StationaryWorkloadRandomSfc:
 
     def __init__(self, topology, n_sfcs, rate=1.0, n_warmup=0, n_measured=4 * 10 ** 5, seed=None, **kwargs):
         self.topology = topology
-        self.ingress_nodes = StationaryWorkloadRandomSfc.get_ingress_nodes(self.topology)
-        self.egress_nodes =  StationaryWorkloadRandomSfc.get_egress_nodes(self.topology)
-        self.sfcs = StationaryWorkloadRandomSfc.generate_random_sfc(n_sfcs)
+        #self.sfc_len = sfc_len
+        self.ingress_nodes = [v for v in topology if topology.node[v]['stack'][0] == 'ingress_node']
+        self.egress_nodes =  [v for v in topology if topology.node[v]['stack'][0] == 'egress_node']
+        self.sfcs = generate_random_sfc(n_sfcs)
+        #self.sfcs = gen_sfc_by_len(sfc_len)
         self.rate = rate
         self.n_warmup = n_warmup
         self.n_measured = n_measured
         random.seed(seed)
-
-
-    @staticmethod
-    def select_random_sfc():
-
-        services = [
-            [1, 2],  # [nat - fw]
-            [4, 5],  # [wanopt - lb]
-            [1, 2, 3],  # [nat - fw - ids]
-            [2, 3, 5],  # [fw - ids - lb]
-            [1, 5, 4],  # [nat - lb - wanopt]
-            [5, 2, 1],  # [lb - fw - nat]
-            [2, 3, 5, 6],  # [fw - ids - lb - encrypt]
-            [3, 2, 5, 8],  # [ids - fw - lb - wanopt]
-            [5, 4, 6, 2, 3],  # [lb - wanopt - encrypt - fw - ids]
-        ]
-
-        return random.choice(services)
-
-    @staticmethod
-    def generate_random_sfc(n_sfcs):
-        sfcs = []
-        for i in range(1, n_sfcs):
-            sfc = StationaryWorkloadRandomSfc.select_random_sfc()
-            sfcs.append(sfc)
-
-        return sfcs
-
-    @staticmethod
-    def get_ingress_nodes(topology):
-        return [v for v in topology if topology.node[v]['stack'][0] == 'ingress_node']
-
-    @staticmethod
-    def get_egress_nodes(topology):
-        return [v for v in topology if topology.node[v]['stack'][0] == 'egress_node']
 
 
     def __iter__(self):
@@ -118,49 +165,11 @@ class StationaryWorkloadVarLenSfc:
 
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
-        self.sfcs = StationaryWorkloadVarLenSfc.generate_var_len_seq_sfc(n_sfcs)
+        self.sfcs = generate_var_len_seq_sfc(n_sfcs)
         self.rate = rate
         self.n_measured = n_measured
         self.n_warmup = n_warmup
         random.seed(seed)
-
-
-    @staticmethod
-    def var_len_seq_sfc():
-        var_len_sfc = []
-        sfcs = {1: 15,  # nat
-                2: 25,  # fw
-                3: 25,  # ids
-                4: 20,  # wanopt
-                5: 20,  # lb
-                6: 25,  # encrypt
-                7: 25,  # decrypts
-                8: 30,  # dpi
-                }
-        sfc_len = random.randint(1, 8)
-        sum_cpu = 0
-        while sfc_len != 0:
-            vnf, cpu = random.choice(list(sfcs.items()))
-            if vnf not in var_len_sfc:
-                var_len_sfc.append(vnf)
-                sfc_len -= 1
-                sum_cpu += cpu
-                if sum_cpu > 100 or sfc_len == 0:
-                    break
-                elif sum_cpu <= 100 and sfc_len != 0:
-                    sfc_len -= 1
-
-
-        return var_len_sfc
-
-    @staticmethod
-    def generate_var_len_seq_sfc(n_sfcs):
-        sfcs = []
-        for i in range(1, n_sfcs + 1):
-            sfc = StationaryWorkloadVarLenSfc.var_len_seq_sfc()
-            sfcs.append(sfc)
-
-        return sfcs
 
 
     def __iter__(self):
@@ -186,13 +195,12 @@ class StationaryWorkloadVarLenSfc:
         return
 
 
-"""
+
 topo= topology_geant()
-var_len = StationaryWorkloadRandomSfc(topo, 10*3)
+var_len = StationaryWorkloadRandomSfc(topo,  10*3)
 
 for i in var_len:
     print(i)
-"""
 
 
 
