@@ -32,8 +32,7 @@ def generate_random_sfc(n_sfcs):
     sfcs = []
     for i in range(1, n_sfcs):
         sfc = select_random_sfc()
-        if sfc not in sfcs:
-            sfcs.append(sfc)
+        sfcs.append(sfc)
 
     return sfcs
 
@@ -48,7 +47,7 @@ def var_len_seq_sfc():
             3: 25,  # ids
             4: 20,  # wanopt
             5: 20,  # lb
-            6: 25,  # encryptsfc_len
+            6: 25,  # encrypt
             7: 25,  # decrypts
             8: 30,  # dpi
             }
@@ -79,14 +78,6 @@ def generate_var_len_seq_sfc(n_sfcs):
 
 
 
-def gen_sfc_by_len(sfc_len):
-    vnfs = [1, 2, 3, 4, 5, 6, 7, 8]
-    sfc_by_len = []
-    for i in range(1, sfc_len + 1):
-        vnf = random.choice(vnfs)
-        if vnf not in sfc_by_len:
-            sfc_by_len.append(vnf)
-    return sfc_by_len
 
 
 
@@ -108,13 +99,12 @@ class StationaryWorkloadRandomSfc:
 
     """
 
-    def __init__(self, topology, n_sfcs, rate=1.0, n_warmup=0, n_measured=4 * 10 ** 5, seed=None, **kwargs):
+    def __init__(self, topology, n_sfcs, sfc_len, rate=1.0, n_warmup=0, n_measured=4 * 10 ** 5, seed=None, **kwargs):
         self.topology = topology
-        #self.sfc_len = sfc_len
+        self.sfc_len = sfc_len
         self.ingress_nodes = [v for v in topology if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes =  [v for v in topology if topology.node[v]['stack'][0] == 'egress_node']
         self.sfcs = generate_random_sfc(n_sfcs)
-        #self.sfcs = gen_sfc_by_len(sfc_len)
         self.rate = rate
         self.n_warmup = n_warmup
         self.n_measured = n_measured
@@ -197,7 +187,7 @@ class StationaryWorkloadVarLenSfc:
 
 
 topo= topology_geant()
-var_len = StationaryWorkloadRandomSfc(topo,  10*3)
+var_len = StationaryWorkloadRandomSfc(topo, 2, 10*3)
 
 for i in var_len:
     print(i)
