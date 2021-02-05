@@ -11,7 +11,7 @@ __all__ = [
     'StationaryWorkloadVarLenSfc'
 ]
 
-
+########################### RANDOM SFC #########################
 def select_random_sfc():
     services = [
         [1, 2],  # [nat - fw]
@@ -24,22 +24,25 @@ def select_random_sfc():
         [3, 2, 5, 8],  # [ids - fw - lb - wanopt]
         [5, 4, 6, 2, 3],  # [lb - wanopt - encrypt - fw - ids]
     ]
-
     return random.choice(services)
-
 
 def generate_random_sfc(n_sfcs):
     sfcs = []
     for i in range(1, n_sfcs):
         sfc = select_random_sfc()
         sfcs.append(sfc)
-
     return sfcs
 
 
-###########################################
+########################### SFC BY GIVEN LENGTH ###################
 
 
+
+
+
+
+
+########################### VARIABLE-LENGTH SFC ###################
 def var_len_seq_sfc():
     var_len_sfc = []
     sfcs = {1: 15,  # nat
@@ -74,12 +77,6 @@ def generate_var_len_seq_sfc(n_sfcs):
     return sfcs
 
 
-##############################################
-
-
-
-
-
 
 
 @register_workload('STATIONARY_RANDOM_SFC')
@@ -99,16 +96,40 @@ class StationaryWorkloadRandomSfc:
 
     """
 
-    def __init__(self, topology, n_sfcs, sfc_len, rate=1.0, n_warmup=0, n_measured=4 * 10 ** 5, seed=None, **kwargs):
+    def __init__(self, topology, n_sfcs, rate=1.0, n_warmup=0, n_measured=4 * 10 ** 2, seed=None, **kwargs):
         self.topology = topology
-        self.sfc_len = sfc_len
+        self.n_sfcs = n_sfcs
         self.ingress_nodes = [v for v in topology if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes =  [v for v in topology if topology.node[v]['stack'][0] == 'egress_node']
-        self.sfcs = generate_random_sfc(n_sfcs)
+        self.sfcs = StationaryWorkloadRandomSfc.sfc_by_len(self.n_sfcs)
         self.rate = rate
         self.n_warmup = n_warmup
         self.n_measured = n_measured
         random.seed(seed)
+
+    @staticmethod
+    def gen_sfc_by_len(sfc_len):
+        vnfs = [1, 2, 3, 4, 5, 6, 7, 8]
+        sfc = []
+        for i in range(1, sfc_len + 1):
+            vnf = random.choice(vnfs)
+            if vnf not in sfc:
+                sfc.append(vnf)
+        return sfc
+
+    @staticmethod
+    def sfc_by_len(n_sfcs):
+        sfc = []
+        for i in range(1, n_sfcs + 1):
+            vnf = StationaryWorkloadRandomSfc.gen_sfc_by_len(1)
+            if vnf not in sfc:
+                sfc.append(vnf)
+
+        return sfc
+
+
+
+
 
 
     def __iter__(self):
@@ -186,11 +207,17 @@ class StationaryWorkloadVarLenSfc:
 
 
 
+"""
 topo= topology_geant()
-var_len = StationaryWorkloadRandomSfc(topo, 2, 10*3)
+var_len = StationaryWorkloadRandomSfc(topo, 10*3, 2)
 
 for i in var_len:
     print(i)
+
+"""
+
+
+
 
 
 

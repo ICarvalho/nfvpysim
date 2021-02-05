@@ -9,7 +9,7 @@ import logging
 import matplotlib.pyplot as plt
 
 from nfvpysim.util import Settings, config_logging
-from nfvpysim.results import plot_lines, plot_bar_chart
+from nfvpysim.results.plot import plot_lines, plot_bar_chart
 from nfvpysim.registry import RESULTS_READER
 
 
