@@ -228,7 +228,7 @@ class NetworkModel:
 
 
     def get_shortest_path_between_two_nodes(self, source, target):
-        if self.topology[source]['stack'][0] == 'nfv_node':
+        if self.topology.node[source]['stack'][0] == 'nfv_node':
             return nx.shortest_path_length(source, target)
 
 
@@ -324,7 +324,7 @@ class NetworkController:
         vnf_status = {}
         path = self.model.shortest_path[ingress_node][egress_node]
         for node in path:
-            if node in self.model.cache:
+            if node in self.model.nfv_cache:
                 for vnf in sfc:
                     vnf_status = {vnf: False for vnf in sfc}
                     if self.get_vnf(node, vnf) and vnf_status[vnf] == False: # vnf on node and processed
@@ -348,7 +348,7 @@ class NetworkController:
         missed_vnfs = []
         path = self.model.shortest_path[ingress_node][egress_node]
         for node in path:
-            if node in self.model.cache:
+            if node in self.model.nfv_cache:
                 for vnf in sfc:
                     vnf_status = {vnf: False for vnf in sfc}
                     if self.get_vnf(node, vnf) and vnf_status[vnf] == False: # vnf on node and processed
@@ -371,29 +371,42 @@ class NetworkController:
 
 
 
-    def get_closest__nfv_node(self, path):
+    def get_closest_nfv_node(self, path):
         dist_nfv_node_egress_node = {}
         egress_node = self.model.get_egress_nodes(path)
         nfv_nodes_candidates = self.model.get_nfv_nodes(path)
         for nfv_node in nfv_nodes_candidates:
             dist_nfv_node_egress_node[nfv_node] = self.model.get_shortest_path_between_two_nodes(nfv_node, egress_node)
-        closest_nfv_node = min(dist_nfv_node_egress_node.values())
+        closest_nfv_node = min(dist_nfv_node_egress_node.keys())
         return closest_nfv_node
 
 
-    def sum_cpu_req_vnfs(self, vnfs):
-        return sum(vnf.values() for vnf in vnfs)
+    def sum_vnfs_cpu_node(self, node, vnfs):
+        if node in self.model.nfv_cache:
+            return self.model.nfv_cache[node].sum_vnfs_cpu_node(node, vnfs)
 
 
-    def sum_vnfs_cpu_node(self, node):
-        return self.model.cache[node].get_sum_vnfs_cpu()
+
+    def sum_vnfs_cpu_sfc(self, sfc):
+        vnfs_cpu = {1: 15,  # nat
+                    2: 25,  # fw
+                    3: 25,  # ids
+                    4: 20,  # wanopt
+                    5: 20,  # lb
+                    6: 25,  # encrypt
+                    7: 25,  # decrypts
+                    8: 30,  # dpi
+                    }
+        sum_cpu = 0
+        for vnf in sfc:
+            if vnf in vnfs_cpu.keys():
+                sum_cpu += vnfs_cpu[vnf]
+        return sum_cpu
 
 
 
     def find_target_nfv_node(self, path, vnfs):
-        target_node = min(self.sum_vnfs_cpu_node(node) for node in path \
-                          if self.sum_vnfs_cpu_node(node) <= self.sum_cpu_req_vnfs(vnfs))
-
+        target_node = min(self.sum_vnfs_cpu_node(node, vnfs) for node in path if node in self.model.nfv_cache)
         return target_node
 
 

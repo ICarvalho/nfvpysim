@@ -43,7 +43,7 @@ PLOT_EMPTY_GRAPHS = True
 # No-cache: dotted line
 STRATEGY_STYLE = {
          'GREEDY_WITHOUT_PLACEMENT':         'b-o',
-         #'HR_ASYMM':        'g-D',
+         'GREEDY_WITH_ONLINE_PLACEMENT':      'g-D',
          #'HR_MULTICAST':    'm-^',
          #'HR_HYBRID_AM':    'c-s',
          #'HR_HYBRID_SM':    'r-v',
@@ -60,7 +60,7 @@ STRATEGY_STYLE = {
 # This dict maps name of strategies to names to be displayed in the legend
 STRATEGY_LEGEND = {
          'GREEDY_WITHOUT_PLACEMENT':             'GWP',
-         #'LCD':             'LCD',
+         'GREEDY_WITH_ONLINE_PLACEMENT':             'GWOP',
          #'HR_SYMM':         'HR Symm',
          #'HR_ASYMM':        'HR Asymm',
          #'HR_MULTICAST':    'HR Multicast',
@@ -77,7 +77,7 @@ STRATEGY_LEGEND = {
 # Color and hatch styles for bar charts of cache hit ratio and link load vs topology
 STRATEGY_BAR_COLOR = {
     'GWP':          'k',
-    #'LCD':          '0.4',
+    'GWOP':          '0.4',
     #'NO_CACHE':     '0.5',
     #'HR_ASYMM':     '0.6',
     #'HR_SYMM':      '0.7'
@@ -85,13 +85,14 @@ STRATEGY_BAR_COLOR = {
 
 STRATEGY_BAR_HATCH = {
     'GWP':          None,
-    #'LCD':          '//',
+    'GWOP':          '//',
     #'NO_CACHE':     'x',
     #'HR_ASYMM':     '+',
     #'HR_SYMM':      '\\'
     }
 
 
+"""
 def plot_cache_hits_vs_alpha(resultset, topology, cache_size, alpha_range, strategies, plotdir):
     if 'NO_CACHE' in strategies:
         strategies.remove('NO_CACHE')
@@ -115,6 +116,11 @@ def plot_cache_hits_vs_alpha(resultset, topology, cache_size, alpha_range, strat
                % (topology, cache_size), plotdir)
 
 
+"""
+
+
+
+""""
 def plot_cache_hits_vs_cache_size(resultset, topology, alpha, cache_size_range, strategies, plotdir):
     desc = {}
     if 'NO_CACHE' in strategies:
@@ -138,13 +144,16 @@ def plot_cache_hits_vs_cache_size(resultset, topology, alpha, cache_size_range, 
     plot_lines(resultset, desc, 'CACHE_HIT_RATIO_T=%s@A=%s.pdf'
                % (topology, alpha), plotdir)
 
+"""
+
+
 
 def plot_link_load_vs_alpha(resultset, topology, cache_size, alpha_range, strategies, plotdir):
     desc = {}
     desc['title'] = 'Internal link load: T=%s C=%s' % (topology, cache_size)
     desc['xlabel'] = u'Content distribution \u03b1'
     desc['ylabel'] = 'Internal link load'
-    desc['xparam'] = ('workload', 'alpha')
+    desc['xparam'] = ('workload')
     desc['xvals'] = alpha_range
     desc['filter'] = {'topology': {'name': topology},
                       'cache_placement': {'network_cache': cache_size}}
@@ -203,7 +212,7 @@ def plot_latency_vs_alpha(resultset, topology, cache_size, alpha_range, strategi
                % (topology, cache_size), plotdir)
 
 
-def plot_latency_vs_cache_size(resultset, topology, cache_size_range, strategies, plotdir):
+def plot_latency_vs_cache_size(resultset, topology, cache_size_range, policies, plotdir):
     desc = {}
     desc['title'] = 'Latency: T=%s' % (topology)
     desc['xlabel'] = 'Nfv Cache to population ratio'
@@ -213,9 +222,9 @@ def plot_latency_vs_cache_size(resultset, topology, cache_size_range, strategies
     desc['xvals'] = cache_size_range
     desc['filter'] = {'topology': {'name': topology},
                       'workload': {'name': 'STATIONARY'}}
-    desc['ymetrics'] = [('LATENCY', 'MEAN')] * len(strategies)
-    desc['ycondnames'] = [('strategy', 'name')] * len(strategies)
-    desc['ycondvals'] = strategies
+    desc['ymetrics'] = [('LATENCY', 'MEAN')] * len(policies)
+    desc['ycondnames'] = [('strategy', 'name')] * len(policies)
+    desc['ycondvals'] = policies
     desc['metric'] = ('LATENCY', 'MEAN')
     desc['errorbar'] = True
     desc['legend_loc'] = 'upper right'
@@ -225,14 +234,14 @@ def plot_latency_vs_cache_size(resultset, topology, cache_size_range, strategies
     plot_lines(resultset, desc, 'LATENCY_T=%s.pdf'
                % (topology), plotdir)
 
-
+"""
 def plot_cache_hits_vs_topology(resultset, alpha, cache_size, topology_range, strategies, plotdir):
-    """
+
     Plot bar graphs of cache hit ratio for specific values of alpha and cache
     size for various topologies.
     The objective here is to show that our algorithms works well on all
     topologies considered
-    """
+
     if 'NO_CACHE' in strategies:
         strategies.remove('NO_CACHE')
     desc = {}
@@ -255,7 +264,11 @@ def plot_cache_hits_vs_topology(resultset, alpha, cache_size, topology_range, st
                    % (alpha, cache_size), plotdir)
 
 
-def plot_link_load_vs_topology(resultset, alpha, cache_size, topology_range, strategies, plotdir):
+"""
+
+
+
+def plot_link_load_vs_topology(resultset, cache_size, topology_range, strategies, plotdir):
     """
     Plot bar graphs of link load for specific values of alpha and cache
     size for various topologies.
@@ -263,12 +276,12 @@ def plot_link_load_vs_topology(resultset, alpha, cache_size, topology_range, str
     topologies considered
     """
     desc = {}
-    desc['title'] = 'Internal link load: A=%s C=%s' % (alpha, cache_size)
+    desc['title'] = 'Internal link load: C=%s' % (cache_size)
     desc['ylabel'] = 'Internal link load'
     desc['xparam'] = ('topology', 'name')
     desc['xvals'] = topology_range
     desc['filter'] = {'cache_placement': {'network_cache': cache_size},
-                      'workload': {'name': 'STATIONARY', 'alpha': alpha}}
+                      'workload': {'name': 'STATIONARY'}}
     desc['ymetrics'] = [('LINK_LOAD', 'MEAN_INTERNAL')] * len(strategies)
     desc['ycondnames'] = [('strategy', 'name')] * len(strategies)
     desc['ycondvals'] = strategies
@@ -278,8 +291,8 @@ def plot_link_load_vs_topology(resultset, alpha, cache_size, topology_range, str
     desc['bar_hatch'] = STRATEGY_BAR_HATCH
     desc['legend'] = STRATEGY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
-    plot_bar_chart(resultset, desc, 'LINK_LOAD_INTERNAL_A=%s_C=%s.pdf'
-                   % (alpha, cache_size), plotdir)
+    plot_bar_chart(resultset, desc, 'LINK_LOAD_INTERNAL_C=%s.pdf'
+                   % (cache_size), plotdir)
 
 
 def run(config, results, plotdir):
@@ -327,14 +340,14 @@ def run(config, results, plotdir):
         logger.info('Plotting latency for topology %s vs cache size' % (topology))
         plot_latency_vs_cache_size(resultset, topology, cache_sizes, policies, plotdir)
 
-    """
-        for cache_size in cache_sizes:
-        for alpha in alphas:
-            logger.info('Plotting cache hit ratio for cache size %s vs alpha %s against topologies' % (str(cache_size), str(alpha)))
-            plot_cache_hits_vs_topology(resultset, alpha, cache_size, topologies, policies, plotdir)
-            logger.info('Plotting link load for cache size %s vs alpha %s against topologies' % (str(cache_size), str(alpha)))
-            plot_link_load_vs_topology(resultset, alpha, cache_size, topologies, policies, plotdir)
-    """
+
+    for cache_size in cache_sizes:
+        #for alpha in alphas:
+        #logger.info('Plotting cache hit ratio for cache size %s vs alpha %s against topologies' % (str(cache_size), str(alpha)))
+        #plot_cache_hits_vs_topology(resultset, alpha, cache_size, topologies, policies, plotdir)
+        logger.info('Plotting link load for cache size %s against topologies' % (str(cache_size)))
+        plot_link_load_vs_topology(resultset, cache_size, topologies, policies, plotdir)
+
 
     logger.info('Exit. Plots were saved in directory %s' % os.path.abspath(plotdir))
 

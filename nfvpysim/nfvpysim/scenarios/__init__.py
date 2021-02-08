@@ -3,3 +3,4 @@
 from .vnfallocation import *
 from .topology import *
 from .workload import *
+from .requests import *

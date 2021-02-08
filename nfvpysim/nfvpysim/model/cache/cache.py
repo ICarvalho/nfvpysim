@@ -28,3 +28,32 @@ class NfvCache:
 
     def remove_vnf(self, vnf):
         return self.nfvcache.remove(vnf)
+
+    def sum_vnfs_cpu_node(self, node, vnfs):
+        vnfs_cpu =  {1: 15,  # nat
+                2: 25,  # fw
+                3: 25,  # ids
+                4: 20,  # wanopt
+                5: 20,  # lb
+                6: 25,  # encrypt
+                7: 25,  # decrypts
+                8: 30,  # dpi
+                }
+
+        sum_cpu = 0
+        for vnf in vnfs:
+            if self.has_vnf(vnf) and vnf in vnfs_cpu.keys():
+                sum_cpu += vnfs_cpu[vnf]
+        return sum_cpu
+
+
+"""
+c = NfvCache(4)
+c.add_vnf(1)
+c.add_vnf(2)
+c.add_vnf(3)
+c.add_vnf(4)
+
+print(c.sum_vnfs_cpu_node(1, [1,2,3,4,6]))
+
+"""

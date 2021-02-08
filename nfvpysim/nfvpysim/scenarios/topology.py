@@ -115,9 +115,9 @@ def topology_tatanld(**kwargs):
     deg = nx.degree(topology)
     ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 80 nodes
     egress_nodes = [v for v in topology.nodes() if deg[v] == 2]  # 22 nodes
-    nfv_nodes_candidates = [v for v in topology.nodes() if deg[v] > 2]   # 34 nodes
+    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2]   # 34 nodes
     forwarding_nodes = [v for v in topology.nodes()]
-    topology.graph['nfv_nodes_candidates'] = set(nfv_nodes_candidates)
+    topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
 
 
     # Add stacks to nodes
@@ -127,8 +127,8 @@ def topology_tatanld(**kwargs):
     for v in egress_nodes:
         fnss.add_stack(topology, v, 'egress_node')
 
-    for v in forwarding_nodes:
-        fnss.add_stack(topology, v, 'forwarding_node')
+    for v in nfv_nodes:
+        fnss.add_stack(topology, v, 'nfv_node', {'cache_size': {}})
 
 
 

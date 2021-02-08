@@ -44,7 +44,7 @@ DATA_COLLECTORS = [
 
 
 # Number of content requests that are measured after warmup
-VNF_ALLOCATION_SPACE = [8,9,10,11]
+VNF_ALLOCATION_SPACE = [8, 10, 16]
 
 # Number of warmup requests
 N_WARMUP_REQUESTS = 0
@@ -74,12 +74,12 @@ NFV_NODE_CACHE_POLICY = 'NFV_CACHE'
 # List of topologies tested
 # Topology implementations are located in ./icarus/scenarios/topology.py
 # Remove topologies not needed
-TOPOLOGIES = ['GEANT']
+TOPOLOGIES = ['GEANT', 'TATANLD']
 
 # List of caching and routing strategies
 # The code is located in ./icarus/models/strategy/*.py
 # Remove strategies not needed
-POLICIES = ['GREEDY_WITHOUT_PLACEMENT']  # 'GREEDY_WITHOUT_PLACEMENT',
+POLICIES = ['GREEDY_WITHOUT_PLACEMENT', 'GREEDY_WITH_ONLINE_PLACEMENT']  # 'GREEDY_WITHOUT_PLACEMENT',
 
 # Instantiate experiment queue
 EXPERIMENT_QUEUE = deque()
@@ -87,7 +87,6 @@ EXPERIMENT_QUEUE = deque()
 # Create tree of experiment configuration
 default = Tree()
 default['workload'] = {'name':  'STATIONARY_RANDOM_SFC',
-                       'n_sfcs': N_SFCS,
                        'n_warmup': N_WARMUP_REQUESTS,
                        'n_measured': N_MEASURED_REQUESTS,
                        'rate': REQ_RATE}

@@ -1,86 +1,16 @@
 from nfvpysim.registry import register_workload
-import csv
 from nfvpysim.scenarios import topology_geant
-import random
-from nfvpysim.tools import TruncatedZipfDist
-
+from nfvpysim.scenarios.requests import *
 
 
 __all__ = [
-    'StationaryWorkloadRandomSfc',
-    'StationaryWorkloadVarLenSfc'
+    'StationaryWorkloadSfcByLen',
+    'StationaryWorkloadVarLenSfc',
+    'StationaryWorkloadRandomSfc'
 ]
 
-########################### RANDOM SFC #########################
-def select_random_sfc():
-    services = [
-        [1, 2],  # [nat - fw]
-        [4, 5],  # [wanopt - lb]
-        [1, 2, 3],  # [nat - fw - ids]
-        [2, 3, 5],  # [fw - ids - lb]
-        [1, 5, 4],  # [nat - lb - wanopt]
-        [5, 2, 1],  # [lb - fw - nat]
-        [2, 3, 5, 6],  # [fw - ids - lb - encrypt]
-        [3, 2, 5, 8],  # [ids - fw - lb - wanopt]
-        [5, 4, 6, 2, 3],  # [lb - wanopt - encrypt - fw - ids]
-    ]
-    return random.choice(services)
-
-def generate_random_sfc(n_sfcs):
-    sfcs = []
-    for i in range(1, n_sfcs):
-        sfc = select_random_sfc()
-        sfcs.append(sfc)
-    return sfcs
-
-
-########################### SFC BY GIVEN LENGTH ###################
-
-
-
-
-
-
-
-########################### VARIABLE-LENGTH SFC ###################
-def var_len_seq_sfc():
-    var_len_sfc = []
-    sfcs = {1: 15,  # nat
-            2: 25,  # fw
-            3: 25,  # ids
-            4: 20,  # wanopt
-            5: 20,  # lb
-            6: 25,  # encrypt
-            7: 25,  # decrypts
-            8: 30,  # dpi
-            }
-    sfc_len = random.randint(1, 8)
-    sum_cpu = 0
-    while sfc_len != 0:
-        vnf, cpu = random.choice(list(sfcs.items()))
-        if vnf not in var_len_sfc:
-            var_len_sfc.append(vnf)
-            sfc_len -= 1
-            sum_cpu += cpu
-            if sum_cpu > 100 or sfc_len == 0:
-                break
-            elif sum_cpu <= 100 and sfc_len != 0:
-                sfc_len -= 1
-    return var_len_sfc
-
-
-def generate_var_len_seq_sfc(n_sfcs):
-    sfcs = []
-    for i in range(1, n_sfcs + 1):
-        sfc = var_len_seq_sfc()
-        sfcs.append(sfc)
-    return sfcs
-
-
-
-
-@register_workload('STATIONARY_RANDOM_SFC')
-class StationaryWorkloadRandomSfc:
+@register_workload('STATIONARY_SFC_BY_LEN')
+class StationaryWorkloadSfcByLen:
 
     """
     This function generates events on the fly, i.e. instead of creating an
@@ -96,41 +26,15 @@ class StationaryWorkloadRandomSfc:
 
     """
 
-    def __init__(self, topology, sfc_len, rate=1.0, n_warmup=0, n_measured=4 * 10 ** 2, seed=None, **kwargs):
+    def __init__(self, topology, sfc_len, rate=1.0, n_warmup=0, n_measured=4 * 10 ** 8, seed=None, **kwargs):
         self.topology = topology
-        #self.n_sfcs = n_sfcs
         self.sfc_len = sfc_len
         self.ingress_nodes = [v for v in topology if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes =  [v for v in topology if topology.node[v]['stack'][0] == 'egress_node']
-        self.sfcs = StationaryWorkloadRandomSfc.sfc_by_len(self.n_sfcs)
         self.rate = rate
         self.n_warmup = n_warmup
         self.n_measured = n_measured
         random.seed(seed)
-
-    @staticmethod
-    def gen_sfc_by_len(sfc_len):
-        vnfs = [1, 2, 3, 4, 5, 6, 7, 8]
-        sfc = []
-        for i in range(1, sfc_len + 1):
-            vnf = random.choice(vnfs)
-            if vnf not in sfc:
-                sfc.append(vnf)
-        return sfc
-
-    @staticmethod
-    def sfc_by_len(n_sfcs):
-        sfc = []
-        for i in range(1, n_sfcs + 1):
-            vnf = StationaryWorkloadRandomSfc.gen_sfc_by_len(1)
-            if vnf not in sfc:
-                sfc.append(vnf)
-
-        return sfc
-
-
-
-
 
 
     def __iter__(self):
@@ -145,7 +49,9 @@ class StationaryWorkloadRandomSfc:
             t_event += (random.expovariate(self.rate))
             ingress_node = random.choice(self.ingress_nodes)
             egress_node = random.choice(self.egress_nodes)
-            sfc = random.choice(self.sfcs)
+            self.req = RequestSfcByLen()
+            self.sfc = self.req.gen_sfc_by_len(self.sfc_len)
+            sfc = self.sfc
             log = (req_counter >= self.n_warmup)
             event = {'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
             #file_lines = [str(i),',', str(sfc)[1:-1], '\n']
@@ -173,11 +79,10 @@ class StationaryWorkloadVarLenSfc:
 
     """
 
-    def __init__(self, topology, n_sfcs, rate=1.0, n_warmup=0, n_measured=4 * 10 ** 5, seed=None):
+    def __init__(self, topology, rate=1.0, n_warmup=0, n_measured=4 * 10 ** 5, seed=None):
 
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
-        self.sfcs = generate_var_len_seq_sfc(n_sfcs)
         self.rate = rate
         self.n_measured = n_measured
         self.n_warmup = n_warmup
@@ -196,7 +101,9 @@ class StationaryWorkloadVarLenSfc:
             t_event += (random.expovariate(self.rate))
             ingress_node = random.choice(self.ingress_nodes)
             egress_node = random.choice(self.egress_nodes)
-            sfc = random.choice(self.sfcs)
+            self.req = RequestVarLenSfc()
+            self.sfc = self.req.var_len_seq_sfc()
+            sfc = self.sfc
             log = (req_counter >= self.n_warmup)
             event = {'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
             #file_lines = [str(i),',', str(sfc)[1:-1], '\n']
@@ -207,29 +114,63 @@ class StationaryWorkloadVarLenSfc:
         return
 
 
+@register_workload('STATIONARY_RANDOM_SFC')
+class StationaryWorkloadRandomSfc:
+    """
+    This function generates events on the fly, i.e. instead of creating an
+    event schedule to be kept in memory, returns an iterator that generates
+    events when needed.
 
-topo= topology_geant()
-var_len = StationaryWorkloadRandomSfc(topo, 10*3, 2)
+    This is useful for running large schedules of events where RAM is limited
+    as its memory impact is considerably lower
 
-for i in var_len:
+    All requests are mapped to receivers uniformly unless a positive *beta*
+    parameter is specified
+
+
+    """
+
+    def __init__(self, topology, rate=1.0, n_warmup=0, n_measured=4 * 10 ** 5, seed=None):
+
+        self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
+        self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
+        self.rate = rate
+        self.n_measured = n_measured
+        self.n_warmup = n_warmup
+        random.seed(seed)
+
+
+    def __iter__(self):
+        req_counter = 0
+        t_event = 0.0
+        #header = ['id', 'sfc']
+        #with open('var_seq_len_sfc.csv', 'w', newline='\n') as f:
+        #writer = csv.writer(f)
+        #writer.writerow(header)
+        while req_counter < self.n_warmup + self.n_measured:
+            #for i in range(0, self.n_req):
+            t_event += (random.expovariate(self.rate))
+            ingress_node = random.choice(self.ingress_nodes)
+            egress_node = random.choice(self.egress_nodes)
+            self.req = RequestRandomSfc()
+            self.sfc = self.req.select_random_sfc()
+            sfc = self.sfc
+            log = (req_counter >= self.n_warmup)
+            event = {'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
+            #file_lines = [str(i),',', str(sfc)[1:-1], '\n']
+            #f.writelines(file_lines)
+            yield (t_event, event)
+            req_counter += 1
+            #f.close() n_warmup=0,  n_measured=4 * 10 ** 5,
+        return
+
+
+"""
+topo = topology_geant()
+r = StationaryWorkloadRandomSfc(topo)
+for i in r:
     print(i)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+"""
 
 
 
