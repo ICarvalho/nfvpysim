@@ -89,6 +89,7 @@ class StationaryWorkloadVarLenSfc:
         random.seed(seed)
 
 
+
     def __iter__(self):
         req_counter = 0
         t_event = 0.0
@@ -138,11 +139,13 @@ class StationaryWorkloadRandomSfc:
         self.n_measured = n_measured
         self.n_warmup = n_warmup
         random.seed(seed)
+        self.dict_sfcs = {}
 
 
     def __iter__(self):
         req_counter = 0
         t_event = 0.0
+
         #header = ['id', 'sfc']
         #with open('var_seq_len_sfc.csv', 'w', newline='\n') as f:
         #writer = csv.writer(f)
@@ -156,6 +159,8 @@ class StationaryWorkloadRandomSfc:
             self.sfc = self.req.select_random_sfc()
             sfc = self.sfc
             log = (req_counter >= self.n_warmup)
+            #for index, sfc_chain in enumerate(sfc):
+            #self.dict_sfcs[index] = sfc_chain
             event = {'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
             #file_lines = [str(i),',', str(sfc)[1:-1], '\n']
             #f.writelines(file_lines)
@@ -170,7 +175,10 @@ topo = topology_geant()
 r = StationaryWorkloadRandomSfc(topo)
 for i in r:
     print(i)
+
+
 """
+
 
 
 

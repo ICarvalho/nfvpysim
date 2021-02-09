@@ -278,15 +278,16 @@ class NetworkController:
             self.collector.request_vnf_hop(u, v, main_path)
 
 
-    def forward_vnf_hop(self, u, v, main_path=True):
-
+    def proc_vnf_payload(self, u, v, main_path=True):
         if self.collector is not None and self.session['log']:
-            self.collector.vnf_proc_hop(u, v, main_path)
+            self.collector.vnf_proc_payload(u, v, main_path)
 
 
     def vnf_proc(self, vnf):
         if self.collector is not None and self.session['log']:
             self.collector.vnf_proc_delay(vnf)
+
+
 
 
     def get_vnf(self, node, vnf):

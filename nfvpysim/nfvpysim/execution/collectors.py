@@ -29,8 +29,9 @@ class DataCollector:
     def request_vnf_hop(self, u, v, main_path=True):
         pass
 
-    def vnf_proc_hop(self, u, v, main_path=True):
+    def vnf_proc_payload(self, u, v, main_path=True):
         pass
+
 
     def sfc_hit(self, sfc):
         pass
@@ -49,7 +50,7 @@ class DataCollector:
 class CollectorProxy(DataCollector):
 
 
-    EVENTS = ('start_session', 'request_vnf_hop', 'vnf_proc_hop', 'sfc_hit', 'vnf_proc_delay', 'end_session',  'results')
+    EVENTS = ('start_session', 'request_vnf_hop', 'vnf_proc_payload', 'sfc_hit', 'vnf_proc_delay', 'end_session',  'results')
 
     def __init__(self, view, collectors, **params):
 
@@ -69,9 +70,9 @@ class CollectorProxy(DataCollector):
         for c in self.collectors['request_vnf_hop']:
             c.request_vnf_hop(u, v, main_path)
 
-    def vnf_proc_hop(self, u, v, main_path=True):
-        for c in self.collectors['vnf_proc_hop']:
-            c.vnf_proc_hop(u, v, main_path)
+    def vnf_proc_payload(self, u, v, main_path=True):
+        for c in self.collectors['vnf_proc_payload']:
+            c.vnf_proc_payload(u, v, main_path)
 
 
     def sfc_hit(self, sfc):
@@ -131,7 +132,7 @@ class LinkLoadCollector(DataCollector):
     def request_vnf_hop(self, u, v, path=True):
         self.req_vnf_count[(u, v)] += 1
 
-    def vnf_proc_hop(self, u, v, path=True):
+    def vnf_proc_payload(self, u, v, path=True):
         self.vnf_proc_payload_count[(u, v)] += 1
 
 

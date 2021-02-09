@@ -2,7 +2,8 @@ import random
 
 class RequestSfcByLen:
 
-    def gen_sfc_by_len(self, sfc_len):
+    @staticmethod
+    def gen_sfc_by_len(sfc_len):
         vnfs = [1, 2, 3, 4, 5, 6, 7, 8]
         sfc = []
         for i in range(1, sfc_len + 1):
@@ -14,7 +15,8 @@ class RequestSfcByLen:
 
 class RequestRandomSfc:
 
-    def select_random_sfc(self):
+    @staticmethod
+    def select_random_sfc():
         services = [
             [1, 2],  # [nat - fw]
             [4, 5],  # [wanopt - lb]
@@ -31,7 +33,8 @@ class RequestRandomSfc:
 
 class RequestVarLenSfc:
 
-    def var_len_seq_sfc(self):
+    @staticmethod
+    def var_len_seq_sfc():
         var_len_sfc = []
         sfcs = {1: 15,  # nat
                 2: 25,  # fw
