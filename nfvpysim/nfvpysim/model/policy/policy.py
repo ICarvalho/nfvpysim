@@ -1,7 +1,7 @@
 from abc import abstractmethod
 
 from nfvpysim.registry import register_policy
-from nfvpysim.util import path_links
+#from nfvpysim.util import path_links
 
 __all__ = [
     'Policy',
@@ -39,9 +39,11 @@ class GreedyWithoutPlacement(Policy):
             if self.view.is_nfv_node(v):
                 for vnf in sfc:
                     if self.controller.get_vnf(v, vnf) and vnf_status[vnf] is False: # vnf on node and processed
-                            vnf_status[vnf] = True
-                            self.controller.vnf_proc(vnf)
-            if all(value is True for value in vnf_status.values())and v!= egress_node:
+                        vnf_status[vnf] = True
+                        self.controller.vnf_proc(vnf)
+                    else:
+                        continue
+            if all(value is True for value in vnf_status.values())and v != egress_node:
                 return True
                 #self.controller.sfc_hit(sfc)
 

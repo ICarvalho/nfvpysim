@@ -98,25 +98,26 @@ class LinkLoadCollector(DataCollector):
     """Data collector measuring the link load
     """
 
-    def __init__(self, view, req_vnf_size=150, vnf_size=1500, **params):
+    def __init__(self, view, req_vnf_size=150, vnf_payload=1500, **params):
         """Constructor
         Parameters
         ----------
         view : NetworkView
             The network view instance
-        req_size : int
-            Average size (in bytes) of a request
-        content_size : int
-            Average size (in byte) of a content
+        req_vnf_size: int
+            average size of a vnf request in bytes
+
+        vnf_payload : int
+            Average payload of a given vnf in bytes
         """
         super().__init__(view, **params)
         self.view = view
         self.req_vnf_count = collections.defaultdict(int)
-        self.vnf_size_count = collections.defaultdict(int)
+        self.vnf_proc_payload_count = collections.defaultdict(int)
         if req_vnf_size <= 0:
             raise ValueError('req_size  must be positive')
         self.req_vnf_size = req_vnf_size
-        self.vnf_size = vnf_size
+        self.vnf_payload = vnf_payload
 
         self.t_start = -1
         self.t_end = 1
@@ -131,15 +132,14 @@ class LinkLoadCollector(DataCollector):
         self.req_vnf_count[(u, v)] += 1
 
     def vnf_proc_hop(self, u, v, path=True):
-        self.vnf_size_count[(u, v)] += 1
-
+        self.vnf_proc_payload_count[(u, v)] += 1
 
 
     def results(self):
         duration = self.t_end - self.t_start
-        used_links = set(self.req_vnf_count.keys()).union(set(self.vnf_size_count.keys()))
-        link_loads = {link: (self.req_vnf_size * self.req_vnf_count[link] +
-                             self.vnf_size * self.vnf_size_count[link]) / duration
+        used_links = set(self.req_vnf_count.keys()).union(set(self.vnf_proc_payload_count.keys()))
+        link_loads = {link: (self.req_vnf_size * self.vnf_proc_payload_count[link] +
+                             self.vnf_payload * self.vnf_proc_payload_count[link]) / duration
                       for link in used_links}
         link_loads_int = {link: load
                           for link, load in link_loads.items()

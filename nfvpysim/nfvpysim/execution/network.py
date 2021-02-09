@@ -285,7 +285,6 @@ class NetworkController:
 
 
     def vnf_proc(self, vnf):
-
         if self.collector is not None and self.session['log']:
             self.collector.vnf_proc_delay(vnf)
 
@@ -313,10 +312,6 @@ class NetworkController:
         if node in self.model.nfv_cache:
             for vnf in sfc:
                 self.model.nfv_cache[node].add_vnf(vnf)
-
-
-
-
 
 
 
