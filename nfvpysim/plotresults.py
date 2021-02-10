@@ -268,7 +268,7 @@ def plot_cache_hits_vs_topology(resultset, alpha, cache_size, topology_range, st
 
 
 
-def plot_link_load_vs_topology(resultset, cache_size, topology_range, strategies, plotdir):
+def plot_link_load_vs_topology(resultset, sfc_len,  nfv_cache_size, topology_range, policies, plotdir):
     """
     Plot bar graphs of link load for specific values of alpha and cache
     size for various topologies.
@@ -276,23 +276,23 @@ def plot_link_load_vs_topology(resultset, cache_size, topology_range, strategies
     topologies considered
     """
     desc = {}
-    desc['title'] = 'Internal link load: C=%s' % (cache_size)
+    desc['title'] = 'Internal link load: L=%s C=%s' % (nfv_cache_size)
     desc['ylabel'] = 'Internal link load'
     desc['xparam'] = ('topology', 'name')
     desc['xvals'] = topology_range
-    desc['filter'] = {'cache_placement': {'network_cache': cache_size},
-                      'workload': {'name': 'STATIONARY'}}
-    desc['ymetrics'] = [('LINK_LOAD', 'MEAN_INTERNAL')] * len(strategies)
-    desc['ycondnames'] = [('strategy', 'name')] * len(strategies)
-    desc['ycondvals'] = strategies
+    desc['filter'] = {'vnf_allocation': {'network_cache': nfv_cache_size},
+                      'workload': {'name': 'STATIONARY_SFC_BY_LEN', 'sfc_len': sfc_len}}
+    desc['ymetrics'] = [('LINK_LOAD', 'MEAN_INTERNAL')] * len(policies)
+    desc['ycondnames'] = [('policy', 'name')] * len(policies)
+    desc['ycondvals'] = policies
     desc['errorbar'] = True
     desc['legend_loc'] = 'lower right'
     desc['bar_color'] = STRATEGY_BAR_COLOR
     desc['bar_hatch'] = STRATEGY_BAR_HATCH
     desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
-    plot_bar_chart(resultset, desc, 'LINK_LOAD_INTERNAL_C=%s.pdf'
-                   % (cache_size), plotdir)
+    plot_bar_chart(resultset, desc, 'LINK_LOAD_INTERNAL_L=%s_C=%s.pdf'
+                   % (sfc_len, nfv_cache_size), plotdir)
 
 
 def run(config, results, plotdir):
@@ -315,38 +315,37 @@ def run(config, results, plotdir):
         os.makedirs(plotdir)
     # Parse params from settings
     topologies = settings.TOPOLOGIES
-    cache_sizes = settings.VNF_ALLOCATION_SPACE
-    sfc_len = settings.SFC_LEN
+    nfv_cache_sizes = settings.VNF_ALLOCATION_SPACE
+    sfc_lens = settings.SFC_LEN
     policies = settings.POLICIES
     # Plot graphs
-    """
-        for topology in topologies:
-        for cache_size in cache_sizes:
-            logger.info('Plotting cache hit ratio for topology %s and cache size %s vs alpha' % (topology, str(cache_size)))
-            plot_cache_hits_vs_alpha(resultset, topology, cache_size, alphas, policies, plotdir)
-            logger.info('Plotting link load for topology %s vs cache size %s' % (topology, str(cache_size)))
-            plot_link_load_vs_alpha(resultset, topology, cache_size, alphas, policies, plotdir)
-            logger.info('Plotting latency for topology %s vs cache size %s' % (topology, str(cache_size)))
-            plot_latency_vs_alpha(resultset, topology, cache_size, alphas, policies, plotdir)
+    for topology in topologies:
+        for nfv_cache_size in nfv_cache_sizes:
+            #logger.info('Plotting cache hit ratio for topology %s and cache size %s vs alpha' % (topology, str(cache_size)))
+            #plot_cache_hits_vs_alpha(resultset, topology, cache_size, alphas, policies, plotdir)
+            logger.info('Plotting link load for topology %s vs cache size %s' % (topology, str(nfv_cache_size)))
+            plot_link_load_vs_sfc_len(resultset, topology, nfv_cache_sizes, sfc_lens, policies, plotdir)
+            logger.info('Plotting latency for topology %s vs cache size %s' % (topology, str(nfv_cache_size)))
+            plot_latency_vs_sfc_len(resultset, topology, nfv_cache_sizes, sfc_lens, policies, plotdir)
     
-    """
+
 
     for topology in topologies:
-        #for alpha in alphas:
-        #logger.info('Plotting cache hit ratio for topology %s and alpha %s vs cache size' % (topology, str(alpha)))
-        #plot_cache_hits_vs_cache_size(resultset, topology, alpha, cache_sizes, policies, plotdir)
-        logger.info('Plotting link load for topology %s vs cache size' % (topology))
-        plot_link_load_vs_cache_size(resultset, topology,  cache_sizes, policies, plotdir)
-        logger.info('Plotting latency for topology %s vs cache size' % (topology))
-        plot_latency_vs_cache_size(resultset, topology, cache_sizes, policies, plotdir)
+        for sfc_len in sfc_lens:
+            #logger.info('Plotting cache hit ratio for topology %s and alpha %s vs cache size' % (topology, str(alpha)))
+            #plot_cache_hits_vs_cache_size(resultset, topology, alpha, cache_sizes, policies, plotdir)
+            #logger.info('Plotting link load for topology %s vs cache size' % (topology, str(sfc_len)))
+            plot_link_load_vs_nfv_cache_size(resultset, topology, nfv_cache_sizes, policies, plotdir)
+            logger.info('Plotting latency for topology %s and sfc_len %s vs cache size' % (topology, str(sfc_len)))
+            plot_latency_vs_nfv_cache_size(resultset, topology, sfc_len, nfv_cache_sizes, policies, plotdir)
 
 
-    for cache_size in cache_sizes:
-        #for alpha in alphas:
-        #logger.info('Plotting cache hit ratio for cache size %s vs alpha %s against topologies' % (str(cache_size), str(alpha)))
-        #plot_cache_hits_vs_topology(resultset, alpha, cache_size, topologies, policies, plotdir)
-        logger.info('Plotting link load for cache size %s against topologies' % (str(cache_size)))
-        plot_link_load_vs_topology(resultset, cache_size, topologies, policies, plotdir)
+    for nfv_cache_size in nfv_cache_sizes:
+        for sfc_len in sfc_lens:
+            #logger.info('Plotting cache hit ratio for cache size %s vs alpha %s against topologies' % (str(cache_size), str(alpha)))
+            #plot_cache_hits_vs_topology(resultset, alpha, cache_size, topologies, policies, plotdir)
+            logger.info('Plotting link load for cache size %s against topologies' % (str(nfv_cache_size)))
+            plot_link_load_vs_topology(resultset, sfc_len, nfv_cache_size, topologies, policies, plotdir)
 
 
     logger.info('Exit. Plots were saved in directory %s' % os.path.abspath(plotdir))
