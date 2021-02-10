@@ -178,7 +178,7 @@ def plot_link_load_vs_nfv_cache_size(resultset, topology, sfc_len,  nfv_cache_si
     desc['xparam'] = ('vnf_allocation', 'network_cache')
     desc['xvals'] = nfv_cache_size_range
     desc['filter'] = {'topology': {'name': topology},
-                      'workload': {'name': 'StationaryWorkloadSfcByLen', 'sfc_len': sfc_len}}
+                      'workload': {'name': 'STATIONARY_SFC_BY_LEN', 'sfc_len': sfc_len}}
     desc['ymetrics'] = [('LINK_LOAD', 'MEAN_INTERNAL')] * len(policies)
     desc['ycondnames'] = [('policy', 'name')] * len(policies)
     desc['ycondvals'] = policies
@@ -191,37 +191,37 @@ def plot_link_load_vs_nfv_cache_size(resultset, topology, sfc_len,  nfv_cache_si
                % (topology, sfc_len), plotdir)
 
 
-def plot_latency_vs_alpha(resultset, topology, cache_size, alpha_range, strategies, plotdir):
+def plot_latency_vs_sfc_len(resultset, topology, nfv_cache_size, sfc_len_range, policies, plotdir):
     desc = {}
-    desc['title'] = 'Latency: T=%s C=%s' % (topology, cache_size)
+    desc['title'] = 'Latency: T=%s C=%s' % (topology, nfv_cache_size)
     desc['xlabel'] = u'Content distribution \u03b1'
     desc['ylabel'] = 'Latency (ms)'
-    desc['xparam'] = ('workload', 'alpha')
-    desc['xvals'] = alpha_range
+    desc['xparam'] = ('workload', 'sfc_len')
+    desc['xvals'] = sfc_len_range
     desc['filter'] = {'topology': {'name': topology},
-                      'cache_placement': {'network_cache': cache_size}}
-    desc['ymetrics'] = [('LATENCY', 'MEAN')] * len(strategies)
-    desc['ycondnames'] = [('strategy', 'name')] * len(strategies)
-    desc['ycondvals'] = strategies
+                      'vnf_allocation': {'network_cache': nfv_cache_size}}
+    desc['ymetrics'] = [('LATENCY', 'MEAN')] * len(policies)
+    desc['ycondnames'] = [('policy', 'name')] * len(policies)
+    desc['ycondvals'] = policies
     desc['errorbar'] = True
     desc['legend_loc'] = 'upper right'
     desc['line_style'] = POLICY_STYLE
     desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
     plot_lines(resultset, desc, 'LATENCY_T=%s@C=%s.pdf'
-               % (topology, cache_size), plotdir)
+               % (topology, nfv_cache_size), plotdir)
 
 
-def plot_latency_vs_cache_size(resultset, topology, cache_size_range, policies, plotdir):
+def plot_latency_vs_nfv_cache_size(resultset, topology, sfc_len, nfv_cache_size_range, policies, plotdir):
     desc = {}
-    desc['title'] = 'Latency: T=%s' % (topology)
+    desc['title'] = 'Latency: T=%s L=%s' % (topology, sfc_len)
     desc['xlabel'] = 'Nfv Cache to population ratio'
     desc['ylabel'] = 'Latency'
     desc['xscale'] = 'log'
-    desc['xparam'] = ('cache_placement', 'network_cache')
-    desc['xvals'] = cache_size_range
+    desc['xparam'] = ('vnf_allocation', 'network_cache')
+    desc['xvals'] = nfv_cache_size_range
     desc['filter'] = {'topology': {'name': topology},
-                      'workload': {'name': 'STATIONARY'}}
+                      'workload': {'name': 'STATIONARY_SFC_BY_LEN'}}
     desc['ymetrics'] = [('LATENCY', 'MEAN')] * len(policies)
     desc['ycondnames'] = [('strategy', 'name')] * len(policies)
     desc['ycondvals'] = policies
@@ -231,8 +231,8 @@ def plot_latency_vs_cache_size(resultset, topology, cache_size_range, policies, 
     desc['line_style'] = POLICY_STYLE
     desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
-    plot_lines(resultset, desc, 'LATENCY_T=%s.pdf'
-               % (topology), plotdir)
+    plot_lines(resultset, desc, 'LATENCY_T=%s@L=%s.pdf'
+               % (topology, sfc_len), plotdir)
 
 """
 def plot_cache_hits_vs_topology(resultset, alpha, cache_size, topology_range, strategies, plotdir):
