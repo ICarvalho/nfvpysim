@@ -126,6 +126,8 @@ class NetworkModel:
                 self.nfv_cache[node].add_vnf(vnf)
 
 
+
+
     # Method to allocate statically a random sfc on an nfv cache node
     @staticmethod
     def select_random_sfc():

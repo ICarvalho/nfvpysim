@@ -47,6 +47,7 @@ class GreedyWithoutPlacement(Policy):
                     elif not self.controller.get_vnf(v, vnf) and vnf_status[vnf] is False:
                         continue
             if all(value is True for value in vnf_status.values())and v == egress_node:
+                #print(vnf_status)
                 return True
                 #self.controller.sfc_hit(sfc)
 

@@ -41,7 +41,7 @@ PLOT_EMPTY_GRAPHS = True
 # Off-path strategies: solid lines
 # On-path strategies: dashed lines
 # No-cache: dotted line
-STRATEGY_STYLE = {
+POLICY_STYLE = {
          'GREEDY_WITHOUT_PLACEMENT':         'b-o',
          'GREEDY_WITH_ONLINE_PLACEMENT':      'g-D',
          #'HR_MULTICAST':    'm-^',
@@ -58,9 +58,9 @@ STRATEGY_STYLE = {
                 }
 
 # This dict maps name of strategies to names to be displayed in the legend
-STRATEGY_LEGEND = {
+POLICY_LEGEND = {
          'GREEDY_WITHOUT_PLACEMENT':             'GWP',
-         'GREEDY_WITH_ONLINE_PLACEMENT':             'GWOP',
+         'GREEDY_WITH_ONLINE_PLACEMENT':         'GWOP',
          #'HR_SYMM':         'HR Symm',
          #'HR_ASYMM':        'HR Asymm',
          #'HR_MULTICAST':    'HR Multicast',
@@ -109,8 +109,8 @@ def plot_cache_hits_vs_alpha(resultset, topology, cache_size, alpha_range, strat
     desc['ycondvals'] = strategies
     desc['errorbar'] = True
     desc['legend_loc'] = 'upper left'
-    desc['line_style'] = STRATEGY_STYLE
-    desc['legend'] = STRATEGY_LEGEND
+    desc['line_style'] = POLICY_STYLE
+    desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
     plot_lines(resultset, desc, 'CACHE_HIT_RATIO_T=%s@C=%s.pdf'
                % (topology, cache_size), plotdir)
@@ -138,8 +138,8 @@ def plot_cache_hits_vs_cache_size(resultset, topology, alpha, cache_size_range, 
     desc['ycondvals'] = strategies
     desc['errorbar'] = True
     desc['legend_loc'] = 'upper left'
-    desc['line_style'] = STRATEGY_STYLE
-    desc['legend'] = STRATEGY_LEGEND
+    desc['line_style'] = POLICY_STYLE
+    desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
     plot_lines(resultset, desc, 'CACHE_HIT_RATIO_T=%s@A=%s.pdf'
                % (topology, alpha), plotdir)
@@ -148,47 +148,47 @@ def plot_cache_hits_vs_cache_size(resultset, topology, alpha, cache_size_range, 
 
 
 
-def plot_link_load_vs_alpha(resultset, topology, cache_size, alpha_range, strategies, plotdir):
+def plot_link_load_vs_sfc_len(resultset, topology, nfv_cache_size, sfc_len_range, policies, plotdir):
     desc = {}
-    desc['title'] = 'Internal link load: T=%s C=%s' % (topology, cache_size)
+    desc['title'] = 'Internal link load: T=%s C=%s' % (topology, nfv_cache_size)
     desc['xlabel'] = u'Content distribution \u03b1'
     desc['ylabel'] = 'Internal link load'
-    desc['xparam'] = ('workload')
-    desc['xvals'] = alpha_range
+    desc['xparam'] = ('workload', 'sfc_len')
+    desc['xvals'] = sfc_len_range
     desc['filter'] = {'topology': {'name': topology},
-                      'cache_placement': {'network_cache': cache_size}}
-    desc['ymetrics'] = [('LINK_LOAD', 'MEAN_INTERNAL')] * len(strategies)
-    desc['ycondnames'] = [('strategy', 'name')] * len(strategies)
-    desc['ycondvals'] = strategies
+                      'vnf_allocation': {'network_cache': nfv_cache_size}}
+    desc['ymetrics'] = [('LINK_LOAD', 'MEAN_INTERNAL')] * len(policies)
+    desc['ycondnames'] = [('policy', 'name')] * len(policies)
+    desc['ycondvals'] = policies
     desc['errorbar'] = True
     desc['legend_loc'] = 'upper right'
-    desc['line_style'] = STRATEGY_STYLE
-    desc['legend'] = STRATEGY_LEGEND
+    desc['line_style'] = POLICY_STYLE
+    desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
     plot_lines(resultset, desc, 'LINK_LOAD_INTERNAL_T=%s@C=%s.pdf'
-               % (topology, cache_size), plotdir)
+               % (topology, nfv_cache_size), plotdir)
 
 
-def plot_link_load_vs_cache_size(resultset, topology,  cache_size_range, strategies, plotdir):
+def plot_link_load_vs_nfv_cache_size(resultset, topology, sfc_len,  nfv_cache_size_range, policies, plotdir):
     desc = {}
-    desc['title'] = 'Internal link load: T=%s' % (topology)
+    desc['title'] = 'Internal link load: T=%s L=%s' % (topology, sfc_len)
     desc['xlabel'] = 'Cache to population ratio'
     desc['ylabel'] = 'Internal link load'
     desc['xscale'] = 'log'
-    desc['xparam'] = ('cache_placement', 'network_cache')
-    desc['xvals'] = cache_size_range
+    desc['xparam'] = ('vnf_allocation', 'network_cache')
+    desc['xvals'] = nfv_cache_size_range
     desc['filter'] = {'topology': {'name': topology},
-                      'workload': {'name': 'stationary'}}
-    desc['ymetrics'] = [('LINK_LOAD', 'MEAN_INTERNAL')] * len(strategies)
-    desc['ycondnames'] = [('strategy', 'name')] * len(strategies)
-    desc['ycondvals'] = strategies
+                      'workload': {'name': 'StationaryWorkloadSfcByLen', 'sfc_len': sfc_len}}
+    desc['ymetrics'] = [('LINK_LOAD', 'MEAN_INTERNAL')] * len(policies)
+    desc['ycondnames'] = [('policy', 'name')] * len(policies)
+    desc['ycondvals'] = policies
     desc['errorbar'] = True
     desc['legend_loc'] = 'upper right'
-    desc['line_style'] = STRATEGY_STYLE
-    desc['legend'] = STRATEGY_LEGEND
+    desc['line_style'] = POLICY_STYLE
+    desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
-    plot_lines(resultset, desc, 'LINK_LOAD_INTERNAL_T=%s.pdf'
-               % (topology), plotdir)
+    plot_lines(resultset, desc, 'LINK_LOAD_INTERNAL_T=%s@L=%s.pdf'
+               % (topology, sfc_len), plotdir)
 
 
 def plot_latency_vs_alpha(resultset, topology, cache_size, alpha_range, strategies, plotdir):
@@ -205,8 +205,8 @@ def plot_latency_vs_alpha(resultset, topology, cache_size, alpha_range, strategi
     desc['ycondvals'] = strategies
     desc['errorbar'] = True
     desc['legend_loc'] = 'upper right'
-    desc['line_style'] = STRATEGY_STYLE
-    desc['legend'] = STRATEGY_LEGEND
+    desc['line_style'] = POLICY_STYLE
+    desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
     plot_lines(resultset, desc, 'LATENCY_T=%s@C=%s.pdf'
                % (topology, cache_size), plotdir)
@@ -228,8 +228,8 @@ def plot_latency_vs_cache_size(resultset, topology, cache_size_range, policies, 
     desc['metric'] = ('LATENCY', 'MEAN')
     desc['errorbar'] = True
     desc['legend_loc'] = 'upper right'
-    desc['line_style'] = STRATEGY_STYLE
-    desc['legend'] = STRATEGY_LEGEND
+    desc['line_style'] = POLICY_STYLE
+    desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
     plot_lines(resultset, desc, 'LATENCY_T=%s.pdf'
                % (topology), plotdir)
@@ -258,7 +258,7 @@ def plot_cache_hits_vs_topology(resultset, alpha, cache_size, topology_range, st
     desc['legend_loc'] = 'lower right'
     desc['bar_color'] = STRATEGY_BAR_COLOR
     desc['bar_hatch'] = STRATEGY_BAR_HATCH
-    desc['legend'] = STRATEGY_LEGEND
+    desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
     plot_bar_chart(resultset, desc, 'CACHE_HIT_RATIO_A=%s_C=%s.pdf'
                    % (alpha, cache_size), plotdir)
@@ -289,7 +289,7 @@ def plot_link_load_vs_topology(resultset, cache_size, topology_range, strategies
     desc['legend_loc'] = 'lower right'
     desc['bar_color'] = STRATEGY_BAR_COLOR
     desc['bar_hatch'] = STRATEGY_BAR_HATCH
-    desc['legend'] = STRATEGY_LEGEND
+    desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
     plot_bar_chart(resultset, desc, 'LINK_LOAD_INTERNAL_C=%s.pdf'
                    % (cache_size), plotdir)
@@ -316,7 +316,7 @@ def run(config, results, plotdir):
     # Parse params from settings
     topologies = settings.TOPOLOGIES
     cache_sizes = settings.VNF_ALLOCATION_SPACE
-    #alphas = settings.ALPHA
+    sfc_len = settings.SFC_LEN
     policies = settings.POLICIES
     # Plot graphs
     """

@@ -1,3 +1,4 @@
+import random
 services = [
             [1, 2],  # [nat - fw]
             [4, 5],  # [wanopt - lb]
@@ -10,8 +11,9 @@ services = [
             [5, 4, 6, 2, 3],  # [lb - wanopt - encrypt - fw - ids]
         ]
 
-d = {}
-for index, item in enumerate(services):
-    #print(index, item)
-    d[index] = item
-    print(d)
+lim = range(10)
+print(lim)
+
+result = {k: v for k, v in zip(lim, services)}
+
+print(result)
