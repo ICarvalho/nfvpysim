@@ -77,7 +77,7 @@ POLICY_LEGEND = {
 # Color and hatch styles for bar charts of cache hit ratio and link load vs topology
 STRATEGY_BAR_COLOR = {
     'GWP':          'k',
-    'GWOP':          '0.4',
+    'GWOP':          '0.6',
     #'NO_CACHE':     '0.5',
     #'HR_ASYMM':     '0.6',
     #'HR_SYMM':      '0.7'
@@ -276,7 +276,7 @@ def plot_link_load_vs_topology(resultset, sfc_len,  nfv_cache_size, topology_ran
     topologies considered
     """
     desc = {}
-    desc['title'] = 'Internal link load: L=%s C=%s' % (nfv_cache_size)
+    desc['title'] = 'Internal link load: L=%s C=%s' % (sfc_len, nfv_cache_size)
     desc['ylabel'] = 'Internal link load'
     desc['xparam'] = ('topology', 'name')
     desc['xvals'] = topology_range
@@ -335,7 +335,7 @@ def run(config, results, plotdir):
             #logger.info('Plotting cache hit ratio for topology %s and alpha %s vs cache size' % (topology, str(alpha)))
             #plot_cache_hits_vs_cache_size(resultset, topology, alpha, cache_sizes, policies, plotdir)
             #logger.info('Plotting link load for topology %s vs cache size' % (topology, str(sfc_len)))
-            plot_link_load_vs_nfv_cache_size(resultset, topology, nfv_cache_sizes, policies, plotdir)
+            plot_link_load_vs_nfv_cache_size(resultset, topology, sfc_len, nfv_cache_sizes, policies, plotdir)
             logger.info('Plotting latency for topology %s and sfc_len %s vs cache size' % (topology, str(sfc_len)))
             plot_latency_vs_nfv_cache_size(resultset, topology, sfc_len, nfv_cache_sizes, policies, plotdir)
 
@@ -344,7 +344,7 @@ def run(config, results, plotdir):
         for sfc_len in sfc_lens:
             #logger.info('Plotting cache hit ratio for cache size %s vs alpha %s against topologies' % (str(cache_size), str(alpha)))
             #plot_cache_hits_vs_topology(resultset, alpha, cache_size, topologies, policies, plotdir)
-            logger.info('Plotting link load for cache size %s against topologies' % (str(nfv_cache_size)))
+            logger.info('Plotting link load for cache size %s  vs sfc_len %s against topologies' % (str(nfv_cache_size), str(sfc_len)))
             plot_link_load_vs_topology(resultset, sfc_len, nfv_cache_size, topologies, policies, plotdir)
 
 
