@@ -217,11 +217,12 @@ def plot_latency_vs_nfv_cache_size(resultset, topology, sfc_len, nfv_cache_size_
     desc['title'] = 'Latency: T=%s L=%s' % (topology, sfc_len)
     desc['xlabel'] = 'nfv cache size'
     desc['ylabel'] = 'Latency'
-    desc['xscale'] = 'linear'
+    desc['xscale'] = 'log'
+    desc['yscale'] = 'log'
     desc['xparam'] = ('vnf_allocation', 'network_cache')
     desc['xvals'] = nfv_cache_size_range
     desc['filter'] = {'topology': {'name': topology},
-                      'workload': {'name': 'STATIONARY_SFC_BY_LEN'}}
+                      'workload': {'name': 'STATIONARY_SFC_BY_LEN', 'sfc_len': sfc_len}}
     desc['ymetrics'] = [('LATENCY', 'MEAN')] * len(policies)
     desc['ycondnames'] = [('strategy', 'name')] * len(policies)
     desc['ycondvals'] = policies
