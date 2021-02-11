@@ -151,7 +151,7 @@ def plot_cache_hits_vs_cache_size(resultset, topology, alpha, cache_size_range, 
 def plot_link_load_vs_sfc_len(resultset, topology, nfv_cache_size, sfc_len_range, policies, plotdir):
     desc = {}
     desc['title'] = 'Internal link load: T=%s C=%s' % (topology, nfv_cache_size)
-    desc['xlabel'] = u'Content distribution \u03b1'
+    desc['xlabel'] = 'sfc length'
     desc['ylabel'] = 'Internal link load'
     desc['xparam'] = ('workload', 'sfc_len')
     desc['xvals'] = sfc_len_range
@@ -172,7 +172,7 @@ def plot_link_load_vs_sfc_len(resultset, topology, nfv_cache_size, sfc_len_range
 def plot_link_load_vs_nfv_cache_size(resultset, topology, sfc_len,  nfv_cache_size_range, policies, plotdir):
     desc = {}
     desc['title'] = 'Internal link load: T=%s L=%s' % (topology, sfc_len)
-    desc['xlabel'] = 'Cache to population ratio'
+    desc['xlabel'] = 'nfv cache size'
     desc['ylabel'] = 'Internal link load'
     desc['xscale'] = 'log'
     desc['xparam'] = ('vnf_allocation', 'network_cache')
@@ -194,7 +194,7 @@ def plot_link_load_vs_nfv_cache_size(resultset, topology, sfc_len,  nfv_cache_si
 def plot_latency_vs_sfc_len(resultset, topology, nfv_cache_size, sfc_len_range, policies, plotdir):
     desc = {}
     desc['title'] = 'Latency: T=%s C=%s' % (topology, nfv_cache_size)
-    desc['xlabel'] = u'Content distribution \u03b1'
+    desc['xlabel'] = 'sfc length'
     desc['ylabel'] = 'Latency (ms)'
     desc['xparam'] = ('workload', 'sfc_len')
     desc['xvals'] = sfc_len_range
@@ -215,7 +215,7 @@ def plot_latency_vs_sfc_len(resultset, topology, nfv_cache_size, sfc_len_range, 
 def plot_latency_vs_nfv_cache_size(resultset, topology, sfc_len, nfv_cache_size_range, policies, plotdir):
     desc = {}
     desc['title'] = 'Latency: T=%s L=%s' % (topology, sfc_len)
-    desc['xlabel'] = 'Nfv Cache to population ratio'
+    desc['xlabel'] = 'nfv cache size'
     desc['ylabel'] = 'Latency'
     desc['xscale'] = 'log'
     desc['xparam'] = ('vnf_allocation', 'network_cache')

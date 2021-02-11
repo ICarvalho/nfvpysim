@@ -117,13 +117,17 @@ class NetworkModel:
         policy_args = {k: v for k, v in nfv_cache_policy.items() if k != 'name'}
         # The actual cache objects storing the vnfs
         self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_cache_size[node], **policy_args)
-                                  for node in nfv_cache_size}
+                          for node in nfv_cache_size}
 
         for node in self.nfv_cache:
-            #vnfs = NetworkModel.var_len_seq_sfc()
-            vnfs = NetworkModel.select_random_sfc()
+            vnfs = NetworkModel.var_len_seq_sfc()
+            #vnfs = NetworkModel.select_random_sfc()
+            #vnf = NetworkModel.select_random_vnf()
             for vnf in vnfs:
                 self.nfv_cache[node].add_vnf(vnf)
+                #print(node)
+                #self.nfv_cache[node].list_nfv_cache()
+
 
 
 
@@ -143,6 +147,13 @@ class NetworkModel:
             [5, 4, 6, 2, 3],  # [lb - wanopt - encrypt - fw - ids]
         ]
         return random.choice(services)
+
+
+    @staticmethod
+    def select_random_vnf():
+        vnfs = [1, 2, 3, 4, 5, 6, 7, 8]
+        return random.choice(vnfs)
+
 
     # Method to generate a variable-length sfc in order to be allocated on an nfv cache node
     @staticmethod
@@ -385,7 +396,8 @@ class NetworkController:
 
 
 
-    def sum_vnfs_cpu_sfc(self, sfc):
+    @staticmethod
+    def sum_vnfs_cpu_sfc(sfc):
         vnfs_cpu = {1: 15,  # nat
                     2: 25,  # fw
                     3: 25,  # ids

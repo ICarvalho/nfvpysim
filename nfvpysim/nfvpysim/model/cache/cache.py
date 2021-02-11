@@ -29,6 +29,9 @@ class NfvCache:
     def remove_vnf(self, vnf):
         return self.nfvcache.remove(vnf)
 
+    def list_nfv_cache(self):
+        print(self.nfvcache)
+
     def sum_vnfs_cpu_node(self, node, vnfs):
         vnfs_cpu =  {1: 15,  # nat
                 2: 25,  # fw
