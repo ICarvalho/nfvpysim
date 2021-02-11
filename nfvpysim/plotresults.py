@@ -32,7 +32,7 @@ plt.rcParams['figure.figsize'] = 8, 5
 LEGEND_SIZE = 14
 
 # Line width in pixels
-LINE_WIDTH = 1.5
+LINE_WIDTH = 1
 
 # Plot
 PLOT_EMPTY_GRAPHS = True
@@ -43,7 +43,7 @@ PLOT_EMPTY_GRAPHS = True
 # No-cache: dotted line
 POLICY_STYLE = {
          'GREEDY_WITHOUT_PLACEMENT':         'b-o',
-         'GREEDY_WITH_ONLINE_PLACEMENT':      'g-D',
+         'GREEDY_WITH_ONLINE_PLACEMENT':      'g-->',
          #'HR_MULTICAST':    'm-^',
          #'HR_HYBRID_AM':    'c-s',
          #'HR_HYBRID_SM':    'r-v',
@@ -77,7 +77,7 @@ POLICY_LEGEND = {
 # Color and hatch styles for bar charts of cache hit ratio and link load vs topology
 STRATEGY_BAR_COLOR = {
     'GWP':          'k',
-    'GWOP':          '0.6',
+    'GWOP':          '0.4',
     #'NO_CACHE':     '0.5',
     #'HR_ASYMM':     '0.6',
     #'HR_SYMM':      '0.7'
@@ -174,7 +174,7 @@ def plot_link_load_vs_nfv_cache_size(resultset, topology, sfc_len,  nfv_cache_si
     desc['title'] = 'Internal link load: T=%s L=%s' % (topology, sfc_len)
     desc['xlabel'] = 'nfv cache size'
     desc['ylabel'] = 'Internal link load'
-    desc['xscale'] = 'log'
+    desc['xscale'] = 'linear'
     desc['xparam'] = ('vnf_allocation', 'network_cache')
     desc['xvals'] = nfv_cache_size_range
     desc['filter'] = {'topology': {'name': topology},
@@ -217,7 +217,7 @@ def plot_latency_vs_nfv_cache_size(resultset, topology, sfc_len, nfv_cache_size_
     desc['title'] = 'Latency: T=%s L=%s' % (topology, sfc_len)
     desc['xlabel'] = 'nfv cache size'
     desc['ylabel'] = 'Latency'
-    desc['xscale'] = 'log'
+    desc['xscale'] = 'linear'
     desc['xparam'] = ('vnf_allocation', 'network_cache')
     desc['xvals'] = nfv_cache_size_range
     desc['filter'] = {'topology': {'name': topology},
@@ -324,9 +324,9 @@ def run(config, results, plotdir):
             #logger.info('Plotting cache hit ratio for topology %s and cache size %s vs alpha' % (topology, str(cache_size)))
             #plot_cache_hits_vs_alpha(resultset, topology, cache_size, alphas, policies, plotdir)
             logger.info('Plotting link load for topology %s vs cache size %s' % (topology, str(nfv_cache_size)))
-            plot_link_load_vs_sfc_len(resultset, topology, nfv_cache_sizes, sfc_lens, policies, plotdir)
+            plot_link_load_vs_sfc_len(resultset, topology, nfv_cache_size, sfc_lens, policies, plotdir)
             logger.info('Plotting latency for topology %s vs cache size %s' % (topology, str(nfv_cache_size)))
-            plot_latency_vs_sfc_len(resultset, topology, nfv_cache_sizes, sfc_lens, policies, plotdir)
+            plot_latency_vs_sfc_len(resultset, topology, nfv_cache_size, sfc_lens, policies, plotdir)
     
 
 

@@ -120,8 +120,8 @@ class NetworkModel:
                           for node in nfv_cache_size}
 
         for node in self.nfv_cache:
-            vnfs = NetworkModel.var_len_seq_sfc()
-            #vnfs = NetworkModel.select_random_sfc()
+            #vnfs = NetworkModel.var_len_seq_sfc()
+            vnfs = NetworkModel.select_random_sfc()
             #vnf = NetworkModel.select_random_vnf()
             for vnf in vnfs:
                 self.nfv_cache[node].add_vnf(vnf)
