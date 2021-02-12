@@ -24,7 +24,7 @@ RESULTS_FORMAT = 'PICKLE'
 
 # Number of times each experiment is replicated
 # This is necessary for extracting confidence interval of selected metrics
-N_REPLICATIONS = 3
+N_REPLICATIONS = 5
 
 # List of metrics to be measured in the experiments
 # The implementation of data collectors are located in ./icarus/execution/collectors.py
@@ -44,16 +44,16 @@ DATA_COLLECTORS = [
 
 
 # Number of content requests that are measured after warmup
-VNF_ALLOCATION_SPACE = [8, 10 , 12]
+VNF_ALLOCATION_SPACE = [8]
 
-SFC_LEN = [1, 2, 3, 4, 5, 6, 7, 8]
+SFC_LEN = [1, 3, 5, 7]
 
 # Number of warmup requests
 N_WARMUP_REQUESTS = 0
 
 # Number of measured requests
 
-N_MEASURED_REQUESTS = 4 * 10 ** 3
+N_MEASURED_REQUESTS = 1 * 10 ** 5
 
 N_SFCS = 10**5
 
