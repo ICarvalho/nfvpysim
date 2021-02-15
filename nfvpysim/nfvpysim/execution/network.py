@@ -121,10 +121,10 @@ class NetworkModel:
 
         for node in self.nfv_cache:
             #vnfs = NetworkModel.var_len_seq_sfc()
-            #vnfs = NetworkModel.select_random_sfc()
-            vnf = NetworkModel.select_random_vnf()
-            #for vnf in vnfs:
-            self.nfv_cache[node].add_vnf(vnf)
+            vnfs = NetworkModel.select_random_sfc()
+            #vnf = NetworkModel.select_random_vnf()
+            for vnf in vnfs:
+                self.nfv_cache[node].add_vnf(vnf)
                 #print(node)
                 #self.nfv_cache[node].list_nfv_cache()
 
@@ -264,7 +264,7 @@ class NetworkController:
         self.collector = None
 
 
-    def start_session(self, timestamp, ingress_node, egress_node,  sfc, log):
+    def start_session(self, timestamp, sfc_id, ingress_node, egress_node,  sfc, log):
         self.session = dict(timestamp=timestamp,
                             ingress_node=ingress_node,
                             egress_node=egress_node,
@@ -272,7 +272,7 @@ class NetworkController:
                             log=log)
 
         if self.collector is not None and self.session['log']:
-            self.collector.start_session(timestamp, ingress_node, egress_node, sfc)
+            self.collector.start_session(timestamp, sfc_id, ingress_node, egress_node, sfc)
 
 
 
@@ -311,9 +311,9 @@ class NetworkController:
             else:
                 return False
 
-    def sfc_hit(self, sfc):
+    def sfc_hit(self, sfc_id):
         if self.collector is not None and self.session['log']:
-            self.collector.sfc_hit(sfc)
+            self.collector.sfc_hit(sfc_id)
 
 
 

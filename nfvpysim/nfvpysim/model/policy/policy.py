@@ -16,7 +16,7 @@ class Policy:
         self.controller = controller
 
     @abstractmethod
-    def process_event(self, time, ingress_node, egress_node, sfc, log):
+    def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, log):
 
         raise NotImplementedError('The selected policy must implement a process event method')
 
@@ -27,9 +27,9 @@ class GreedyWithoutPlacement(Policy):
 
     def __init__(self, view, controller, **kwargs):
         super(GreedyWithoutPlacement, self).__init__(view, controller)
-    def process_event(self, time, ingress_node, egress_node, sfc, log):
+    def process_event(self, time, sfc_id,  ingress_node, egress_node, sfc, log):
         path = self.view.shortest_path(ingress_node, egress_node)
-        self.controller.start_session(time, ingress_node, egress_node, sfc, log)
+        self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, log)
         vnf_status = {vnf: False for vnf in sfc}
         #for u, v in path_links(path):
         for hop in range(1, len(path)):
@@ -47,10 +47,8 @@ class GreedyWithoutPlacement(Policy):
                     elif not self.controller.get_vnf(v, vnf) and vnf_status[vnf] is False:
                         continue
             if all(value is True for value in vnf_status.values())and v == egress_node:
-                break
+                self.controller.sfc_hit(sfc_id)
 
-                #print(vnf_status)
-                #self.controller.sfc_hit(sfc)
 
         self.controller.end_session()
 
@@ -62,9 +60,9 @@ class GreedyWithOnlinePlacementPolicy(Policy):
     def __init__(self, view, controller, **kwargs):
         super(GreedyWithOnlinePlacementPolicy, self).__init__(view, controller)
 
-    def process_event(self, time, ingress_node, egress_node, sfc, log):
+    def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, log):
         path = self.view.shortest_path(ingress_node, egress_node)
-        self.controller.start_session(time, ingress_node, egress_node, sfc, log)
+        self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, log)
         missed_vnfs = []
         vnf_status = {vnf: False for vnf in sfc}
         #for u, v in path_links(path):
@@ -93,12 +91,8 @@ class GreedyWithOnlinePlacementPolicy(Policy):
                             self.controller.vnf_proc(missed_vnf)
                             self.controller.proc_vnf_payload(u, v)
                             vnf_status[missed_vnf] = True
-                if all(value is True for value in vnf_status.values()) and v == egress_node:
-                    break
-            #if self.collector is not None and self.session['log']:
-                #self.collector.sfc_acc(sfc)
-                #return True
-            #else:
-                #return False
+            if all(value is True for value in vnf_status.values()) and v == egress_node:
+                self.controller.sfc_hit(sfc_id)
+
 
         self.controller.end_session()

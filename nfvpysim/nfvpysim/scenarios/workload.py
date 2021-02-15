@@ -1,6 +1,7 @@
 from nfvpysim.registry import register_workload
 from nfvpysim.scenarios import topology_geant
 from nfvpysim.scenarios.requests import *
+import math
 
 
 __all__ = [
@@ -8,6 +9,12 @@ __all__ = [
     'StationaryWorkloadVarLenSfc',
     'StationaryWorkloadRandomSfc'
 ]
+
+
+def truncate(number, digits):
+    stepper = 10.0 ** digits
+    return math.trunc(stepper * number) / stepper
+
 
 @register_workload('STATIONARY_SFC_BY_LEN')
 class StationaryWorkloadSfcByLen:
@@ -52,8 +59,9 @@ class StationaryWorkloadSfcByLen:
             self.req = RequestSfcByLen()
             self.sfc = self.req.gen_sfc_by_len(self.sfc_len)
             sfc = self.sfc
+            sfc_id = truncate(t_event, 2)
             log = (req_counter >= self.n_warmup)
-            event = {'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
+            event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
             #file_lines = [str(i),',', str(sfc)[1:-1], '\n']
             #f.writelines(file_lines)
             yield (t_event, event)
@@ -105,8 +113,9 @@ class StationaryWorkloadVarLenSfc:
             self.req = RequestVarLenSfc()
             self.sfc = self.req.var_len_seq_sfc()
             sfc = self.sfc
+            sfc_id = truncate(t_event, 2)
             log = (req_counter >= self.n_warmup)
-            event = {'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
+            event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
             #file_lines = [str(i),',', str(sfc)[1:-1], '\n']
             #f.writelines(file_lines)
             yield (t_event, event)
@@ -160,15 +169,15 @@ class StationaryWorkloadRandomSfc:
             self.req = RequestRandomSfc()
             self.sfc = self.req.select_random_sfc()
             sfc = self.sfc
+            sfc_id = truncate(t_event, 2)
             log = (req_counter >= self.n_warmup)
-            event = {'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
+            event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
             #file_lines = [str(i),',', str(sfc)[1:-1], '\n']
             #f.writelines(file_lines)
             yield (t_event, event)
             req_counter += 1
             #f.close() n_warmup=0,  n_measured=4 * 10 ** 5,
         return
-
 
 """
 topo = topology_geant()
@@ -177,6 +186,11 @@ for i in r:
     print(i)
 
 """
+
+
+
+
+
 
 
 

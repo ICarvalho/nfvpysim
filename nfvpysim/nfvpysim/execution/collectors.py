@@ -23,7 +23,7 @@ class DataCollector:
         self.view = view
 
 
-    def start_session(self, timestamp, ingress_node, egress_node, sfc):
+    def start_session(self, timestamp, sfc_id, ingress_node, egress_node, sfc):
         pass
 
     def request_vnf_hop(self, u, v, main_path=True):
@@ -33,7 +33,7 @@ class DataCollector:
         pass
 
 
-    def sfc_hit(self, sfc):
+    def sfc_hit(self, sfc_id):
         pass
 
     def vnf_proc_delay(self, vnf):
@@ -60,9 +60,9 @@ class CollectorProxy(DataCollector):
                              for e in self.EVENTS}
 
 
-    def start_session(self, timestamp, ingress_node, egress_node, sfc):
+    def start_session(self, timestamp, sfc_id,  ingress_node, egress_node, sfc):
         for c in self.collectors['start_session']:
-            c.start_session(timestamp, ingress_node, egress_node, sfc)
+            c.start_session(timestamp, sfc_id, ingress_node, egress_node, sfc)
 
 
 
@@ -75,9 +75,9 @@ class CollectorProxy(DataCollector):
             c.vnf_proc_payload(u, v, main_path)
 
 
-    def sfc_hit(self, sfc):
+    def sfc_hit(self, sfc_id):
         for c in self.collectors['sfc_hit']:
-            c.sfc_hit(sfc)
+            c.sfc_hit(sfc_id)
 
 
     def vnf_proc_delay(self, vnf):
@@ -124,7 +124,7 @@ class LinkLoadCollector(DataCollector):
         self.t_end = 1
 
 
-    def start_session(self, timestamp, ingress_node, egress_node, sfc):
+    def start_session(self, timestamp, sfc_id,  ingress_node, egress_node, sfc):
         if self.t_start < 0:
             self.t_start = timestamp
         self.t_end = timestamp
@@ -197,7 +197,7 @@ class LatencyCollector(DataCollector):
             self.latency_data = collections.deque()
 
 
-    def start_session(self, timestamp, ingress_node, egress_node, sfc):
+    def start_session(self, timestamp, sfc_id,  ingress_node, egress_node, sfc):
         self.sess_count += 1
         self.sess_latency = 0.0
 
@@ -235,27 +235,32 @@ class AcceptanceRatioCollector(DataCollector):
     def __init__(self, view, per_sfc=True, **params):
 
         super().__init__(view, **params)
+        self.per_sfc = per_sfc
         self.view = view
         self.sess_count = 0
-        self.sfc_hit = 0
+        self.sfc_hits = 0
 
         if per_sfc:
-            self.per_sfc_ratio = collections.defaultdict(int)
+            self.per_sfc_hit = collections.defaultdict(int)
 
-    def start_session(self, timestamp, ingress_node, egress_node, sfc):
+    def start_session(self, timestamp, sfc_id, ingress_node, egress_node, sfc):
         self.sess_count += 1
         self.curr_path = self.view.shortest_path(ingress_node, egress_node)
 
 
-    def sfc_hit(self, sfc):
-        self.sfc_hit += 1
-        if self.per_sfc_ratio:
-            self.per_sfc_ratio[sfc] += 1
+    def sfc_hit(self, sfc_id):
+        self.sfc_hits += 1
+        if self. per_sfc_hit:
+            self. self.per_sfc_hit[sfc_id] += 1
 
     def results(self):
-        n_sess = self.sfc_hit
-        sfc_hit_ratio = self.sfc_hit / n_sess
+        n_sess = self.sess_count
+        sfc_hit_ratio = self.sfc_hits / n_sess
         results = Tree(**{'MEAN': sfc_hit_ratio})
+        if self.per_sfc:
+            for sfc in self.per_sfc_hit:
+                self.per_sfc_hit[sfc] /= n_sess
+            results['PER_SFC_HIT_RATIO'] = self.per_sfc_hit
 
         return results
 

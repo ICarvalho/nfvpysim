@@ -30,7 +30,7 @@ N_REPLICATIONS = 5
 # The implementation of data collectors are located in ./icarus/execution/collectors.py
 # Remove collectors not needed
 DATA_COLLECTORS = [
-           #"'ACCEPTANCE_RATIO',  # Measure acceptance hit ratio
+           'ACCEPTANCE_RATIO',  # Measure acceptance hit ratio
            'LATENCY',  # Measure request and response latency (based on static link delays)
            'LINK_LOAD',  # Measure link loads
 
@@ -46,14 +46,14 @@ DATA_COLLECTORS = [
 # Number of content requests that are measured after warmup
 VNF_ALLOCATION_SPACE = [8]
 
-SFC_LEN = [1, 3, 5, 7]
+SFC_LEN = [1, 2, 3, 4, 5, 6, 7, 8]
 
 # Number of warmup requests
 N_WARMUP_REQUESTS = 0
 
 # Number of measured requests
 
-N_MEASURED_REQUESTS = 1 * 10 ** 5
+N_MEASURED_REQUESTS = 1 * 10 ** 3
 
 N_SFCS = 10**5
 
