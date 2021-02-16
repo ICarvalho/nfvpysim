@@ -77,7 +77,7 @@ POLICY_LEGEND = {
 # Color and hatch styles for bar charts of cache hit ratio and link load vs topology
 POLICY_BAR_COLOR = {
     'GWP':          'k',
-    'GWOP':          '0.4',
+    'GWOP':          '0.8',
     #'NO_CACHE':     '0.5',
     #'HR_ASYMM':     '0.6',
     #'HR_SYMM':      '0.7'
@@ -309,7 +309,7 @@ def run(config, results, plotdir):
     # Parse params from settings
     topologies = settings.TOPOLOGIES
     nfv_cache_sizes = settings.VNF_ALLOCATION_SPACE
-    sfc_lens = settings.SFC_LEN
+    sfc_lens = settings.SFC_LENS
     policies = settings.POLICIES
     # Plot graphs
     for topology in topologies:

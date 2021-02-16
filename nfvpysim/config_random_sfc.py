@@ -46,20 +46,20 @@ DATA_COLLECTORS = [
 # Number of content requests that are measured after warmup
 VNF_ALLOCATION_SPACE = [8]
 
-SFC_LEN = [1, 2, 3, 4, 5, 6, 7, 8]
+#SFC_LEN = [1, 2, 3, 4, 5, 6, 7, 8]
 
 # Number of warmup requests
 N_WARMUP_REQUESTS = 0
 
 # Number of measured requests
 
-N_MEASURED_REQUESTS = 1 * 10 ** 3
+N_MEASURED_REQUESTS = 1 * 10 ** 5
 
 N_SFCS = 10**5
 
 
 # Number of requests per second (over the whole network)
-REQ_RATE = 10.0
+SFC_REQ_RATES = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
 
 # vnf allocation policy
 VNF_ALLOCATION_POLICY = 'STATIC'
@@ -88,11 +88,10 @@ EXPERIMENT_QUEUE = deque()
 
 # Create tree of experiment configuration
 default = Tree()
-default['workload'] = {'name':  'STATIONARY_SFC_BY_LEN',
-                       'sfc_len': SFC_LEN,
+default['workload'] = {'name':  'STATIONARY_RANDOM_SFC', # 'sfc_len': SFC_LEN,
                        'n_warmup': N_WARMUP_REQUESTS,
                        'n_measured': N_MEASURED_REQUESTS,
-                       'rate': REQ_RATE}
+                       'sfc_req_rate': SFC_REQ_RATES}
 
 default['vnf_allocation']['name'] = VNF_ALLOCATION_POLICY
 default['nfv_cache_policy']['name'] = NFV_NODE_CACHE_POLICY
@@ -100,15 +99,15 @@ default['nfv_cache_policy']['name'] = NFV_NODE_CACHE_POLICY
 
 
 # Create experiments multiplexing all desired parameters
-for sfc_len in SFC_LEN:
+for sfc_req_rate in SFC_REQ_RATES:
     for policy in POLICIES:
         for topology in TOPOLOGIES:
             for vnf_allocation_space in VNF_ALLOCATION_SPACE:
                 experiment = copy.deepcopy(default)
-                experiment['workload']['sfc_len'] = sfc_len
+                experiment['workload']['sfc_req_rate'] = sfc_req_rate
                 experiment['policy']['name'] = policy
                 experiment['topology']['name'] = topology
                 experiment['vnf_allocation']['network_cache'] = vnf_allocation_space
                 experiment['desc'] = "sfc_len: %s, policy: %s, topology: %s, network cache: %s" \
-                                     % (sfc_len,  policy, topology, str(vnf_allocation_space))
+                                     % (sfc_req_rate,  policy, topology, str(vnf_allocation_space))
                 EXPERIMENT_QUEUE.append(experiment)
