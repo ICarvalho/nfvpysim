@@ -46,20 +46,20 @@ DATA_COLLECTORS = [
 # Number of content requests that are measured after warmup
 VNF_ALLOCATION_SPACE = [8]
 
-SFC_LENS = [1, 2, 3, 4, 5, 6, 7, 8]
+SFC_LENS = [2, 3, 4, 5, 6, 7, 8]
 
 # Number of warmup requests
 N_WARMUP_REQUESTS = 0
 
 # Number of measured requests
 
-N_MEASURED_REQUESTS = 1 * 10 ** 5
+N_MEASURED_REQUESTS = 1* 10 ** 3
 
 N_SFCS = 10**5
 
 
 # Number of requests per second (over the whole network)
-SFC_REQ_RATE = 10.0
+SFC_REQ_RATE = 1.0
 #SFC_REQ_RATES = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
 
 # vnf allocation policy
@@ -77,7 +77,7 @@ NFV_NODE_CACHE_POLICY = 'NFV_CACHE'
 # List of topologies tested
 # Topology implementations are located in ./icarus/scenarios/topology.py
 # Remove topologies not needed
-TOPOLOGIES = ['GEANT', 'TATANLD']
+TOPOLOGIES = ['GEANT', 'TATANLD', 'KDL']
 
 # List of caching and routing strategies
 # The code is located in ./icarus/models/strategy/*.py

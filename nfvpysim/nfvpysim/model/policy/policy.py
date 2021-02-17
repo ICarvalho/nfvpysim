@@ -83,14 +83,19 @@ class GreedyWithOnlinePlacementPolicy(Policy):
 
             if len(missed_vnfs) != 0 and v != egress_node :
                 if any(missed_vnf in vnf_status.keys() and vnf_status[missed_vnf] is False for missed_vnf in missed_vnfs):
-                    target_nfv_node = self.controller.find_target_nfv_node(path, missed_vnfs)
+                    sum_cpu_missed_vnfs = self.controller.sum_vnfs_cpu(missed_vnfs)
+                    sum_cpu_vnfs_on_node = self.controller.sum_vnfs_cpu_sfc_on_node(v)
+                    nfv_node_min_cpu_all = self.controller.find_nfv_node_with_min_cpu_alloc(path)
                     closest_nfv_node = self.controller.get_closest_nfv_node(path)
-                    if v == closest_nfv_node and v == target_nfv_node and v != egress_node:
+                    if v == closest_nfv_node and v == nfv_node_min_cpu_all \
+                                        and sum_cpu_missed_vnfs <= sum_cpu_vnfs_on_node and v != egress_node:
                         for missed_vnf in missed_vnfs:
                             self.controller.put_vnf(v, missed_vnf)
                             self.controller.vnf_proc(missed_vnf)
                             self.controller.proc_vnf_payload(u, v)
                             vnf_status[missed_vnf] = True
+                    else:
+                        continue
             if all(value is True for value in vnf_status.values()) and v == egress_node:
                 self.controller.sfc_hit(sfc_id)
 

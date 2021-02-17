@@ -6,7 +6,6 @@ from nfvpysim.util import path_links
 import logging
 logger = logging.getLogger('orchestration')
 
-from nfvpysim.scenarios import topology_geant
 
 
 __all__ = [
@@ -125,8 +124,7 @@ class NetworkModel:
             vnf = NetworkModel.select_random_vnf()
             #for vnf in vnfs:
             self.nfv_cache[node].add_vnf(vnf)
-                #print(node)
-                #self.nfv_cache[node].list_nfv_cache()
+
 
 
 
@@ -396,27 +394,36 @@ class NetworkController:
 
 
 
-    @staticmethod
-    def sum_vnfs_cpu_sfc(sfc):
-        vnfs_cpu = {1: 15,  # nat
-                    2: 25,  # fw
-                    3: 25,  # ids
-                    4: 20,  # wanopt
-                    5: 20,  # lb
-                    6: 25,  # encrypt
-                    7: 25,  # decrypts
-                    8: 30,  # dpi
+
+    def sum_vnfs_cpu_sfc_on_node(self, node):
+        if node in self.model.nfv_cache:
+            return self.model.nfv_cache[node].sum_vnfs_cpu_node()
+
+
+
+    def sum_vnfs_cpu(self, vnfs):
+        vnfs_cpu =  {1: 15,  # nat
+                     2: 25,  # fw
+                     3: 25,  # ids
+                     4: 20,  # wanopt
+                     5: 20,  # lb
+                     6: 25,  # encrypt
+                     7: 25,  # decrypts
+                     8: 30,  # dpi
                     }
-        sum_cpu = 0
-        for vnf in sfc:
+
+        sum_vnfs_cpu = 0
+        for vnf in vnfs:
             if vnf in vnfs_cpu.keys():
-                sum_cpu += vnfs_cpu[vnf]
-        return sum_cpu
+                sum_vnfs_cpu += vnfs_cpu[vnf]
+        return sum_vnfs_cpu
 
 
 
-    def find_target_nfv_node(self, path, vnfs):
-        target_node = min(self.sum_vnfs_cpu_node(node, vnfs) for node in path if node in self.model.nfv_cache)
+
+
+    def find_nfv_node_with_min_cpu_alloc(self, path):
+        target_node = min(self.sum_vnfs_cpu_sfc_on_node(node) for node in path if node in self.model.nfv_cache)
         return target_node
 
 

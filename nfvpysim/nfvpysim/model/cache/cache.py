@@ -32,22 +32,22 @@ class NfvCache:
     def list_nfv_cache(self):
         print(self.nfvcache)
 
-    def sum_vnfs_cpu_node(self, node, vnfs):
+    def sum_vnfs_cpu_node(self):
         vnfs_cpu =  {1: 15,  # nat
-                2: 25,  # fw
-                3: 25,  # ids
-                4: 20,  # wanopt
-                5: 20,  # lb
-                6: 25,  # encrypt
-                7: 25,  # decrypts
-                8: 30,  # dpi
-                }
+                     2: 25,  # fw
+                     3: 25,  # ids
+                     4: 20,  # wanopt
+                     5: 20,  # lb
+                     6: 25,  # encrypt
+                     7: 25,  # decrypts
+                     8: 30,  # dpi
+                    }
 
-        sum_cpu = 0
-        for vnf in vnfs:
+        sum_vnfs_cpu = 0
+        for vnf in self.nfvcache:
             if self.has_vnf(vnf) and vnf in vnfs_cpu.keys():
-                sum_cpu += vnfs_cpu[vnf]
-        return sum_cpu
+                sum_vnfs_cpu += vnfs_cpu[vnf]
+        return sum_vnfs_cpu
 
 
 """
@@ -55,8 +55,10 @@ c = NfvCache(4)
 c.add_vnf(1)
 c.add_vnf(2)
 c.add_vnf(3)
-c.add_vnf(4)
+c.add_vnf(5)
 
-print(c.sum_vnfs_cpu_node(1, [1,2,3,4,6]))
+print(c.sum_vnfs_cpu_node())
 
 """
+
+

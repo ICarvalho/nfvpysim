@@ -32,7 +32,7 @@ plt.rcParams['figure.figsize'] = 8, 5
 LEGEND_SIZE = 14
 
 # Line width in pixels
-LINE_WIDTH = 1
+LINE_WIDTH = 0.8
 
 # Plot
 PLOT_EMPTY_GRAPHS = True
@@ -77,7 +77,7 @@ POLICY_LEGEND = {
 # Color and hatch styles for bar charts of cache hit ratio and link load vs topology
 POLICY_BAR_COLOR = {
     'GWP':          'k',
-    'GWOP':          '0.8',
+    'GWOP':          '0.2',
     #'NO_CACHE':     '0.5',
     #'HR_ASYMM':     '0.6',
     #'HR_SYMM':      '0.7'

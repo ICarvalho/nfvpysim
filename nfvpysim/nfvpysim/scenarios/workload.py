@@ -1,5 +1,5 @@
 from nfvpysim.registry import register_workload
-from nfvpysim.scenarios import topology_geant
+from nfvpysim.scenarios.topology import *
 from nfvpysim.scenarios.requests import *
 import math
 
@@ -33,11 +33,10 @@ class StationaryWorkloadSfcByLen:
 
     """
 
-    def __init__(self, topology, sfc_len, sfc_req_rate, n_warmup=0, n_measured=4 * 10 ** 2, seed=None, **kwargs):
-        self.topology = topology
+    def __init__(self, topology, sfc_len, sfc_req_rate=1.0, n_warmup=0, n_measured=4 * 10 ** 2, seed=None, **kwargs):
         self.sfc_len = sfc_len
-        self.ingress_nodes = [v for v in topology if topology.node[v]['stack'][0] == 'ingress_node']
-        self.egress_nodes =  [v for v in topology if topology.node[v]['stack'][0] == 'egress_node']
+        self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
+        self.egress_nodes =  [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
         self.sfc_req_rate = sfc_req_rate
         self.n_warmup = n_warmup
         self.n_measured = n_measured
@@ -52,7 +51,7 @@ class StationaryWorkloadSfcByLen:
             # writer = csv.writer(f)
             # writer.writerow(header)
         while req_counter < self.n_warmup + self.n_measured:
-            #for i in range(1, self.n_req-1):
+            #for i in range(1, self.n_req + 1):
             t_event += (random.expovariate(self.sfc_req_rate))
             ingress_node = random.choice(self.ingress_nodes)
             egress_node = random.choice(self.egress_nodes)
@@ -180,12 +179,14 @@ class StationaryWorkloadRandomSfc:
         return
 
 """
-topo = topology_geant()
-r = StationaryWorkloadRandomSfc(topo,4)
+topo = topology_datacenter_two_tier()
+r = StationaryWorkloadSfcByLen(topo,4)
 for i in r:
     print(i)
 
+
 """
+
 
 
 
