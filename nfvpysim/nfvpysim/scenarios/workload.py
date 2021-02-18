@@ -179,11 +179,13 @@ class StationaryWorkloadRandomSfc:
             #f.close() n_warmup=0,  n_measured=4 * 10 ** 5,
         return
 
-
+"""
 topo = topology_geant()
 r = StationaryWorkloadSfcByLen(topo,4)
 for i in r:
     print(i)
+"""
+
 
 
 
