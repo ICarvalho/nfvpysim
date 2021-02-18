@@ -53,13 +53,13 @@ N_WARMUP_REQUESTS = 0
 
 # Number of measured requests
 
-N_MEASURED_REQUESTS = 1* 10 ** 3
+N_MEASURED_REQUESTS = 1* 10 ** 4
 
 N_SFCS = 10**5
 
 
 # Number of requests per second (over the whole network)
-SFC_REQ_RATE = 1.0
+SFC_REQ_RATE = 10.0
 #SFC_REQ_RATES = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
 
 # vnf allocation policy

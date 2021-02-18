@@ -254,5 +254,3 @@ def topology_datacenter_two_tier(**kwargs):
 
 
 
-
-

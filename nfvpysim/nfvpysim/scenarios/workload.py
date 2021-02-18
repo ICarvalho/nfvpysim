@@ -2,6 +2,7 @@ from nfvpysim.registry import register_workload
 from nfvpysim.scenarios.topology import *
 from nfvpysim.scenarios.requests import *
 import math
+import csv
 
 
 __all__ = [
@@ -46,27 +47,27 @@ class StationaryWorkloadSfcByLen:
     def __iter__(self):
         req_counter = 0
         t_event = 0.0
-        # header = ['id', 'sfc']
-        # with open('random_sfcs.csv', 'w', newline='\n') as f:
-            # writer = csv.writer(f)
-            # writer.writerow(header)
-        while req_counter < self.n_warmup + self.n_measured:
-            #for i in range(1, self.n_req + 1):
-            t_event += (random.expovariate(self.sfc_req_rate))
-            ingress_node = random.choice(self.ingress_nodes)
-            egress_node = random.choice(self.egress_nodes)
-            self.req = RequestSfcByLen()
-            self.sfc = self.req.gen_sfc_by_len(self.sfc_len)
-            sfc = self.sfc
-            sfc_id = truncate(t_event, 2)
-            log = (req_counter >= self.n_warmup)
-            event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
-            #file_lines = [str(i),',', str(sfc)[1:-1], '\n']
-            #f.writelines(file_lines)
-            yield (t_event, event)
-            req_counter += 1
-            #f.close()
-        return
+        header = ['id', 'sfc']
+        with open('random_sfc_by_len.csv', 'w', newline='\n') as f:
+            writer = csv.writer(f)
+            writer.writerow(header)
+            while req_counter < self.n_warmup + self.n_measured:
+                for i in range(1, self.n_measured + 1):
+                    t_event += (random.expovariate(self.sfc_req_rate))
+                    ingress_node = random.choice(self.ingress_nodes)
+                    egress_node = random.choice(self.egress_nodes)
+                    self.req = RequestSfcByLen()
+                    self.sfc = self.req.gen_sfc_by_len(self.sfc_len)
+                    sfc = self.sfc
+                    sfc_id = truncate(t_event, 2)
+                    log = (req_counter >= self.n_warmup)
+                    event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
+                    file_lines = [str(i),',', str(sfc)[1:-1], '\n']
+                    f.writelines(file_lines)
+                    yield (t_event, event)
+                    req_counter += 1
+                f.close()
+            return
 
 
 
@@ -178,14 +179,13 @@ class StationaryWorkloadRandomSfc:
             #f.close() n_warmup=0,  n_measured=4 * 10 ** 5,
         return
 
-"""
-topo = topology_datacenter_two_tier()
+
+topo = topology_geant()
 r = StationaryWorkloadSfcByLen(topo,4)
 for i in r:
     print(i)
 
 
-"""
 
 
 
