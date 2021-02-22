@@ -15,3 +15,5 @@ class GenerateTraceDrivenRequests:
             f.close()
 
 
+req = GenerateTraceDrivenRequests()
+sfc = req.gen_sfc_reqs(30, 4)
