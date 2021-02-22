@@ -10,10 +10,10 @@ class GenerateTraceDrivenRequests:
             for i in range(1, n_reqs + 1):
                 req = RequestSfcByLen()
                 sfc = req.gen_sfc_by_len(sfc_len)
-                file_lines = [str(sfc)[1:-1], '\n']
+                file_lines = [str(i), ',',  str(sfc)[1:-1], '\n']
                 f.writelines(file_lines)
             f.close()
 
 
 req = GenerateTraceDrivenRequests()
-sfc = req.gen_sfc_reqs(30, 4)
+sfc = req.gen_sfc_reqs(10**5, 5)

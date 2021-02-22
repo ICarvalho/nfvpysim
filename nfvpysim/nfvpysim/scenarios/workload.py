@@ -149,7 +149,7 @@ class StationaryWorkloadRandomSfc:
         self.n_measured = n_measured
         self.n_warmup = n_warmup
         random.seed(seed)
-        self.dict_sfcs = {}
+
 
 
     def __iter__(self):
@@ -161,7 +161,7 @@ class StationaryWorkloadRandomSfc:
         #writer = csv.writer(f)
         #writer.writerow(header)
 
-        self.sfcs = {}
+
         while req_counter < self.n_warmup + self.n_measured:
             #for i in range(0, self.n_req):
             t_event += (random.expovariate(self.sfc_req_rate))
@@ -185,7 +185,7 @@ class StationaryWorkloadRandomSfc:
 @register_workload('TRACE_DRIVEN')
 class TraceDrivenWorkload:
     def __init__(self, topology, n_warmup, n_measured,
-                 sfc_reqs_file='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/sfc_reqs_file.csv', rate=1.0, **kwargs):
+                 sfc_reqs_file='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/sfc_reqs_test.csv', rate=1.0, **kwargs):
         # Set high buffering to avoid one-line reads
         self.buffering = 64 * 1024 * 1024
         self.n_warmup = n_warmup
