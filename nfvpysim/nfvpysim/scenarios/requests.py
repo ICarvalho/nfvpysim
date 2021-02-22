@@ -6,11 +6,12 @@ class RequestSfcByLen:
     def gen_sfc_by_len(sfc_len):
         vnfs = [1, 2, 3, 4, 5, 6, 7, 8]
         sfc = []
-        for i in range(0, sfc_len):
+        len = 0
+        while len < sfc_len:
             vnf = random.choice(vnfs)
             if vnf not in sfc:
                 sfc.append(vnf)
-
+                len += 1
         return sfc
 
 class RequestRandomSfc:
