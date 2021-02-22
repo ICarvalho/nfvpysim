@@ -20,8 +20,8 @@ import itertools
 
 
 ## Initialize algorithm parameters
-MaxOrder = 7
-MinSupport = 100
+MaxOrder = 8
+MinSupport = 200
 
 #/home/igor/PycharmProjects/HON/hon-master/data/sfc.csv
 
@@ -33,7 +33,7 @@ MinSupport = 100
 ## Initialize user parameters
 #InputFileName = '../../../../C2/data/synthetic/1098_ModifyMixedOrder.csv'
 #InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/random_sfcs.csv'
-InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/var_seq_len_sfc.csv'
+InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/random_sfc_by_len.csv'
 
 
 #InputFileName = '../data/synthetic-major/9999.csv'
@@ -42,10 +42,10 @@ InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/var_seq_len_
 #InputFileName = '../data/traces-lloyds.csv'
 #OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/random_sfcs_rules.csv'
 #OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/random_sfcs_output.csv'
-OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/var_len_sfcs_rules.csv'
-OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/var_len_sfcs_output.csv'
+OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/random_sfc_by_len_rules.csv'
+OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/random_sfc_by_len_output.csv'
 
-LastStepsHoldOutForTesting = 0
+LastStepsHoldOutForTesting = 1
 MinimumLengthForTraining = 2
 InputFileDeliminator = ','
 Verbose = True

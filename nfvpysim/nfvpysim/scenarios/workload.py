@@ -8,7 +8,8 @@ import csv
 __all__ = [
     'StationaryWorkloadSfcByLen',
     'StationaryWorkloadVarLenSfc',
-    'StationaryWorkloadRandomSfc'
+    'StationaryWorkloadRandomSfc',
+    'TraceDrivenWorkload'
 ]
 
 
@@ -34,7 +35,7 @@ class StationaryWorkloadSfcByLen:
 
     """
 
-    def __init__(self, topology, sfc_len, sfc_req_rate=1.0, n_warmup=0, n_measured=4 * 10 ** 2, seed=None, **kwargs):
+    def __init__(self, topology, sfc_len, sfc_req_rate=1.0, n_warmup= 0, n_measured= 1* 10 ** 4, seed=None, **kwargs):
         self.sfc_len = sfc_len
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes =  [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
@@ -62,7 +63,7 @@ class StationaryWorkloadSfcByLen:
                     sfc_id = truncate(t_event, 2)
                     log = (req_counter >= self.n_warmup)
                     event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
-                    file_lines = [str(i),',', str(sfc)[1:-1], '\n']
+                    file_lines = [str(sfc)[1:-1], '\n'] #str(i),',',
                     f.writelines(file_lines)
                     yield (t_event, event)
                     req_counter += 1
@@ -179,12 +180,49 @@ class StationaryWorkloadRandomSfc:
             #f.close() n_warmup=0,  n_measured=4 * 10 ** 5,
         return
 
+
+
+@register_workload('TRACE_DRIVEN')
+class TraceDrivenWorkload:
+    def __init__(self, topology, n_warmup, n_measured,
+                 sfc_reqs_file='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/sfc_reqs_file.csv', rate=1.0, **kwargs):
+        # Set high buffering to avoid one-line reads
+        self.buffering = 64 * 1024 * 1024
+        self.n_warmup = n_warmup
+        self.n_measured = n_measured
+        self.sfc_reqs_file = sfc_reqs_file
+        self.rate = rate
+        self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
+        self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
+
+
+    def __iter__(self):
+        req_counter = 0
+        t_event = 0.0
+        with open(self.sfc_reqs_file, 'r', buffering=self.buffering) as sfc_file:
+            for sfc in sfc_file:
+                t_event += (random.expovariate(self.rate))
+                ingress_node= random.choice(self.ingress_nodes)
+                egress_node = random.choice(self.egress_nodes)
+                sfc_id = truncate(t_event, 2)
+                log = (req_counter >= self.n_warmup)
+                event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
+                yield (t_event, event)
+                req_counter += 1
+                if (req_counter >= self.n_warmup + self.n_measured):
+                    return
+            raise ValueError("Trace did not contain enough requests")
+
+
 """
 topo = topology_geant()
-r = StationaryWorkloadSfcByLen(topo,4)
+r = StationaryWorkloadSfcByLen(topo,3)
 for i in r:
     print(i)
+
 """
+
+
 
 
 

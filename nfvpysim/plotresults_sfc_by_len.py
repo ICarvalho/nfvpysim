@@ -32,7 +32,7 @@ plt.rcParams['figure.figsize'] = 8, 5
 LEGEND_SIZE = 14
 
 # Line width in pixels
-LINE_WIDTH = 0.8
+LINE_WIDTH = 0.6
 
 # Plot
 PLOT_EMPTY_GRAPHS = True
@@ -147,9 +147,9 @@ def plot_cache_hits_vs_cache_size(resultset, topology, sfc_len, nfv_cache_size_r
 
 def plot_link_load_vs_sfc_len(resultset, topology, nfv_cache_size, sfc_len_range, policies, plotdir):
     desc = {}
-    desc['title'] = 'Internal link load: T=%s C=%s' % (topology, nfv_cache_size)
+    desc['title'] = 'Average Link Load: T=%s C=%s' % (topology, nfv_cache_size)
     desc['xlabel'] = 'sfc length'
-    desc['ylabel'] = 'Internal link load'
+    desc['ylabel'] = 'Average Link Load (Mbps)'
     desc['xparam'] = ('workload', 'sfc_len')
     desc['xvals'] = sfc_len_range
     desc['filter'] = {'topology': {'name': topology},
@@ -168,9 +168,9 @@ def plot_link_load_vs_sfc_len(resultset, topology, nfv_cache_size, sfc_len_range
 
 def plot_link_load_vs_nfv_cache_size(resultset, topology, sfc_len,  nfv_cache_size_range, policies, plotdir):
     desc = {}
-    desc['title'] = 'Internal link load: T=%s L=%s' % (topology, sfc_len)
+    desc['title'] = 'Average Link Load : T=%s L=%s' % (topology, sfc_len)
     desc['xlabel'] = 'nfv cache size'
-    desc['ylabel'] = 'Internal link load'
+    desc['ylabel'] = 'Average Link Load (Mbps)'
     desc['xscale'] = 'linear'
     desc['xparam'] = ('vnf_allocation', 'network_cache')
     desc['xvals'] = nfv_cache_size_range
@@ -239,7 +239,7 @@ def plot_cache_hits_vs_topology(resultset, sfc_len, nfv_cache_size, topology_ran
     if 'NO_CACHE' in policies:
         policies.remove('NO_CACHE')
     desc = {}
-    desc['title'] = 'SFC hit ratio: A=%s C=%s' % (sfc_len, nfv_cache_size)
+    desc['title'] = 'SFC hit ratio: L=%s C=%s' % (sfc_len, nfv_cache_size)
     desc['ylabel'] = 'SFC hit ratio'
     desc['xparam'] = ('topology', 'name')
     desc['xvals'] = topology_range
@@ -269,8 +269,8 @@ def plot_link_load_vs_topology(resultset, sfc_len,  nfv_cache_size, topology_ran
     topologies considered
     """
     desc = {}
-    desc['title'] = 'Internal link load: L=%s C=%s' % (sfc_len, nfv_cache_size)
-    desc['ylabel'] = 'Internal link load'
+    desc['title'] = 'Average Link Load: L=%s C=%s' % (sfc_len, nfv_cache_size)
+    desc['ylabel'] = 'Average Link Load (Mbps)'
     desc['xparam'] = ('topology', 'name')
     desc['xvals'] = topology_range
     desc['filter'] = {'vnf_allocation': {'network_cache': nfv_cache_size},

@@ -1,4 +1,4 @@
-from nfvpysim.execution.network import NetworkModel, NetworkView, NetworkController
+from nfvpysim.execution.network import NetworkModel, NetworkModelHodVnfs, NetworkView, NetworkController
 from nfvpysim.execution.collectors import CollectorProxy
 from nfvpysim.registry import DATA_COLLECTOR, POLICY
 

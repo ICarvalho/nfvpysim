@@ -31,7 +31,7 @@ plt.rcParams['figure.figsize'] = 8, 5
 LEGEND_SIZE = 14
 
 # Line width in pixels
-LINE_WIDTH = 1
+LINE_WIDTH = 0.6
 
 # Plot
 PLOT_EMPTY_GRAPHS = True
@@ -108,6 +108,7 @@ def plot_cache_hits_vs_sfc_req_rate(resultset, topology, nfv_cache_size, sfc_req
     desc['errorbar'] = True
     desc['legend_loc'] = 'upper left'
     desc['line_style'] = POLICY_STYLE
+    desc['line_width'] = LINE_WIDTH
     desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
     plot_lines(resultset, desc, 'ACCEPTANCE_RATIO_T=%s@C=%s.pdf'
@@ -143,9 +144,9 @@ def plot_cache_hits_vs_cache_size(resultset, topology, sfc_len, nfv_cache_size_r
 
 def plot_link_load_vs_sfc_req_rate(resultset, topology, nfv_cache_size, sfc_req_rate_range, policies, plotdir):
     desc = {}
-    desc['title'] = 'Internal link load: T=%s C=%s' % (topology, nfv_cache_size)
+    desc['title'] = 'Average Link Load: T=%s C=%s' % (topology, nfv_cache_size)
     desc['xlabel'] = 'sfc_req_rate'
-    desc['ylabel'] = 'Internal link load'
+    desc['ylabel'] = 'Average Link Load (Mbps)'
     desc['xparam'] = ('workload', 'sfc_req_rate')
     desc['xvals'] = sfc_req_rate_range
     desc['filter'] = {'topology': {'name': topology},
@@ -266,8 +267,8 @@ def plot_link_load_vs_topology(resultset, sfc_req_rate, nfv_cache_size, topology
     topologies considered
     """
     desc = {}
-    desc['title'] = 'Internal link load: L=%s C=%s' % (sfc_req_rate, nfv_cache_size)
-    desc['ylabel'] = 'Internal link load'
+    desc['title'] = 'Average Link Load: L=%s C=%s' % (sfc_req_rate, nfv_cache_size)
+    desc['ylabel'] = 'Average Link Load (Mbps)'
     desc['xparam'] = ('topology', 'name')
     desc['xvals'] = topology_range
     desc['filter'] = {'vnf_allocation': {'network_cache': nfv_cache_size},
