@@ -14,5 +14,7 @@ output_file = open('/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/
 #input_file = open('/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/sfc_reqs_sfc_var_len.csv', 'r')
 #output_file = open('/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_var_len_training_data.csv', 'w')
 
-get_training_data(input_file, output_file, 0, 50000)
+start_train_index = 0
+end_train_index = 50000
+get_training_data(input_file, output_file, start_train_index, end_train_index)
 
