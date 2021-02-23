@@ -185,7 +185,7 @@ class StationaryWorkloadRandomSfc:
 @register_workload('TRACE_DRIVEN')
 class TraceDrivenWorkload:
     def __init__(self, topology, n_warmup, n_measured,
-                 sfc_reqs_file='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/sfc_reqs_test.csv', rate=1.0, **kwargs):
+                 sfc_reqs_file='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/sfc_test_data.csv', rate=1.0, **kwargs):
         # Set high buffering to avoid one-line reads
         self.buffering = 64 * 1024 * 1024
         self.n_warmup = n_warmup

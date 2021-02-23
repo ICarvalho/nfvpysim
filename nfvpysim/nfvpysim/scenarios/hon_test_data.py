@@ -6,7 +6,7 @@ def get_test_data(input_file, output_file, start_line, end_line):
 
 
 input_file = open('/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/sfc_reqs_file.csv', 'r')
-output_file = open('/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/sfc_reqs_test.csv', 'w')
+output_file = open('/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_test_data.csv', 'w')
 
-a = get_test_data(input_file, output_file, 7000, 100000)
+a = get_test_data(input_file, output_file, 50000, 100000)
 

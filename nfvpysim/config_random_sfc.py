@@ -88,7 +88,7 @@ EXPERIMENT_QUEUE = deque()
 
 # Create tree of experiment configuration
 default = Tree()
-default['workload'] = {'name':  'STATIONARY_RANDOM_SFC', # 'sfc_len': SFC_LEN,
+default['workload'] = {'name':  'TRACE_DRIVEN', # 'sfc_len': SFC_LEN,
                        'n_warmup': N_WARMUP_REQUESTS,
                        'n_measured': N_MEASURED_REQUESTS,
                        'sfc_req_rate': SFC_REQ_RATES}

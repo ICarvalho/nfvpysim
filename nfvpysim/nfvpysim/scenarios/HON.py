@@ -20,7 +20,7 @@ import itertools
 
 
 ## Initialize algorithm parameters
-MaxOrder = 8
+MaxOrder = 4
 MinSupport = 200
 
 #/home/igor/PycharmProjects/HON/hon-master/data/sfc.csv
@@ -33,7 +33,7 @@ MinSupport = 200
 ## Initialize user parameters
 #InputFileName = '../../../../C2/data/synthetic/1098_ModifyMixedOrder.csv'
 #InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/random_sfcs.csv'
-InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/sfc_reqs_training.csv'
+InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_training_data.csv'
 
 
 #InputFileName = '../data/synthetic-major/9999.csv'
@@ -42,8 +42,8 @@ InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/sfc
 #InputFileName = '../data/traces-lloyds.csv'
 #OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/random_sfcs_rules.csv'
 #OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/random_sfcs_output.csv'
-OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/sfc_reqs_training_rules.csv'
-OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/sfc_reqs_training_output.csv'
+OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_training_rules.csv'
+OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_training_output.csv'
 
 LastStepsHoldOutForTesting = 1
 MinimumLengthForTraining = 2
@@ -107,7 +107,7 @@ def DumpRules(Rules, OutputRulesFile):
     with open(OutputRulesFile, 'w') as f:
         for Source in Rules:
             for Target in Rules[Source]:
-                f.write(' '.join([','.join([str(x) for x in Source]),',',Target, ',', str(Rules[Source][Target])]) + '\n')
+                f.write(' '.join([','.join([str(x) for x in Source]),',',Target, '-->', str(Rules[Source][Target])]) + '\n')
 
 def DumpNetwork(Network, OutputNetworkFile):
     VPrint('Dumping network to file')
