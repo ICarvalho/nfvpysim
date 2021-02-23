@@ -1,11 +1,11 @@
-from nfvpysim.execution.network import NetworkModel, NetworkModelHodVnfs, NetworkView, NetworkController
+from nfvpysim.execution.network import NetworkModelBaseLine, NetworkModelProposal, NetworkViewBaseLine, NetworkViewProposal,  NetworkController
 from nfvpysim.execution.collectors import CollectorProxy
 from nfvpysim.registry import DATA_COLLECTOR, POLICY
 
 __all__ = ['exec_experiment']
 
 
-def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, collectors):
+def exec_experiment(topology, workload, netconf, policy_baseline, polocy_proposal,  nfv_cache_policy, collectors):
     """Execute the simulation of a specific scenario.
     Parameters
     ----------
@@ -34,10 +34,10 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
     results : Tree
         A tree with the aggregated simulation results from all collectors
     """
-    model_baseline = NetworkModel(topology, nfv_cache_policy, **netconf)
-    model_proposal = NetworkModelHodVnfs(topology, nfv_cache_policy, **netconf)
-    view_baseline = NetworkView(model_baseline)
-    view_proposal = NetworkView(model_proposal)
+    model_baseline = NetworkModelBaseLine(topology, nfv_cache_policy, **netconf)
+    model_proposal = NetworkModelProposal(topology, nfv_cache_policy, **netconf)
+    view_baseline = NetworkViewBaseLine(model_baseline)
+    view_proposal = NetworkViewProposal(model_proposal)
     controller_baseline = NetworkController(model_baseline)
     controller_proposal = NetworkController(model_proposal)
 
@@ -47,8 +47,8 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
     collector_baseline = CollectorProxy(view_baseline, collectors_inst_baseline)
     controller_baseline.attach_collector(collector_baseline)
 
-    policy_name_baseline = policy['GreedyWithoutPlacement']
-    policy_args_baseline = {k: v for k, v in policy.items() if k != 'name'}
+    policy_name_baseline = policy_baseline['name']
+    policy_args_baseline = {k: v for k, v in policy_baseline.items() if k != 'name'}
     policy_inst_baseline = POLICY[policy_name_baseline](view_baseline, controller_baseline, **policy_args_baseline)
 
 
@@ -58,8 +58,8 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
     collector_proposal = CollectorProxy(view_proposal, collectors_inst_proposal)
     controller_proposal.attach_collector(collector_proposal)
 
-    policy_name_proposal = policy['GreedyWithOnlinePlacementPolicy']
-    policy_args_proposal = {k: v for k, v in policy.items() if k != 'name'}
+    policy_name_proposal = polocy_proposal['name']
+    policy_args_proposal = {k: v for k, v in polocy_proposal.items() if k != 'name'}
     policy_inst_proposal = POLICY[policy_name_proposal](view_proposal, controller_proposal, **policy_args_proposal)
 
 

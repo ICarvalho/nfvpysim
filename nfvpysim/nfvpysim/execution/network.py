@@ -9,18 +9,19 @@ logger = logging.getLogger('orchestration')
 
 
 __all__ = [
-    'NetworkModel',
-    'NetworkModelHodVnfs',
-    'NetworkView',
+    'NetworkModelBaseLine',
+    'NetworkModelProposal',
+    'NetworkViewBaseLine',
+    'NetworkViewProposal',
     'NetworkController'
 ]
 
 
-class NetworkView:
+class NetworkViewBaseLine:
 
     def __init__(self, model):
 
-        if not isinstance(model, NetworkModel):
+        if not isinstance(model, NetworkModelBaseLine):
             raise ValueError('The model argument must be an instance of '
                              'NetworkModel')
 
@@ -56,7 +57,49 @@ class NetworkView:
 
 
 
-class NetworkModel:
+class NetworkViewProposal:
+
+    def __init__(self, model):
+
+        if not isinstance(model, NetworkModelProposal):
+            raise ValueError('The model argument must be an instance of '
+                             'NetworkModel')
+
+        self.model = model
+
+
+    def shortest_path(self, ingress_node, egress_node):
+        return self.model.shortest_path[ingress_node][egress_node]
+
+
+    def all_pairs_shortest_paths(self):
+        return self.model.shortest_path
+
+
+    def nfv_cache_nodes(self, size=True):
+        return {v: c.maxlen for v, c in self.model.nfv_cache.items()} if size \
+                else list(self.model.nfv_cache.keys())
+
+    def is_nfv_node(self, node):
+        return node in self.model.nfv_cache
+
+
+    def link_type(self, u, v):
+        return self.model.link_type[(u, v)]
+
+
+    def link_delay(self, u, v):
+        return self.model.link_delay[(u, v)]
+
+
+    def topology(self):
+        return self.model.topology
+
+
+
+
+
+class NetworkModelBaseLine:
     """
     Models the internal state of the network.
     This object should never be edited by VNF Allocation Policies directly, but only
@@ -121,7 +164,7 @@ class NetworkModel:
 
         for node in self.nfv_cache:
             #vnfs = NetworkModel.var_len_seq_sfc()
-            vnf = NetworkModel.select_random_vnf()
+            vnf = NetworkModelBaseLine.select_random_vnf()
             #for vnf in vnfs:
             self.nfv_cache[node].add_vnf(vnf)
 
@@ -225,7 +268,7 @@ class NetworkModel:
 ################################### NetworkModelHodVnfs ##################################################
 
 
-class NetworkModelHodVnfs:
+class NetworkModelProposal:
     """
     Models the internal state of the network.
     This object should never be edited by VNF Allocation Policies directly, but only
@@ -288,13 +331,27 @@ class NetworkModelHodVnfs:
         self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_cache_size[node], **policy_args)
                           for node in nfv_cache_size}
 
-        #for node in self.nfv_cache:
+        for node in self.nfv_cache:
             #vnfs = NetworkModel.var_len_seq_sfc()
-            #vnfs = NetworkModel.select_random_sfc()
+            vnfs = NetworkModelProposal.select_random_sfc()
             #vnf = NetworkModel.select_random_vnf()
-            #for vnf in vnfs:
-            #self.nfv_cache[node].add_vnf(vnf)
+            for vnf in vnfs:
+                self.nfv_cache[node].add_vnf(vnf)
 
+    @staticmethod
+    def select_random_sfc():
+        services = [
+                [1, 2],  # [nat - fw]
+                [4, 5],  # [wanopt - lb]
+                [1, 2, 3],  # [nat - fw - ids]
+                [2, 3, 5],  # [fw - ids - lb]
+                [1, 5, 4],  # [nat - lb - wanopt]
+                [5, 2, 1],  # [lb - fw - nat]
+                [2, 3, 5, 6],  # [fw - ids - lb - encrypt]
+                [3, 2, 5, 8],  # [ids - fw - lb - wanopt]
+                [5, 4, 6, 2, 3],  # [lb - wanopt - encrypt - fw - ids]
+            ]
+        return random.choice(services)
 
 
 
