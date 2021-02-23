@@ -31,19 +31,28 @@ MinSupport = 200
 #OutputNetworkFile = '../data/network-syn.csv'
 
 ## Initialize user parameters
-#InputFileName = '../../../../C2/data/synthetic/1098_ModifyMixedOrder.csv'
-#InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/random_sfcs.csv'
-InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_training_data.csv'
 
 
-#InputFileName = '../data/synthetic-major/9999.csv'
-#InputFileName = '../data/synthetic-major/1000_ModifyMixedOrder.csv'
-#InputFileName = '../data/traces-test.csv'
-#InputFileName = '../data/traces-lloyds.csv'
-#OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/random_sfcs_rules.csv'
-#OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/scenarios/random_sfcs_output.csv'
-OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_training_rules.csv'
-OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_training_output.csv'
+InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_random_sfc_training_data.csv'
+#InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_by_len_training_data.csv'
+#InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_var_len_training_data.csv'
+
+OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_random_sfc_rules.csv'
+OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_random_sfc_output.csv'
+
+#OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_var_len_rules.csv'
+#OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_var_len_output.csv'
+
+
+#OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_by_len_rules.csv'
+#OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_by_len_output.csv'
+
+
+
+
+
+
+########################################################################################################################
 
 LastStepsHoldOutForTesting = 1
 MinimumLengthForTraining = 2
