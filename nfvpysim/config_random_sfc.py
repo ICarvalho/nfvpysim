@@ -53,13 +53,11 @@ N_WARMUP_REQUESTS = 0
 
 # Number of measured requests
 
-N_MEASURED_REQUESTS = 1 * 10 ** 4
-
-N_SFCS = 10**5
+N_MEASURED_REQUESTS = 5*10**4
 
 
 # Number of requests per second (over the whole network)
-SFC_REQ_RATES = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
+SFC_REQ_RATES = [1, 2, 3, 4 ,5, 6, 7 , 8, 9, 10 ]
 
 # vnf allocation policy
 VNF_ALLOCATION_POLICY = 'STATIC'
@@ -108,6 +106,6 @@ for sfc_req_rate in SFC_REQ_RATES:
                 experiment['policy']['name'] = policy
                 experiment['topology']['name'] = topology
                 experiment['vnf_allocation']['network_cache'] = vnf_allocation_space
-                experiment['desc'] = "sfc_len: %s, policy: %s, topology: %s, network cache: %s" \
+                experiment['desc'] = "sfc_rate: %s, policy: %s, topology: %s, network cache: %s" \
                                      % (sfc_req_rate,  policy, topology, str(vnf_allocation_space))
                 EXPERIMENT_QUEUE.append(experiment)

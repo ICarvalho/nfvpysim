@@ -20,7 +20,7 @@ output_file = open('/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/
 
 
 
-start_test_index = 50000
-end_test_index = 100000
+start_test_index = 5*10**4
+end_test_index = 10**5
 get_test_data(input_file, output_file, start_test_index, end_test_index)
 

@@ -44,7 +44,7 @@ class GenerateTraceDrivenRequests:
 
 
 req_rand_sfc = GenerateTraceDrivenRequests()
-req_rand_sfc.gen_random_sfc(10 ** 4)
+req_rand_sfc.gen_random_sfc(10 ** 5)
 
 #req_var_len_sfc = GenerateTraceDrivenRequests()
 #req_var_len_sfc.gen_var_len_sfc(10 ** 5)

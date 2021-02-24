@@ -107,7 +107,7 @@ class Orchestrator(object):
                 while job_queue:
                     job = job_queue.popleft()
                     while not job.ready():
-                        time.sleep(5)
+                        time.sleep(10)
             except KeyboardInterrupt:
                 self.pool.terminate()
             self.pool.join()

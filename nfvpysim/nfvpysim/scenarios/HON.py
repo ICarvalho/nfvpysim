@@ -20,8 +20,8 @@ import itertools
 
 
 ## Initialize algorithm parameters
-MaxOrder = 4
-MinSupport = 200
+MaxOrder = 8
+MinSupport = 100
 
 #/home/igor/PycharmProjects/HON/hon-master/data/sfc.csv
 

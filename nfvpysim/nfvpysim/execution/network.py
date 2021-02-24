@@ -333,25 +333,25 @@ class NetworkModelProposal:
 
         for node in self.nfv_cache:
             #vnfs = NetworkModel.var_len_seq_sfc()
-            vnfs = NetworkModelProposal.select_random_sfc()
+            vnfs = NetworkModelProposal.select_hod_vnfs()
             #vnf = NetworkModel.select_random_vnf()
             for vnf in vnfs:
                 self.nfv_cache[node].add_vnf(vnf)
 
     @staticmethod
-    def select_random_sfc():
-        services = [
-                [1, 2],  # [nat - fw]
-                [4, 5],  # [wanopt - lb]
-                [1, 2, 3],  # [nat - fw - ids]
-                [2, 3, 5],  # [fw - ids - lb]
-                [1, 5, 4],  # [nat - lb - wanopt]
-                [5, 2, 1],  # [lb - fw - nat]
-                [2, 3, 5, 6],  # [fw - ids - lb - encrypt]
-                [3, 2, 5, 8],  # [ids - fw - lb - wanopt]
-                [5, 4, 6, 2, 3],  # [lb - wanopt - encrypt - fw - ids]
+    def select_hod_vnfs():
+        sfcs = [
+                [5, 4],
+                [5, 2],
+                [4, 6],
+                [6, 2],
+                [1, 5],
+                [1, 2],
+                [2, 3],
+                [3, 5],
+
             ]
-        return random.choice(services)
+        return random.choice(sfcs)
 
 
 
