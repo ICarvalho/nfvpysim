@@ -250,6 +250,7 @@ class NetworkModelBaseLine:
 
 
 
+
     def get_ingress_node_path(self, path):
         for node in path:
             return self.topology.node[node]['stack'][0] == 'ingress_node'
@@ -565,42 +566,17 @@ class NetworkController:
         return closest_nfv_node
 
 
-    def sum_vnfs_cpu_node(self, node, vnfs):
-        if node in self.model.nfv_cache:
-            return self.model.nfv_cache[node].sum_vnfs_cpu_node(node, vnfs)
 
-
-
-
-    def sum_vnfs_cpu_sfc_on_node(self, node):
+    def sum_vnfs_cpu_on_node(self, node):
         if node in self.model.nfv_cache:
             return self.model.nfv_cache[node].sum_vnfs_cpu_node()
 
 
 
-    def sum_vnfs_cpu(self, vnfs):
-        vnfs_cpu =  {1: 15,  # nat
-                     2: 25,  # fw
-                     3: 25,  # ids
-                     4: 20,  # wanopt
-                     5: 20,  # lb
-                     6: 25,  # encrypt
-                     7: 25,  # decrypts
-                     8: 30,  # dpi
-                    }
 
-        sum_vnfs_cpu = 0
-        for vnf in vnfs:
-            if vnf in vnfs_cpu.keys():
-                sum_vnfs_cpu += vnfs_cpu[vnf]
-        return sum_vnfs_cpu
-
-
-
-
-
-    def find_nfv_node_with_min_cpu_alloc(self, path):
-        target_node = min(self.sum_vnfs_cpu_sfc_on_node(node) for node in path if node in self.model.nfv_cache)
+    def find_nfv_node_with_min_cpu_alloc(self, source, target):
+        path = self.model.shortest_path[source][target]
+        target_node = min(self.sum_vnfs_cpu_on_node(node) for node in path if node in self.model.nfv_cache)
         return target_node
 
 

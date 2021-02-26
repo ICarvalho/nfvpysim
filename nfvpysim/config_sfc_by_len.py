@@ -44,7 +44,7 @@ DATA_COLLECTORS = [
 
 
 # Number of content requests that are measured after warmup
-VNF_ALLOCATION_SPACE = [8, 10]
+VNF_ALLOCATION_SPACE = [8]
 
 SFC_LENS = [2, 3, 4, 5, 6, 7, 8]
 
@@ -53,7 +53,7 @@ N_WARMUP_REQUESTS = 0
 
 # Number of measured requests
 
-N_MEASURED_REQUESTS = 1* 10 ** 5
+N_MEASURED_REQUESTS = 1* 10 ** 4
 
 
 

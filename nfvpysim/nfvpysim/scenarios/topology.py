@@ -78,7 +78,7 @@ def topology_geant(**kwargs):
     deg = nx.degree(topology)
     ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 8 nodes
     egress_nodes = [v for v in topology.nodes() if deg[v] == 2] # 13 nodes
-    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2] #  19 nodes
+    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2 and v not in ingress_nodes + egress_nodes] #  19 nodes
     #forwarding_nodes = [v for v in topology.nodes() if v not in ingress_nodes + egress_nodes]
     topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
     # Add stacks to nodes
@@ -163,9 +163,8 @@ def topology_kdl(**kwargs):
     topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/Kdl.graphml').to_undirected() # 754 nodes
     deg = nx.degree(topology)
     ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 42 nodes
-    nfv_nodes = [v for v in topology.nodes() if deg[v] == 2]  # 483 nodes
     egress_nodes = [v for v in topology.nodes() if deg[v] > 2]  # 45 nodes
-
+    nfv_nodes = [v for v in topology.nodes() if deg[v] == 2 and v not in ingress_nodes + egress_nodes]   # 483 nodes
     topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
 
     # kdl
