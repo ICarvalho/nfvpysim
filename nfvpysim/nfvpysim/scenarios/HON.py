@@ -21,7 +21,7 @@ import itertools
 
 ## Initialize algorithm parameters
 MaxOrder = 8
-MinSupport = 100
+MinSupport = 300
 
 #/home/igor/PycharmProjects/HON/hon-master/data/sfc.csv
 
@@ -33,19 +33,19 @@ MinSupport = 100
 ## Initialize user parameters
 
 
-InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_random_sfc_training_data.csv'
-#InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_by_len_training_data.csv'
+#InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_random_sfc_training_data.csv'
+InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_by_len_training_data.csv'
 #InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_var_len_training_data.csv'
 
-OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_random_sfc_rules.csv'
-OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_random_sfc_output.csv'
+#OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_random_sfc_rules.csv'
+#OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_random_sfc_output.csv'
 
 #OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_var_len_rules.csv'
 #OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_var_len_output.csv'
 
 
-#OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_by_len_rules.csv'
-#OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_by_len_output.csv'
+OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_by_len_rules.csv'
+OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_by_len_output.csv'
 
 
 
@@ -54,8 +54,8 @@ OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios
 
 ########################################################################################################################
 
-LastStepsHoldOutForTesting = 1
-MinimumLengthForTraining = 2
+LastStepsHoldOutForTesting = 0
+MinimumLengthForTraining = 1
 InputFileDeliminator = ','
 Verbose = True
 
@@ -116,7 +116,7 @@ def DumpRules(Rules, OutputRulesFile):
     with open(OutputRulesFile, 'w') as f:
         for Source in Rules:
             for Target in Rules[Source]:
-                f.write(' '.join([','.join([str(x) for x in Source]),',',Target, '-->', str(Rules[Source][Target])]) + '\n')
+                f.write(' '.join([' '.join([str(x) for x in Source]), ',',   Target, str(Rules[Source][Target])]) + '\n')
 
 def DumpNetwork(Network, OutputNetworkFile):
     VPrint('Dumping network to file')

@@ -112,7 +112,6 @@ class LinkLoadCollector(DataCollector):
             Average payload of a given vnf in bytes
         """
         super().__init__(view, **params)
-        self.view = view
         self.req_vnf_count = collections.defaultdict(int)
         self.vnf_proc_payload_count = collections.defaultdict(int)
         if req_vnf_size <= 0:
@@ -139,7 +138,7 @@ class LinkLoadCollector(DataCollector):
     def results(self):
         duration = self.t_end - self.t_start
         used_links = set(self.req_vnf_count.keys()).union(set(self.vnf_proc_payload_count.keys()))
-        link_loads = {link: (self.req_vnf_size * self.vnf_proc_payload_count[link] +
+        link_loads = {link: (self.req_vnf_size * self.req_vnf_count[link] +
                              self.vnf_payload * self.vnf_proc_payload_count[link]) / duration
                       for link in used_links}
         link_loads_int = {link: load
@@ -200,6 +199,7 @@ class LatencyCollector(DataCollector):
     def start_session(self, timestamp, sfc_id,  ingress_node, egress_node, sfc):
         self.sess_count += 1
         self.sess_latency = 0.0
+        self.vnf_proc_time = 0.0
 
     def request_vnf_hop(self, u, v, path=True):
         if path:
@@ -239,6 +239,7 @@ class AcceptanceRatioCollector(DataCollector):
         self.view = view
         self.sess_count = 0
         self.sfc_hits = 0
+        self.curr_path = None
 
         if per_sfc:
             self.per_sfc_hit = collections.defaultdict(int)
