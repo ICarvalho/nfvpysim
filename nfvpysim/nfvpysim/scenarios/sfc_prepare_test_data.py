@@ -2,6 +2,8 @@ import csv
 
 input_file = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_by_len_test_data.csv'
 output_file = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/sfc_test_data.csv'
+
+
 cols_to_remove = [0] # Column indexes to be removed (starts at 0)
 
 cols_to_remove = sorted(cols_to_remove, reverse=True) # Reverse so we remove from the end first

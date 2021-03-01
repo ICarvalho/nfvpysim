@@ -3,16 +3,15 @@ import random
 class RequestSfcByLen:
 
     @staticmethod
-    def gen_sfc_by_len(sfc_lens):
+    def gen_sfc_by_len(sfc_len):
         sfc = []
-        for sfc_len in sfc_lens:
-            vnfs = [1, 2, 3, 4, 5, 6, 7, 8]
-            len = 0
-            while len < sfc_len:
-                vnf = random.choice(vnfs)
-                if vnf not in sfc:
-                    sfc.append(vnf)
-                    len += 1
+        vnfs = [1, 2, 3, 4, 5, 6, 7, 8]
+        len = 0
+        while len < sfc_len:
+            vnf = random.choice(vnfs)
+            if vnf not in sfc:
+                sfc.append(vnf)
+                len += 1
         return sfc
 
 class RequestRandomSfc:
@@ -62,7 +61,7 @@ class RequestVarLenSfc:
         return var_len_sfc
 
 
-r = RequestSfcByLen.gen_sfc_by_len([2,5])
-print(r)
+#r = RequestSfcByLen.gen_sfc_by_len(1)
+#print(r)
 
 
