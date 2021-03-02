@@ -342,12 +342,10 @@ class NetworkModelProposal:
     @staticmethod
     def select_hod_vnfs():
         sfcs = [
-                [5, 7],
-                [1, 6],
-                [7, 8],
-                [4, 3],
-                [8, 4],
-                [3, 5],
+                [1, 2, 3, 4, 5, 8],
+                [3, 5, 6],
+                [2, 3],
+
             ]
         return random.choice(sfcs)
 

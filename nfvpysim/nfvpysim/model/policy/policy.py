@@ -101,8 +101,8 @@ class GreedyWithOnlinePlacementPolicy(Policy):
 
             if len(missed_vnfs) != 0:
                 if all(vnf_status[missed_vnf] == 0 for missed_vnf in missed_vnfs):
-                    sum_cpu_missed_vnfs = GreedyWithOnlinePlacementPolicy.sum_vnfs_cpu(missed_vnfs)
-                    sum_cpu_vnfs_on_node = self.controller.sum_vnfs_cpu_on_node(v)
+                    #sum_cpu_missed_vnfs = GreedyWithOnlinePlacementPolicy.sum_vnfs_cpu(missed_vnfs)
+                    #sum_cpu_vnfs_on_node = self.controller.sum_vnfs_cpu_on_node(v)
                     nfv_node_min_cpu_all = self.controller.find_nfv_node_with_min_cpu_alloc(ingress_node, egress_node)
                     closest_nfv_node = self.controller.get_closest_nfv_node(path)
                     if v == closest_nfv_node and v == nfv_node_min_cpu_all: #and sum_cpu_missed_vnfs <= sum_cpu_vnfs_on_node:

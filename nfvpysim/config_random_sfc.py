@@ -53,11 +53,11 @@ N_WARMUP_REQUESTS = 0
 
 # Number of measured requests
 
-N_MEASURED_REQUESTS = 5*10**4
+N_MEASURED_REQUESTS = [10 ** 2, 10 ** 3, 10 ** 4, 10 ** 5]
 
 
 # Number of requests per second (over the whole network)
-SFC_REQ_RATES = [10, 20, 30, 40, 50]
+SFC_REQ_RATES = 10.0
 
 # vnf allocation policy
 VNF_ALLOCATION_POLICY = 'STATIC'
@@ -86,7 +86,7 @@ EXPERIMENT_QUEUE = deque()
 
 # Create tree of experiment configuration
 default = Tree()
-default['workload'] = {'name':  'TRACE_DRIVEN', # 'sfc_len': SFC_LEN,
+default['workload'] = {'name':  'STATIONARY_RANDOM_SFC', # 'sfc_len': SFC_LEN,
                        'n_warmup': N_WARMUP_REQUESTS,
                        'n_measured': N_MEASURED_REQUESTS,
                        'sfc_req_rate': SFC_REQ_RATES}
@@ -97,15 +97,15 @@ default['nfv_cache_policy']['name'] = NFV_NODE_CACHE_POLICY
 
 
 # Create experiments multiplexing all desired parameters
-for sfc_req_rate in SFC_REQ_RATES:
+for n_measured_request in N_MEASURED_REQUESTS:
     for policy in POLICIES:
         for topology in TOPOLOGIES:
             for vnf_allocation_space in VNF_ALLOCATION_SPACE:
                 experiment = copy.deepcopy(default)
-                experiment['workload']['sfc_req_rate'] = sfc_req_rate
+                experiment['workload']['n_measured'] = n_measured_request
                 experiment['policy']['name'] = policy
                 experiment['topology']['name'] = topology
                 experiment['vnf_allocation']['network_cache'] = vnf_allocation_space
-                experiment['desc'] = "sfc_rate: %s, policy: %s, topology: %s, network cache: %s" \
-                                     % (sfc_req_rate,  policy, topology, str(vnf_allocation_space))
+                experiment['desc'] = "n_measured_request: %s, policy: %s, topology: %s, network cache: %s" \
+                                     % (n_measured_request, policy, topology, str(vnf_allocation_space))
                 EXPERIMENT_QUEUE.append(experiment)

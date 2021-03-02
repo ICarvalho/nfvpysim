@@ -53,7 +53,7 @@ N_WARMUP_REQUESTS = 0
 
 # Number of measured requests
 
-N_MEASURED_REQUESTS = 1* 10 ** 5
+N_MEASURED_REQUESTS = 1* 10 ** 4
 
 
 
