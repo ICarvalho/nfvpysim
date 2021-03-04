@@ -163,10 +163,10 @@ class NetworkModelBaseLine:
                           for node in nfv_cache_size}
 
         for node in self.nfv_cache:
-            #vnfs = NetworkModel.var_len_seq_sfc()
-            vnf = NetworkModelBaseLine.select_random_vnf()
-            #for vnf in vnfs:
-            self.nfv_cache[node].add_vnf(vnf)
+            vnfs = NetworkModelBaseLine.var_len_seq_sfc()
+            #vnf = NetworkModelBaseLine.select_random_vnf()
+            for vnf in vnfs:
+                self.nfv_cache[node].add_vnf(vnf)
 
 
 
@@ -215,7 +215,8 @@ class NetworkModelBaseLine:
         return [p for p in nx.all_shortest_paths(topology, ingress_node, egress_node)]
 
 
-    def get_ingress_nodes(self, topology):
+    @staticmethod
+    def get_ingress_nodes(topology):
 
         if isinstance(topology, fnss.Topology):
             ing_nodes = []
@@ -226,7 +227,8 @@ class NetworkModelBaseLine:
 
             return ing_nodes
 
-    def get_egress_nodes(self, topology):
+    @staticmethod
+    def get_egress_nodes(topology):
 
         if isinstance(topology, fnss.Topology):
             egr_nodes = []

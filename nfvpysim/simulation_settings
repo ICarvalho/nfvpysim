@@ -4,3 +4,22 @@ Ex: 10/s ; 100/s 300/s etc
 
 Average total bandwith x number of vnfs on the chain
 
+
+
+
+############################## Observations ####################333
+
+(off-line phase)
+
+-- Calculate all the shortest paths between ingress and egress nodes
+
+-- After getting HODs among vnfs, allocate them in the shortest path (in terms of number of hops) closest
+   to the egress nodes.
+
+(on-line phase)
+
+-- Start sending sfc requests to the network;
+
+-- find the closest nfv-node to the ingress node and check whether the sfc can be matched on it.
+
+- run the service and collect metrics.
