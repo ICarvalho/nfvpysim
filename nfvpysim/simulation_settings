@@ -11,7 +11,7 @@ Average total bandwith x number of vnfs on the chain
 
 (off-line phase)
 
--- Calculate all the shortest paths between ingress and egress nodes
+-- Calculate all the shortest paths between all ingress and egress nodes
 
 -- After getting HODs among vnfs, allocate them in the shortest path (in terms of number of hops) closest
    to the egress nodes.

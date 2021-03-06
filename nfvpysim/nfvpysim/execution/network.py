@@ -342,11 +342,10 @@ class NetworkModelProposal:
     @staticmethod
     def select_hod_vnfs():
         sfcs = [
-                [5, 7, 4, 3],
-                [2, 4, 1],
-                [6, 8, 4, 7],
-                [1, 3, 4, 6],
-                [6, 5, 8, 1, 2],
+                [1, 2, 5, 8],
+                [3, 2, 4, 5],
+                [2, 3, 6],
+
 
             ]
         return random.choice(sfcs)
@@ -428,13 +427,12 @@ class NetworkModelProposal:
 
 
 
-    #def get_target_nfv_nodes_on_shortest_path(self, topology, src_node, dst_node):
-        #list_of_paths = NetworkModelProposal.calculate_all_shortest_paths(topology, src_node, dst_node)
-
-
-
-
-
+    @staticmethod
+    def get_target_nfv_nodes_on_path(topology, src_node, dst_node):
+        list_of_paths = NetworkModelProposal.calculate_all_shortest_paths(topology, src_node, dst_node)
+        min_len_path = min(len(p) for p in list_of_paths)
+        target_path = [p for p in list_of_paths if p in min_len_path]
+        return target_path
 
 
 
