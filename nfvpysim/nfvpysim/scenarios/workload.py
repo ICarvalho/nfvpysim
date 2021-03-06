@@ -88,11 +88,11 @@ class StationaryWorkloadVarLenSfc:
 
     """
 
-    def __init__(self, topology, rate=1.0, n_warmup=0, n_measured=4 * 10 ** 5, seed=None):
+    def __init__(self, topology, sfc_req_rate =1.0, n_warmup=0, n_measured=4 * 10 ** 5, seed=None):
 
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
-        self.rate = rate
+        self.rate = sfc_req_rate
         self.n_measured = n_measured
         self.n_warmup = n_warmup
         random.seed(seed)

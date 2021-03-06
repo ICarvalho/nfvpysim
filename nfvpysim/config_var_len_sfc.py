@@ -24,7 +24,7 @@ RESULTS_FORMAT = 'PICKLE'
 
 # Number of times each experiment is replicated
 # This is necessary for extracting confidence interval of selected metrics
-N_REPLICATIONS = 3
+N_REPLICATIONS = 5
 
 # List of metrics to be measured in the experiments
 # The implementation of data collectors are located in ./icarus/execution/collectors.py
@@ -46,21 +46,18 @@ DATA_COLLECTORS = [
 # Number of content requests that are measured after warmup
 VNF_ALLOCATION_SPACE = [8]
 
-SFC_LENS = [2, 3, 4, 5, 6, 7, 8]
+#SFC_LEN = [1, 2, 3, 4, 5, 6, 7, 8]
 
 # Number of warmup requests
 N_WARMUP_REQUESTS = 0
 
 # Number of measured requests
 
-N_MEASURED_REQUESTS = 1* 10 ** 5
-
-
+N_MEASURED_REQUESTS = [10 ** 2, 10 ** 3, 10 ** 4, 10 ** 5]
 
 
 # Number of requests per second (over the whole network)
-SFC_REQ_RATE = 10.0
-#SFC_REQ_RATES = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
+SFC_REQ_RATES = 1.0
 
 # vnf allocation policy
 VNF_ALLOCATION_POLICY = 'STATIC'
@@ -82,18 +79,17 @@ TOPOLOGIES = ['GEANT', 'TATANLD', 'KDL']
 # List of caching and routing strategies
 # The code is located in ./icarus/models/strategy/*.py
 # Remove strategies not needed
-POLICIES = ['GREEDY_WITHOUT_PLACEMENT', 'GREEDY_WITH_ONLINE_PLACEMENT' ]  # 'GREEDY_WITHOUT_PLACEMENT',
+POLICIES = ['GREEDY_WITHOUT_PLACEMENT', 'GREEDY_WITH_ONLINE_PLACEMENT']  # 'GREEDY_WITHOUT_PLACEMENT',
 
 # Instantiate experiment queue
 EXPERIMENT_QUEUE = deque()
 
 # Create tree of experiment configuration
 default = Tree()
-default['workload'] = {'name':  'STATIONARY_SFC_BY_LEN',
-                       'sfc_len': SFC_LENS,
+default['workload'] = {'name':  'STATIONARY_VAR_LEN_SFC', # 'sfc_len': SFC_LEN,
                        'n_warmup': N_WARMUP_REQUESTS,
-                       'n_measured': N_MEASURED_REQUESTS
-                       }
+                       'n_measured': N_MEASURED_REQUESTS,
+                       'sfc_req_rate': SFC_REQ_RATES}
 
 default['vnf_allocation']['name'] = VNF_ALLOCATION_POLICY
 default['nfv_cache_policy']['name'] = NFV_NODE_CACHE_POLICY
@@ -101,15 +97,15 @@ default['nfv_cache_policy']['name'] = NFV_NODE_CACHE_POLICY
 
 
 # Create experiments multiplexing all desired parameters
-for sfc_len in SFC_LENS:
+for n_measured_request in N_MEASURED_REQUESTS:
     for policy in POLICIES:
         for topology in TOPOLOGIES:
             for vnf_allocation_space in VNF_ALLOCATION_SPACE:
                 experiment = copy.deepcopy(default)
-                experiment['workload']['sfc_len'] = sfc_len
+                experiment['workload']['n_measured'] = n_measured_request
                 experiment['policy']['name'] = policy
                 experiment['topology']['name'] = topology
                 experiment['vnf_allocation']['network_cache'] = vnf_allocation_space
-                experiment['desc'] = "policy: %s, topology: %s, network cache: %s" \
-                                     % (policy, topology, str(vnf_allocation_space))
+                experiment['desc'] = "n_measured_request: %s, policy: %s, topology: %s, network cache: %s" \
+                                     % (n_measured_request, policy, topology, str(vnf_allocation_space))
                 EXPERIMENT_QUEUE.append(experiment)

@@ -342,9 +342,11 @@ class NetworkModelProposal:
     @staticmethod
     def select_hod_vnfs():
         sfcs = [
-                [1, 2, 3, 4, 5, 8],
-                [3, 5, 6],
-                [2, 3],
+                [5, 7, 4, 3],
+                [2, 4, 1],
+                [6, 8, 4, 7],
+                [1, 3, 4, 6],
+                [6, 5, 8, 1, 2],
 
             ]
         return random.choice(sfcs)
@@ -376,7 +378,7 @@ class NetworkModelProposal:
             return ing_nodes
 
     @staticmethod
-    def get_egress_nodes(self, topology):
+    def get_egress_nodes(topology):
 
         if isinstance(topology, fnss.Topology):
             egr_nodes = []
@@ -410,15 +412,26 @@ class NetworkModelProposal:
             return self.topology.node[node]['stack'][0] == 'egress_node'
 
 
+    def get_closest_nfv_node(self, path):
+        dist_nfv_node_egress_node = {}
+        egress_node = self.get_egress_node_path(path)
+        nfv_nodes_candidates = self.get_nfv_nodes(path)
+        for nfv_node in nfv_nodes_candidates:
+            dist_nfv_node_egress_node[nfv_node] = self.get_shortest_path_between_two_nodes(nfv_node, egress_node)
+        closest_nfv_node = min(dist_nfv_node_egress_node.keys())
+        return closest_nfv_node
+
+
 
     def get_shortest_path_between_two_nodes(self, source, target):
-        if self.topology.node[source]['stack'][0] == 'nfv_node':
-            return nx.shortest_path_length(source, target)
+        return self.shortest_path[source][target]
 
 
 
-    def get_target_nfv_nodes_on_shortest_path(self, topology, src_node, dst_node):
-        list_of_paths = NetworkModelProposal.calculate_all_shortest_paths(topology, src_node, dst_node)
+    #def get_target_nfv_nodes_on_shortest_path(self, topology, src_node, dst_node):
+        #list_of_paths = NetworkModelProposal.calculate_all_shortest_paths(topology, src_node, dst_node)
+
+
 
 
 
@@ -483,7 +496,6 @@ class NetworkController:
 
 
 
-
     def get_vnf(self, node, vnf):
         if node in self.model.nfv_cache:
             has_vnf = self.model.nfv_cache[node].get_vnf(vnf)
@@ -510,13 +522,7 @@ class NetworkController:
 
 
     def get_closest_nfv_node(self, path):
-        dist_nfv_node_egress_node = {}
-        egress_node = self.model.get_egress_nodes(path)
-        nfv_nodes_candidates = self.model.get_nfv_nodes(path)
-        for nfv_node in nfv_nodes_candidates:
-            dist_nfv_node_egress_node[nfv_node] = self.model.get_shortest_path_between_two_nodes(nfv_node, egress_node)
-        closest_nfv_node = min(dist_nfv_node_egress_node.keys())
-        return closest_nfv_node
+        return self.model.get_closest_nfv_node(path)
 
 
 
