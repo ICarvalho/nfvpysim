@@ -18,6 +18,7 @@ def truncate(number, digits):
     return math.trunc(stepper * number) / stepper
 
 
+
 @register_workload('STATIONARY_SFC_BY_LEN')
 class StationaryWorkloadSfcByLen:
 
