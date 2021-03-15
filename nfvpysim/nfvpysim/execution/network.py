@@ -342,7 +342,7 @@ class NetworkModelProposal:
     @staticmethod
     def select_hod_vnfs():
         sfcs = [
-                [1, 2, 5, 8],
+                [1, 5, 7, 8],
                 [3, 2, 4, 5],
                 [2, 3, 6],
 
@@ -353,10 +353,17 @@ class NetworkModelProposal:
 
 
 
+
+
     # Compute the shortest path between ingress and egress node
     @staticmethod
     def shortest_path(topology, ingress_node, egress_node):
         return nx.shortest_path(topology, ingress_node,egress_node)
+
+
+    @staticmethod
+    def shortest_path_len(topology, src_node, targ_node):
+        return nx.shortest_path_length(topology, src_node, targ_node)
 
 
     @staticmethod
@@ -399,8 +406,6 @@ class NetworkModelProposal:
         return nfv_nodes
 
 
-
-
     def get_ingress_node_path(self, path):
         for node in path:
             return self.topology.node[node]['stack'][0] == 'ingress_node'
@@ -416,23 +421,20 @@ class NetworkModelProposal:
         egress_node = self.get_egress_node_path(path)
         nfv_nodes_candidates = self.get_nfv_nodes_path(path)
         for nfv_node in nfv_nodes_candidates:
-            dist_nfv_node_egress_node[nfv_node] = self.get_shortest_path_between_two_nodes(nfv_node, egress_node)
+            dist_nfv_node_egress_node[nfv_node] = len(self.get_shortest_path_between_two_nodes(nfv_node, egress_node))
         closest_nfv_node = min(dist_nfv_node_egress_node.keys())
         return closest_nfv_node
-
 
 
     def get_shortest_path_between_two_nodes(self, source, target):
         return self.shortest_path[source][target]
 
 
-
     @staticmethod
-    def get_target_nfv_nodes_on_path(topology, src_node, dst_node):
+    def get_min_len_path(topology, src_node, dst_node):
         list_of_paths = NetworkModelProposal.calculate_all_shortest_paths(topology, src_node, dst_node)
         min_len_path = min(len(p) for p in list_of_paths)
-        target_path = [p for p in list_of_paths if p in min_len_path]
-        return target_path
+        return min_len_path
 
 
 
