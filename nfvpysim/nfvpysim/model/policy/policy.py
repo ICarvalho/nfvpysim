@@ -113,5 +113,6 @@ class GreedyWithOnlinePlacementPolicy(Policy):
                             self.controller.proc_vnf_payload(u, v)
                 if all(value == 1 for value in vnf_status.values()) and v == egress_node:
                     self.controller.sfc_hit(sfc_id)
+                    break
 
         self.controller.end_session()

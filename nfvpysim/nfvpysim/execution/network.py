@@ -390,7 +390,7 @@ class NetworkModelProposal:
 
 
 
-    def get_nfv_nodes(self, path):
+    def get_nfv_nodes_path(self, path):
 
         nfv_nodes = []
         for node in path:
@@ -414,7 +414,7 @@ class NetworkModelProposal:
     def get_closest_nfv_node(self, path):
         dist_nfv_node_egress_node = {}
         egress_node = self.get_egress_node_path(path)
-        nfv_nodes_candidates = self.get_nfv_nodes(path)
+        nfv_nodes_candidates = self.get_nfv_nodes_path(path)
         for nfv_node in nfv_nodes_candidates:
             dist_nfv_node_egress_node[nfv_node] = self.get_shortest_path_between_two_nodes(nfv_node, egress_node)
         closest_nfv_node = min(dist_nfv_node_egress_node.keys())
@@ -433,9 +433,6 @@ class NetworkModelProposal:
         min_len_path = min(len(p) for p in list_of_paths)
         target_path = [p for p in list_of_paths if p in min_len_path]
         return target_path
-
-
-
 
 
 
