@@ -1,6 +1,7 @@
 import networkx as nx
 import fnss
 import random
+from collections import defaultdict
 from nfvpysim.registry import CACHE_POLICY
 from nfvpysim.util import path_links
 import logging
@@ -353,17 +354,9 @@ class NetworkModelProposal:
 
 
 
-
-
-    # Compute the shortest path between ingress and egress node
     @staticmethod
-    def shortest_path(topology, ingress_node, egress_node):
-        return nx.shortest_path(topology, ingress_node,egress_node)
-
-
-    @staticmethod
-    def shortest_path_len(topology, src_node, targ_node):
-        return nx.shortest_path_length(topology, src_node, targ_node)
+    def shortest_path_len(topology, ingress_node, egress_node):
+        return nx.shortest_path_length(topology, ingress_node, egress_node)
 
 
     @staticmethod
@@ -394,6 +387,19 @@ class NetworkModelProposal:
                     egr_nodes.append(node)
 
             return egr_nodes
+
+
+    @staticmethod
+    def get_nfv_nodes(topology):
+
+        if isinstance(topology, fnss.Topology):
+            nfv_nodes = []
+            for node in topology.nodes():
+                stack_name, stack_props = fnss.get_stack(topology, node)
+                if stack_name == 'nfv_node':
+                    nfv_nodes.append(node)
+
+            return nfv_nodes
 
 
 
@@ -430,11 +436,33 @@ class NetworkModelProposal:
         return self.shortest_path[source][target]
 
 
-    @staticmethod
-    def get_min_len_path(topology, src_node, dst_node):
-        list_of_paths = NetworkModelProposal.calculate_all_shortest_paths(topology, src_node, dst_node)
-        min_len_path = min(len(p) for p in list_of_paths)
-        return min_len_path
+    def get_target_nfv_nodes_place_vnfs(self, topology):
+        path_dist = defaultdict(dict)
+        all_pairs_dist = dict(nx.all_pairs_shortest_path(topology))
+        ing_nodes = NetworkModelProposal.get_ingress_nodes(topology)
+        egr_nodes = NetworkModelProposal.get_egress_nodes(topology)
+        nfv_nodes = NetworkModelProposal.get_nfv_nodes(topology)
+        for ing_node in ing_nodes:
+            for egr_node in egr_nodes:
+                ing_egr_dist = all_pairs_dist[ing_node][egr_node]
+                path_dist[ing_node][egr_node] = ing_egr_dist
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
