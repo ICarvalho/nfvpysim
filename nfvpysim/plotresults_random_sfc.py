@@ -41,8 +41,8 @@ PLOT_EMPTY_GRAPHS = True
 # On-path strategies: dashed lines
 # No-cache: dotted line
 POLICY_STYLE = {
-    'GREEDY_WITHOUT_PLACEMENT': 'b-o',
-    'GREEDY_WITH_ONLINE_PLACEMENT': 'g-->',
+    'RND_VAR_LEN_VNF_PLC': 'r--*',
+    'HOD_PLC': 'k--o',
     # 'HR_MULTICAST':    'm-^',
     # 'HR_HYBRID_AM':    'c-s',
     # 'HR_HYBRID_SM':    'r-v',
@@ -58,8 +58,8 @@ POLICY_STYLE = {
 
 # This dict maps name of strategies to names to be displayed in the legend
 POLICY_LEGEND = {
-    'GREEDY_WITHOUT_PLACEMENT': 'GWP',
-    'GREEDY_WITH_ONLINE_PLACEMENT': 'GWOP',
+    'GREEDY_WITHOUT_PLACEMENT': 'RND_VAR_LEN_SFC_PLC',
+    'GREEDY_WITH_ONLINE_PLACEMENT': 'HOD_PLC',
     # 'HR_SYMM':         'HR Symm',
     # 'HR_ASYMM':        'HR Asymm',
     # 'HR_MULTICAST':    'HR Multicast',
@@ -75,16 +75,16 @@ POLICY_LEGEND = {
 
 # Color and hatch styles for bar charts of cache hit ratio and link load vs topology
 POLICY_BAR_COLOR = {
-    'GWP': 'k',
-    'GWOP': '0.4',
+    'RND_VAR_LEN_SFC_PLC': 'k',
+    'HOD_PLC': '0.4',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
 }
 
 POLICY_BAR_HATCH = {
-    'GWP': None,
-    'GWOP': '//',
+    'RND_VAR_LEN_SFC_PLC': None,
+    'HOD_PLC': '//',
     # 'NO_CACHE':     'x',
     # 'HR_ASYMM':     '+',
     # 'HR_SYMM':      '\\'

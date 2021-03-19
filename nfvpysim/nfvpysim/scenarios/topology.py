@@ -209,9 +209,9 @@ def topology_ion(**kwargs):
 
     topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/Ion.graphml').to_undirected() # 146  nodes
     deg = nx.degree(topology)
-    ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 11 nodes
+    ingress_nodes = [v for v in topology.nodes() if deg[v] == 2]   # 73 nodes
     egress_nodes = [v for v in topology.nodes() if deg[v] == 3]  # 33 nodes
-    nfv_nodes = [v for v in topology.nodes() if deg[v] == 2 and v not in ingress_nodes + egress_nodes]  # 73 nodes
+    nfv_nodes = [v for v in topology.nodes() if deg[v] == 1 and v not in ingress_nodes + egress_nodes]  # 11 nodes
     topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
 
     # ion

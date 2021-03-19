@@ -290,6 +290,7 @@ class NetworkModelProposal:
 
 
         self.topology = topology
+        self.nfv_nodes_list = None
 
         self.dict_vnfs_cpu_req_proc_delay = {1: 15,   # nat
                                              2: 25,   # fw
@@ -333,23 +334,24 @@ class NetworkModelProposal:
         self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_cache_size[node], **policy_args)
                           for node in nfv_cache_size}
 
+        self.nfv_nodes_list = list(self.nfv_cache.keys())
+
         for node in self.nfv_cache:
             #vnfs = NetworkModel.var_len_seq_sfc()
-            #vnfs = NetworkModelProposal.select_hod_vnfs()
+            vnfs = NetworkModelProposal.select_hod_vnfs()
             #vnf = NetworkModel.select_random_vnf()
-            nfv_nodes = self.get_target_nfv_nodes_place_vnfs(topology)
-            for nfv_node in nfv_nodes:
-                if nfv_node in self.nfv_cache:
-                    hod_vnfs = NetworkModelProposal.select_hod_vnfs()
-                    for vnf in hod_vnfs:
-                        self.nfv_cache[node].add_vnf(vnf)
+            #nfv_nodes = self.get_target_nfv_nodes_place_vnfs(topology)
+            for vnf in vnfs:
+                self.nfv_cache[node].add_vnf(vnf)
 
     @staticmethod
     def select_hod_vnfs():
         sfcs = [
-                [1, 5, 7, 8],
-                [3, 2, 4, 5],
-                [2, 3, 6],
+                [1, 8, 3],
+                [1, 2, 3],
+                [6, 2, 3],
+                [1, 5, 4],
+                [3, 4, 5, 6],
 
 
             ]
@@ -370,7 +372,6 @@ class NetworkModelProposal:
 
     @staticmethod
     def get_ingress_nodes(topology):
-
         if isinstance(topology, fnss.Topology):
             ing_nodes = []
             for node in topology.nodes():
@@ -382,7 +383,6 @@ class NetworkModelProposal:
 
     @staticmethod
     def get_egress_nodes(topology):
-
         if isinstance(topology, fnss.Topology):
             egr_nodes = []
             for node in topology.nodes():
@@ -395,7 +395,6 @@ class NetworkModelProposal:
 
     @staticmethod
     def get_nfv_nodes(topology):
-
         if isinstance(topology, fnss.Topology):
             nfv_nodes = []
             for node in topology.nodes():
@@ -407,32 +406,35 @@ class NetworkModelProposal:
 
 
 
-    def get_nfv_nodes_path(self, topology, path):
+    def get_nfv_nodes_path(self,path):
         nfv_nodes = []
         for node in path:
-            if topology.node[node]['stack'][0] == 'nfv_node':
+            if self.topology.node[node]['stack'][0] == 'nfv_node':
                 nfv_nodes.append(node)
         return nfv_nodes
 
 
-    def get_ingress_node_path(self, topology, path):
+    def get_ingress_node_path(self, path):
         for node in path:
-            return topology.node[node]['stack'][0] == 'ingress_node'
+            if self.topology.node[node]['stack'][0] == 'ingress_node':
+                return node
 
 
-    def get_egress_node_path(self, topology, path):
+    def get_egress_node_path(self, path):
         for node in path:
-            return topology.node[node]['stack'][0] == 'egress_node'
+            if self.topology.node[node]['stack'][0] == 'egress_node':
+                return node
 
 
 
-    def get_closest_nfv_node(self, topology, path_list):
+    def get_closest_nfv_node(self,path_list):
         dist_nfv_node_egress_node = {}
-        egress_node = self.get_egress_node_path(topology, path_list)
-        nfv_nodes_candidates = self.get_nfv_nodes_path(topology, path_list)
+        egress_node = self.get_egress_node_path(path_list)
+        nfv_nodes_candidates = self.nfv_nodes_list
         for nfv_node in nfv_nodes_candidates:
-            dist_nfv_node_egress_node[nfv_node] = len(self.get_shortest_path_between_two_nodes(nfv_node, egress_node))
-        closest_nfv_node = min(dist_nfv_node_egress_node, key=dist_nfv_node_egress_node.get)
+            dist_nfv_node_egress_node[nfv_node] =  len(self.get_shortest_path_between_two_nodes(nfv_node, egress_node))
+        closest_nfv_node = min(dist_nfv_node_egress_node,  key = lambda k: dist_nfv_node_egress_node[k]) \
+        if len(dist_nfv_node_egress_node) > 0 else print("no nfv_nodes found")
         return closest_nfv_node
 
 
@@ -450,7 +452,7 @@ class NetworkModelProposal:
             for egr_node in egr_nodes:
                 ing_egr_dist_list = all_pairs_dist[ing_node][egr_node]
                 path_dist[ing_node][egr_node] = ing_egr_dist_list
-                closest_nfv_node = self.get_closest_nfv_node(topology, ing_egr_dist_list)
+                closest_nfv_node = self.get_closest_nfv_node(ing_egr_dist_list)
                 if closest_nfv_node not in target_nfv_nodes:
                     target_nfv_nodes.append(closest_nfv_node)
         return target_nfv_nodes
