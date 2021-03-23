@@ -41,8 +41,8 @@ PLOT_EMPTY_GRAPHS = True
 # On-path strategies: dashed lines
 # No-cache: dotted line
 POLICY_STYLE = {
-    'RND_VAR_LEN_VNF_PLC': 'r--*',
-    'HOD_PLC': 'k--o',
+    'GREEDY_WITHOUT_PLACEMENT': 'r--*',
+    'GREEDY_WITH_ONLINE_PLACEMENT': 'k--o',
     # 'HR_MULTICAST':    'm-^',
     # 'HR_HYBRID_AM':    'c-s',
     # 'HR_HYBRID_SM':    'r-v',
@@ -75,16 +75,16 @@ POLICY_LEGEND = {
 
 # Color and hatch styles for bar charts of cache hit ratio and link load vs topology
 POLICY_BAR_COLOR = {
-    'RND_VAR_LEN_SFC_PLC': 'k',
-    'HOD_PLC': '0.4',
+    'GREEDY_WITHOUT_PLACEMENT': 'k',
+    'GREEDY_WITH_ONLINE_PLACEMENT': '0.4',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
 }
 
 POLICY_BAR_HATCH = {
-    'RND_VAR_LEN_SFC_PLC': None,
-    'HOD_PLC': '//',
+    'GREEDY_WITHOUT_PLACEMENT': None,
+    'GREEDY_WITH_ONLINE_PLACEMENT': '//',
     # 'NO_CACHE':     'x',
     # 'HR_ASYMM':     '+',
     # 'HR_SYMM':      '\\'
