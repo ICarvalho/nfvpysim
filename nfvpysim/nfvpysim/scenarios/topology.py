@@ -207,12 +207,13 @@ def topology_kdl(**kwargs):
 @register_topology_factory('ION')
 def topology_ion(**kwargs):
 
-    topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/Ion.graphml').to_undirected() # 146  nodes
-    deg = nx.degree(topology)
-    ingress_nodes = [v for v in topology.nodes() if deg[v] == 2]   # 73 nodes
-    egress_nodes = [v for v in topology.nodes() if deg[v] == 3]  # 33 nodes
-    nfv_nodes = [v for v in topology.nodes() if deg[v] == 1 and v not in ingress_nodes + egress_nodes]  # 11 nodes
-    topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
+    topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/Garr200112.graphml').to_undirected() # 146  nodes
+    topo_nodes = topology.nodes
+    ingress_nodes = random.sample(topo_nodes, 5)   # 23 nodes
+    #ingress_nodes = random.sample(topo_nodes, 23)   # 23 nodes
+    egress_nodes = random.sample(topo_nodes, 5) # 23 nodes
+    nfv_nodes = random.sample(topo_nodes, 10) # 50 nodes)
+    topology.graph['nfv_nodes_candidates'] = nfv_nodes
 
     # ion
     # deg[v] == 1 = 11
