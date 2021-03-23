@@ -80,7 +80,7 @@ def topology_geant(**kwargs):
     egress_nodes = [v for v in topology.nodes() if deg[v] == 2] # 13 nodes
     nfv_nodes = [v for v in topology.nodes() if deg[v] > 2 and v not in ingress_nodes + egress_nodes] #  19 nodes
     #forwarding_nodes = [v for v in topology.nodes() if v not in ingress_nodes + egress_nodes]
-    topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
+    topology.graph['nfv_nodes_candidates'] = nfv_nodes
     # Add stacks to nodes
     for v in ingress_nodes:
         fnss.add_stack(topology, v, 'ingress_node')
@@ -163,8 +163,8 @@ def topology_kdl(**kwargs):
     topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/Kdl.graphml').to_undirected() # 754 nodes
     deg = nx.degree(topology)
     ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 42 nodes
-    egress_nodes = [v for v in topology.nodes() if deg[v] > 2]  # 45 nodes
-    nfv_nodes = [v for v in topology.nodes() if deg[v] == 2 and v not in ingress_nodes + egress_nodes]   # 483 nodes
+    egress_nodes = [v for v in topology.nodes() if deg[v] == 2]  # 45 nodes
+    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2 and v not in ingress_nodes + egress_nodes]   # 483 nodes
     topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
 
     # kdl
@@ -207,12 +207,11 @@ def topology_kdl(**kwargs):
 @register_topology_factory('ION')
 def topology_ion(**kwargs):
 
-    topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/Garr200112.graphml').to_undirected() # 146  nodes
-    topo_nodes = topology.nodes
-    ingress_nodes = random.sample(topo_nodes, 5)   # 23 nodes
-    #ingress_nodes = random.sample(topo_nodes, 23)   # 23 nodes
-    egress_nodes = random.sample(topo_nodes, 5) # 23 nodes
-    nfv_nodes = random.sample(topo_nodes, 10) # 50 nodes)
+    topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/Ion.graphml').to_undirected() # 146  nodes
+    deg = nx.degree(topology)
+    ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 11 nodes
+    egress_nodes = [v for v in topology.nodes() if deg[v] > 4] # 8 nodes
+    nfv_nodes = [v for v in topology.nodes() if deg[v] == 3] # 33 nodes
     topology.graph['nfv_nodes_candidates'] = nfv_nodes
 
     # ion
