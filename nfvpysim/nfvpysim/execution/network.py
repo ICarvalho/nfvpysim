@@ -4,6 +4,7 @@ import random
 from collections import defaultdict
 from nfvpysim.registry import CACHE_POLICY
 from nfvpysim.util import path_links
+from nfvpysim.execution.collectors import LatencyCollector
 import logging
 logger = logging.getLogger('orchestration')
 
@@ -181,15 +182,8 @@ class NetworkModelBaseLine:
     @staticmethod
     def var_len_seq_sfc():
         var_len_sfc = []
-        sfcs = {1: 15,  # nat
-                2: 25,  # fw
-                3: 25,  # ids
-                4: 20,  # wanopt
-                5: 20,  # lb
-                6: 25,  # encrypt
-                7: 25,  # decrypts
-                8: 30,  # dpi
-                }
+        sfcs = LatencyCollector.dict_vnfs_cpu_req_proc_delay
+
         sfc_len = random.randint(1, 8)
         sum_cpu = 0
         while sfc_len != 0:
@@ -291,16 +285,6 @@ class NetworkModelProposal:
 
         self.topology = topology
         self.nfv_nodes = None
-
-        self.dict_vnfs_cpu_req_proc_delay = {1: 15,   # nat
-                                             2: 25,   # fw
-                                             3: 25,   # ids
-                                             4: 20,   # wanopt
-                                             5: 20,   # lb
-                                             6: 25,   # encrypt
-                                             7: 25,   # decrypt
-                                             8: 25,   # decrypt
-                                  }
 
 
         self.link_type = nx.get_edge_attributes(topology, 'type')

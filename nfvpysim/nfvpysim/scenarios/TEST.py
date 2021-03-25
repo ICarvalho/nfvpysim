@@ -5,6 +5,16 @@ from nfvpysim.execution.network import *
 import random
 from collections import defaultdict
 
+
+for i in range(1, 10):
+    a = random.uniform(10, 20)
+    print(round(a,3))
+    print("{:.2f}".format(a))
+
+
+
+
+"""
 topo = topology_kdl()
 topo_nodes = topo.nodes
 ingress_nodes = random.sample(topo_nodes, 23)   # 23 nodes
@@ -19,6 +29,8 @@ nfv_nodes = random.sample(topo_nodes, 50)
 print(sorted(ingress_nodes))
 print(sorted(egress_nodes))
 print(sorted(nfv_nodes))
+"""
+
 
 
 

@@ -2,6 +2,7 @@ from nfvpysim.util import Tree
 from nfvpysim.registry import register_data_collector
 from nfvpysim.tools.stats import cdf
 import collections
+import random
 
 
 
@@ -182,14 +183,14 @@ class LatencyCollector(DataCollector):
         self.sess_count = 0
         self.latency = 0.0
         self.vnf_proc_time = 0.0
-        self.dict_vnfs_cpu_req_proc_delay = {1: 15,  # nat
-                                             2: 25,  # fw
-                                             3: 25,  # ids
-                                             4: 20,  # wanopt
-                                             5: 20,  # lb
-                                             6: 25,  # encrypt
-                                             7: 25,  # decrypt
-                                             8: 30,  # dpi
+        self.dict_vnfs_cpu_req_proc_delay = {1: LatencyCollector.get_vnf_proc_delay(10, 15),  # nat
+                                             2: LatencyCollector.get_vnf_proc_delay(15, 25),  # fw
+                                             3: LatencyCollector.get_vnf_proc_delay(10, 20),  # ids
+                                             4: LatencyCollector.get_vnf_proc_delay(15, 20),  # wanopt
+                                             5: LatencyCollector.get_vnf_proc_delay(10, 15),  # lb
+                                             6: LatencyCollector.get_vnf_proc_delay(20, 25),  # encrypt
+                                             7: LatencyCollector.get_vnf_proc_delay(20, 25),  # decrypt
+                                             8: LatencyCollector.get_vnf_proc_delay(25, 30),  # dpi
                                              }
 
         if cdf:
@@ -200,6 +201,13 @@ class LatencyCollector(DataCollector):
         self.sess_count += 1
         self.sess_latency = 0.0
         self.vnf_proc_time = 0.0
+
+    @staticmethod
+    def get_vnf_proc_delay(lower, upper):
+        delay = random.uniform(lower, upper)
+        return round(delay, 2)
+
+
 
     def request_vnf_hop(self, u, v, path=True):
         if path:
