@@ -166,7 +166,7 @@ class LatencyCollector(DataCollector):
     content.
     """
 
-    def __init__(self, view, cdf=False, **params):
+    def __init__(self, view, cdf=True, **params):
         """Constructor
         Parameters
         ----------
@@ -206,8 +206,6 @@ class LatencyCollector(DataCollector):
     def get_vnf_proc_delay(lower, upper):
         delay = random.uniform(lower, upper)
         return round(delay, 2)
-
-
 
     def request_vnf_hop(self, u, v, path=True):
         if path:

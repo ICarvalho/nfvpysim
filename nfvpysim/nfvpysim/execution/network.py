@@ -182,7 +182,15 @@ class NetworkModelBaseLine:
     @staticmethod
     def var_len_seq_sfc():
         var_len_sfc = []
-        sfcs = LatencyCollector.dict_vnfs_cpu_req_proc_delay
+        sfcs = {1: LatencyCollector.get_vnf_proc_delay(10, 15),  # nat
+                2: LatencyCollector.get_vnf_proc_delay(15, 25),  # fw
+                3: LatencyCollector.get_vnf_proc_delay(10, 20),  # ids
+                4: LatencyCollector.get_vnf_proc_delay(15, 20),  # wanopt
+                5: LatencyCollector.get_vnf_proc_delay(10, 15),  # lb
+                6: LatencyCollector.get_vnf_proc_delay(20, 25),  # encrypt
+                7: LatencyCollector.get_vnf_proc_delay(20, 25),  # decrypt
+                8: LatencyCollector.get_vnf_proc_delay(25, 30),  # dpi
+                }
 
         sfc_len = random.randint(1, 8)
         sum_cpu = 0
@@ -319,10 +327,10 @@ class NetworkModelProposal:
         self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_cache_size[node], **policy_args)
                           for node in nfv_cache_size}
 
-        self.nfv_nodes = NetworkModelProposal.get_nfv_nodes(topology)
+        self.nfv_nodes = NetworkModelProposal.select_nfv_nodes_path(self,topology)
         #print(self.nfv_nodes)
-        for node in self.nfv_nodes:
-            if node in self.nfv_cache:
+        for node in self.nfv_cache:
+            if node in self.nfv_nodes:
                 #print(node)
                 vnfs = NetworkModelProposal.select_hod_vnfs()
                 for vnf in vnfs:
@@ -335,7 +343,11 @@ class NetworkModelProposal:
                 [3, 5, 6],
                 [6, 2, 3],
                 [1, 2, 3],
-                [3, 2, 5],
+                [5, 2, 1],
+                [3, 2, 4, 5],
+                [1, 5, 4],
+                [4, 6],
+
 
 
             ]
@@ -345,8 +357,8 @@ class NetworkModelProposal:
 
 
     @staticmethod
-    def shortest_path_len(topology, ingress_node, egress_node):
-        return nx.shortest_path_length(topology, ingress_node, egress_node)
+    def shortest_path_len(topology, source_node, dest_node):
+        return nx.shortest_path_length(topology, source_node, dest_node)
 
 
     @staticmethod
@@ -388,28 +400,74 @@ class NetworkModelProposal:
                 return node
 
 
+
+
+    def select_nfv_nodes_path(self, topology):
+        path_dist = defaultdict(list)
+        dist_nfv_egr = defaultdict(int)
+        target_nfv_nodes = []
+        ing_nodes = NetworkModelProposal.get_ingress_nodes(topology)
+        egr_nodes = NetworkModelProposal.get_egress_nodes(topology)
+        for ing_node in ing_nodes:
+            for egr_node in egr_nodes:
+                path_ing_egr = self.shortest_path[ing_node][egr_node]
+                path_dist[ing_node] = path_ing_egr
+                nfv_nodes_path = NetworkModelProposal.get_nfv_nodes_path(topology, path_ing_egr)
+                for nfv_node_path in nfv_nodes_path:
+                    dist_nfv_egr[nfv_node_path] = NetworkModelProposal.shortest_path_len(topology, nfv_node_path, egr_node)
+                    closest_nfv_node = min(dist_nfv_egr, key=lambda k:dist_nfv_egr[k]) if len(dist_nfv_egr) > 0 \
+                        else print("No nfv_node found on path")
+                    if closest_nfv_node not in target_nfv_nodes:
+                        target_nfv_nodes.append(closest_nfv_node)
+        return target_nfv_nodes
+
+    def get_closest_nfv_node_path(self, path):
+        nfv_nodes = []
+        closest_node = None
+        dist_nfv_node_egr_node = defaultdict(int)
+        egr_node = NetworkModelProposal.get_egress_node_path(self.topology, path)
+        for node in path:
+            if self.topology.node[node]['stack'][0] == 'nfv_node':
+                nfv_nodes.append(node)
+        for nfv_node in nfv_nodes:
+            dist_nfv_node_egr_node[nfv_node] = len(self.get_shortest_path_between_two_nodes(nfv_node, egr_node))
+            closest_node = min(dist_nfv_node_egr_node, key=lambda k:dist_nfv_node_egr_node[k]) if len(dist_nfv_node_egr_node) > 0 \
+                else None
+        return closest_node
+
+
+
+
+
+
+
+
+
+
+
+    """
     @staticmethod
     def get_closest_nfv_nodes(topology):
-        dist_nfv_node_egress_node = defaultdict(int)
+        dist_ingress_node_egress_node = defaultdict(int)
         pair_dist = dict(nx.all_pairs_shortest_path_length(topology))
         closest_nfv_nodes = []
+        ingress_nodes = NetworkModelProposal.get_ingress_nodes(topology)
         egress_nodes = NetworkModelProposal.get_egress_nodes(topology)
         nfv_nodes_candidates = NetworkModelProposal.get_nfv_nodes(topology)
-        for nfv_node in nfv_nodes_candidates:
+        for ingress_node in ingress_nodes:
             for egress_node in egress_nodes:
-                dist_nfv_node_egress_node[nfv_node] =  pair_dist[nfv_node][egress_node]
-            closest_nfv_node = min(dist_nfv_node_egress_node,  key=lambda k: dist_nfv_node_egress_node[k])\
-            if len(dist_nfv_node_egress_node) > 0 else print("No nfv_node found")
+                dist_ingress_node_egress_node[ingress_node] =  NetworkModelProposal.get_shortest_path_between_two_nodes(ingress_node, egress_node)
+                closest_nfv_node = min(dist_ingress_node_egress_node,  key=lambda k: dist_nfv_node_egress_node[k])\
+            if len(dist_ingress_node_egress_node) > 0 else print("No nfv_node found")
             if closest_nfv_node not in closest_nfv_nodes:
                 closest_nfv_nodes.append(closest_nfv_node)
         return closest_nfv_nodes
+    """
+
 
 
     def get_shortest_path_between_two_nodes(self, source, target):
         return self.shortest_path[source][target]
-
-
-
 
 
 
@@ -472,7 +530,7 @@ class NetworkController:
         if node in self.model.nfv_cache:
             has_vnf = self.model.nfv_cache[node].get_vnf(vnf)
             if has_vnf:
-                return  True
+                return True
             else:
                 return False
 
@@ -494,7 +552,7 @@ class NetworkController:
 
 
     def get_closest_nfv_node(self, path):
-        return self.model.get_closest_nfv_node(path)
+        return self.model.get_closest_nfv_node_path(path)
 
 
 

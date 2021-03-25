@@ -31,7 +31,7 @@ plt.rcParams['figure.figsize'] = 8, 5
 LEGEND_SIZE = 14
 
 # Line width in pixels
-LINE_WIDTH = 0.6
+LINE_WIDTH = 1.5
 
 # Plot
 PLOT_EMPTY_GRAPHS = True
@@ -41,8 +41,8 @@ PLOT_EMPTY_GRAPHS = True
 # On-path strategies: dashed lines
 # No-cache: dotted line
 POLICY_STYLE = {
-    'GREEDY_WITHOUT_PLACEMENT': 'r--*',
-    'GREEDY_WITH_ONLINE_PLACEMENT': 'k--o',
+    'GREEDY_WITHOUT_PLACEMENT': 'r--D',
+    'GREEDY_WITH_ONLINE_PLACEMENT': 'k--^',
     # 'HR_MULTICAST':    'm-^',
     # 'HR_HYBRID_AM':    'c-s',
     # 'HR_HYBRID_SM':    'r-v',
@@ -58,8 +58,8 @@ POLICY_STYLE = {
 
 # This dict maps name of strategies to names to be displayed in the legend
 POLICY_LEGEND = {
-    'GREEDY_WITHOUT_PLACEMENT': 'RND_VAR_LEN_SFC_PLC',
-    'GREEDY_WITH_ONLINE_PLACEMENT': 'HOD_PLC',
+    'GREEDY_WITHOUT_PLACEMENT': 'RND_VNF_PLC',
+    'GREEDY_WITH_ONLINE_PLACEMENT': 'HOD_PLC(ON)',
     # 'HR_SYMM':         'HR Symm',
     # 'HR_ASYMM':        'HR Asymm',
     # 'HR_MULTICAST':    'HR Multicast',
@@ -76,7 +76,7 @@ POLICY_LEGEND = {
 # Color and hatch styles for bar charts of cache hit ratio and link load vs topology
 POLICY_BAR_COLOR = {
     'GREEDY_WITHOUT_PLACEMENT': 'k',
-    'GREEDY_WITH_ONLINE_PLACEMENT': '0.4',
+    'GREEDY_WITH_ONLINE_PLACEMENT': '0.6',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
@@ -144,16 +144,16 @@ def plot_cache_hits_vs_cache_size(resultset, topology, sfc_len, nfv_cache_size_r
 
 
 
-def plot_link_load_vs_n_sfc_requests(resultset, topology, nfv_cache_size, n_measured_range, policies, plotdir):
+def plot_link_load_vs_n_sfc_requests(resultset, topology, nfv_cache_size, sfc_req_rate_range, policies, plotdir):
     desc = {}
     desc['title'] = 'Average Link Load: T=%s C=%s' % (topology, nfv_cache_size)
     desc['xlabel'] = '#_of_sfc_requests'
     desc['ylabel'] = 'Average Link Load (Mbps)'
     desc['xscale'] = 'log'
-    desc['xparam'] = ('workload', ' n_measured')
-    desc['xvals'] = n_measured_range
+    desc['xparam'] = ('workload', ' sfc_req_rate')
+    desc['xvals'] = sfc_req_rate_range
     desc['filter'] = {'topology': {'name': topology},
-                      'workload': {'name': 'STATIONARY_RANDOM_SFC', 'n_measured': n_measured_range},
+                      'workload': {'name': 'STATIONARY_RANDOM_SFC', 'n_measured': sfc_req_rate_range},
                       'vnf_allocation': {'network_cache': nfv_cache_size}}
     desc['ymetrics'] = [('LINK_LOAD', 'MEAN_INTERNAL')] * len(policies)
     desc['ycondnames'] = [('policy', 'name')] * len(policies)
@@ -164,7 +164,7 @@ def plot_link_load_vs_n_sfc_requests(resultset, topology, nfv_cache_size, n_meas
     desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
     plot_lines(resultset, desc, 'LINK_LOAD_INTERNAL_T=%s@C=%s.pdf'
-               % (topology, n_measured_range), plotdir)
+               % (topology, sfc_req_rate_range), plotdir)
 
 
 """
@@ -279,7 +279,7 @@ def plot_link_load_vs_topology(resultset, n_measured, nfv_cache_size, topology_r
     desc['xparam'] = ('topology', 'name')
     desc['xvals'] = topology_range
     desc['filter'] = {'vnf_allocation': {'network_cache': nfv_cache_size},
-                      'workload': {'name': 'STATIONARY_SFC_BY_LEN', 'n_measured': n_measured}}
+                      'workload': {'name': 'STATIONARY_RANDOM_SFC', 'n_measured': n_measured}}
     desc['ymetrics'] = [('LINK_LOAD', 'MEAN_INTERNAL')] * len(policies)
     desc['ycondnames'] = [('policy', 'name')] * len(policies)
     desc['ycondvals'] = policies

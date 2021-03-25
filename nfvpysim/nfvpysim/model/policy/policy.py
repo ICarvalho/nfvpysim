@@ -37,15 +37,13 @@ class GreedyWithoutPlacement(Policy):
             u = path[hop - 1]
             v = path[hop]
             self.controller.forward_request_vnf_hop(u, v)
-            if self.view.is_nfv_node(v) and v != egress_node:
+            if self.view.is_nfv_node(v):
                 for vnf in sfc:
                     if self.controller.get_vnf(v, vnf):
                         if vnf_status[vnf] == 0:
                             vnf_status[vnf] = 1
                             self.controller.vnf_proc(vnf)
                             self.controller.proc_vnf_payload(u, v)
-                    else:
-                        continue
             if all(value == 1 for value in vnf_status.values()) and v == egress_node:
                 self.controller.sfc_hit(sfc_id)
 
@@ -95,10 +93,21 @@ class GreedyWithOnlinePlacementPolicy(Policy):
                             self.controller.vnf_proc(vnf)
                             self.controller.proc_vnf_payload(u, v)
                     else:
-                        continue
+                        missed_vnfs.append(vnf)
+
+            if len(missed_vnfs) != 0:
+                sum_cpu_missed_vnfs = GreedyWithOnlinePlacementPolicy.sum_vnfs_cpu(missed_vnfs)
+                nfv_node_min_cpu_all = self.controller.find_nfv_node_with_min_cpu_alloc(ingress_node, egress_node)
+                closest_nfv_node = self.controller.get_closest_nfv_node(path)
+                # sum_cpu_vnfs_on_node = self.controller.sum_vnfs_cpu_on_node(closest_nfv_node)
+                if v == closest_nfv_node and v == nfv_node_min_cpu_all:
+                    for missed_vnf in missed_vnfs:
+                        vnf_status[missed_vnf] = 1
+                        self.controller.put_vnf(v, missed_vnf)
+                        self.controller.vnf_proc(missed_vnf)
+                        self.controller.proc_vnf_payload(u, v)
             if all(value == 1 for value in vnf_status.values()) and v == egress_node:
                 self.controller.sfc_hit(sfc_id)
-
 
         self.controller.end_session()
 

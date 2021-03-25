@@ -6,20 +6,12 @@ import random
 from collections import defaultdict
 
 
-for i in range(1, 10):
-    a = random.uniform(10, 20)
-    print(round(a,3))
-    print("{:.2f}".format(a))
 
-
-
-
-"""
 topo = topology_kdl()
 topo_nodes = topo.nodes
 ingress_nodes = random.sample(topo_nodes, 23)   # 23 nodes
-egress_nodes = random.sample(topo_nodes, 23)  # 23 nodes
-nfv_nodes = random.sample(topo_nodes, 50)
+egress_nodes = random.sample(topo_nodes, 23) # 23 nodes
+nfv_nodes = random.sample(topo_nodes, 23)
 
 #path = nx.shortest_path(topo, 257, 22)
 #nodes = list(topo.nodes)
@@ -30,18 +22,12 @@ print(sorted(ingress_nodes))
 print(sorted(egress_nodes))
 print(sorted(nfv_nodes))
 """
-
-
-
+257 382 644 ing_nodes
+512 22 40  egr_nodes
+"""
 
 
 """
-
-257 382 644 ing_nodes
-512 22 40  egr_nodes
-
-
-
 path_dist = defaultdict(dict)
 all_pairs_dist = dict(nx.all_pairs_shortest_path(topo))
 ing_nodes = NetworkModelProposal.get_ingress_nodes(topo)

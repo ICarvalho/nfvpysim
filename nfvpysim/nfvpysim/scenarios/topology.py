@@ -116,7 +116,7 @@ def topology_tatanld(**kwargs):
     deg = nx.degree(topology)
     ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 9 nodes
     egress_nodes = [v for v in topology.nodes() if deg[v] == 2]  # 34 nodes
-    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2 ]   # 80 nodes
+    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2 and v not in ingress_nodes + egress_nodes]   # 80 nodes
     topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
 
     # ttln
@@ -210,8 +210,8 @@ def topology_ion(**kwargs):
     topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/Ion.graphml').to_undirected() # 146  nodes
     deg = nx.degree(topology)
     ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 11 nodes
-    egress_nodes = [v for v in topology.nodes() if deg[v] > 4] # 8 nodes
-    nfv_nodes = [v for v in topology.nodes() if deg[v] == 3] # 33 nodes
+    egress_nodes = [v for v in topology.nodes() if deg[v] == 2] # 8 nodes
+    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2] # 33 nodes
     topology.graph['nfv_nodes_candidates'] = nfv_nodes
 
     # ion
@@ -256,8 +256,8 @@ def topology_bestel(**kwargs):
     topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/RedBestel.graphml').to_undirected() # 84 nodes
     deg = nx.degree(topology)
     ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 10 nodes
-    egress_nodes = [v for v in topology.nodes() if deg[v] == 4]  # 14 nodes
-    nfv_nodes = [v for v in topology.nodes() if deg[v] == 2 and v not in ingress_nodes + egress_nodes]  # 54 nodes
+    egress_nodes = [v for v in topology.nodes() if deg[v] == 2]  # 14 nodes
+    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2 and v not in ingress_nodes + egress_nodes]  # 54 nodes
     topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
 
     # bestel
