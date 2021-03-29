@@ -335,6 +335,8 @@ class NetworkModelProposal:
                 vnfs = NetworkModelProposal.select_hod_vnfs()
                 for vnf in vnfs:
                     self.nfv_cache[node].add_vnf(vnf)
+                    print(node)
+
 
     @staticmethod
     def select_hod_vnfs():
