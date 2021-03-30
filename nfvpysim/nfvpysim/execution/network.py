@@ -150,7 +150,7 @@ class NetworkModelBaseLine:
                 if 'cache_size' in stack_props:
                     nfv_cache_size[node] = stack_props['cache_size']
         if any(c < 8 for c in nfv_cache_size.values()):
-            logger.warning('Some nfv node caches have size less than 8. '
+            logger.warning('Some nfv node caches have size less than 8.'
                         'I am setting them to 8 and run the experiment anyway')
             for node in nfv_cache_size:
                 if nfv_cache_size[node] < 8:
@@ -327,15 +327,15 @@ class NetworkModelProposal:
         self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_cache_size[node], **policy_args)
                           for node in nfv_cache_size}
 
-        self.nfv_nodes = NetworkModelProposal.select_nfv_nodes_path(self,topology)
+        self.nfv_nodes = NetworkModelProposal.select_nfv_nodes_path(self, topology)
         #print(self.nfv_nodes)
         for node in self.nfv_cache:
             if node in self.nfv_nodes:
                 #print(node)
-                vnfs = NetworkModelProposal.select_hod_vnfs()
+                vnfs = NetworkModelProposal.select_target_sfc()
                 for vnf in vnfs:
                     self.nfv_cache[node].add_vnf(vnf)
-                    print(node)
+                    self.nfv_cache[node].list_nfv_cache()
 
 
     @staticmethod
@@ -349,11 +349,14 @@ class NetworkModelProposal:
                 [3, 2, 4, 5],
                 [1, 5, 4],
                 [4, 6],
-
-
-
             ]
         return random.choice(sfcs)
+
+    @staticmethod
+    def select_target_sfc():
+        sfc = NetworkModelProposal.select_hod_vnfs()
+        return random.Random(500).choice(NetworkModelProposal.select_hod_vnfs())
+
 
 
 
