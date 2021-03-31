@@ -292,8 +292,6 @@ class NetworkModelProposal:
 
 
         self.topology = topology
-        self.nfv_nodes = None
-
 
         self.link_type = nx.get_edge_attributes(topology, 'type')
         self.link_delay = fnss.get_delays(topology)
@@ -328,11 +326,11 @@ class NetworkModelProposal:
                           for node in nfv_cache_size}
 
         self.nfv_nodes = NetworkModelProposal.select_nfv_nodes_path(self, topology)
-        #print(self.nfv_nodes)
+        print(self.nfv_nodes)
         for node in self.nfv_cache:
             if node in self.nfv_nodes:
-                #print(node)
-                vnfs = NetworkModelProposal.select_target_sfc()
+                print(node)
+                vnfs = NetworkModelProposal.select_hod_vnfs()
                 for vnf in vnfs:
                     self.nfv_cache[node].add_vnf(vnf)
                     self.nfv_cache[node].list_nfv_cache()
@@ -352,10 +350,6 @@ class NetworkModelProposal:
             ]
         return random.choice(sfcs)
 
-    @staticmethod
-    def select_target_sfc():
-        sfc = NetworkModelProposal.select_hod_vnfs()
-        return random.Random(500).choice(NetworkModelProposal.select_hod_vnfs())
 
 
 
