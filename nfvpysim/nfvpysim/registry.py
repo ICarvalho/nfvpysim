@@ -11,6 +11,9 @@ TOPOLOGY_FACTORY = {}
 # Dictionary storying all cache placement functions keyed by ID
 VNF_ALLOCATION = {}
 
+# Dictionary storying all vnf palcement functions keyed by ID
+VNF_PLACEMENT = {}
+
 # Dictionary storying all workload generators keyed by ID
 WORKLOAD = {}
 
@@ -55,6 +58,7 @@ register_cache_policy = register_decorator(CACHE_POLICY)
 register_policy = register_decorator(POLICY)
 register_topology_factory = register_decorator(TOPOLOGY_FACTORY)
 register_vnf_allocation = register_decorator(VNF_ALLOCATION)
+register_vnf_placement = register_decorator(VNF_PLACEMENT)
 register_workload = register_decorator(WORKLOAD)
 register_data_collector = register_decorator(DATA_COLLECTOR)
 register_results_reader = register_decorator(RESULTS_READER)
