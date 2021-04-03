@@ -53,9 +53,10 @@ class NfvTopology(fnss.Topology):
         """
         :return: return a set of ingress nodes
         """
-        return set(v for v in self
-                   if 'stack' in self.node[v]
-                   and self.node[v]['stack'][0] == 'nfv_node')
+        return set (v for v in self
+                if 'stack' in self.node[v]
+                and self.node[v]['stack'][0] == 'nfv_node'
+                and 'cache_size' in self.node[v]['stack'][1])
 
 
     """
