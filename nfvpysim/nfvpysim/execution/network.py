@@ -341,15 +341,18 @@ class NetworkModelProposal:
 
 
         def hod_vnfs_assignment(nfv_nodes, sfcs):
-            return dict(zip(nfv_nodes, cycle(sfcs)))
+            if len(nfv_nodes) < len(sfcs):
+                return dict(zip(cycle(nfv_nodes), sfcs))
+            else:
+                return dict(zip(nfv_nodes, cycle(sfcs)))
 
 
         self.nfv_nodes = NetworkModelProposal.select_nfv_nodes_path(self, topology)
-        #print(self.nfv_nodes)
+        print(self.nfv_nodes)
         target_nfv_nodes = hod_vnfs_assignment(self.nfv_nodes, hods_vnfs)
         for target_nfv_node in target_nfv_nodes:
             if target_nfv_node in self.nfv_cache:
-                #print(target_nfv_node)
+                print(target_nfv_node)
                 vnfs = target_nfv_nodes[target_nfv_node]
                 for vnf in vnfs:
                     self.nfv_cache[target_nfv_node].add_vnf(vnf)
