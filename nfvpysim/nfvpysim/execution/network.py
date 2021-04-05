@@ -1,11 +1,13 @@
 import networkx as nx
 import fnss
+from itertools import cycle
 import random
 from collections import defaultdict
 from nfvpysim.registry import CACHE_POLICY
 from nfvpysim.util import path_links
 from nfvpysim.execution.collectors import LatencyCollector
 import logging
+from multi_key_dict import multi_key_dict
 logger = logging.getLogger('orchestration')
 
 
@@ -292,6 +294,7 @@ class NetworkModelProposal:
 
 
         self.topology = topology
+        self.nfv_cache = None
 
         self.link_type = nx.get_edge_attributes(topology, 'type')
         self.link_delay = fnss.get_delays(topology)
@@ -325,32 +328,32 @@ class NetworkModelProposal:
         self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_cache_size[node], **policy_args)
                           for node in nfv_cache_size}
 
+        hods_vnfs = [
+            [2, 5, 8],
+            [3, 5, 6],
+            [6, 2, 3],
+            [1, 2, 3],
+            [5, 2, 1],
+            [3, 2, 4, 5],
+            [1, 5, 4],
+            [4, 6],
+        ]
+
+
+        def hod_vnfs_assignment(nfv_nodes, sfcs):
+            return dict(zip(nfv_nodes, cycle(sfcs)))
+
+
         self.nfv_nodes = NetworkModelProposal.select_nfv_nodes_path(self, topology)
-        print(self.nfv_nodes)
-        for node in self.nfv_cache:
-            if node in self.nfv_nodes:
-                print(node)
-                vnfs = NetworkModelProposal.select_hod_vnfs()
+        #print(self.nfv_nodes)
+        target_nfv_nodes = hod_vnfs_assignment(self.nfv_nodes, hods_vnfs)
+        for target_nfv_node in target_nfv_nodes:
+            if target_nfv_node in self.nfv_cache:
+                #print(target_nfv_node)
+                vnfs = target_nfv_nodes[target_nfv_node]
                 for vnf in vnfs:
-                    self.nfv_cache[node].add_vnf(vnf)
-                    self.nfv_cache[node].list_nfv_cache()
-
-
-    @staticmethod
-    def select_hod_vnfs():
-        sfcs = [
-                [2, 5, 8],
-                [3, 5, 6],
-                [6, 2, 3],
-                [1, 2, 3],
-                [5, 2, 1],
-                [3, 2, 4, 5],
-                [1, 5, 4],
-                [4, 6],
-            ]
-        return random.choice(sfcs)
-
-
+                    self.nfv_cache[target_nfv_node].add_vnf(vnf)
+                    self.nfv_cache[target_nfv_node].list_nfv_cache()
 
 
 
