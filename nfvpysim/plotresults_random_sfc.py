@@ -75,15 +75,15 @@ POLICY_LEGEND = {
 
 # Color and hatch styles for bar charts of cache hit ratio and link load vs topology
 POLICY_BAR_COLOR = {
-    'GREEDY_WITHOUT_PLACEMENT': 'k',
-    'GREEDY_WITH_ONLINE_PLACEMENT': '0.6',
+    'GREEDY_WITHOUT_PLACEMENT': '0.7',
+    'GREEDY_WITH_ONLINE_PLACEMENT': '0.3',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
 }
 
 POLICY_BAR_HATCH = {
-    'GREEDY_WITHOUT_PLACEMENT': None,
+    'GREEDY_WITHOUT_PLACEMENT': '\\',
     'GREEDY_WITH_ONLINE_PLACEMENT': '//',
     # 'NO_CACHE':     'x',
     # 'HR_ASYMM':     '+',

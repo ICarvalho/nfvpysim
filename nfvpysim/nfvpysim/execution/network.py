@@ -167,7 +167,7 @@ class NetworkModelBaseLine:
             else:
                 return dict(zip(nfv_nodes, cycle(vnfs)))
 
-        vnfs = [1, 2, 3, 4, 5, 6, 7, 8]
+        vnfs = [2, 1, 8, 6, 5, 7, 4, 3]
 
         policy_name = nfv_cache_policy['name']
         policy_args = {k: v for k, v in nfv_cache_policy.items() if k != 'name'}
@@ -175,14 +175,15 @@ class NetworkModelBaseLine:
         self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_cache_size[node], **policy_args)
                           for node in nfv_cache_size}
 
+
         target_nfv_nodes = vnfs_assignment(self.nfv_cache, vnfs)
         for target_nfv_node in target_nfv_nodes.keys():
             if target_nfv_node in self.nfv_cache:
                 #print(target_nfv_node)
-                vnfs = target_nfv_nodes[target_nfv_node]
-                for vnf in vnfs:
-                    self.nfv_cache[target_nfv_node].add_vnf(vnf)
-                    #self.nfv_cache[target_nfv_node].list_nfv_cache()
+                vnf = target_nfv_nodes[target_nfv_node]
+                #for vnf in vnfs:
+                self.nfv_cache[target_nfv_node].add_vnf(vnf)
+                #self.nfv_cache[target_nfv_node].list_nfv_cache()
 
 
 
@@ -360,6 +361,21 @@ class NetworkModelProposal:
                 return dict(zip(nfv_nodes, cycle(sfcs)))
 
 
+
+        # Place vnfs on all nfv_nodes of the topology
+        """
+        target_nfv_nodes = hod_vnfs_assignment(self.nfv_cache, hods_vnfs)
+        for target_nfv_node in target_nfv_nodes.keys():
+            #print(target_nfv_node)
+            vnfs = target_nfv_nodes[target_nfv_node]
+            for vnf in vnfs:
+                self.nfv_cache[target_nfv_node].add_vnf(vnf)
+                #self.nfv_cache[target_nfv_node].list_nfv_cache()
+        
+        """
+
+        # Place vnfs on the closest nfv_nodes to the egress_nodes
+
         self.nfv_nodes = NetworkModelProposal.select_nfv_nodes_path(self, topology)
         #print(self.nfv_nodes)
         target_nfv_nodes = hod_vnfs_assignment(self.nfv_nodes, hods_vnfs)
@@ -370,6 +386,9 @@ class NetworkModelProposal:
                 for vnf in vnfs:
                     self.nfv_cache[target_nfv_node].add_vnf(vnf)
                     #self.nfv_cache[target_nfv_node].list_nfv_cache()
+        
+
+
 
 
 

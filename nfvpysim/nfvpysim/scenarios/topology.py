@@ -48,6 +48,16 @@ class NfvTopology(fnss.Topology):
                     and self.node[v]['stack'][0] == 'egress_node')
 
 
+    def forwarding_nodes(self):
+        """
+        :return: return a set of egress nodes
+        """
+
+        return set (v for v in self
+                    if 'stack' in self.node[v]
+                    and self.node[v]['stack'][0] == 'forwarding_node')
+
+
 
     def nfv_nodes(self):
         """
@@ -74,13 +84,22 @@ class NfvTopology(fnss.Topology):
 @register_topology_factory('GEANT')
 def topology_geant(**kwargs):
 
-    topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/Geant2012.graphml').to_undirected() # 61 nodes
+    topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/Geant2012.graphml').to_undirected() # 40 nodes
     deg = nx.degree(topology)
     ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 8 nodes
     egress_nodes = [v for v in topology.nodes() if deg[v] == 2] # 13 nodes
-    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2 and v not in ingress_nodes + egress_nodes] #  19 nodes
+    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2] # 13 nodes
     #forwarding_nodes = [v for v in topology.nodes() if v not in ingress_nodes + egress_nodes]
     topology.graph['nfv_nodes_candidates'] = nfv_nodes
+
+    # GEANT
+    # deg[v] == 1 = 8
+    # deg[v] == 2 = 13
+    # deg[v] == 3 = 5
+    # deg[v] == 4 = 5
+    # deg[v] == 5 = 6
+    # deg[v] == 6 = 1
+
     # Add stacks to nodes
     for v in ingress_nodes:
         fnss.add_stack(topology, v, 'ingress_node')
@@ -90,7 +109,6 @@ def topology_geant(**kwargs):
 
     for v in nfv_nodes:
         fnss.add_stack(topology, v, 'nfv_node', {'cache_size': {}})
-
 
 
     # Set weight and delay on all links
@@ -119,7 +137,7 @@ def topology_tatanld(**kwargs):
     nfv_nodes = [v for v in topology.nodes() if deg[v] > 2 and v not in ingress_nodes + egress_nodes]   # 80 nodes
     topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
 
-    # ttln
+    # TATANLD
     # deg[v] == 1 = 9
     # deg[v] == 2 = 80
     # deg[v] == 3 = 34
@@ -339,12 +357,13 @@ def topology_datacenter_two_tier(**kwargs):
 
     return NfvTopology(topology)
 
-"""
-topo = topology_bestel()
+
+topo = topology_geant()
+
 deg = nx.degree(topo)
-node = [v for v in topo.nodes() if deg[v] == 5]
+node = [v for v in topo.nodes() if deg[v] == 6]
 #print(nx.info(topo))
 print(len(node))
 
-"""
+
 
