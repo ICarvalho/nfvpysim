@@ -1,4 +1,5 @@
-config_random_sfc
+############# CONFIG_RANDOM_SFC #################################################
+
 
 hods_vnfs = [
             [2, 5, 8],
@@ -11,3 +12,19 @@ hods_vnfs = [
             [4, 6],
         ]
 
+#################### CENÁRIOS DE AVALIAÇÕES #######################################
+
+--> OFF-LINE (Sem alocação de vnfs em tempo de execução)
+
+1 - Armazenando as vnfs apenas nos nfv_nodes
+
+2 - Armazenando as vnfs nos nos nfv_nodes mais próximos do egress_node do caminho.
+
+
+--> ON-LINE (com alocação de vnfs em tempo de execução)
+
+1 - Armazenando as vnfs apenas nos nfv_nodes
+
+2 - Armazenando as vnfs nos nos nfv_nodes mais próximos do egress_node do caminho.
+
+########################## FIM #####################################################

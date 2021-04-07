@@ -312,6 +312,156 @@ def topology_bestel(**kwargs):
     return NfvTopology(topology)
 
 
+
+@register_topology_factory('USCARRIER')
+def topology_uscarrier(**kwargs):
+
+    topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/UsCarrier.graphml').to_undirected() # 84 nodes
+    deg = nx.degree(topology)
+    ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 10 nodes
+    egress_nodes = [v for v in topology.nodes() if deg[v] == 2]  # 14 nodes
+    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2 and v not in ingress_nodes + egress_nodes]  # 54 nodes
+    topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
+
+    # bestel
+    # deg[v] == 1 = 10
+    # deg[v] == 2 = 54
+    # deg[v] == 3 = 14
+    # deg[v] == 4 = 5
+
+
+    # Add stacks to nodes
+    for v in ingress_nodes:
+        fnss.add_stack(topology, v, 'ingress_node')
+
+    for v in egress_nodes:
+        fnss.add_stack(topology, v, 'egress_node')
+
+    for v in nfv_nodes:
+        fnss.add_stack(topology, v, 'nfv_node', {'cache_size': {}})
+
+
+    # Set weight and delay on all links
+    fnss.set_weights_constant(topology, 1.0)
+    fnss.set_delays_constant(topology, INTERNAL_LINK_DELAY, 'ms')
+    # label links as internal or external
+    for u, v in topology.edges():
+        if u in egress_nodes or v in egress_nodes:
+            topology.adj[u][v]['type'] = 'external'
+            # this prevents egress nodes to be used to route traffic
+            fnss.set_weights_constant(topology, 1000.0, [(u, v)])
+            fnss.set_delays_constant(topology, EXTERNAL_LINK_DELAY, 'ms', [(u, v)])
+        else:
+            topology.adj[u][v]['type'] = 'internal'
+
+    return NfvTopology(topology)
+
+
+@register_topology_factory('VIATEL')
+def topology_uscarrier(**kwargs):
+
+    topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/VtlWavenet2011.graphml').to_undirected() # 84 nodes
+    deg = nx.degree(topology)
+    ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 10 nodes
+    egress_nodes = [v for v in topology.nodes() if deg[v] == 2]  # 14 nodes
+    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2 and v not in ingress_nodes + egress_nodes]  # 54 nodes
+    topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
+
+    # bestel
+    # deg[v] == 1 = 10
+    # deg[v] == 2 = 54
+    # deg[v] == 3 = 14
+    # deg[v] == 4 = 5
+
+
+    # Add stacks to nodes
+    for v in ingress_nodes:
+        fnss.add_stack(topology, v, 'ingress_node')
+
+    for v in egress_nodes:
+        fnss.add_stack(topology, v, 'egress_node')
+
+    for v in nfv_nodes:
+        fnss.add_stack(topology, v, 'nfv_node', {'cache_size': {}})
+
+
+    # Set weight and delay on all links
+    fnss.set_weights_constant(topology, 1.0)
+    fnss.set_delays_constant(topology, INTERNAL_LINK_DELAY, 'ms')
+    # label links as internal or external
+    for u, v in topology.edges():
+        if u in egress_nodes or v in egress_nodes:
+            topology.adj[u][v]['type'] = 'external'
+            # this prevents egress nodes to be used to route traffic
+            fnss.set_weights_constant(topology, 1000.0, [(u, v)])
+            fnss.set_delays_constant(topology, EXTERNAL_LINK_DELAY, 'ms', [(u, v)])
+        else:
+            topology.adj[u][v]['type'] = 'internal'
+
+    return NfvTopology(topology)
+
+
+@register_topology_factory('COGENTCO')
+def topology_uscarrier(**kwargs):
+
+    topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/Cogentco.graphml').to_undirected() # 84 nodes
+    deg = nx.degree(topology)
+    ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 10 nodes
+    egress_nodes = [v for v in topology.nodes() if deg[v] == 2]  # 14 nodes
+    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2 and v not in ingress_nodes + egress_nodes]  # 54 nodes
+    topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
+
+    # bestel
+    # deg[v] == 1 = 10
+    # deg[v] == 2 = 54
+    # deg[v] == 3 = 14
+    # deg[v] == 4 = 5
+
+
+    # Add stacks to nodes
+    for v in ingress_nodes:
+        fnss.add_stack(topology, v, 'ingress_node')
+
+    for v in egress_nodes:
+        fnss.add_stack(topology, v, 'egress_node')
+
+    for v in nfv_nodes:
+        fnss.add_stack(topology, v, 'nfv_node', {'cache_size': {}})
+
+
+    # Set weight and delay on all links
+    fnss.set_weights_constant(topology, 1.0)
+    fnss.set_delays_constant(topology, INTERNAL_LINK_DELAY, 'ms')
+    # label links as internal or external
+    for u, v in topology.edges():
+        if u in egress_nodes or v in egress_nodes:
+            topology.adj[u][v]['type'] = 'external'
+            # this prevents egress nodes to be used to route traffic
+            fnss.set_weights_constant(topology, 1000.0, [(u, v)])
+            fnss.set_delays_constant(topology, EXTERNAL_LINK_DELAY, 'ms', [(u, v)])
+        else:
+            topology.adj[u][v]['type'] = 'internal'
+
+    return NfvTopology(topology)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @register_topology_factory('DATACENTER_TWO_TIER')
 def topology_datacenter_two_tier(**kwargs):
     # create a topology with 10 core switches, 20 edge switches and 10 hosts
@@ -358,12 +508,24 @@ def topology_datacenter_two_tier(**kwargs):
     return NfvTopology(topology)
 
 
-topo = topology_geant()
+topo = topology_ulaknet()
 
 deg = nx.degree(topo)
-node = [v for v in topo.nodes() if deg[v] == 6]
+node1 = [v for v in topo.nodes() if deg[v] == 1]
+node2 = [v for v in topo.nodes() if deg[v] == 2]
+node3 = [v for v in topo.nodes() if deg[v] == 3]
+node4 = [v for v in topo.nodes() if deg[v] == 4]
+node5 = [v for v in topo.nodes() if deg[v] == 5]
+node6 = [v for v in topo.nodes() if deg[v] == 6]
 #print(nx.info(topo))
-print(len(node))
+
+print("Number of nodes of the topology:", topo.number_of_nodes())
+print(" degree 1: ", len(node1))
+print(" degree 2: ", len(node2))
+print(" degree 3: ", len(node3))
+print(" degree 4: ", len(node4))
+print(" degree 5: ", len(node5))
+print(" degree 6: ", len(node6))
 
 
 
