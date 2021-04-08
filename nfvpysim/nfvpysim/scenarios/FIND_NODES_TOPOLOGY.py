@@ -94,9 +94,9 @@ def topology_geant(**kwargs):
 
     topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/Geant2012.graphml').to_undirected() # 40 nodes
     deg = nx.degree(topology)
-    ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 8 nodes
-    egress_nodes = [v for v in topology.nodes() if deg[v] == 2] # 13 nodes
-    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2] # 13 nodes
+    ingress_nodes = [4, 12, 37, 1, 8, 6, 35, 24, 13, 25]   # 8 nodes
+    egress_nodes = [11, 22, 23, 26, 29, 34, 5, 14, 10, 16] # 13 nodes
+    nfv_nodes = [15, 27, 32, 17, 19, 2, 21, 39, 7, 18, 36, 33, 3, 9, 20, 31, 0, 30, 38, 28] # 13 nodes
     #forwarding_nodes = [v for v in topology.nodes() if v not in ingress_nodes + egress_nodes]
     topology.graph['nfv_nodes_candidates'] = nfv_nodes
 
@@ -625,9 +625,9 @@ def set_list_of_nodes(topology):
     for egr_node in egr_nodes:
         topo_nodes.remove(egr_node)
     nfv_nodes = random.sample(topo_nodes,20)
-    print(ing_nodes)
-    print(egr_nodes)
-    print(nfv_nodes)
+    print("ingress nodes : ", ing_nodes)
+    print("egress nodes :" , egr_nodes)
+    print("nfv nodes ", nfv_nodes)
 
 
 
