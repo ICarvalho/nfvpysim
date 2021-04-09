@@ -94,9 +94,9 @@ def topology_geant(**kwargs):
 
     topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/Geant2012.graphml').to_undirected() # 40 nodes
     deg = nx.degree(topology)
-    ingress_nodes = [4, 12, 37, 1, 8, 6, 35, 24, 13, 25]   # 8 nodes
-    egress_nodes = [11, 22, 23, 26, 29, 34, 5, 14, 10, 16] # 13 nodes
-    nfv_nodes = [15, 27, 32, 17, 19, 2, 21, 39, 7, 18, 36, 33, 3, 9, 20, 31, 0, 30, 38, 28]
+    ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 8 nodes
+    egress_nodes = [v for v in topology.nodes() if deg[v] == 2] # 13 nodes
+    nfv_nodes = [v for v in topology.nodes() if v not in ingress_nodes + egress_nodes]
     #forwarding_nodes = [v for v in topology.nodes() if v not in ingress_nodes + egress_nodes]
     topology.graph['nfv_nodes_candidates'] = nfv_nodes
 
@@ -138,11 +138,11 @@ def topology_geant(**kwargs):
 @register_topology_factory('TATANLD')
 def topology_tatanld(**kwargs):
 
-    topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/TataNld.graphml').to_undirected() # 186 nodes
+    topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/TataNld.graphml').to_undirected() # 145 nodes
     deg = nx.degree(topology)
-    ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 9 nodes
-    egress_nodes = [v for v in topology.nodes() if deg[v] == 2]  # 34 nodes
-    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2 and v not in ingress_nodes + egress_nodes]   # 80 nodes
+    ingress_nodes = [v for v in topology.nodes() if deg[v] == 2]   # 9 nodes
+    egress_nodes = [v for v in topology.nodes() if deg[v] == 3]  # 12 nodes
+    nfv_nodes = [v for v in topology.nodes() if v not in ingress_nodes + egress_nodes]   # 124 nodes
     topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
 
     # TATANLD
@@ -189,8 +189,8 @@ def topology_kdl(**kwargs):
     topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/Kdl.graphml').to_undirected() # 754 nodes
     deg = nx.degree(topology)
     ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 42 nodes
-    egress_nodes = [v for v in topology.nodes() if deg[v] == 2]  # 45 nodes
-    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2 and v not in ingress_nodes + egress_nodes]   # 483 nodes
+    egress_nodes = [v for v in topology.nodes() if deg[v] == 4]  # 45 nodes
+    nfv_nodes = [v for v in topology.nodes() if v not in ingress_nodes + egress_nodes]   # 483 nodes
     topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
 
     # kdl
@@ -233,11 +233,11 @@ def topology_kdl(**kwargs):
 @register_topology_factory('ION')
 def topology_ion(**kwargs):
 
-    topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/Ion.graphml').to_undirected() # 146  nodes
+    topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/Ion.graphml').to_undirected() # 125  nodes
     deg = nx.degree(topology)
     ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 11 nodes
-    egress_nodes = [v for v in topology.nodes() if deg[v] == 2] # 8 nodes
-    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2] # 33 nodes
+    egress_nodes = [v for v in topology.nodes() if deg[v] == 3] # 8 nodes
+    nfv_nodes = [v for v in topology.nodes() if v not in ingress_nodes + egress_nodes] # 33 nodes
     topology.graph['nfv_nodes_candidates'] = nfv_nodes
 
     # ion
@@ -282,8 +282,8 @@ def topology_bestel(**kwargs):
     topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/RedBestel.graphml').to_undirected() # 84 nodes
     deg = nx.degree(topology)
     ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 10 nodes
-    egress_nodes = [v for v in topology.nodes() if deg[v] == 2]  # 14 nodes
-    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2 and v not in ingress_nodes + egress_nodes]  # 54 nodes
+    egress_nodes = [v for v in topology.nodes() if deg[v] == 3]  # 14 nodes
+    nfv_nodes = [v for v in topology.nodes() if v not in ingress_nodes + egress_nodes]  # 54 nodes
     topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
 
     # bestel
@@ -324,11 +324,11 @@ def topology_bestel(**kwargs):
 @register_topology_factory('USCARRIER')
 def topology_uscarrier(**kwargs):
 
-    topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/UsCarrier.graphml').to_undirected() # 152 nodes
+    topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/UsCarrier.graphml').to_undirected() # 158 nodes
     deg = nx.degree(topology)
-    ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]
-    egress_nodes = [v for v in topology.nodes() if deg[v] == 2]
-    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2 and v not in ingress_nodes + egress_nodes]
+    ingress_nodes = [v for v in topology.nodes() if deg[v] == 3]
+    egress_nodes = [v for v in topology.nodes() if deg[v] == 4]
+    nfv_nodes = [v for v in topology.nodes() if  v not in ingress_nodes + egress_nodes]
     topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
 
     # USCARRIER
@@ -373,8 +373,8 @@ def topology_viatel(**kwargs):
     topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/VtlWavenet2011.graphml').to_undirected() # 92 nodes
     deg = nx.degree(topology)
     ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]
-    egress_nodes = [v for v in topology.nodes() if deg[v] == 2]
-    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2 and v not in ingress_nodes + egress_nodes]
+    egress_nodes = [v for v in topology.nodes() if deg[v] == 4]
+    nfv_nodes = [v for v in topology.nodes() if  v not in ingress_nodes + egress_nodes]
     topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
 
     # bestel
@@ -417,8 +417,8 @@ def topology_cogentco(**kwargs):
     topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/Cogentco.graphml').to_undirected() # 197 nodes
     deg = nx.degree(topology)
     ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]
-    egress_nodes = [v for v in topology.nodes() if deg[v] == 2]
-    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2 and v not in ingress_nodes + egress_nodes]
+    egress_nodes = [v for v in topology.nodes() if deg[v] == 4]
+    nfv_nodes = [v for v in topology.nodes() if  v not in ingress_nodes + egress_nodes]
     topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
 
     # COGENTCO
@@ -468,7 +468,7 @@ def topology_colt(**kwargs):
     deg = nx.degree(topology)
     ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   # 10 nodes
     egress_nodes = [v for v in topology.nodes() if deg[v] == 2]  # 14 nodes
-    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2 and v not in ingress_nodes + egress_nodes]  # 54 nodes
+    nfv_nodes = [v for v in topology.nodes() if  v not in ingress_nodes + egress_nodes]  # 54 nodes
     topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
 
     # COLT
@@ -517,9 +517,9 @@ def topology_interroute(**kwargs):
 
     topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/Interoute.graphml').to_undirected() # 110 nodes
     deg = nx.degree(topology)
-    ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   #
-    egress_nodes = [v for v in topology.nodes() if deg[v] == 2]  #
-    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2 and v not in ingress_nodes + egress_nodes]  #
+    ingress_nodes = [v for v in topology.nodes() if deg[v] == 3]   #
+    egress_nodes = [v for v in topology.nodes() if deg[v] == 4]  #
+    nfv_nodes = [v for v in topology.nodes() if  v not in ingress_nodes + egress_nodes]  #
     topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
 
     # INTERROUTE
@@ -560,14 +560,6 @@ def topology_interroute(**kwargs):
             topology.adj[u][v]['type'] = 'internal'
 
     return NfvTopology(topology)
-
-
-
-
-
-
-
-
 
 
 
@@ -618,8 +610,8 @@ def topology_datacenter_two_tier(**kwargs):
 
     return NfvTopology(topology)
 
-
-topo = topology_interroute()
+"""
+topo = topology_geant()
 
 deg = nx.degree(topo)
 node1 = [v for v in topo.nodes() if deg[v] == 1]
@@ -635,16 +627,19 @@ node10 = [v for v in topo.nodes() if deg[v] == 10]
 #print(nx.info(topo))
 
 print("Number of nodes of the topology:", topo.number_of_nodes())
-print(" degree 1: ", len(node1))
-print(" degree 2: ", len(node2))
-print(" degree 3: ", len(node3))
-print(" degree 4: ", len(node4))
-print(" degree 5: ", len(node5))
-print(" degree 6: ", len(node6))
-print(" degree 7: ", len(node7))
-print(" degree 8: ", len(node8))
-print(" degree 9: ", len(node9))
-print(" degree 10: ", len(node10))
+print(" degree 1: ", len(node1), "nodes" " -->", node1)
+print(" degree 2: ", len(node2), "nodes" " -->", node2)
+print(" degree 3: ", len(node3), "nodes" " -->", node3)
+print(" degree 4: ", len(node4), "nodes" " -->", node4)
+print(" degree 5: ", len(node5), "nodes" " -->", node5)
+print(" degree 6: ", len(node6), "nodes" " -->", node6)
+print(" degree 7: ", len(node7), "nodes" " -->", node7)
+print(" degree 8: ", len(node8), "nodes" " -->", node8)
+print(" degree 9: ", len(node9), "nodes" " -->", node9)
+print(" degree 10: ", len(node10), "nodes" " -->", node10)
+
+"""
+
 
 
 

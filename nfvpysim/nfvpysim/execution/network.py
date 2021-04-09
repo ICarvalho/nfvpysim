@@ -167,7 +167,8 @@ class NetworkModelBaseLine:
             else:
                 return dict(zip(nfv_nodes, cycle(vnfs)))
 
-        vnfs = [2, 1, 8, 6, 5, 7, 4, 3]
+        #vnfs = [2, 1, 8, 6, 5, 7, 4, 3]
+        #sfcs = NetworkModelBaseLine.var_len_seq_sfc()
 
         policy_name = nfv_cache_policy['name']
         policy_args = {k: v for k, v in nfv_cache_policy.items() if k != 'name'}
@@ -176,14 +177,14 @@ class NetworkModelBaseLine:
                           for node in nfv_cache_size}
 
 
-        target_nfv_nodes = vnfs_assignment(self.nfv_cache, vnfs)
-        for target_nfv_node in target_nfv_nodes.keys():
-            if target_nfv_node in self.nfv_cache:
+        #target_nfv_nodes = vnfs_assignment(self.nfv_cache, sfcs)
+        for node in self.nfv_cache:
+            #if node in target_nfv_nodes.keys():
                 #print(target_nfv_node)
-                vnf = target_nfv_nodes[target_nfv_node]
-                #for vnf in vnfs:
-                self.nfv_cache[target_nfv_node].add_vnf(vnf)
-                #self.nfv_cache[target_nfv_node].list_nfv_cache()
+                vnfs = NetworkModelBaseLine.var_len_seq_sfc()
+                for vnf in vnfs:
+                    self.nfv_cache[node].add_vnf(vnf)
+                #self.nfv_cache[node].list_nfv_cache()
 
 
 
@@ -363,7 +364,7 @@ class NetworkModelProposal:
 
 
         # Place vnfs on all nfv_nodes of the topology
-        """
+
         target_nfv_nodes = hod_vnfs_assignment(self.nfv_cache, hods_vnfs)
         for target_nfv_node in target_nfv_nodes.keys():
             #print(target_nfv_node)
@@ -372,20 +373,22 @@ class NetworkModelProposal:
                 self.nfv_cache[target_nfv_node].add_vnf(vnf)
                 #self.nfv_cache[target_nfv_node].list_nfv_cache()
         
-        """
+
 
         # Place vnfs on the closest nfv_nodes to the egress_nodes
-
+        """
         self.nfv_nodes = NetworkModelProposal.select_nfv_nodes_path(self, topology)
         #print(self.nfv_nodes)
         target_nfv_nodes = hod_vnfs_assignment(self.nfv_nodes, hods_vnfs)
-        for target_nfv_node in target_nfv_nodes.keys():
-            if target_nfv_node in self.nfv_cache:
+        for node in self.nfv_cache:
+            if node in  target_nfv_nodes.keys():
                 #print(target_nfv_node)
-                vnfs = target_nfv_nodes[target_nfv_node]
+                vnfs = target_nfv_nodes[node]
                 for vnf in vnfs:
-                    self.nfv_cache[target_nfv_node].add_vnf(vnf)
+                    self.nfv_cache[node].add_vnf(vnf)
                     #self.nfv_cache[target_nfv_node].list_nfv_cache()
+        """
+
         
 
 

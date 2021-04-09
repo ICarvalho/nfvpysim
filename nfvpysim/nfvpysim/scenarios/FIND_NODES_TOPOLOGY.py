@@ -94,9 +94,9 @@ def topology_geant(**kwargs):
 
     topology = fnss.parse_topology_zoo(path='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/datasets/Geant2012.graphml').to_undirected() # 40 nodes
     deg = nx.degree(topology)
-    ingress_nodes = [4, 12, 37, 1, 8, 6, 35, 24, 13, 25]   # 8 nodes
-    egress_nodes = [11, 22, 23, 26, 29, 34, 5, 14, 10, 16] # 13 nodes
-    nfv_nodes = [15, 27, 32, 17, 19, 2, 21, 39, 7, 18, 36, 33, 3, 9, 20, 31, 0, 30, 38, 28] # 13 nodes
+    ingress_nodes = [0, 23, 21, 28, 29]   # 8 nodes
+    egress_nodes = [4, 35, 16, 7, 30] # 13 nodes
+    nfv_nodes = [37, 34, 1, 24, 26, 8, 33, 31, 3, 36, 14, 11, 12, 39, 10, 18, 19, 38, 27, 6, 2, 13, 17, 9, 20, 25, 22, 5, 15, 32] # 13 nodes
     #forwarding_nodes = [v for v in topology.nodes() if v not in ingress_nodes + egress_nodes]
     topology.graph['nfv_nodes_candidates'] = nfv_nodes
 
@@ -616,24 +616,21 @@ def topology_datacenter_two_tier(**kwargs):
 
 
 
+
+
+"""
 def set_list_of_nodes(topology):
     topo_nodes = [v for v in topology.nodes()]
-    ing_nodes = random.sample(topo_nodes,10)
+    ing_nodes = random.sample(topo_nodes,5)
     for ing_node in ing_nodes:
         topo_nodes.remove(ing_node)
-    egr_nodes = random.sample(topo_nodes,10)
+    egr_nodes = random.sample(topo_nodes,5)
     for egr_node in egr_nodes:
         topo_nodes.remove(egr_node)
-    nfv_nodes = random.sample(topo_nodes,20)
+    nfv_nodes = random.sample(topo_nodes,30)
     print("ingress nodes : ", ing_nodes)
     print("egress nodes :" , egr_nodes)
     print("nfv nodes ", nfv_nodes)
-
-
-
-
-
-
 
 topo = topology_geant()
 
@@ -641,13 +638,14 @@ topo_nodes = [v for v in topo.nodes()]
 
 l = set_list_of_nodes(topo)
 
-
-
-
-
-
-
 """
+
+
+
+
+
+topo = topology_interroute()
+
 deg = nx.degree(topo)
 node1 = [v for v in topo.nodes() if deg[v] == 1]
 node2 = [v for v in topo.nodes() if deg[v] == 2]
@@ -662,19 +660,15 @@ node10 = [v for v in topo.nodes() if deg[v] == 10]
 #print(nx.info(topo))
 
 print("Number of nodes of the topology:", topo.number_of_nodes())
-print(" degree 1: ", len(node1))
-print(" degree 2: ", len(node2))
-print(" degree 3: ", len(node3))
-print(" degree 4: ", len(node4))
-print(" degree 5: ", len(node5))
-print(" degree 6: ", len(node6))
-print(" degree 7: ", len(node7))
-print(" degree 8: ", len(node8))
-print(" degree 9: ", len(node9))
-print(" degree 10: ", len(node10))
-
-
-"""
-
+print(" degree 1: ", len(node1), "nodes" " -->", node1)
+print(" degree 2: ", len(node2), "nodes" " -->", node2)
+print(" degree 3: ", len(node3), "nodes" " -->", node3)
+print(" degree 4: ", len(node4), "nodes" " -->", node4)
+print(" degree 5: ", len(node5), "nodes" " -->", node5)
+print(" degree 6: ", len(node6), "nodes" " -->", node6)
+print(" degree 7: ", len(node7), "nodes" " -->", node7)
+print(" degree 8: ", len(node8), "nodes" " -->", node8)
+print(" degree 9: ", len(node9), "nodes" " -->", node9)
+print(" degree 10: ", len(node10), "nodes" " -->", node10)
 
 

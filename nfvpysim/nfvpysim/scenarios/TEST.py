@@ -6,21 +6,30 @@ import random
 from collections import defaultdict
 
 
+from itertools import permutations
 
-topo = topology_kdl()
-topo_nodes = topo.nodes
+caracteres = [1, 2, 3, 4, 5, 6, 7, 8]
+for subset in permutations(caracteres, 3):
+    print(subset)
+
+
+"""
+opo = topology_kdl()
+topo_nodes = topo.nodes 
 ingress_nodes = random.sample(topo_nodes, 23)   # 23 nodes
 egress_nodes = random.sample(topo_nodes, 23) # 23 nodes
 nfv_nodes = random.sample(topo_nodes, 23)
+"""
+
 
 #path = nx.shortest_path(topo, 257, 22)
 #nodes = list(topo.nodes)
 #for node in path:
     #if topo.node[node]['stack'][0] == 'nfv_node':
         #print(node)
-print(sorted(ingress_nodes))
-print(sorted(egress_nodes))
-print(sorted(nfv_nodes))
+#print(sorted(ingress_nodes))
+#print(sorted(egress_nodes))
+#print(sorted(nfv_nodes))
 """
 257 382 644 ing_nodes
 512 22 40  egr_nodes
