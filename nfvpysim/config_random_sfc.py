@@ -57,7 +57,7 @@ N_MEASURED_REQUESTS = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
 
 
 # Number of requests per second (over the whole network)
-SFC_REQ_RATES = 1000.0
+SFC_REQ_RATES = 10.0
 
 # vnf allocation policy
 VNF_ALLOCATION_POLICY = 'STATIC'
@@ -74,7 +74,7 @@ NFV_NODE_CACHE_POLICY = 'NFV_CACHE'
 # List of topologies tested
 # Topology implementations are located in ./icarus/scenarios/topology.py
 # Remove topologies not needed
-TOPOLOGIES =   ['GEANT','TATANLD', 'KDL', 'ION', 'BESTEL', 'USCARRIER', 'VIATEL', 'COGENTCO', 'COLT', 'INTERROUTE']
+TOPOLOGIES =   ['GEANT','TATANLD', 'ION', 'BESTEL', 'USCARRIER', 'VIATEL', 'COGENTCO', 'COLT', 'INTERROUTE']
 
 # List of caching and routing strategies
 # The code is located in ./icarus/models/strategy/*.py

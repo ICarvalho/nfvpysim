@@ -121,7 +121,7 @@ class NetworkModelBaseLine:
         self.shortest_path = dict(shortest_path) if shortest_path is not None \
             else (dict(nx.all_pairs_dijkstra_path(topology)))
 
-
+        self.nfv_cache = None
         self.topology = topology
 
         self.dict_vnfs_cpu_req_proc_delay = {1: 15,   # nat
