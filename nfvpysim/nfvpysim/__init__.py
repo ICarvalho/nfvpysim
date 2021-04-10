@@ -1,5 +1,4 @@
 from __future__ import absolute_import
-from nfvpysim.util import Tree
 
 import sys
 
@@ -42,7 +41,4 @@ for m in __modules_to_register:
 del m
 
 # Imports
-from nfvpysim.model import *
-from nfvpysim.tools import *
-from nfvpysim.runner import run
 

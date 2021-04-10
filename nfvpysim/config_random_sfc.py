@@ -66,6 +66,7 @@ VNF_ALLOCATION_POLICY = 'STATIC'
 
 # cache size of an nfv_nodes
 
+VNF_PLACEMENT = ['RANDOM_PLACEMENT', 'HOD_PLACEMENT', 'RANDOM_VAR_LEN_PLACEMENT']
 
 # NFV cache policy for storing VNFs
 NFV_NODE_CACHE_POLICY = 'NFV_CACHE'
@@ -93,6 +94,7 @@ default['workload'] = {'name':  'STATIONARY_RANDOM_SFC', # 'sfc_len': SFC_LEN,
 
 default['vnf_allocation']['name'] = VNF_ALLOCATION_POLICY
 default['nfv_cache_policy']['name'] = NFV_NODE_CACHE_POLICY
+default['vnf_placement']['name'] = VNF_PLACEMENT
 
 
 

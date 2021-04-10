@@ -160,12 +160,14 @@ class NetworkModelBaseLine:
 
 
 
-
+        """
         def vnfs_assignment(nfv_nodes, vnfs):
             if len(nfv_nodes) < len(vnfs):
                 return dict(zip(cycle(nfv_nodes), vnfs))
             else:
                 return dict(zip(nfv_nodes, cycle(vnfs)))
+        """
+
 
         #vnfs = [2, 1, 8, 6, 5, 7, 4, 3]
         #sfcs = NetworkModelBaseLine.var_len_seq_sfc()
@@ -178,53 +180,25 @@ class NetworkModelBaseLine:
 
 
         #target_nfv_nodes = vnfs_assignment(self.nfv_cache, sfcs)
-        for node in self.nfv_cache:
+        #for node in self.nfv_cache:
             #if node in target_nfv_nodes.keys():
                 #print(target_nfv_node)
-                vnfs = NetworkModelBaseLine.var_len_seq_sfc()
-                for vnf in vnfs:
-                    self.nfv_cache[node].add_vnf(vnf)
+                #vnfs = NetworkModelBaseLine.var_len_seq_sfc()
+                #for vnf in vnfs:
+                    #self.nfv_cache[node].add_vnf(vnf)
                 #self.nfv_cache[node].list_nfv_cache()
 
 
 
-
+    """
     @staticmethod
     def select_random_vnf():
         vnfs = [1, 2, 3, 4, 5, 6, 7, 8]
-        return random.choice(vnfs)
+        return random.choice(vnfs)    
+    """
 
 
-    # Method to generate a variable-length sfc in order to be allocated on an nfv cache node
-    @staticmethod
-    def var_len_seq_sfc():
-        var_len_sfc = []
-        sfcs = {1: LatencyCollector.get_vnf_proc_delay(10, 15),  # nat
-                2: LatencyCollector.get_vnf_proc_delay(15, 25),  # fw
-                3: LatencyCollector.get_vnf_proc_delay(10, 20),  # ids
-                4: LatencyCollector.get_vnf_proc_delay(15, 20),  # wanopt
-                5: LatencyCollector.get_vnf_proc_delay(10, 15),  # lb
-                6: LatencyCollector.get_vnf_proc_delay(20, 25),  # encrypt
-                7: LatencyCollector.get_vnf_proc_delay(20, 25),  # decrypt
-                8: LatencyCollector.get_vnf_proc_delay(25, 30),  # dpi
-                }
 
-        sfc_len = random.randint(1, 8)
-        sum_cpu = 0
-        while sfc_len != 0:
-            vnf, cpu = random.choice(list(sfcs.items()))
-            if vnf not in var_len_sfc:
-                var_len_sfc.append(vnf)
-                sfc_len -= 1
-                sum_cpu += cpu
-                if sum_cpu > 100 or sfc_len == 0:
-                    break
-                elif sum_cpu <= 100 and sfc_len != 0:
-                    sfc_len -= 1
-
-        return var_len_sfc
-
-    # Compute the shortest path between ingress and egress node
     @staticmethod
     def shortest_path(topology, ingress_node, egress_node):
         return nx.shortest_path(topology, ingress_node,egress_node)
@@ -343,37 +317,27 @@ class NetworkModelProposal:
         self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_cache_size[node], **policy_args)
                           for node in nfv_cache_size}
 
-        hods_vnfs = [
-            [2, 5, 8],
-            [3, 5, 6],
-            [6, 2, 3],
-            [1, 2, 3],
-            [5, 2, 1],
-            [3, 2, 4, 5],
-            [1, 5, 4],
-            [4, 6],
-        ]
-
-
+        """
         def hod_vnfs_assignment(nfv_nodes, sfcs):
             if len(nfv_nodes) < len(sfcs):
                 return dict(zip(cycle(nfv_nodes), sfcs))
             else:
                 return dict(zip(nfv_nodes, cycle(sfcs)))
+        """
+
 
 
 
         # Place vnfs on all nfv_nodes of the topology
-
+        """
         target_nfv_nodes = hod_vnfs_assignment(self.nfv_cache, hods_vnfs)
         for target_nfv_node in target_nfv_nodes.keys():
             #print(target_nfv_node)
             vnfs = target_nfv_nodes[target_nfv_node]
             for vnf in vnfs:
                 self.nfv_cache[target_nfv_node].add_vnf(vnf)
-                #self.nfv_cache[target_nfv_node].list_nfv_cache()
-        
-
+                #self.nfv_cache[target_nfv_node].list_nfv_cache()        
+        """
 
         # Place vnfs on the closest nfv_nodes to the egress_nodes
         """
@@ -388,12 +352,6 @@ class NetworkModelProposal:
                     self.nfv_cache[node].add_vnf(vnf)
                     #self.nfv_cache[target_nfv_node].list_nfv_cache()
         """
-
-        
-
-
-
-
 
 
     @staticmethod

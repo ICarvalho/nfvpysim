@@ -1,9 +1,7 @@
 import fnss
 import random
 from nfvpysim.execution.network import NetworkModelBaseLine, NetworkModelProposal
-from nfvpysim.scenarios.topology import *
-from nfvpysim.model.cache import *
-from nfvpysim.nfvpysim.registry import register_vnf_placement
+from nfvpysim.registry import register_vnf_placement
 
 
 

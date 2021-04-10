@@ -13,7 +13,7 @@ import signal
 import traceback
 
 from nfvpysim.execution import exec_experiment
-from nfvpysim.registry import TOPOLOGY_FACTORY, POLICY, VNF_ALLOCATION,  WORKLOAD, DATA_COLLECTOR, CACHE_POLICY
+from nfvpysim.registry import TOPOLOGY_FACTORY, POLICY, VNF_ALLOCATION,  WORKLOAD, DATA_COLLECTOR, CACHE_POLICY, VNF_PLACEMENT
 from nfvpysim.results import ResultSet
 from nfvpysim.util import SequenceNumber, timestr
 
@@ -231,6 +231,11 @@ def run_scenario(settings, params, curr_exp, n_exp):
             vnf_allocation_spec['cache_budget'] = network_cache
             VNF_ALLOCATION[vnf_allocation_name](topology, **vnf_allocation_spec)
 
+
+        vnf_placement = tree['vnf_placement']
+        if vnf_placement['name'] not in VNF_PLACEMENT:
+            logger.error('No implementation of strategy %s was found.' % vnf_placement['name'])
+            return None
 
 
         # caching and routing strategy definition
