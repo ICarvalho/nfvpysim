@@ -5,11 +5,11 @@ from nfvpysim.registry import register_vnf_placement
 
 
 
-__all__ = ['place_hod_vnfs', 'place_random_vnf', 'place_random_var_len_vnfs']
+__all__ = ['hod_placement', 'random_placement', 'random_var_len_placement']
 
 
 @register_vnf_placement('HOD_PLACEMENT')
-def place_hod_vnfs(topology):
+def hod_placement(topology, **kwargs):
     if not isinstance(topology, fnss.Topology):
         raise ValueError('The topology argument must be an'
                          'instance of fnss.Topology or   of its subclasses')
@@ -35,7 +35,7 @@ def place_hod_vnfs(topology):
 
 
 @register_vnf_placement('RANDOM_PLACEMENT')
-def place_random_vnf(topology):
+def random_placement(topology, **kwargs):
     if not isinstance(topology, fnss.Topology):
         raise ValueError('The topology argument must be an'
                          'instance of fnss.Topology or   of its subclasses')
@@ -51,7 +51,7 @@ def place_random_vnf(topology):
 
 
 @register_vnf_placement('RANDOM_VAR_LEN_PLACEMENT')
-def place_random_var_len_vnfs(topology):
+def random_var_len_placement(topology, **kwargs):
     if not isinstance(topology, fnss.Topology):
         raise ValueError('The topology argument must be an'
                          'instance of fnss.Topology or   of its subclasses')
