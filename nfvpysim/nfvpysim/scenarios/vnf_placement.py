@@ -2,6 +2,8 @@ import fnss
 import random
 from nfvpysim.execution.network import NetworkModelBaseLine, NetworkModelProposal
 from nfvpysim.registry import register_vnf_placement
+from nfvpysim.registry import register_cache_policy
+
 
 
 
@@ -9,7 +11,7 @@ __all__ = ['hod_placement', 'random_placement', 'random_var_len_placement']
 
 
 @register_vnf_placement('HOD_PLACEMENT')
-def hod_placement(topology, **kwargs):
+def hod_placement(topology):
     if not isinstance(topology, fnss.Topology):
         raise ValueError('The topology argument must be an'
                          'instance of fnss.Topology or   of its subclasses')
@@ -32,10 +34,11 @@ def hod_placement(topology, **kwargs):
         for vnf in vnfs:
             nfv_nodes[nfv_node].add_vnf(vnf)
             nfv_nodes[nfv_node].list_nfv_cache()
+    return nfv_nodes
 
 
 @register_vnf_placement('RANDOM_PLACEMENT')
-def random_placement(topology, **kwargs):
+def random_placement(topology):
     if not isinstance(topology, fnss.Topology):
         raise ValueError('The topology argument must be an'
                          'instance of fnss.Topology or   of its subclasses')
@@ -46,12 +49,12 @@ def random_placement(topology, **kwargs):
     for nfv_node in nfv_nodes:
         vnf = random.choice(vnfs)
         nfv_nodes[nfv_node].add_vnf(vnf)
-
+    return nfv_nodes
 
 
 
 @register_vnf_placement('RANDOM_VAR_LEN_PLACEMENT')
-def random_var_len_placement(topology, **kwargs):
+def random_var_len_placement(topology):
     if not isinstance(topology, fnss.Topology):
         raise ValueError('The topology argument must be an'
                          'instance of fnss.Topology or   of its subclasses')
@@ -90,3 +93,4 @@ def random_var_len_placement(topology, **kwargs):
         vnfs = var_len_seq_sfc()
         for vnf in vnfs:
             nfv_nodes[nfv_node].add_vnf(vnf)
+    return nfv_nodes

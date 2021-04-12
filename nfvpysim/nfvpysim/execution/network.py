@@ -111,7 +111,7 @@ class NetworkModelBaseLine:
 
     """
 
-    def __init__(self,topology, nfv_cache_policy , shortest_path=None): #
+    def __init__(self,topology, nfv_cache_policy, shortest_path=None): #
 
 
         if not isinstance(topology, fnss.Topology):
@@ -271,7 +271,7 @@ class NetworkModelProposal:
 
     """
 
-    def __init__(self,topology, nfv_cache_policy , shortest_path=None): #
+    def __init__(self, topology, nfv_cache_policy, shortest_path=None): #
 
 
         if not isinstance(topology, fnss.Topology):
@@ -283,7 +283,7 @@ class NetworkModelProposal:
 
 
         self.topology = topology
-        self.nfv_cache = None
+
 
         self.link_type = nx.get_edge_attributes(topology, 'type')
         self.link_delay = fnss.get_delays(topology)
@@ -316,6 +316,10 @@ class NetworkModelProposal:
         # The actual cache objects storing the vnfs
         self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_cache_size[node], **policy_args)
                           for node in nfv_cache_size}
+
+        for node in self.nfv_cache:
+            print(node)
+            self.nfv_cache[node].list_nfv_cache()
 
         """
         def hod_vnfs_assignment(nfv_nodes, sfcs):
