@@ -7,7 +7,7 @@ from nfvpysim.registry import CACHE_POLICY
 from nfvpysim.util import path_links
 from nfvpysim.execution.collectors import LatencyCollector
 import logging
-from multi_key_dict import multi_key_dict
+#from multi_key_dict import multi_key_dict
 logger = logging.getLogger('orchestration')
 
 
