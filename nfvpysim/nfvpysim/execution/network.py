@@ -205,6 +205,7 @@ class NetworkModelBaseLine:
         return nx.shortest_path(topology, ingress_node,egress_node)
 
 
+
     @staticmethod
     def calculate_all_shortest_paths(topology, ingress_node, egress_node):
         return [p for p in nx.all_shortest_paths(topology, ingress_node, egress_node)]
@@ -319,9 +320,9 @@ class NetworkModelProposal:
         self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_cache_size[node])  #,**policy_args)
                           for node in nfv_cache_size}
 
-        for node in self.nfv_cache:
-            print(node)
-            self.nfv_cache[node].list_nfv_cache()
+        #for node in self.nfv_cache:
+            #print(node)
+            #self.nfv_cache[node].list_nfv_cache()
 
         """
         def hod_vnfs_assignment(nfv_nodes, sfcs):
