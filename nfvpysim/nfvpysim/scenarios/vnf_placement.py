@@ -2,9 +2,6 @@ import fnss
 import random
 from nfvpysim.execution.network import NetworkModelBaseLine, NetworkModelProposal
 from nfvpysim.registry import register_vnf_placement
-from nfvpysim.registry import register_cache_policy
-
-
 
 
 __all__ = ['hod_placement', 'random_placement', 'random_var_len_placement']

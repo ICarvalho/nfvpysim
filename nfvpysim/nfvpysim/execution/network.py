@@ -172,10 +172,11 @@ class NetworkModelBaseLine:
         #vnfs = [2, 1, 8, 6, 5, 7, 4, 3]
         #sfcs = NetworkModelBaseLine.var_len_seq_sfc()
 
-        policy_name = nfv_cache_policy['name']
-        policy_args = {k: v for k, v in nfv_cache_policy.items() if k != 'name'}
+        #policy_name = nfv_cache_policy['name']
+        policy_name = 'NFV_CACHE'
+        #policy_args = {k: v for k, v in nfv_cache_policy.items() if k != 'name'}
         # The actual cache objects storing the vnfs
-        self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_cache_size[node], **policy_args)
+        self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_cache_size[node]) #**policy_args)
                           for node in nfv_cache_size}
 
 
@@ -311,10 +312,11 @@ class NetworkModelProposal:
 
 
 
-        policy_name = nfv_cache_policy['name']
-        policy_args = {k: v for k, v in nfv_cache_policy.items() if k != 'name'}
+        #policy_name = nfv_cache_policy['name']
+        policy_name = 'NFV_CACHE'
+        #policy_args = {k: v for k, v in nfv_cache_policy.items() if k != 'name'}
         # The actual cache objects storing the vnfs
-        self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_cache_size[node], **policy_args)
+        self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_cache_size[node])  #,**policy_args)
                           for node in nfv_cache_size}
 
         for node in self.nfv_cache:

@@ -66,7 +66,7 @@ VNF_ALLOCATION_POLICY = 'STATIC'
 
 # cache size of an nfv_nodes
 
-VNF_PLACEMENT = 'RANDOM_PLACEMENT'
+VNF_PLACEMENT = 'HOD_PLACEMENT'
 #, 'HOD_PLACEMENT', 'RANDOM_VAR_LEN_PLACEMENT']
 
 # NFV cache policy for storing VNFs
