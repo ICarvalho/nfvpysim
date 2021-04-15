@@ -320,9 +320,9 @@ class NetworkModelProposal:
         self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_cache_size[node])  #,**policy_args)
                           for node in nfv_cache_size}
 
-        #for node in self.nfv_cache:
+        for node in self.nfv_cache:
             #print(node)
-            #self.nfv_cache[node].list_nfv_cache()
+            self.nfv_cache[node].list_nfv_cache()
 
         """
         def hod_vnfs_assignment(nfv_nodes, sfcs):

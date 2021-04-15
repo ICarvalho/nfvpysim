@@ -53,7 +53,7 @@ N_WARMUP_REQUESTS = 0
 
 # Number of measured requests
 
-N_MEASURED_REQUESTS = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
+N_MEASURED_REQUESTS = [100, 200, 300, 400, 500]
 
 
 # Number of requests per second (over the whole network)
@@ -76,19 +76,19 @@ NFV_NODE_CACHE_POLICY = 'NFV_CACHE'
 # List of topologies tested
 # Topology implementations are located in ./icarus/scenarios/topology.py
 # Remove topologies not needed
-TOPOLOGIES =   ['GEANT','TATANLD', 'ION', 'BESTEL', 'USCARRIER', 'VIATEL', 'COGENTCO', 'COLT', 'INTERROUTE']
+TOPOLOGIES =   ['GEANT', 'TATANLD', 'ION', 'BESTEL', 'USCARRIER', 'VIATEL', 'COGENTCO', 'COLT', 'INTERROUTE']
 
 # List of caching and routing strategies
 # The code is located in ./icarus/models/strategy/*.py
 # Remove strategies not needed
-POLICIES = ['GREEDY_WITHOUT_PLACEMENT', 'GREEDY_WITH_ONLINE_PLACEMENT']  # 'GREEDY_WITHOUT_PLACEMENT',
+POLICIES = ['GREEDY_WITH_ONLINE_PLACEMENT']  # 'GREEDY_WITHOUT_PLACEMENT',
 
 # Instantiate experiment queue
 EXPERIMENT_QUEUE = deque()
 
 # Create tree of experiment configuration
 default = Tree()
-default['workload'] = {'name':  'STATIONARY_RANDOM_SFC', # 'sfc_len': SFC_LEN,
+default['workload'] = {'name': 'STATIONARY_RANDOM_SFC', # 'sfc_len': SFC_LEN,
                        'n_warmup': N_WARMUP_REQUESTS,
                        'n_measured': N_MEASURED_REQUESTS,
                        'sfc_req_rate': SFC_REQ_RATES}
