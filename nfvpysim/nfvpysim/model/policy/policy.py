@@ -43,10 +43,6 @@ class GreedyWithoutPlacement(Policy):
                         vnf_status[vnf] = 1
                         #self.controller.vnf_proc(vnf)
                         self.controller.proc_vnf_payload(u, v)
-                    elif vnf_status[vnf] == 1:
-                        continue
-                    elif not self.controller.get_vnf(v, vnf):
-                        continue
             if all(value == 1 for value in vnf_status.values()) and v == egress_node:
                 self.controller.sfc_hit(sfc_id)
 
@@ -94,10 +90,6 @@ class GreedyWithOnlinePlacementPolicy(Policy):
                         vnf_status[vnf] = 1
                         # self.controller.vnf_proc(vnf)
                         self.controller.proc_vnf_payload(u, v)
-                    elif vnf_status[vnf] == 1:
-                        continue
-                    elif not self.controller.get_vnf(v, vnf):
-                        continue
             if all(value == 1 for value in vnf_status.values()) and v == egress_node:
                 self.controller.sfc_hit(sfc_id)
 

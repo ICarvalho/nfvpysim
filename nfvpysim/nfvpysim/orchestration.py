@@ -242,13 +242,15 @@ def run_scenario(settings, params, curr_exp, n_exp):
         """
 
 
-
+        """
         vnf_placement_spec = tree['vnf_placement']
         vnf_placement_name = vnf_placement_spec.pop('name')
         if vnf_placement_name not in VNF_PLACEMENT:
             logger.error('No implementation of vnf_placement %s was found' % vnf_placement_name)
             return None
         VNF_PLACEMENT[vnf_placement_name](topology)
+
+        """
 
 
 

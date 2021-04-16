@@ -123,7 +123,6 @@ class NetworkModelBaseLine:
 
 
         self.topology = topology
-        self.nfv_cache = None
         self.dict_vnfs_cpu_req_proc_delay = {1: 15,   # nat
                                              2: 25,   # fw
                                              3: 25,   # ids
@@ -160,43 +159,43 @@ class NetworkModelBaseLine:
 
 
 
-        """
+
         def vnfs_assignment(nfv_nodes, vnfs):
             if len(nfv_nodes) < len(vnfs):
                 return dict(zip(cycle(nfv_nodes), vnfs))
             else:
                 return dict(zip(nfv_nodes, cycle(vnfs)))
-        """
 
 
-        #vnfs = [2, 1, 8, 6, 5, 7, 4, 3]
+
+        vnfs = [2, 1, 8, 6, 5, 7, 4, 3]
         #sfcs = NetworkModelBaseLine.var_len_seq_sfc()
 
-        #policy_name = nfv_cache_policy['name']
-        policy_name = 'NFV_CACHE'
-        #policy_args = {k: v for k, v in nfv_cache_policy.items() if k != 'name'}
+        policy_name = nfv_cache_policy['name']
+        #policy_name = 'NFV_CACHE'
+        policy_args = {k: v for k, v in nfv_cache_policy.items() if k != 'name'}
         # The actual cache objects storing the vnfs
-        self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_cache_size[node]) #**policy_args)
+        self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_cache_size[node],**policy_args)
                           for node in nfv_cache_size}
 
 
-        #target_nfv_nodes = vnfs_assignment(self.nfv_cache, sfcs)
-        #for node in self.nfv_cache:
-            #if node in target_nfv_nodes.keys():
-                #print(target_nfv_node)
-                #vnfs = NetworkModelBaseLine.var_len_seq_sfc()
+        target_nfv_nodes = vnfs_assignment(self.nfv_cache, vnfs)
+        for node in self.nfv_cache:
+            if node in target_nfv_nodes.keys():
+                #print(node)
+                vnf = target_nfv_nodes[node]
                 #for vnf in vnfs:
-                    #self.nfv_cache[node].add_vnf(vnf)
+                self.nfv_cache[node].add_vnf(vnf)
                 #self.nfv_cache[node].list_nfv_cache()
 
 
 
-    """
+
     @staticmethod
     def select_random_vnf():
         vnfs = [1, 2, 3, 4, 5, 6, 7, 8]
         return random.choice(vnfs)    
-    """
+
 
 
 
@@ -313,30 +312,34 @@ class NetworkModelProposal:
 
 
 
-        #policy_name = nfv_cache_policy['name']
-        policy_name = 'NFV_CACHE'
-        #policy_args = {k: v for k, v in nfv_cache_policy.items() if k != 'name'}
+        policy_name = nfv_cache_policy['name']
+        #policy_name = 'NFV_CACHE'
+        policy_args = {k: v for k, v in nfv_cache_policy.items() if k != 'name'}
         # The actual cache objects storing the vnfs
-        self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_cache_size[node])  #,**policy_args)
+        self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_cache_size[node],**policy_args)
                           for node in nfv_cache_size}
 
-        for node in self.nfv_cache:
-            #print(node)
-            self.nfv_cache[node].list_nfv_cache()
 
-        """
         def hod_vnfs_assignment(nfv_nodes, sfcs):
             if len(nfv_nodes) < len(sfcs):
                 return dict(zip(cycle(nfv_nodes), sfcs))
             else:
                 return dict(zip(nfv_nodes, cycle(sfcs)))
-        """
 
 
-
+        # all hod_vnfs found on the training phase
+        hods_vnfs = [
+            [2, 5, 8],
+            [3, 5, 6],
+            [6, 2, 3],
+            [1, 2, 3],
+            [5, 2, 1],
+            [3, 2, 4, 5],
+            [1, 5, 4],
+            [4, 6],
+        ]
 
         # Place vnfs on all nfv_nodes of the topology
-        """
         target_nfv_nodes = hod_vnfs_assignment(self.nfv_cache, hods_vnfs)
         for target_nfv_node in target_nfv_nodes.keys():
             #print(target_nfv_node)
@@ -344,7 +347,7 @@ class NetworkModelProposal:
             for vnf in vnfs:
                 self.nfv_cache[target_nfv_node].add_vnf(vnf)
                 #self.nfv_cache[target_nfv_node].list_nfv_cache()        
-        """
+
 
         # Place vnfs on the closest nfv_nodes to the egress_nodes
         """

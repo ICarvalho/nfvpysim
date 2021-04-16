@@ -24,7 +24,7 @@ RESULTS_FORMAT = 'PICKLE'
 
 # Number of times each experiment is replicated
 # This is necessary for extracting confidence interval of selected metrics
-N_REPLICATIONS = 10
+N_REPLICATIONS = 30
 
 # List of metrics to be measured in the experiments
 # The implementation of data collectors are located in ./icarus/execution/collectors.py
@@ -53,7 +53,7 @@ N_WARMUP_REQUESTS = 0
 
 # Number of measured requests
 
-N_MEASURED_REQUESTS = [100, 200, 300, 400, 500]
+N_MEASURED_REQUESTS = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
 
 
 # Number of requests per second (over the whole network)
@@ -66,7 +66,7 @@ VNF_ALLOCATION_POLICY = 'STATIC'
 
 # cache size of an nfv_nodes
 
-VNF_PLACEMENT = 'HOD_PLACEMENT'
+#VNF_PLACEMENT = 'HOD_PLACEMENT'
 #, 'HOD_PLACEMENT', 'RANDOM_VAR_LEN_PLACEMENT']
 
 # NFV cache policy for storing VNFs
@@ -81,7 +81,7 @@ TOPOLOGIES =   ['GEANT', 'TATANLD', 'ION', 'BESTEL', 'USCARRIER', 'VIATEL', 'COG
 # List of caching and routing strategies
 # The code is located in ./icarus/models/strategy/*.py
 # Remove strategies not needed
-POLICIES = ['GREEDY_WITH_ONLINE_PLACEMENT']  # 'GREEDY_WITHOUT_PLACEMENT',
+POLICIES = ['GREEDY_WITH_ONLINE_PLACEMENT', 'GREEDY_WITHOUT_PLACEMENT']  # 'GREEDY_WITHOUT_PLACEMENT',
 
 # Instantiate experiment queue
 EXPERIMENT_QUEUE = deque()
@@ -95,7 +95,7 @@ default['workload'] = {'name': 'STATIONARY_RANDOM_SFC', # 'sfc_len': SFC_LEN,
 
 default['vnf_allocation']['name'] = VNF_ALLOCATION_POLICY
 default['nfv_cache_policy']['name'] = NFV_NODE_CACHE_POLICY
-default['vnf_placement']['name'] = VNF_PLACEMENT
+#default['vnf_placement']['name'] = VNF_PLACEMENT
 
 
 
