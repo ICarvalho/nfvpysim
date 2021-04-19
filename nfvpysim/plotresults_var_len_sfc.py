@@ -25,7 +25,7 @@ plt.rcParams['pdf.use14corefonts'] = True
 plt.rcParams['text.usetex'] = False
 
 # Aspect ratio of the output figures
-plt.rcParams['figure.figsize'] = 8, 5
+plt.rcParams['figure.figsize'] = 12, 5
 
 # Size of font in legends
 LEGEND_SIZE = 14
@@ -97,7 +97,7 @@ def plot_cache_hits_vs_n_sfc_requests(resultset, topology, nfv_cache_size, n_mea
     desc = {}
     desc['title'] = 'Sfc hit ratio: T=%s C=%s' % (topology, nfv_cache_size)
     desc['ylabel'] = 'Sfc hit ratio'
-    desc['xscale'] = 'log'
+    desc['xscale'] = 'linear'
     desc['xlabel'] = '#_of_sfc_requests'
     desc['xparam'] = ('workload', 'n_measured')
     desc['xvals'] = n_measured_range
@@ -149,7 +149,7 @@ def plot_link_load_vs_n_sfc_requests(resultset, topology, nfv_cache_size, n_meas
     desc['title'] = 'Average Link Load: T=%s C=%s' % (topology, nfv_cache_size)
     desc['xlabel'] = '#_of_sfc_requests'
     desc['ylabel'] = 'Average Link Load (Mbps)'
-    desc['xscale'] = 'log'
+    desc['xscale'] = 'linear'
     desc['xparam'] = ('workload', ' n_measured')
     desc['xvals'] = n_measured_range
     desc['filter'] = {'topology': {'name': topology},
@@ -197,7 +197,7 @@ def plot_latency_vs_n_sfc_requests(resultset, topology, nfv_cache_size, n_measur
     desc['title'] = 'Latency: T=%s C=%s' % (topology, nfv_cache_size)
     desc['xlabel'] = '#_of_sfc_requests'
     desc['ylabel'] = 'Latency (ms)'
-    desc['xscale'] = 'log'
+    desc['xscale'] = 'linear'
     desc['xparam'] = ('workload', 'n_measured')
     desc['xvals'] = n_measured_range
     desc['filter'] = {'topology': {'name': topology},
@@ -247,7 +247,7 @@ def plot_cache_hits_vs_topology(resultset, n_measured, nfv_cache_size, topology_
     desc = {}
     desc['title'] = 'SFC hit ratio: A=%s C=%s' % (n_measured, nfv_cache_size)
     desc['ylabel'] = 'SFC hit ratio'
-    desc['xscale'] = 'log'
+    desc['xscale'] = 'linear'
     desc['xparam'] = ('topology', 'name')
     desc['xvals'] = topology_range
     desc['filter'] = {'vnf_allocation': {'network_cache': nfv_cache_size},

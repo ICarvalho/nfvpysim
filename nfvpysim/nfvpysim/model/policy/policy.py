@@ -60,7 +60,7 @@ class GreedyWithOnlinePlacementPolicy(Policy):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {1: 15,  # nat
+        vnfs_cpu = {1: 10,  # nat
                      2: 25,  # fw
                      3: 25,  # ids
                      4: 20,  # wanopt
@@ -90,7 +90,7 @@ class GreedyWithOnlinePlacementPolicy(Policy):
                 for vnf in sfc:
                     if self.controller.get_vnf(v, vnf):
                         vnf_status[vnf] = 1
-                        # self.controller.vnf_proc(vnf)
+                        self.controller.vnf_proc(vnf)
                         self.controller.proc_vnf_payload(u, v)
             if all(value == 1 for value in vnf_status.values()):
                 self.controller.sfc_hit(sfc_id)

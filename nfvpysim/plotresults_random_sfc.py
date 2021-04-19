@@ -25,7 +25,7 @@ plt.rcParams['pdf.use14corefonts'] = True
 plt.rcParams['text.usetex'] = False
 
 # Aspect ratio of the output figures
-plt.rcParams['figure.figsize'] = 16,6
+plt.rcParams['figure.figsize'] = 12, 5
 
 # Size of font in legends
 LEGEND_SIZE = 14
