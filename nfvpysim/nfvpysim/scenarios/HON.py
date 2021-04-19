@@ -16,12 +16,12 @@ import BuildRulesFastParameterFree
 import BuildRulesFastParameterFreeFreq
 import BuildNetwork
 import itertools
-
+import math
 
 
 ## Initialize algorithm parameters
 MaxOrder = 1
-MinSupport = 100
+MinSupport = 1000
 
 #/home/igor/PycharmProjects/HON/hon-master/data/sfc.csv
 
@@ -97,6 +97,13 @@ def ReadSequentialData(InputFileName):
     return RawTrajectories
 
 
+def truncate(number, digits):
+    stepper = 10.0 ** digits
+    return math.trunc(stepper * number) / stepper
+
+
+
+
 def BuildTrainingAndTesting(RawTrajectories):
     VPrint('Building training and testing')
     Training = []
@@ -116,7 +123,7 @@ def DumpRules(Rules, OutputRulesFile):
     with open(OutputRulesFile, 'w') as f:
         for Source in Rules:
             for Target in Rules[Source]:
-                f.write(' '.join([','.join([str(x) for x in Source]), ',',Target, str(Rules[Source][Target])]) + '\n')
+                f.write(' '.join([','.join([str(x) for x in Source]), ',',Target, ',', str(truncate(Rules[Source][Target],4))]) + '\n')
 
 def DumpNetwork(Network, OutputNetworkFile):
     VPrint('Dumping network to file')

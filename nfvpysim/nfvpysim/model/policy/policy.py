@@ -37,14 +37,16 @@ class GreedyWithoutPlacement(Policy):
             u = path[hop - 1]
             v = path[hop]
             self.controller.forward_request_vnf_hop(u, v)
-            if self.view.is_nfv_node(v) and v != egress_node:
+            if self.view.is_nfv_node(v):
                 for vnf in sfc:
                     if self.controller.get_vnf(v, vnf):
                         vnf_status[vnf] = 1
                         #self.controller.vnf_proc(vnf)
                         self.controller.proc_vnf_payload(u, v)
-            if all(value == 1 for value in vnf_status.values()) and v == egress_node:
+            if all(value == 1 for value in vnf_status.values()):
                 self.controller.sfc_hit(sfc_id)
+                break
+
 
 
         self.controller.end_session()
@@ -84,14 +86,15 @@ class GreedyWithOnlinePlacementPolicy(Policy):
             u = path[hop - 1]
             v = path[hop]
             self.controller.forward_request_vnf_hop(u, v)
-            if self.view.is_nfv_node(v) and v != egress_node:
+            if self.view.is_nfv_node(v):
                 for vnf in sfc:
                     if self.controller.get_vnf(v, vnf):
                         vnf_status[vnf] = 1
                         # self.controller.vnf_proc(vnf)
                         self.controller.proc_vnf_payload(u, v)
-            if all(value == 1 for value in vnf_status.values()) and v == egress_node:
+            if all(value == 1 for value in vnf_status.values()):
                 self.controller.sfc_hit(sfc_id)
+                break
 
         self.controller.end_session()
 

@@ -329,24 +329,24 @@ class NetworkModelProposal:
 
         # all hod_vnfs found on the training phase
         hods_vnfs = [
-            [2, 5, 8],
-            [3, 5, 6],
-            [6, 2, 3],
-            [1, 2, 3],
-            [5, 2, 1],
-            [3, 2, 4, 5],
-            [1, 5, 4],
-            [4, 6],
+            [6, 5, 4, 1],
+            [1, 5, 6, 7],
+            [8, 3, 4, 2, 5],
+            [2, 5, 4, 7, 6],
+            [3, 6, 7, 2, 1],
         ]
 
         # Place vnfs on all nfv_nodes of the topology
+
         target_nfv_nodes = hod_vnfs_assignment(self.nfv_cache, hods_vnfs)
         for target_nfv_node in target_nfv_nodes.keys():
             #print(target_nfv_node)
             vnfs = target_nfv_nodes[target_nfv_node]
             for vnf in vnfs:
                 self.nfv_cache[target_nfv_node].add_vnf(vnf)
-                #self.nfv_cache[target_nfv_node].list_nfv_cache()        
+                #self.nfv_cache[target_nfv_node].list_nfv_cache() 
+
+
 
 
         # Place vnfs on the closest nfv_nodes to the egress_nodes
@@ -361,7 +361,10 @@ class NetworkModelProposal:
                 for vnf in vnfs:
                     self.nfv_cache[node].add_vnf(vnf)
                     #self.nfv_cache[target_nfv_node].list_nfv_cache()
+        
         """
+
+
 
 
     @staticmethod

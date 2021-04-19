@@ -1,5 +1,6 @@
 from nfvpysim.scenarios.requests import *
 import csv
+import random
 
 class GenerateTraceDrivenRequests:
 
@@ -7,12 +8,14 @@ class GenerateTraceDrivenRequests:
     def gen_sfc_by_len(n_reqs, sfc_lens):
         with open("sfc_reqs_sfc_by_len.csv", 'w', newline='\n') as f:
             writer = csv.writer(f)
-            for sfc_len in sfc_lens:
-                for i in range(1, n_reqs + 1):
+            for i in range(1, n_reqs + 1):
+                l = random.choice(sfc_lens)
+                for j in range(1, l +1 ):
                     req = RequestSfcByLen()
-                    sfc = req.gen_sfc_by_len(sfc_len)
+                    sfc = req.gen_sfc_by_len(l)
                     file_lines = [str(i), ',',  str(sfc)[1:-1], '\n']
                     f.writelines(file_lines)
+
         f.close()
 
 
