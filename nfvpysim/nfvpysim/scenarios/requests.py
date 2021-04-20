@@ -88,7 +88,4 @@ class RequestVarLenSfc:
         return var_len_sfc
 
 
-r = RequestSfcByLen.gen_sfc_by_len(8)
-print(r)
-
 

@@ -359,11 +359,10 @@ class NetworkModelProposal:
 
         # all hod_vnfs found on the training phase
         hods_vnfs = [
-            [1, 2, 6, 7, 8],
-            [5, 6, 8, 3, 4],
-            [1, 8, 3, 6, 4, 5],
-            [5, 7, 6, 1, 2],
-
+            [3, 4, 5, 6],
+            [1, 2, 3, 5],
+            [6, 2, 3],
+            [4, 6, 5, 8]
         ]
 
         # Place vnfs on all nfv_nodes of the topology

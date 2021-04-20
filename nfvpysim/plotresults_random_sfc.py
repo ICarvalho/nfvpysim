@@ -97,7 +97,7 @@ def plot_cache_hits_vs_n_sfc_requests(resultset, topology, nfv_cache_size, n_mea
     desc = {}
     desc['title'] = 'Sfc hit ratio: T=%s C=%s' % (topology, nfv_cache_size)
     desc['ylabel'] = 'Sfc hit ratio'
-    desc['xscale'] = 'linear'
+    desc['xscale'] = 'log'
     desc['xlabel'] = '#_of_sfc_requests'
     desc['xparam'] = ('workload', 'n_measured')
     desc['xvals'] = n_measured_range
@@ -149,7 +149,7 @@ def plot_link_load_vs_n_sfc_requests(resultset, topology, nfv_cache_size, sfc_re
     desc['title'] = 'Average Link Load: T=%s C=%s' % (topology, nfv_cache_size)
     desc['xlabel'] = '#_of_sfc_requests'
     desc['ylabel'] = 'Average Link Load (Mbps)'
-    desc['xscale'] = 'linear'
+    desc['xscale'] = 'log'
     desc['xparam'] = ('workload', ' sfc_req_rate')
     desc['xvals'] = sfc_req_rate_range
     desc['filter'] = {'topology': {'name': topology},
@@ -173,7 +173,7 @@ def plot_link_load_vs_nfv_cache_size(resultset, topology, sfc_len, nfv_cache_siz
     desc['title'] = 'Internal link load: T=%s L=%s' % (topology, sfc_len)
     desc['xlabel'] = 'nfv cache size'
     desc['ylabel'] = 'Internal link load'
-    desc['xscale'] = 'linear'
+    desc['xscale'] = 'log'
     desc['xparam'] = ('vnf_allocation', 'network_cache')
     desc['xvals'] = nfv_cache_size_range
     desc['filter'] = {'topology': {'name': topology},
@@ -197,7 +197,7 @@ def plot_latency_vs_n_sfc_requests(resultset, topology, nfv_cache_size, n_measur
     desc['title'] = 'Latency: T=%s C=%s' % (topology, nfv_cache_size)
     desc['xlabel'] = '#_of_sfc_requests'
     desc['ylabel'] = 'Latency (ms)'
-    desc['xscale'] = 'linear'
+    desc['xscale'] = 'log'
     desc['xparam'] = ('workload', 'n_measured')
     desc['xvals'] = n_measured_range
     desc['filter'] = {'topology': {'name': topology},
@@ -247,7 +247,7 @@ def plot_cache_hits_vs_topology(resultset, n_measured, nfv_cache_size, topology_
     desc = {}
     desc['title'] = 'SFC hit ratio: A=%s C=%s' % (n_measured, nfv_cache_size)
     desc['ylabel'] = 'SFC hit ratio'
-    desc['xscale'] = 'linear'
+    desc['xscale'] = 'log'
     desc['xparam'] = ('topology', 'name')
     desc['xvals'] = topology_range
     desc['filter'] = {'vnf_allocation': {'network_cache': nfv_cache_size},
@@ -275,7 +275,7 @@ def plot_link_load_vs_topology(resultset, n_measured, nfv_cache_size, topology_r
     desc = {}
     desc['title'] = 'Average Link Load: L=%s C=%s' % (n_measured, nfv_cache_size)
     desc['ylabel'] = 'Average Link Load (Mbps)'
-    desc['xscale'] = 'linear'
+    desc['xscale'] = 'log'
     desc['xparam'] = ('topology', 'name')
     desc['xvals'] = topology_range
     desc['filter'] = {'vnf_allocation': {'network_cache': nfv_cache_size},
