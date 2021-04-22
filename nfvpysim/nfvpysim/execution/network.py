@@ -359,11 +359,15 @@ class NetworkModelProposal:
 
         # all hod_vnfs found on the training phase
         hods_vnfs = [
-            [3, 4, 5, 6],
-            [1, 2, 3, 5],
-            [6, 2, 3],
-            [4, 6, 5, 8]
+            [1, 2, 3],
+            [5, 2, 1],
+            [1, 5, 4],
+            [2, 5, 8],
+            [3, 2, 5, 4],
+
         ]
+
+
 
         # Place vnfs on all nfv_nodes of the topology
 
@@ -373,7 +377,7 @@ class NetworkModelProposal:
             vnfs = target_nfv_nodes[target_nfv_node]
             for vnf in vnfs:
                 self.nfv_cache[target_nfv_node].add_vnf(vnf)
-                #self.nfv_cache[target_nfv_node].list_nfv_cache() 
+                #self.nfv_cache[target_nfv_node].list_nfv_cache()
 
 
 

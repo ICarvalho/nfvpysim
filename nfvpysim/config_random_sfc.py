@@ -53,7 +53,7 @@ N_WARMUP_REQUESTS = 0
 
 # Number of measured requests
 
-N_MEASURED_REQUESTS = [10 ** 2, 10 ** 3, 10 ** 4, 10 ** 5]
+N_MEASURED_REQUESTS = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
 
 
 # Number of requests per second (over the whole network)

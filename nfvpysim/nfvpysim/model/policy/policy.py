@@ -39,10 +39,14 @@ class GreedyWithoutPlacement(Policy):
             self.controller.forward_request_vnf_hop(u, v)
             if self.view.is_nfv_node(v):
                 for vnf in sfc:
-                    if self.controller.get_vnf(v, vnf):
+                    if self.controller.get_vnf(v, vnf) and vnf_status[vnf] == 0:
                         vnf_status[vnf] = 1
-                        #self.controller.vnf_proc(vnf)
                         self.controller.proc_vnf_payload(u, v)
+                        #self.controller.vnf_proc(vnf)
+                    elif vnf_status[vnf] == 1:
+                        continue
+                    elif not self.controller.get_vnf(v, vnf):
+                        continue
             if all(value == 1 for value in vnf_status.values()):
                 self.controller.sfc_hit(sfc_id)
                 break
@@ -88,10 +92,14 @@ class GreedyWithOnlinePlacementPolicy(Policy):
             self.controller.forward_request_vnf_hop(u, v)
             if self.view.is_nfv_node(v):
                 for vnf in sfc:
-                    if self.controller.get_vnf(v, vnf):
+                    if self.controller.get_vnf(v, vnf) and vnf_status[vnf] == 0:
                         vnf_status[vnf] = 1
-                        self.controller.vnf_proc(vnf)
                         self.controller.proc_vnf_payload(u, v)
+                        # self.controller.vnf_proc(vnf)
+                    elif vnf_status[vnf] == 1:
+                        continue
+                    elif not self.controller.get_vnf(v, vnf):
+                        continue
             if all(value == 1 for value in vnf_status.values()):
                 self.controller.sfc_hit(sfc_id)
                 break
