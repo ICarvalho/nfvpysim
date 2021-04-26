@@ -231,6 +231,16 @@ def run_scenario(settings, params, curr_exp, n_exp):
             vnf_allocation_spec['cache_budget'] = network_cache
             VNF_ALLOCATION[vnf_allocation_name](topology, **vnf_allocation_spec)
 
+
+
+
+        # cache eviction policy definition
+        nfv_cache_policy = tree['nfv_cache_policy']
+        if nfv_cache_policy['name'] not in CACHE_POLICY:
+            logger.error('No implementation of cache policy %s was found.' % nfv_cache_policy['name'])
+            return None
+
+
         """
         if 'vnf_placement' in tree:
             vnf_placement_spec = tree['vnf_placement']
@@ -241,16 +251,17 @@ def run_scenario(settings, params, curr_exp, n_exp):
             VNF_PLACEMENT[vnf_placement_name](topology) 
         """
 
-
+        """"
+        
         """
         vnf_placement_spec = tree['vnf_placement']
         vnf_placement_name = vnf_placement_spec.pop('name')
         if vnf_placement_name not in VNF_PLACEMENT:
             logger.error('No implementation of vnf_placement %s was found' % vnf_placement_name)
             return None
-        VNF_PLACEMENT[vnf_placement_name](topology)
+        VNF_PLACEMENT[vnf_placement_name](topology, nfv_cache_policy, **vnf_placement_spec)
 
-        """
+
 
 
 
@@ -260,11 +271,7 @@ def run_scenario(settings, params, curr_exp, n_exp):
             logger.error('No implementation of strategy %s was found.' % policy['name'])
             return None
 
-        # cache eviction policy definition
-        nfv_cache_policy = tree['nfv_cache_policy']
-        if nfv_cache_policy['name'] not in CACHE_POLICY:
-            logger.error('No implementation of cache policy %s was found.' % nfv_cache_policy['name'])
-            return None
+
 
         # Configuration parameters of network model
         netconf = tree['netconf']

@@ -123,6 +123,7 @@ class NetworkModelBaseLine:
 
 
         self.topology = topology
+        self.nfv_cache = None
         self.dict_vnfs_cpu_req_proc_delay = {1: 15,   # nat
                                              2: 25,   # fw
                                              3: 25,   # ids
@@ -177,7 +178,12 @@ class NetworkModelBaseLine:
         self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_cache_size[node],**policy_args)
                           for node in nfv_cache_size}
 
-        vnfs = [2, 1, 8, 6, 5, 7, 4, 3]
+        #for node in self.nfv_cache:
+            #print(node)
+            #self.nfv_cache[node].list_nfv_cache()
+
+
+        #vnfs = [2, 1, 8, 6, 5, 7, 4, 3]
         """
         sfcs = [
             [5, 7, 8, 3], [5, 7, 2, 1], [3, 8, 2, 6], [7, 2], [7], [3, 5], [8, 3, 1], [2, 6], [5, 4, 3, 2], [1, 3],
@@ -189,7 +195,7 @@ class NetworkModelBaseLine:
 
 
         # place a single vnf in all nfv-nodes
-
+        """        
         target_nfv_nodes = vnfs_assignment(self.nfv_cache, vnfs)
         for node in self.nfv_cache:
             if node in target_nfv_nodes.keys():
@@ -198,6 +204,8 @@ class NetworkModelBaseLine:
                 #for vnf in vnfs:
                 self.nfv_cache[node].add_vnf(vnf)
                 #self.nfv_cache[node].list_nfv_cache()
+
+        """
 
 
         """
@@ -312,7 +320,7 @@ class NetworkModelProposal:
         self.shortest_path = dict(shortest_path) if shortest_path is not None \
             else (dict(nx.all_pairs_dijkstra_path(topology)))
 
-
+        global nfv_cache_hod
         self.topology = topology
 
 
@@ -346,10 +354,17 @@ class NetworkModelProposal:
         #policy_name = 'NFV_CACHE'
         policy_args = {k: v for k, v in nfv_cache_policy.items() if k != 'name'}
         # The actual cache objects storing the vnfs
-        self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_cache_size[node],**policy_args)
+        nfv_cache_hod = {node: CACHE_POLICY[policy_name](nfv_cache_size[node],**policy_args)
                           for node in nfv_cache_size}
 
+        for node in nfv_cache_hod:
+            nfv_cache_hod[node].list_nfv_cache()
 
+
+
+
+        """        
+        
         def hod_vnfs_assignment(nfv_nodes, sfcs):
             if len(nfv_nodes) < len(sfcs):
                 return dict(zip(cycle(nfv_nodes), sfcs))
@@ -380,7 +395,7 @@ class NetworkModelProposal:
                 #self.nfv_cache[target_nfv_node].list_nfv_cache()
 
 
-
+        """
 
         # Place vnfs on the closest nfv_nodes to the egress_nodes
         """
