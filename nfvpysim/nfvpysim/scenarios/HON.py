@@ -123,7 +123,7 @@ def DumpRules(Rules, OutputRulesFile):
     with open(OutputRulesFile, 'w') as f:
         for Source in Rules:
             for Target in Rules[Source]:
-                f.write(' '.join([','.join([str(x) for x in Source]), ',',Target, '--->', str(truncate(Rules[Source][Target],4))]) + '\n')
+                f.write(' '.join([','.join([str(x) for x in Source]), ',',Target, ',', str(truncate(Rules[Source][Target],4))]) + '\n')
 
 def DumpNetwork(Network, OutputNetworkFile):
     VPrint('Dumping network to file')
