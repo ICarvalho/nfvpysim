@@ -76,7 +76,7 @@ NFV_NODE_CACHE_POLICY = 'NFV_CACHE'
 # List of topologies tested
 # Topology implementations are located in ./icarus/scenarios/topology.py
 # Remove topologies not needed
-TOPOLOGIES =  ['GEANT', 'TATANLD',  'ION',  'BESTEL', 'USCARRIER', 'VIATEL', 'COGENTCO', 'COLT', 'INTERROUTE']
+TOPOLOGIES =  ['GEANT', 'TATANLD',  'ION', 'KDL', 'BESTEL', 'USCARRIER', 'VIATEL', 'COGENTCO', 'COLT', 'INTERROUTE']
 
 # List of caching and routing strategies
 # The code is located in ./icarus/models/strategy/*.py
@@ -95,7 +95,7 @@ default['workload'] = {'name': 'STATIONARY_RANDOM_SFC', # 'sfc_len': SFC_LEN,
 
 default['vnf_allocation']['name'] = VNF_ALLOCATION_POLICY
 default['nfv_cache_policy']['name'] = NFV_NODE_CACHE_POLICY
-default['vnf_placement']['name'] = VNF_PLACEMENT
+#default['vnf_placement']['name'] = VNF_PLACEMENT
 
 
 

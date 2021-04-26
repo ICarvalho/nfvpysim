@@ -30,7 +30,7 @@ def hod_placement(topology, nfv_cache_policy):
         vnfs = random.choice(hods_vnfs)
         for vnf in vnfs:
             nfv_nodes[nfv_node].add_vnf(vnf)
-            #nfv_nodes[nfv_node].list_nfv_cache()
+            nfv_nodes[nfv_node].list_nfv_cache()
     return nfv_nodes
 
 

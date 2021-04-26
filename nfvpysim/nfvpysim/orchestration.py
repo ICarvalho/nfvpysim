@@ -251,8 +251,6 @@ def run_scenario(settings, params, curr_exp, n_exp):
             VNF_PLACEMENT[vnf_placement_name](topology) 
         """
 
-        """"
-        
         """
         vnf_placement_spec = tree['vnf_placement']
         vnf_placement_name = vnf_placement_spec.pop('name')
@@ -260,6 +258,9 @@ def run_scenario(settings, params, curr_exp, n_exp):
             logger.error('No implementation of vnf_placement %s was found' % vnf_placement_name)
             return None
         VNF_PLACEMENT[vnf_placement_name](topology, nfv_cache_policy, **vnf_placement_spec)
+        
+        """
+
 
 
 
