@@ -183,7 +183,8 @@ class NetworkModelBaseLine:
             #self.nfv_cache[node].list_nfv_cache()
 
 
-        vnfs = [2, 1, 8, 6, 5, 7, 4, 3]
+        sfcs = [2, 1, 8, 6, 5, 7, 4, 3]
+        #sfcs = [[5, 7, 8, 3], [7, 6], [5, 4, 2], [2, 5, 3, 7], [1, 3] ]
         """
         sfcs = [
             [5, 7, 8, 3], [5, 7, 2, 1], [3, 8, 2, 6], [7, 2], [7], [3, 5], [8, 3, 1], [2, 6], [5, 4, 3, 2], [1, 3],
@@ -196,12 +197,12 @@ class NetworkModelBaseLine:
 
         # place a single vnf in all nfv-nodes
 
-        target_nfv_nodes = vnfs_assignment(self.nfv_cache, vnfs)
+        target_nfv_nodes = vnfs_assignment(self.nfv_cache, sfcs)
         for node in self.nfv_cache:
             if node in target_nfv_nodes.keys():
                 #print(node)
                 vnf = target_nfv_nodes[node]
-                #for vnf in vnfs:
+                #for vnf in sfc:
                 self.nfv_cache[node].add_vnf(vnf)
                 #self.nfv_cache[node].list_nfv_cache()
 
@@ -372,11 +373,11 @@ class NetworkModelProposal:
 
         # all hod_vnfs found on the training phase
         hods_vnfs = [
-            [1, 2, 3],
-            [5, 2, 1],
-            [1, 5, 4],
-            [2, 5, 8],
-            [3, 2, 5, 4],
+            [1, 2, 3, 4, 5],
+            [6, 2, 3],
+            [4, 6, 2, 1],
+            [1, 2, 5, 8],
+            [3, 2, 5, 6],
 
         ]
 

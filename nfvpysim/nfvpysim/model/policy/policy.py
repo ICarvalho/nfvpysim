@@ -42,7 +42,7 @@ class GreedyWithoutPlacement(Policy):
                     if self.controller.get_vnf(v, vnf) and vnf_status[vnf] == 0:
                         vnf_status[vnf] = 1
                         self.controller.proc_vnf_payload(u, v)
-                        #self.controller.vnf_proc(vnf)
+                        self.controller.vnf_proc(vnf)
                     elif vnf_status[vnf] == 1:
                         continue
                     elif not self.controller.get_vnf(v, vnf):
@@ -95,7 +95,7 @@ class GreedyWithOnlinePlacementPolicy(Policy):
                     if self.controller.get_vnf(v, vnf) and vnf_status[vnf] == 0:
                         vnf_status[vnf] = 1
                         self.controller.proc_vnf_payload(u, v)
-                        # self.controller.vnf_proc(vnf)
+                        self.controller.vnf_proc(vnf)
                     elif vnf_status[vnf] == 1:
                         continue
                     elif not self.controller.get_vnf(v, vnf):
