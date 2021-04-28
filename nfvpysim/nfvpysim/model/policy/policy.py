@@ -6,8 +6,9 @@ from nfvpysim.registry import register_policy
 
 __all__ = [
     'Policy',
-    'GreedyWithoutPlacement',
-    'GreedyWithOnlinePlacementPolicy'
+    'FirstOrder',
+    'Greedy',
+    'HOD'
 ]
 
 
@@ -22,11 +23,11 @@ class Policy:
         raise NotImplementedError('The selected policy must implement a process event method')
 
 
-@register_policy('GREEDY_WITHOUT_PLACEMENT')
-class GreedyWithoutPlacement(Policy):
+@register_policy('FIRST_ORDER')
+class FirstOrder(Policy):
 
     def __init__(self, view, controller, **kwargs):
-        super(GreedyWithoutPlacement, self).__init__(view, controller)
+        super(FirstOrder, self).__init__(view, controller)
 
     def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, log):
         path = self.view.shortest_path(ingress_node, egress_node)
@@ -56,11 +57,48 @@ class GreedyWithoutPlacement(Policy):
         self.controller.end_session()
 
 
-@register_policy('GREEDY_WITH_ONLINE_PLACEMENT')
-class GreedyWithOnlinePlacementPolicy(Policy):
+
+
+
+@register_policy('GREEDY')
+class Greedy(Policy):
 
     def __init__(self, view, controller, **kwargs):
-        super(GreedyWithOnlinePlacementPolicy, self).__init__(view, controller)
+        super(Greedy, self).__init__(view, controller)
+
+    def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, log):
+        path = self.view.shortest_path(ingress_node, egress_node)
+        self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, log)
+        vnf_status = {vnf: 0 for vnf in sfc}  # 0 - not processed / 1 - processed
+        # for u, v in path_links(path):
+        for hop in range(1, len(path)):
+            u = path[hop - 1]
+            v = path[hop]
+            self.controller.forward_request_vnf_hop(u, v)
+            if self.view.is_nfv_node(v):
+                for vnf in sfc:
+                    if self.controller.get_vnf(v, vnf) and vnf_status[vnf] == 0:
+                        vnf_status[vnf] = 1
+                        self.controller.proc_vnf_payload(u, v)
+                        self.controller.vnf_proc(vnf)
+                    elif vnf_status[vnf] == 1:
+                        continue
+                    elif not self.controller.get_vnf(v, vnf):
+                        continue
+            if all(value == 1 for value in vnf_status.values()):
+                self.controller.sfc_hit(sfc_id)
+                break
+
+
+
+        self.controller.end_session()
+
+
+@register_policy('HOD')
+class Hod(Policy):
+
+    def __init__(self, view, controller, **kwargs):
+        super(Hod, self).__init__(view, controller)
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):

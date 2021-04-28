@@ -79,7 +79,7 @@ TOPOLOGIES = ['GEANT', 'TATANLD',  'ION',  'BESTEL', 'USCARRIER', 'VIATEL', 'COG
 # List of caching and routing strategies
 # The code is located in ./icarus/models/strategy/*.py
 # Remove strategies not needed
-POLICIES = ['GREEDY_WITHOUT_PLACEMENT', 'GREEDY_WITH_ONLINE_PLACEMENT']  # 'GREEDY_WITHOUT_PLACEMENT',
+POLICIES = ['GREEDY', 'FIRST_ORDER', 'HOD']  # 'GREEDY_WITHOUT_PLACEMENT',
 
 # Instantiate experiment queue
 EXPERIMENT_QUEUE = deque()

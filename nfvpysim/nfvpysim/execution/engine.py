@@ -1,4 +1,5 @@
-from nfvpysim.execution.network import NetworkModelBaseLine, NetworkModelProposal, NetworkViewBaseLine, NetworkViewProposal,  NetworkController
+from nfvpysim.execution.network import NetworkModelBaseLine, NetworkModelProposal, NetworkViewBaseLine, \
+    NetworkViewProposal, NetworkModelFirstOrder, NetworkViewFirstOrder,  NetworkController
 from nfvpysim.execution.collectors import CollectorProxy
 from nfvpysim.registry import DATA_COLLECTOR, POLICY
 
@@ -36,14 +37,33 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
         :param nfv_cache_policy:
     """
 
+    model_first_order = NetworkModelFirstOrder(topology, nfv_cache_policy, **netconf)
     model_baseline = NetworkModelBaseLine(topology, nfv_cache_policy, **netconf)
     model_proposal = NetworkModelProposal(topology, nfv_cache_policy, **netconf)
+    view_first_order = NetworkViewFirstOrder(model_first_order)
     view_baseline = NetworkViewBaseLine(model_baseline)
     view_proposal = NetworkViewProposal(model_proposal)
+    controller_first_order = NetworkController(model_first_order)
     controller_baseline = NetworkController(model_baseline)
     controller_proposal = NetworkController(model_proposal)
 
-    if policy['name'] == 'GREEDY_WITHOUT_PLACEMENT':
+
+    if policy['name'] == 'FIRST_ORDER':
+        collectors_inst_first_order = [DATA_COLLECTOR[name](view_first_order, **params)
+                                    for name, params in collectors.items()]
+        collector_first_order = CollectorProxy(view_baseline, collectors_inst_first_order)
+        controller_baseline.attach_collector(collector_first_order)
+
+        policy_name_first_order = policy['name']
+        policy_args_first_order = {k: v for k, v in policy.items() if k != 'name'}
+        policy_inst_first_order = POLICY[policy_name_first_order](view_first_order, controller_first_order, **policy_args_first_order)
+
+        for time, event in workload:
+            policy_inst_first_order.process_event(time, **event)
+        return collector_first_order.results()
+
+
+    if policy['name'] == 'GREEDY':
         collectors_inst_baseline = [DATA_COLLECTOR[name](view_baseline, **params)
                                 for name, params in collectors.items()]
         collector_baseline = CollectorProxy(view_baseline, collectors_inst_baseline)
@@ -57,7 +77,7 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
             policy_inst_baseline.process_event(time, **event)
         return collector_baseline.results()
 
-    if policy['name'] == 'GREEDY_WITH_ONLINE_PLACEMENT':
+    if policy['name'] == 'HOD':
         collectors_inst_proposal = [DATA_COLLECTOR[name](view_proposal, **params)
                                 for name, params in collectors.items()]
         collector_proposal = CollectorProxy(view_proposal, collectors_inst_proposal)
