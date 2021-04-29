@@ -51,8 +51,8 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
     if policy['name'] == 'FIRST_ORDER':
         collectors_inst_first_order = [DATA_COLLECTOR[name](view_first_order, **params)
                                     for name, params in collectors.items()]
-        collector_first_order = CollectorProxy(view_baseline, collectors_inst_first_order)
-        controller_baseline.attach_collector(collector_first_order)
+        collector_first_order = CollectorProxy(view_first_order, collectors_inst_first_order)
+        controller_first_order.attach_collector(collector_first_order)
 
         policy_name_first_order = policy['name']
         policy_args_first_order = {k: v for k, v in policy.items() if k != 'name'}

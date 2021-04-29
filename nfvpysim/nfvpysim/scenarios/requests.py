@@ -18,17 +18,18 @@ class RequestRandomSfc:
 
     @staticmethod
     def select_random_sfc():
-        services = [[1, 2],  # [nat - fw]​
-                    [4, 5],  # [wanopt - lb]​
-                    [1, 2, 3],  # [nat - fw - ids]​
-                    [2, 3, 5],  # [fw - ids - lb]​
-                    [1, 5, 4],  # [nat - lb - wanopt]​
-                    [5, 2, 1],  # [lb - fw - nat]​
-                    [2, 3, 5, 6],  # [fw - ids - lb - encrypt]​
-                    [3, 2, 5, 8],  # [ids - fw - lb - wanopt]​
-                    [5, 4, 6, 2, 3],
-                    [3, 5, 6, 7, 8],
-                     ]# [lb - wanopt - encrypt - fw - ids]​
+        services = [
+             [1, 2],
+             [4, 5],
+             [1, 2, 3],
+             [2, 3, 5],
+             [1, 5, 4],
+             [5, 2, 1],
+             [2, 3, 5, 6],
+             [3, 2, 5, 8],
+             [5, 4, 6, 2, 3],
+             [3, 5, 6, 7, 8],
+        ]
         return random.choice(services)
 
 
@@ -65,6 +66,20 @@ class RequestVarLenSfc:
 
 
 """
+
+    services = [[1, 2],  
+                    [4, 5],  # [wanopt - lb]​
+                    [1, 2, 3],  # [nat - fw - ids]​
+                    [2, 3, 5],  # [fw - ids - lb]​
+                    [1, 5, 4],  # [nat - lb - wanopt]​
+                    [5, 2, 1],  # [lb - fw - nat]​
+                    [2, 3, 5, 6],  # [fw - ids - lb - encrypt]​
+                    [3, 2, 5, 8],  # [ids - fw - lb - wanopt]​
+                    [5, 4, 6, 2, 3],
+                    [3, 5, 6, 7, 8],
+                     ]# [lb - wanopt - encrypt - fw - ids]​
+        return random.choice(services)
+
     @staticmethod
     def select_random_sfc():
         services = [

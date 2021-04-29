@@ -32,7 +32,7 @@ plt.rcParams['figure.figsize'] = 12, 5
 LEGEND_SIZE = 14
 
 # Line width in pixels
-LINE_WIDTH = 0.6
+LINE_WIDTH = 1.5
 
 # Plot
 PLOT_EMPTY_GRAPHS = True
@@ -42,55 +42,77 @@ PLOT_EMPTY_GRAPHS = True
 # On-path strategies: dashed lines
 # No-cache: dotted line
 POLICY_STYLE = {
-         'GREEDY_WITHOUT_PLACEMENT':         'b-o',
-         'GREEDY_WITH_ONLINE_PLACEMENT':      'g-->',
-         #'HR_MULTICAST':    'm-^',
-         #'HR_HYBRID_AM':    'c-s',
-         #'HR_HYBRID_SM':    'r-v',
-         #'LCE':             'b--p',
-         #'LCD':             'g-->',
-         #'CL4M':            'g-->',
-         #'PROB_CACHE':      'c--<',
-         #'RAND_CHOICE':     'r--<',
-         #'RAND_BERNOULLI':  'g--*',
-         #'NO_CACHE':        'k:o',
-         #'OPTIMAL':         'k-o'
-                }
+    'GREEDY': 'r--D',
+    'HOD': 'k--^',
+    'FIRST_ORDER': 'm--s',
+    # 'HR_MULTICAST':    'm-^',
+    # 'HR_HYBRID_AM':    'c-s',
+    # 'HR_HYBRID_SM':    'r-v',
+    # 'LCE':             'b--p',
+    # 'LCD':             'g-->',
+    # 'CL4M':            'g-->',
+    # 'PROB_CACHE':      'c--<',
+    # 'RAND_CHOICE':     'r--<',
+    # 'RAND_BERNOULLI':  'g--*',
+    # 'NO_CACHE':        'k:o',
+    # 'OPTIMAL':         'k-o'
+}
 
 # This dict maps name of strategies to names to be displayed in the legend
 POLICY_LEGEND = {
-         'GREEDY_WITHOUT_PLACEMENT':             'GWP',
-         'GREEDY_WITH_ONLINE_PLACEMENT':         'GWOP',
-         #'HR_SYMM':         'HR Symm',
-         #'HR_ASYMM':        'HR Asymm',
-         #'HR_MULTICAST':    'HR Multicast',
-         #'HR_HYBRID_AM':    'HR Hybrid AM',
-         #'HR_HYBRID_SM':    'HR Hybrid SM',
-         #'CL4M':            'CL4M',
-         #'PROB_CACHE':      'ProbCache',
-         #'RAND_CHOICE':     'Random (choice)',
-         #'RAND_BERNOULLI':  'Random (Bernoulli)',
-         #'NO_CACHE':        'No caching',
-         #'OPTIMAL':         'Optimal'
-                    }
+    'GREEDY': 'RND_PLC',
+    'HOD': 'HOD',
+    'FIRST_ORDER': 'FIRST_ORD',
+    # 'HR_SYMM':         'HR Symm',
+    # 'HR_ASYMM':        'HR Asymm',
+    # 'HR_MULTICAST':    'HR Multicast',
+    # 'HR_HYBRID_AM':    'HR Hybrid AM',
+    # 'HR_HYBRID_SM':    'HR Hybrid SM',
+    # 'CL4M':            'CL4M',
+    # 'PROB_CACHE':      'ProbCache',
+    # 'RAND_CHOICE':     'Random (choice)',
+    # 'RAND_BERNOULLI':  'Random (Bernoulli)',
+    # 'NO_CACHE':        'No caching',
+    # 'OPTIMAL':         'Optimal'
+}
 
 # Color and hatch styles for bar charts of cache hit ratio and link load vs topology
-POLICY_BAR_COLOR = {
-    'GWP':          'k',
-    'GWOP':          '0.2',
-    #'NO_CACHE':     '0.5',
-    #'HR_ASYMM':     '0.6',
-    #'HR_SYMM':      '0.7'
-    }
+POLICY_BAR_COLOR_CACHE_SIZE = {
+    'GREEDY': 'darkorange',
+    'HOD': 'royalblue',
+    'FIRST_ORDER': 'green',
+    # 'NO_CACHE':     '0.5',
+    # 'HR_ASYMM':     '0.6',
+    # 'HR_SYMM':      '0.7'
+}
+
+POLICY_BAR_COLOR_LATENCY = {
+    'GREEDY': 'darkorange',
+    'HOD': 'royalblue',
+    'FIRST_ORDER': 'green',
+    # 'NO_CACHE':     '0.5',
+    # 'HR_ASYMM':     '0.6',
+    # 'HR_SYMM':      '0.7'
+}
+
+POLICY_BAR_COLOR_LINK_LOAD = {
+    'GREEDY': 'darkorange',
+    'HOD': 'royalblue',
+    'FIRST_ORDER': 'green',
+    # 'NO_CACHE':     '0.5',
+    # 'HR_ASYMM':     '0.6',
+    # 'HR_SYMM':      '0.7'
+}
+
 
 POLICY_BAR_HATCH = {
-    'GWP':          None,
-    'GWOP':          '//',
-    #'NO_CACHE':     'x',
-    #'HR_ASYMM':     '+',
-    #'HR_SYMM':      '\\'
-    }
-
+    'GREEDY': '\\',
+    'HOD': 'x',
+    'FIRST_ORDER': '+',
+    # 'NO_CACHE':     'x',
+    # 'HR_ASYMM':     '+',
+    # 'HR_SYMM':      '\\'
+}
 
 
 def plot_cache_hits_vs_sfc_len(resultset, topology, nfv_cache_size, sfc_len_range, policies, plotdir):
@@ -250,12 +272,13 @@ def plot_cache_hits_vs_topology(resultset, sfc_len, nfv_cache_size, topology_ran
     desc['ycondvals'] = policies
     desc['errorbar'] = True
     desc['legend_loc'] = 'lower right'
-    desc['bar_color'] = POLICY_BAR_COLOR
+    desc['bar_color'] = POLICY_BAR_COLOR_CACHE_SIZE
     desc['bar_hatch'] = POLICY_BAR_HATCH
     desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
     plot_bar_chart(resultset, desc, 'SFC_HIT_RATIO_A=%s_C=%s.pdf'
                    % (sfc_len, nfv_cache_size), plotdir)
+
 
 
 
@@ -280,7 +303,7 @@ def plot_link_load_vs_topology(resultset, sfc_len,  nfv_cache_size, topology_ran
     desc['ycondvals'] = policies
     desc['errorbar'] = True
     desc['legend_loc'] = 'lower right'
-    desc['bar_color'] = POLICY_BAR_COLOR
+    desc['bar_color'] = POLICY_BAR_COLOR_LINK_LOAD
     desc['bar_hatch'] = POLICY_BAR_HATCH
     desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS

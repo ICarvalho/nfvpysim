@@ -53,7 +53,7 @@ N_WARMUP_REQUESTS = 0
 
 # Number of measured requests
 
-N_MEASURED_REQUESTS = 1 * 10 ** 4
+N_MEASURED_REQUESTS = 1 * 10 ** 5
 
 
 
@@ -77,7 +77,7 @@ NFV_NODE_CACHE_POLICY = 'NFV_CACHE'
 # List of topologies tested
 # Topology implementations are located in ./icarus/scenarios/topology.py
 # Remove topologies not needed
-TOPOLOGIES = ['GEANT', 'TATANLD',  'ION',  'BESTEL', 'USCARRIER', 'VIATEL', 'COGENTCO', 'COLT', 'INTERROUTE', 'KDL']
+TOPOLOGIES = ['GEANT', 'TATANLD',  'ION',  'BESTEL', 'USCARRIER', 'KDL', 'COGENTCO', 'COLT', 'INTERROUTE', 'KDL']
 
 # List of caching and routing strategies
 # The code is located in ./icarus/models/strategy/*.py

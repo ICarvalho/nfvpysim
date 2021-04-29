@@ -409,6 +409,15 @@ class NetworkModelFirstOrder:
         #self.nfv_cache[node].list_nfv_cache()
 
         firs_order_sfcs = [
+            [6, 1],
+            [8, 7],
+            [5, 8],
+            [7, 6],
+            [6, 7],
+            [6, 2],
+            [5, 6],
+            [3, 4],
+
 
 
         ]
@@ -422,10 +431,10 @@ class NetworkModelFirstOrder:
         for node in self.nfv_cache:
             if node in target_nfv_nodes.keys():
                 #print(node)
-                vnf = target_nfv_nodes[node]
-                #for vnf in sfc:
-                self.nfv_cache[node].add_vnf(vnf)
-                #self.nfv_cache[node].list_nfv_cache()
+                sfc = target_nfv_nodes[node]
+                for vnf in sfc:
+                    self.nfv_cache[node].add_vnf(vnf)
+                    #self.nfv_cache[node].list_nfv_cache()
 
 
 
@@ -604,11 +613,15 @@ class NetworkModelProposal:
 
         # all hod_vnfs found on the training phase
         hods_vnfs = [
-            [1, 2, 3, 4, 5],
-            [6, 2, 3],
-            [4, 6, 2, 1],
-            [1, 2, 5, 8],
-            [3, 2, 5, 6],
+            [4, 3, 2],
+            [4, 6, 8],
+            [1, 8, 5],
+            [6, 7, 4],
+            [3, 7, 6],
+            [8, 3, 1],
+            [5, 1, 6],
+            [7, 4, 8],
+
 
         ]
 
@@ -622,7 +635,7 @@ class NetworkModelProposal:
             vnfs = target_nfv_nodes[target_nfv_node]
             for vnf in vnfs:
                 self.nfv_cache[target_nfv_node].add_vnf(vnf)
-                #self.nfv_cache[target_nfv_node].list_nfv_cache()
+                #self.nfv_cache[target_nfv_node].list_nfv_cacPOLICY_BAR_COLOR_LINK_LOADhe()
 
 
 

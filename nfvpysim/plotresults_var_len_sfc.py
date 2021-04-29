@@ -41,8 +41,9 @@ PLOT_EMPTY_GRAPHS = True
 # On-path strategies: dashed lines
 # No-cache: dotted line
 POLICY_STYLE = {
-    'GREEDY_WITHOUT_PLACEMENT': 'r-o',
-    'GREEDY_WITH_ONLINE_PLACEMENT': 'k--*',
+    'GREEDY': 'r--D',
+    'HOD': 'k--^',
+    'FIRST_ORDER': 'm--s',
     # 'HR_MULTICAST':    'm-^',
     # 'HR_HYBRID_AM':    'c-s',
     # 'HR_HYBRID_SM':    'r-v',
@@ -58,8 +59,9 @@ POLICY_STYLE = {
 
 # This dict maps name of strategies to names to be displayed in the legend
 POLICY_LEGEND = {
-    'GREEDY_WITHOUT_PLACEMENT': 'RND_VAR_LEN_VNF_PLC',
-    'GREEDY_WITH_ONLINE_PLACEMENT': 'HOD_PLC',
+    'GREEDY': 'RND_PLC',
+    'HOD': 'HOD',
+    'FIRST_ORDER': 'FIRST_ORD',
     # 'HR_SYMM':         'HR Symm',
     # 'HR_ASYMM':        'HR Asymm',
     # 'HR_MULTICAST':    'HR Multicast',
@@ -74,21 +76,43 @@ POLICY_LEGEND = {
 }
 
 # Color and hatch styles for bar charts of cache hit ratio and link load vs topology
-POLICY_BAR_COLOR = {
-    'GREEDY_WITHOUT_PLACEMENT': 'k',
-    'GREEDY_WITH_ONLINE_PLACEMENT': '0.4',
+POLICY_BAR_COLOR_CACHE_SIZE = {
+    'GREEDY': 'darkorange',
+    'HOD': 'royalblue',
+    'FIRST_ORDER': 'green',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
 }
 
+POLICY_BAR_COLOR_LATENCY = {
+    'GREEDY': 'darkorange',
+    'HOD': 'royalblue',
+    'FIRST_ORDER': 'green',
+    # 'NO_CACHE':     '0.5',
+    # 'HR_ASYMM':     '0.6',
+    # 'HR_SYMM':      '0.7'
+}
+
+POLICY_BAR_COLOR_LINK_LOAD = {
+    'GREEDY': 'darkorange',
+    'HOD': 'royalblue',
+    'FIRST_ORDER': 'green',
+    # 'NO_CACHE':     '0.5',
+    # 'HR_ASYMM':     '0.6',
+    # 'HR_SYMM':      '0.7'
+}
+
+
 POLICY_BAR_HATCH = {
-    'GREEDY_WITHOUT_PLACEMENT': None,
-    'GREEDY_WITH_ONLINE_PLACEMENT': '+',
+    'GREEDY': '\\',
+    'HOD': 'x',
+    'FIRST_ORDER': '+',
     # 'NO_CACHE':     'x',
     # 'HR_ASYMM':     '+',
     # 'HR_SYMM':      '\\'
 }
+
 
 
 def plot_cache_hits_vs_n_sfc_requests(resultset, topology, nfv_cache_size, n_measured_range, policies, plotdir):
@@ -257,7 +281,7 @@ def plot_cache_hits_vs_topology(resultset, n_measured, nfv_cache_size, topology_
     desc['ycondvals'] = policies
     desc['errorbar'] = True
     desc['legend_loc'] = 'lower right'
-    desc['bar_color'] = POLICY_BAR_COLOR
+    desc['bar_color'] = POLICY_BAR_COLOR_CACHE_SIZE
     desc['bar_hatch'] = POLICY_BAR_HATCH
     desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
@@ -285,12 +309,41 @@ def plot_link_load_vs_topology(resultset, n_measured, nfv_cache_size, topology_r
     desc['ycondvals'] = policies
     desc['errorbar'] = True
     desc['legend_loc'] = 'lower right'
-    desc['bar_color'] = POLICY_BAR_COLOR
+    desc['bar_color'] = POLICY_BAR_COLOR_LINK_LOAD
     desc['bar_hatch'] = POLICY_BAR_HATCH
     desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
     plot_bar_chart(resultset, desc, 'LINK_LOAD_INTERNAL_L=%s_C=%s.pdf'
                    % (n_measured, nfv_cache_size), plotdir)
+
+
+def plot_latency_vs_topology(resultset, n_measured, nfv_cache_size, topology_range, policies, plotdir):
+    """
+    Plot bar graphs of link load for specific values of alpha and cache
+    size for various topologies.
+    The objective here is to show that our algorithms works well on all
+    topologies considered
+    """
+    desc = {}
+    desc['title'] = 'Average Service Execution Time: L=%s C=%s' % (n_measured, nfv_cache_size)
+    desc['ylabel'] = 'Average Service Execution Time (ms)'
+    desc['xscale'] = 'linear'
+    desc['xparam'] = ('topology', 'name')
+    desc['xvals'] = topology_range
+    desc['filter'] = {'vnf_allocation': {'network_cache': nfv_cache_size},
+                      'workload': {'name': 'STATIONARY_VAR_LEN_SFC', 'n_measured': n_measured}}
+    desc['ymetrics'] = [('LATENCY', 'MEAN')] * len(policies)
+    desc['ycondnames'] = [('policy', 'name')] * len(policies)
+    desc['ycondvals'] = policies
+    desc['errorbar'] = True
+    desc['legend_loc'] = 'best'
+    desc['bar_color'] = POLICY_BAR_COLOR_LATENCY
+    desc['bar_hatch'] = POLICY_BAR_HATCH
+    desc['legend'] = POLICY_LEGEND
+    desc['plotempty'] = PLOT_EMPTY_GRAPHS
+    plot_bar_chart(resultset, desc, 'LATENCY_L=%s_C=%s.pdf'
+                   % (n_measured, nfv_cache_size), plotdir)
+
 
 
 def run(config, results, plotdir):
@@ -344,6 +397,8 @@ def run(config, results, plotdir):
             plot_cache_hits_vs_topology(resultset, n_of_sfc_request, nfv_cache_size, topologies, policies, plotdir)
             logger.info('Plotting link load for cache size %s  vs sfc_len %s against topologies' % (str(nfv_cache_size), str(n_of_sfc_request)))
             plot_link_load_vs_topology(resultset, n_of_sfc_request, nfv_cache_size, topologies, policies, plotdir)
+            plot_latency_vs_topology(resultset, n_of_sfc_request, nfv_cache_size, topologies, policies, plotdir)
+            logger.info('Plotting average service execution for cache size %s  vs sfc_len %s against topologies' % (str(nfv_cache_size), str(n_of_sfc_request)))
 
     logger.info('Exit. Plots were saved in directory %s' % os.path.abspath(plotdir))
 

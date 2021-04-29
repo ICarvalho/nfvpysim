@@ -41,8 +41,9 @@ PLOT_EMPTY_GRAPHS = True
 # On-path strategies: dashed lines
 # No-cache: dotted line
 POLICY_STYLE = {
-    'GREEDY_WITHOUT_PLACEMENT': 'r--D',
-    'GREEDY_WITH_ONLINE_PLACEMENT': 'k--^',
+    'GREEDY': 'r--D',
+    'HOD': 'k--^',
+    'FIRST_ORDER': 'm--s',
     # 'HR_MULTICAST':    'm-^',
     # 'HR_HYBRID_AM':    'c-s',
     # 'HR_HYBRID_SM':    'r-v',
@@ -58,8 +59,9 @@ POLICY_STYLE = {
 
 # This dict maps name of strategies to names to be displayed in the legend
 POLICY_LEGEND = {
-    'GREEDY_WITHOUT_PLACEMENT': 'RND_VNF_PLC',
-    'GREEDY_WITH_ONLINE_PLACEMENT': 'HOD_PLC(ON)',
+    'GREEDY': 'RND_PLC',
+    'HOD': 'HOD',
+    'FIRST_ORDER': 'FIRST_ORD',
     # 'HR_SYMM':         'HR Symm',
     # 'HR_ASYMM':        'HR Asymm',
     # 'HR_MULTICAST':    'HR Multicast',
@@ -75,24 +77,27 @@ POLICY_LEGEND = {
 
 # Color and hatch styles for bar charts of cache hit ratio and link load vs topology
 POLICY_BAR_COLOR_CACHE_SIZE = {
-    'GREEDY_WITHOUT_PLACEMENT': 'darkorange',
-    'GREEDY_WITH_ONLINE_PLACEMENT': 'royalblue',
+    'GREEDY': 'darkorange',
+    'HOD': 'royalblue',
+    'FIRST_ORDER': 'green',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
 }
 
 POLICY_BAR_COLOR_LATENCY = {
-    'GREEDY_WITHOUT_PLACEMENT': 'hotpink',
-    'GREEDY_WITH_ONLINE_PLACEMENT': 'b',
+    'GREEDY': 'darkorange',
+    'HOD': 'royalblue',
+    'FIRST_ORDER': 'green',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
 }
 
 POLICY_BAR_COLOR_LINK_LOAD = {
-    'GREEDY_WITHOUT_PLACEMENT': 'sienna',
-    'GREEDY_WITH_ONLINE_PLACEMENT': 'darkblue',
+    'GREEDY': 'darkorange',
+    'HOD': 'royalblue',
+    'FIRST_ORDER': 'green',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
@@ -100,8 +105,9 @@ POLICY_BAR_COLOR_LINK_LOAD = {
 
 
 POLICY_BAR_HATCH = {
-    'GREEDY_WITHOUT_PLACEMENT': '\\',
-    'GREEDY_WITH_ONLINE_PLACEMENT': '//',
+    'GREEDY': '\\',
+    'HOD': 'x',
+    'FIRST_ORDER': '+',
     # 'NO_CACHE':     'x',
     # 'HR_ASYMM':     '+',
     # 'HR_SYMM':      '\\'
@@ -297,7 +303,7 @@ def plot_link_load_vs_topology(resultset, n_measured, nfv_cache_size, topology_r
     desc['xvals'] = topology_range
     desc['filter'] = {'vnf_allocation': {'network_cache': nfv_cache_size},
                       'workload': {'name': 'STATIONARY_RANDOM_SFC', 'n_measured': n_measured}}
-    desc['ymetrics'] = [('LINK_LOAD', 'MEAN_INTERNAL')] * len(policies)
+    desc['ymetrics'] = [('LINK_LOAD', 'MEAN')] * len(policies)
     desc['ycondnames'] = [('policy', 'name')] * len(policies)
     desc['ycondvals'] = policies
     desc['errorbar'] = True
@@ -330,7 +336,7 @@ def plot_latency_vs_topology(resultset, n_measured, nfv_cache_size, topology_ran
     desc['ycondvals'] = policies
     desc['errorbar'] = True
     desc['legend_loc'] = 'best'
-    desc['bar_color'] = POLICY_BAR_COLOR_LINK_LOAD
+    desc['bar_color'] = POLICY_BAR_COLOR_LATENCY
     desc['bar_hatch'] = POLICY_BAR_HATCH
     desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS

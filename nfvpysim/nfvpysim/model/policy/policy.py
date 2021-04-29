@@ -8,7 +8,7 @@ __all__ = [
     'Policy',
     'FirstOrder',
     'Greedy',
-    'HOD'
+    'Hod'
 ]
 
 
