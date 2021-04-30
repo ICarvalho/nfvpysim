@@ -408,7 +408,7 @@ class NetworkModelFirstOrder:
         #print(node)
         #self.nfv_cache[node].list_nfv_cache()
 
-        firs_order_sfcs = [
+        first_order_sfcs = [
             [6, 1],
             [8, 7],
             [5, 8],
