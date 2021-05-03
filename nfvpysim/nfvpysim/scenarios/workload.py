@@ -17,6 +17,19 @@ def truncate(number, digits):
     stepper = 10.0 ** digits
     return math.trunc(stepper * number) / stepper
 
+def get_delay(service):
+    services = {
+
+        1: {'sfc': [1, 2, 3], 'delay': 120},
+        2: {'sfc': [1, 5, 4], 'delay': 100},
+        3: {'sfc': [2, 3, 5, 6], 'delay': 200},
+        4: {'sfc': [3, 2, 5, 8], 'delay': 200},
+        5: {'sfc': [3, 5, 6, 7], 'delay': 250},
+        6: {'sfc': [3, 5, 2, 3, 4], 'delay': 300},
+        7: {'sfc': [5, 4, 6, 2, 3], 'delay': 300},
+        8: {'sfc': [3, 5, 6, 7, 8], 'delay': 320},
+
+    }
 
 
 @register_workload('STATIONARY_SFC_BY_LEN')

@@ -7,6 +7,94 @@ from collections import defaultdict
 from itertools import cycle
 
 
+def select_random_sfc():
+
+    services = {
+
+        1: {'sfc': [1, 2, 3], 'delay': 120},
+        2: {'sfc': [1, 5, 4], 'delay': 100},
+        3: {'sfc': [2, 3, 5, 6], 'delay': 200},
+        4: {'sfc': [3, 2, 5, 8], 'delay': 200},
+        5: {'sfc': [3, 5, 6, 7], 'delay': 250},
+        6: {'sfc': [3, 5, 2, 3, 4], 'delay': 300},
+        7: {'sfc': [5, 4, 6, 2, 3], 'delay': 300},
+        8: {'sfc': [3, 5, 6, 7, 8], 'delay': 320},
+
+    }
+    key = random.choice(list(services.keys()))
+    return list(services[key]['sfc'])
+
+a = select_random_sfc()
+print(a)
+
+
+
+def get_delay(service):
+
+    services = {
+
+        1: {'sfc': [1, 2, 3], 'delay': 120},
+        2: {'sfc': [1, 5, 4], 'delay': 100},
+        3: {'sfc': [2, 3, 5, 6], 'delay': 200},
+        4: {'sfc': [3, 2, 5, 8], 'delay': 200},
+        5: {'sfc': [3, 5, 6, 7], 'delay': 250},
+        6: {'sfc': [3, 5, 2, 3, 4], 'delay': 300},
+        7: {'sfc': [5, 4, 6, 2, 3], 'delay': 300},
+        8: {'sfc': [3, 5, 6, 7, 8], 'delay': 320},
+
+    }
+    if service in services.items():
+        return services.values()
+
+b = get_delay([1, 2, 3])
+print(b)
+
+
+
+"""
+opo = topology_kdl()
+topo_nodes = topo.nodes 
+ingress_nodes = random.sample(topo_nodes, 23)   # 23 nodes
+egress_nodes = random.sample(topo_nodes, 23) # 23 nodes
+nfv_nodes = random.sample(topo_nodes, 23)
+"""
+
+
+#path = nx.shortest_path(topo, 257, 22)
+#nodes = list(topo.nodes)
+#for node in path:
+    #if topo.node[node]['stack'][0] == 'nfv_node':
+        #print(node)
+#print(sorted(ingress_nodes))
+#print(sorted(egress_nodes))
+#print(sorted(nfv_nodes))
+"""
+257 382 644 ing_nodes
+512 22 40  egr_nodes
+"""
+
+
+"""
+path_dist = defaultdict(dict)
+all_pairs_dist = dict(nx.all_pairs_shortest_path(topo))
+ing_nodes = NetworkModelProposal.get_ingress_nodes(topo)
+egr_nodes = NetworkModelProposal.get_egress_nodes(topo)
+
+for ing_node in ing_nodes:
+    for egr_node in egr_nodes:
+        ing_egr_dist = all_pairs_dist[ing_node][egr_node]
+        path_dist[ing_node][egr_node] = ing_egr_dist
+        nfv_nodes = NetworkModelProposal.get_target_nfv_nodes_place_vnfs(topo)
+        if any(v for v in ing_egr_dist):
+            print("ingress node:", ing_node)
+            print("egress node:", egr_node)
+            print(path_dist[ing_node][egr_node])
+            print(nfv_nodes)
+            
+            
+            
+            
+        
 def var_len_seq_sfc():
     var_len_sfc = []
     sfcs = {1: 15,  # nat
@@ -50,50 +138,10 @@ def vnfs_assignment(nfv_nodes, vnfs):
         return dict(zip(nfv_nodes, cycle(vnfs)))
 
 
-
-
-
-
-
-"""
-opo = topology_kdl()
-topo_nodes = topo.nodes 
-ingress_nodes = random.sample(topo_nodes, 23)   # 23 nodes
-egress_nodes = random.sample(topo_nodes, 23) # 23 nodes
-nfv_nodes = random.sample(topo_nodes, 23)
-"""
-
-
-#path = nx.shortest_path(topo, 257, 22)
-#nodes = list(topo.nodes)
-#for node in path:
-    #if topo.node[node]['stack'][0] == 'nfv_node':
-        #print(node)
-#print(sorted(ingress_nodes))
-#print(sorted(egress_nodes))
-#print(sorted(nfv_nodes))
-"""
-257 382 644 ing_nodes
-512 22 40  egr_nodes
-"""
-
-
-"""
-path_dist = defaultdict(dict)
-all_pairs_dist = dict(nx.all_pairs_shortest_path(topo))
-ing_nodes = NetworkModelProposal.get_ingress_nodes(topo)
-egr_nodes = NetworkModelProposal.get_egress_nodes(topo)
-
-for ing_node in ing_nodes:
-    for egr_node in egr_nodes:
-        ing_egr_dist = all_pairs_dist[ing_node][egr_node]
-        path_dist[ing_node][egr_node] = ing_egr_dist
-        nfv_nodes = NetworkModelProposal.get_target_nfv_nodes_place_vnfs(topo)
-        if any(v for v in ing_egr_dist):
-            print("ingress node:", ing_node)
-            print("egress node:", egr_node)
-            print(path_dist[ing_node][egr_node])
-            print(nfv_nodes)
+    
+    
+    
+    
 """
 
 

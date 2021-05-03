@@ -18,19 +18,20 @@ class RequestRandomSfc:
 
     @staticmethod
     def select_random_sfc():
-        services = [
-             [1, 2],
-             [4, 5],
-             [1, 2, 3],
-             [2, 3, 5],
-             [1, 5, 4],
-             [5, 2, 1],
-             [2, 3, 5, 6],
-             [3, 2, 5, 8],
-             [5, 4, 6, 2, 3],
-             [3, 5, 6, 7, 8],
-        ]
-        return random.choice(services)
+        services = {
+
+            1: {'sfc': [1, 2, 3], 'delay': 120},
+            2: {'sfc': [1, 5, 4], 'delay': 100},
+            3: {'sfc': [2, 3, 5, 6], 'delay': 200},
+            4: {'sfc': [3, 2, 5, 8], 'delay': 200},
+            5: {'sfc': [3, 5, 6, 7], 'delay': 250},
+            6: {'sfc': [3, 5, 2, 3, 4], 'delay': 300},
+            7: {'sfc': [5, 4, 6, 2, 3], 'delay': 300},
+            8: {'sfc': [3, 5, 6, 7, 8], 'delay': 320},
+
+        }
+        key = random.choice(list(services.keys()))
+        return list(services[key]['sfc'])
 
 
 class RequestVarLenSfc:
@@ -79,6 +80,26 @@ class RequestVarLenSfc:
                     [3, 5, 6, 7, 8],
                      ]# [lb - wanopt - encrypt - fw - ids]​
         return random.choice(services)
+        
+        
+        
+    
+        services = [
+             [1, 2],
+             [4, 5],
+             [1, 2, 3],
+             [2, 3, 5],
+             [1, 5, 4],
+             [5, 2, 1],
+             [2, 3, 5, 6],
+             [3, 2, 5, 8],
+             [5, 4, 6, 2, 3],
+             [3, 5, 6, 7, 8],
+        ]    
+        
+    
+    
+    
 
     @staticmethod
     def select_random_sfc():

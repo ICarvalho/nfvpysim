@@ -459,7 +459,7 @@ class NetworkModelProposal:
 
         self.link_type = nx.get_edge_attributes(topology, 'type')
         self.link_delay = fnss.get_delays(topology)
-
+    
         if not topology.is_directed():
             for (u, v), link_type in list(self.link_type.items()):
                 self.link_type[(v, u)] = link_type
