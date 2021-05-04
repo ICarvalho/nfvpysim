@@ -25,12 +25,12 @@ def select_random_sfc():
     return list(services[key]['sfc'])
 
 a = select_random_sfc()
-print(a)
+#print(a)
+
 
 
 
 def get_delay(service):
-
     services = {
 
         1: {'sfc': [1, 2, 3], 'delay': 120},
@@ -43,13 +43,34 @@ def get_delay(service):
         8: {'sfc': [3, 5, 6, 7, 8], 'delay': 320},
 
     }
-    if service in services.items():
-        return services.values()
-
-b = get_delay([1, 2, 3])
-print(b)
 
 
+
+
+
+def get_delay(dict_services, service):
+    for k, v in dict_services.items():
+        for k1, v1 in v.items():
+            if v1 == service:
+                return v.get('delay', v)
+
+
+
+services = {
+
+    1: {'sfc': [1, 2, 3], 'delay': 120},
+    2: {'sfc': [1, 5, 4], 'delay': 100},
+    3: {'sfc': [2, 3, 5, 6], 'delay': 200},
+    4: {'sfc': [3, 2, 5, 8], 'delay': 200},
+    5: {'sfc': [3, 5, 6, 7], 'delay': 250},
+    6: {'sfc': [3, 5, 2, 3, 4], 'delay': 300},
+    7: {'sfc': [5, 4, 6, 2, 3], 'delay': 300},
+    8: {'sfc': [3, 5, 6, 7, 8], 'delay': 320},
+
+}
+
+a = get_delay(services, [1,2,3])
+print(a)
 
 """
 opo = topology_kdl()
