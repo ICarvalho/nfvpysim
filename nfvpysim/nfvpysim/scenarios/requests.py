@@ -15,6 +15,7 @@ class RequestSfcByLen:
         return sfc
 
 class RequestRandomSfc:
+
     @staticmethod
     def select_random_sfc():
         services = {

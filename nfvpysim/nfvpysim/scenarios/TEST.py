@@ -8,7 +8,6 @@ from itertools import cycle
 
 
 def select_random_sfc():
-
     services = {
 
         1: {'sfc': [1, 2, 3], 'delay': 120},
@@ -24,7 +23,7 @@ def select_random_sfc():
     key = random.choice(list(services.keys()))
     return services[key]['sfc'], services[key]['delay']
 
-a = select_random_sfc()[0]
+a = select_random_sfc()[1]
 print(a)
 
 
@@ -70,7 +69,7 @@ services = {
 }
 
 a = get_delay(services, [1,2,3])
-print(a)
+#print(a)
 
 """
 opo = topology_kdl()
