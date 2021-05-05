@@ -24,7 +24,7 @@ class DataCollector:
         self.view = view
 
 
-    def start_session(self, timestamp, sfc_id, ingress_node, egress_node, sfc):
+    def start_session(self, timestamp, sfc_id, ingress_node, egress_node, sfc, delay):
         pass
 
     def request_vnf_hop(self, u, v, main_path=True):
@@ -61,9 +61,9 @@ class CollectorProxy(DataCollector):
                              for e in self.EVENTS}
 
 
-    def start_session(self, timestamp, sfc_id,  ingress_node, egress_node, sfc):
+    def start_session(self, timestamp, sfc_id,  ingress_node, egress_node, sfc, delay):
         for c in self.collectors['start_session']:
-            c.start_session(timestamp, sfc_id, ingress_node, egress_node, sfc)
+            c.start_session(timestamp, sfc_id, ingress_node, egress_node, sfc, delay)
 
 
 
@@ -124,7 +124,7 @@ class LinkLoadCollector(DataCollector):
         self.t_end = 1
 
 
-    def start_session(self, timestamp, sfc_id,  ingress_node, egress_node, sfc):
+    def start_session(self, timestamp, sfc_id,  ingress_node, egress_node, sfc, delay):
         if self.t_start < 0:
             self.t_start = timestamp
         self.t_end = timestamp
@@ -197,7 +197,7 @@ class LatencyCollector(DataCollector):
             self.latency_data = collections.deque()
 
 
-    def start_session(self, timestamp, sfc_id,  ingress_node, egress_node, sfc):
+    def start_session(self, timestamp, sfc_id,  ingress_node, egress_node, sfc, delay):
         self.sess_count += 1
         self.sess_latency = 0.0
         self.vnf_proc_time = 0.0
@@ -216,6 +216,9 @@ class LatencyCollector(DataCollector):
     def vnf_proc_delay(self, vnf):
         if vnf in self.dict_vnfs_cpu_req_proc_delay.keys():
             self.sess_latency += self.dict_vnfs_cpu_req_proc_delay[vnf]
+
+    def get_sess_latency(self):
+        return self.sess_latency
 
 
     def end_session(self, success=True):
@@ -252,7 +255,7 @@ class AcceptanceRatioCollector(DataCollector):
         if per_sfc:
             self.per_sfc_hit = collections.defaultdict(int)
 
-    def start_session(self, timestamp, sfc_id, ingress_node, egress_node, sfc):
+    def start_session(self, timestamp, sfc_id, ingress_node, egress_node, sfc, delay):
         self.sess_count += 1
         self.curr_path = self.view.shortest_path(ingress_node, egress_node)
 

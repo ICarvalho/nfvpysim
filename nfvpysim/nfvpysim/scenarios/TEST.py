@@ -23,8 +23,6 @@ def select_random_sfc():
     key = random.choice(list(services.keys()))
     return services[key]['sfc'], services[key]['delay']
 
-a = select_random_sfc()[1]
-print(a)
 
 
 

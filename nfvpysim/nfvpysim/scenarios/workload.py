@@ -239,10 +239,10 @@ class TraceDrivenWorkload:
 
 
 
-topo = topology_tatanld()
-r = StationaryWorkloadRandomSfc(topo, 10**5, 0)
-for i in r:
-    print(i)
+#topo = topology_tatanld()
+#r = StationaryWorkloadRandomSfc(topo, 10**5, 0)
+#for i in r:
+    #print(i)
 
 
 

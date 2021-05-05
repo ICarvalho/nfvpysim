@@ -19,7 +19,7 @@ class Policy:
         self.controller = controller
 
     @abstractmethod
-    def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, log):
+    def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
         raise NotImplementedError('The selected policy must implement a process event method')
 
 
@@ -29,9 +29,9 @@ class FirstOrder(Policy):
     def __init__(self, view, controller, **kwargs):
         super(FirstOrder, self).__init__(view, controller)
 
-    def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, log):
+    def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
         path = self.view.shortest_path(ingress_node, egress_node)
-        self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, log)
+        self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, delay, log)
         vnf_status = {vnf: 0 for vnf in sfc}  # 0 - not processed / 1 - processed
         # for u, v in path_links(path):
         for hop in range(1, len(path)):
@@ -48,7 +48,7 @@ class FirstOrder(Policy):
                         continue
                     elif not self.controller.get_vnf(v, vnf):
                         continue
-            if all(value == 1 for value in vnf_status.values()):
+            if all(value == 1 for value in vnf_status.values()) and delay <= self.controller.get_delay_sfc:
                 self.controller.sfc_hit(sfc_id)
                 break
 
@@ -66,9 +66,9 @@ class Greedy(Policy):
     def __init__(self, view, controller, **kwargs):
         super(Greedy, self).__init__(view, controller)
 
-    def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, log):
+    def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
         path = self.view.shortest_path(ingress_node, egress_node)
-        self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, log)
+        self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, delay, log)
         vnf_status = {vnf: 0 for vnf in sfc}  # 0 - not processed / 1 - processed
         # for u, v in path_links(path):
         for hop in range(1, len(path)):
@@ -85,7 +85,7 @@ class Greedy(Policy):
                         continue
                     elif not self.controller.get_vnf(v, vnf):
                         continue
-            if all(value == 1 for value in vnf_status.values()):
+            if all(value == 1 for value in vnf_status.values()) and delay <= self.controller.get_delay_sfc:
                 self.controller.sfc_hit(sfc_id)
                 break
 
@@ -118,9 +118,9 @@ class Hod(Policy):
                 sum_vnfs_cpu += vnfs_cpu[vnf]
         return sum_vnfs_cpu
 
-    def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, log):
+    def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
         path = self.view.shortest_path(ingress_node, egress_node)
-        self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, log)
+        self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, delay, log)
         missed_vnfs = []
         vnf_status = {vnf: 0 for vnf in sfc}
         # for u, v in path_links(path):
@@ -138,7 +138,7 @@ class Hod(Policy):
                         continue
                     elif not self.controller.get_vnf(v, vnf):
                         continue
-            if all(value == 1 for value in vnf_status.values()):
+            if all(value == 1 for value in vnf_status.values()) and delay <= self.controller.get_delay_sfc:
                 self.controller.sfc_hit(sfc_id)
                 break
 

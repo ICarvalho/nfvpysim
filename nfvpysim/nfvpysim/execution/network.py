@@ -338,14 +338,13 @@ class NetworkModelFirstOrder:
         # self.nfv_cache[node].list_nfv_cache()
 
         first_order_sfcs = [
-            [6, 1],
-            [8, 7],
-            [5, 8],
-            [7, 6],
-            [6, 7],
-            [6, 2],
-            [5, 6],
-            [3, 4],
+            [5, 4],
+            [4, 6],
+            [2, 3],
+            [7, 8],
+            [2, 3],
+            [3, 5],
+
 
         ]
 
@@ -496,10 +495,12 @@ class NetworkModelProposal:
 
         # all hod_vnfs found on the training phase
         hods_vnfs = [
-            [1, 2, 6, 7, 8],
-            [5, 6, 8, 3, 4],
-            [1, 8, 3, 6, 4, 5],
-            [5, 7, 6, 1, 2],
+            [4, 6, 2],
+            [2, 5, 6, 7, 8],
+            [1, 2, 3],
+            [6, 5, 2, 3],
+            [3, 2, 5, 6],
+            [1, 5, 4],
 
 
 
@@ -683,6 +684,11 @@ class NetworkController:
     def sfc_hit(self, sfc_id):
         if self.collector is not None and self.session['log']:
             self.collector.sfc_hit(sfc_id)
+
+    def get_delay_sfc(self):
+        if self.collector is not None and self.session['log']:
+            self.collector.get_sess_latency()
+
 
     def put_vnf(self, node, vnf):
         if node in self.model.nfv_cache:
