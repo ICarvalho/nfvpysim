@@ -18,20 +18,22 @@ def truncate(number, digits):
     return math.trunc(stepper * number) / stepper
 
 
-services = {
 
-    1: {'sfc': [1, 2, 3], 'delay': 120},
-    2: {'sfc': [1, 5, 4], 'delay': 100},
-    3: {'sfc': [2, 3, 5, 6], 'delay': 200},
-    4: {'sfc': [3, 2, 5, 8], 'delay': 200},
-    5: {'sfc': [3, 5, 6, 7], 'delay': 250},
-    6: {'sfc': [3, 5, 2, 3, 4], 'delay': 300},
-    7: {'sfc': [5, 4, 6, 2, 3], 'delay': 300},
-    8: {'sfc': [3, 5, 6, 7, 8], 'delay': 320},
 
-}
+def get_delay(service):
 
-def get_delay(dict_services, service):
+    dict_services = {
+
+        1: {'sfc': [1, 2, 3], 'delay': 120},
+        2: {'sfc': [1, 5, 4], 'delay': 100},
+        3: {'sfc': [2, 3, 5, 6], 'delay': 200},
+        4: {'sfc': [3, 2, 5, 8], 'delay': 200},
+        5: {'sfc': [3, 5, 6, 7], 'delay': 250},
+        6: {'sfc': [3, 5, 2, 3, 4], 'delay': 300},
+        7: {'sfc': [5, 4, 6, 2, 3], 'delay': 300},
+        8: {'sfc': [3, 5, 6, 7, 8], 'delay': 320},
+
+    }
     for k, v in dict_services.items():
         for k1, v1 in v.items():
             if v1 == service:
@@ -161,7 +163,7 @@ class StationaryWorkloadRandomSfc:
 
     """
 
-    def __init__(self, topology, sfc_req_rate, n_warmup, n_measured=10**1, seed=None):
+    def __init__(self, topology, sfc_req_rate, n_warmup, n_measured=20**1, seed=None):
 
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
@@ -187,13 +189,14 @@ class StationaryWorkloadRandomSfc:
             t_event += (random.expovariate(self.sfc_req_rate))
             ingress_node = random.choice(self.ingress_nodes)
             egress_node = random.choice(self.egress_nodes)
-            self.req = RequestRandomSfc()
-            self.sfc = self.req.select_random_sfc()
-            sfc = self.sfc
-            delay = get_delay(services, sfc)
+            req = RequestRandomSfc()
+            self.sfc = req.select_random_sfc()
+            delay = get_delay(self.sfc)
+            if delay is None:
+                continue
             sfc_id = truncate(t_event, 2)
             log = (req_counter >= self.n_warmup)
-            event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'delay': delay, 'log': log}
+            event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': self.sfc, 'delay': delay, 'log': log}
             #file_lines = [str(i),',', str(sfc)[1:-1], '\n']
             #f.writelines(file_lines)
             yield (t_event, event)
@@ -236,14 +239,10 @@ class TraceDrivenWorkload:
 
 
 
-topo = topology_geant()
-r = StationaryWorkloadRandomSfc(topo, 10**5, 1)
+topo = topology_tatanld()
+r = StationaryWorkloadRandomSfc(topo, 10**5, 0)
 for i in r:
     print(i)
-
-
-
-
 
 
 
