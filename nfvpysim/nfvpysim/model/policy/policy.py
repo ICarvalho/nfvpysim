@@ -48,7 +48,7 @@ class FirstOrder(Policy):
                         continue
                     elif not self.controller.get_vnf(v, vnf):
                         continue
-            if all(value == 1 for value in vnf_status.values()) and delay <= self.controller.get_delay_sfc:
+            if all(value == 1 for value in vnf_status.values()) and delay <= 300: # self.controller.get_delay_sfc():
                 self.controller.sfc_hit(sfc_id)
                 break
 
@@ -85,7 +85,8 @@ class Greedy(Policy):
                         continue
                     elif not self.controller.get_vnf(v, vnf):
                         continue
-            if all(value == 1 for value in vnf_status.values()) and delay <= self.controller.get_delay_sfc:
+
+            if all(value == 1 for value in vnf_status.values()) and delay <= 300: # self.controller.get_delay_sfc():
                 self.controller.sfc_hit(sfc_id)
                 break
 
@@ -138,7 +139,7 @@ class Hod(Policy):
                         continue
                     elif not self.controller.get_vnf(v, vnf):
                         continue
-            if all(value == 1 for value in vnf_status.values()) and delay <= self.controller.get_delay_sfc:
+            if all(value == 1 for value in vnf_status.values()) and delay <= 300: # self.controller.get_delay_sfc():
                 self.controller.sfc_hit(sfc_id)
                 break
 

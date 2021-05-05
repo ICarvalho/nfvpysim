@@ -643,15 +643,16 @@ class NetworkController:
     def detach_collector(self):
         self.collector = None
 
-    def start_session(self, timestamp, sfc_id, ingress_node, egress_node, sfc, log):
+    def start_session(self, timestamp, sfc_id, ingress_node, egress_node, sfc, delay, log):
         self.session = dict(timestamp=timestamp,
                             ingress_node=ingress_node,
                             egress_node=egress_node,
                             sfc=sfc,
+                            delay=delay,
                             log=log)
 
         if self.collector is not None and self.session['log']:
-            self.collector.start_session(timestamp, sfc_id, ingress_node, egress_node, sfc)
+            self.collector.start_session(timestamp, sfc_id, ingress_node, egress_node, sfc, delay)
 
     def forward_request_path(self, ingress_node, egress_node, path=None, main_path=True):
 

@@ -37,6 +37,9 @@ class DataCollector:
     def sfc_hit(self, sfc_id):
         pass
 
+    def get_sess_latency(self):
+        pass
+
     def vnf_proc_delay(self, vnf):
         pass
 
@@ -51,7 +54,7 @@ class DataCollector:
 class CollectorProxy(DataCollector):
 
 
-    EVENTS = ('start_session', 'request_vnf_hop', 'vnf_proc_payload', 'sfc_hit', 'vnf_proc_delay', 'end_session',  'results')
+    EVENTS = ('start_session', 'request_vnf_hop', 'vnf_proc_payload', 'sfc_hit', 'vnf_proc_delay', 'get_sess_latency', 'end_session',  'results')
 
     def __init__(self, view, collectors, **params):
 
@@ -84,6 +87,10 @@ class CollectorProxy(DataCollector):
     def vnf_proc_delay(self, vnf):
         for c in self.collectors['vnf_proc_delay']:
             c.vnf_proc_delay(vnf)
+
+    def get_sess_latency(self):
+        for c in self.collectors['get_sess_latency']:
+            c.get_sess_latency()
 
 
     def end_session(self, success=True):
