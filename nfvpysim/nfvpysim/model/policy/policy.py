@@ -1,5 +1,5 @@
 from abc import abstractmethod
-
+from collections import defaultdict
 from nfvpysim.registry import register_policy
 
 # from nfvpysim.util import path_links
@@ -29,15 +29,39 @@ class FirstOrder(Policy):
     def __init__(self, view, controller, **kwargs):
         super(FirstOrder, self).__init__(view, controller)
 
+    @staticmethod
+    def sum_vnfs_cpu(vnfs):
+        vnfs_cpu = {1: 10,  # nat
+                    2: 25,  # fw
+                    3: 25,  # ids
+                    4: 20,  # wanopt
+                    5: 20,  # lb
+                    6: 25,  # encrypt
+                    7: 25,  # decrypts
+                    8: 30,  # dpi
+                    }
+
+        sum_vnfs_cpu = 0
+        for vnf in vnfs:
+            if vnf in vnfs_cpu.keys():
+                sum_vnfs_cpu += vnfs_cpu[vnf]
+        return sum_vnfs_cpu
+
+
+
     def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
+        delay_sfc = defaultdict(int) # dict to store the delay taken to run the sfc over the path
         path = self.view.shortest_path(ingress_node, egress_node)
         self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, delay, log)
         vnf_status = {vnf: 0 for vnf in sfc}  # 0 - not processed / 1 - processed
+        sum_cpu_sfc = FirstOrder.sum_vnfs_cpu(sfc) # total time processing of the sfc
         # for u, v in path_links(path):
         for hop in range(1, len(path)):
+            delay_sfc[sfc_id] = 0
             u = path[hop - 1]
             v = path[hop]
             self.controller.forward_request_vnf_hop(u, v)
+            delay_sfc[sfc_id] += self.view.link_delay(u, v)
             if self.view.is_nfv_node(v):
                 for vnf in sfc:
                     if self.controller.get_vnf(v, vnf) and vnf_status[vnf] == 0:
@@ -48,11 +72,10 @@ class FirstOrder(Policy):
                         continue
                     elif not self.controller.get_vnf(v, vnf):
                         continue
-            if all(value == 1 for value in vnf_status.values()) and delay <= 300: # self.controller.get_delay_sfc():
+            delay_sfc[sfc_id] += sum_cpu_sfc
+            if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
                 self.controller.sfc_hit(sfc_id)
                 break
-
-
 
         self.controller.end_session()
 
@@ -66,15 +89,38 @@ class Greedy(Policy):
     def __init__(self, view, controller, **kwargs):
         super(Greedy, self).__init__(view, controller)
 
+
+    @staticmethod
+    def sum_vnfs_cpu(vnfs):
+        vnfs_cpu = {1: 10,  # nat
+                    2: 25,  # fw
+                    3: 25,  # ids
+                    4: 20,  # wanopt
+                    5: 20,  # lb
+                    6: 25,  # encrypt
+                    7: 25,  # decrypts
+                    8: 30,  # dpi
+                    }
+
+        sum_vnfs_cpu = 0
+        for vnf in vnfs:
+            if vnf in vnfs_cpu.keys():
+                sum_vnfs_cpu += vnfs_cpu[vnf]
+        return sum_vnfs_cpu
+
     def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
+        delay_sfc = defaultdict(int) # dict to store the delay taken to run the sfc over the path
         path = self.view.shortest_path(ingress_node, egress_node)
         self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, delay, log)
         vnf_status = {vnf: 0 for vnf in sfc}  # 0 - not processed / 1 - processed
+        sum_cpu_sfc = FirstOrder.sum_vnfs_cpu(sfc) # total time processing of the sfc
         # for u, v in path_links(path):
         for hop in range(1, len(path)):
+            delay_sfc[sfc_id] = 0
             u = path[hop - 1]
             v = path[hop]
             self.controller.forward_request_vnf_hop(u, v)
+            delay_sfc[sfc_id] += self.view.link_delay(u, v)
             if self.view.is_nfv_node(v):
                 for vnf in sfc:
                     if self.controller.get_vnf(v, vnf) and vnf_status[vnf] == 0:
@@ -85,8 +131,8 @@ class Greedy(Policy):
                         continue
                     elif not self.controller.get_vnf(v, vnf):
                         continue
-
-            if all(value == 1 for value in vnf_status.values()) and delay <= 300: # self.controller.get_delay_sfc():
+            delay_sfc[sfc_id] += sum_cpu_sfc
+            if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
                 self.controller.sfc_hit(sfc_id)
                 break
 
@@ -120,15 +166,18 @@ class Hod(Policy):
         return sum_vnfs_cpu
 
     def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
+        delay_sfc = defaultdict(int) # dict to store the delay taken to run the sfc over the path
         path = self.view.shortest_path(ingress_node, egress_node)
         self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, delay, log)
-        missed_vnfs = []
-        vnf_status = {vnf: 0 for vnf in sfc}
+        vnf_status = {vnf: 0 for vnf in sfc}  # 0 - not processed / 1 - processed
+        sum_cpu_sfc = FirstOrder.sum_vnfs_cpu(sfc) # total time processing of the sfc
         # for u, v in path_links(path):
         for hop in range(1, len(path)):
+            delay_sfc[sfc_id] = 0
             u = path[hop - 1]
             v = path[hop]
             self.controller.forward_request_vnf_hop(u, v)
+            delay_sfc[sfc_id] += self.view.link_delay(u, v)
             if self.view.is_nfv_node(v):
                 for vnf in sfc:
                     if self.controller.get_vnf(v, vnf) and vnf_status[vnf] == 0:
@@ -139,7 +188,8 @@ class Hod(Policy):
                         continue
                     elif not self.controller.get_vnf(v, vnf):
                         continue
-            if all(value == 1 for value in vnf_status.values()) and delay <= 300: # self.controller.get_delay_sfc():
+            delay_sfc[sfc_id] += sum_cpu_sfc
+            if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
                 self.controller.sfc_hit(sfc_id)
                 break
 
