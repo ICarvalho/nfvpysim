@@ -118,7 +118,7 @@ def plot_cache_hits_vs_n_sfc_requests(resultset, topology, nfv_cache_size, n_mea
     if 'NO_CACHE' in policies:
         policies.remove('NO_CACHE')
     desc = {}
-    desc['title'] = 'Sfc hit ratio: T=%s C=%s' % (topology, nfv_cache_size)
+    desc['title'] = '(D_Aware) Sfc hit ratio: T=%s C=%s' % (topology, nfv_cache_size)
     desc['ylabel'] = 'Sfc hit ratio'
     desc['xscale'] = 'linear'
     desc['xlabel'] = '#_of_sfc_requests'
@@ -217,7 +217,7 @@ def plot_link_load_vs_nfv_cache_size(resultset, topology, sfc_len, nfv_cache_siz
 
 def plot_latency_vs_nfv_cache_size(resultset, topology, nfv_cache_size, n_measured_range, policies, plotdir):
     desc = {}
-    desc['title'] = 'Latency: T=%s C=%s' % (topology, nfv_cache_size)
+    desc['title'] = '(D_Aware)Latency: T=%s C=%s' % (topology, nfv_cache_size)
     desc['xlabel'] = '#_of_sfc_requests'
     desc['ylabel'] = 'Latency (ms)'
     desc['xscale'] = 'linear'
@@ -268,8 +268,9 @@ def plot_cache_hits_vs_topology(resultset, n_measured, nfv_cache_size, topology_
     if 'NO_CACHE' in policies:
         policies.remove('NO_CACHE')
     desc = {}
-    desc['title'] = 'SFC hit ratio: A=%s C=%s' % (n_measured, nfv_cache_size)
+    desc['title'] = '(D_Aware) SFC hit ratio: Number_of_request=%s C=%s' % (n_measured, nfv_cache_size)
     desc['ylabel'] = 'SFC hit ratio'
+    desc['xlabel'] = 'Topology'
     desc['xscale'] = 'linear'
     desc['xparam'] = ('topology', 'name')
     desc['xvals'] = topology_range
@@ -284,7 +285,7 @@ def plot_cache_hits_vs_topology(resultset, n_measured, nfv_cache_size, topology_
     desc['bar_hatch'] = POLICY_BAR_HATCH
     desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
-    plot_bar_chart(resultset, desc, 'SFC_HIT_RATIO_A=%s_C=%s.pdf'
+    plot_bar_chart(resultset, desc, 'SFC_HIT_RATIO_N=%s_C=%s.pdf'
                    % (n_measured, nfv_cache_size), plotdir)
 
 
@@ -324,8 +325,9 @@ def plot_latency_vs_topology(resultset, n_measured, nfv_cache_size, topology_ran
     topologies considered
     """
     desc = {}
-    desc['title'] = 'Average Service Execution Time: L=%s C=%s' % (n_measured, nfv_cache_size)
-    desc['ylabel'] = 'Average Service Execution Time (ms)'
+    desc['title'] = '(D_Aware) - Average Service Execution Time: Number_of_requests=%s C=%s' % (n_measured, nfv_cache_size)
+    desc['ylabel'] = 'Time (ms)'
+    desc['xlabel'] = 'Topology'
     desc['xscale'] = 'linear'
     desc['xparam'] = ('topology', 'name')
     desc['xvals'] = topology_range

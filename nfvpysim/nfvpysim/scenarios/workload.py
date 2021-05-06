@@ -81,12 +81,12 @@ class StationaryWorkloadSfcByLen:
                     egress_node = random.choice(self.egress_nodes)
                     self.req = RequestSfcByLen()
                     self.sfc = self.req.gen_sfc_by_len(self.sfc_len)
-                    sfc = self.sfc
+                    delay = get_delay(self.sfc)
                     sfc_id = truncate(t_event, 2)
                     log = (req_counter >= self.n_warmup)
-                    event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
-                    file_lines = [str(sfc)[1:-1], '\n'] #str(i),',',
-                    f.writelines(file_lines)
+                    event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': self.sfc, 'delay': delay, 'log': log}
+                    #file_lines = [str(sfc)[1:-1], '\n'] #str(i),',',
+                    #f.writelines(file_lines)
                     yield t_event, event
                     req_counter += 1
                 f.close()
@@ -135,10 +135,10 @@ class StationaryWorkloadVarLenSfc:
             egress_node = random.choice(self.egress_nodes)
             self.req = RequestVarLenSfc()
             self.sfc = self.req.var_len_seq_sfc()
-            sfc = self.sfc
+            delay = get_delay(self.sfc)
             sfc_id = truncate(t_event, 2)
             log = (req_counter >= self.n_warmup)
-            event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
+            event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': self.sfc, 'delay': delay, 'log': log}
             #file_lines = [str(i),',', str(sfc)[1:-1], '\n']
             #f.writelines(file_lines)
             yield t_event, event

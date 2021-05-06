@@ -74,7 +74,7 @@ NFV_NODE_CACHE_POLICY = 'NFV_CACHE'
 # List of topologies tested
 # Topology implementations are located in ./icarus/scenarios/topology.py
 # Remove topologies not needed
-TOPOLOGIES = ['GEANT', 'TATANLD',  'ION',  'BESTEL', 'USCARRIER', 'KDL', 'COGENTCO', 'COLT', 'INTERROUTE']
+TOPOLOGIES = ['TATANLD',  'ION',  'BESTEL', 'USCARRIER', 'KDL', 'COGENTCO', 'COLT', 'INTERROUTE']
 
 # List of caching and routing strategies
 # The code is located in ./icarus/models/strategy/*.py
