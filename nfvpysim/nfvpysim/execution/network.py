@@ -6,6 +6,7 @@ from collections import defaultdict
 from nfvpysim.registry import CACHE_POLICY
 from nfvpysim.util import path_links
 from collections import OrderedDict
+from operator import itemgetter
 import logging
 
 # from multi_key_dict import multi_key_dict
@@ -179,7 +180,7 @@ class NetworkModelBaseLine:
         # print(node)
         # self.nfv_cache[node].list_nfv_cache()
 
-        sfcs = [2, 1, 8, 6, 5, 7, 4, 3]
+        sfcs = [5, 7, 8, 3, 1, 2, 4, 6]
         # sfcs = [[5, 7, 8, 3], [7, 6], [5, 4, 2], [2, 5, 3, 7], [1, 3] ]
         """
         sfcs = [
@@ -338,13 +339,11 @@ class NetworkModelFirstOrder:
         # self.nfv_cache[node].list_nfv_cache()
 
         first_order_sfcs = [
-            [2, 6],
-            [7, 5],
-            [3, 8],
-            [4, 2],
-            [3, 4],
-            [4, 3],
-            [1, 3],
+            [5, 4],
+            [4, 6],
+            [7, 8],
+            [2, 3],
+            [3, 5],
 
 
         ]
@@ -496,20 +495,31 @@ class NetworkModelProposal:
 
         # all hod_vnfs found on the training phase
         hods_vnfs = [
-            [5, 2, 1, 4, 3],
-            [7, 2, 1, 4, 8],
-            [6, 2, 1, 4, 5],
-            [3, 2, 1, 4, 7],
-            [6, 8, 1, 4, 3],
-            [5, 8, 1, 4, 3],
-            [3, 7, 1, 4, 2],
+            [6, 2, 3],
+            [1, 5, 2, 3],
+            [3, 2, 5, 6, 7],
+            [2, 5, 8],
+            [2, 3, 4, 5],
+
 
 
 
         ]
 
-        # Place vnfs on all nfv_nodes of the topology
+        # place vnfs on top-20 nfv_nodes with the highest betweenness_centrality value
+        betw_nfv_nodes = NetworkModelProposal.get_top_betw_nodes(topology, 20)
+        target_nfv_nodes = hod_vnfs_assignment(betw_nfv_nodes, hods_vnfs)
+        for node in self.nfv_cache:
+            if node in target_nfv_nodes.keys():
+                #print(node)
+                vnfs = target_nfv_nodes[node]
+                for vnf in vnfs:
+                    self.nfv_cache[node].add_vnf(vnf)
+                    #self.nfv_cache[node].list_nfv_cache()
 
+
+        """
+        # Place vnfs on all nfv_nodes of the topology
         target_nfv_nodes = hod_vnfs_assignment(self.nfv_cache, hods_vnfs)
         for target_nfv_node in target_nfv_nodes.keys():
             # print(target_nfv_node)
@@ -517,6 +527,8 @@ class NetworkModelProposal:
             for vnf in vnfs:
                 self.nfv_cache[target_nfv_node].add_vnf(vnf)
                 # self.nfv_cache[target_nfv_node].list_nfv_cacPOLICY_BAR_COLOR_LINK_LOADhe()
+        """
+
 
         # Place vnfs on the closest nfv_nodes to the egress_nodes
         """
@@ -536,8 +548,8 @@ class NetworkModelProposal:
     @staticmethod
     def get_top_betw_nodes(topology, n_of_nodes):
         dict_nodes_betw = nx.betweenness_centrality(topology)
-        ord_dict = dict(sorted(dict_nodes_betw.items(), key=lambda x: x[1], reverse=True))
-        return list(ord_dict[:n_of_nodes])
+        ord_dict =  OrderedDict(sorted(dict_nodes_betw.items(), key=itemgetter(1), reverse=True))
+        return dict(list(ord_dict.items())[0:n_of_nodes])
 
 
     @staticmethod

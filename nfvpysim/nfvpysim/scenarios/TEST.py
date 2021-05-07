@@ -15,7 +15,7 @@ ord = dict(sorted(b.items(), key=lambda x: x[1], reverse=True))
 print(b)
 print()
 print(ord)
-print(list(ord)[:9])
+print(dict(ord))
 
 
 
