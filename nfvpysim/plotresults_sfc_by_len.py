@@ -119,7 +119,7 @@ def plot_cache_hits_vs_sfc_len(resultset, topology, nfv_cache_size, sfc_len_rang
     if 'NO_CACHE' in policies:
         policies.remove('NO_CACHE')
     desc = {}
-    desc['title'] = 'Sfc hit ratio: T=%s C=%s' % (topology, nfv_cache_size)
+    desc['title'] = 'D_Aware Sfc hit ratio: T=%s C=%s' % (topology, nfv_cache_size)
     desc['ylabel'] = 'Sfc hit ratio'
     desc['xlabel'] = 'sfc_length'
     desc['xparam'] = ('workload', 'sfc_len')
@@ -144,7 +144,7 @@ def plot_cache_hits_vs_cache_size(resultset, topology, sfc_len, nfv_cache_size_r
     desc = {}
     if 'NO_CACHE' in policies:
         policies.remove('NO_CACHE')
-    desc['title'] = 'Sfc hit ratio: T=%s L=%s' % (topology, sfc_len)
+    desc['title'] = ' D_Aware Sfc hit ratio: T=%s L=%s' % (topology, sfc_len)
     desc['xlabel'] = 'Cache to population ratio'
     desc['ylabel'] = 'Cache hit ratio'
     desc['xscale'] = 'linear'
@@ -169,7 +169,7 @@ def plot_cache_hits_vs_cache_size(resultset, topology, sfc_len, nfv_cache_size_r
 
 def plot_link_load_vs_sfc_len(resultset, topology, nfv_cache_size, sfc_len_range, policies, plotdir):
     desc = {}
-    desc['title'] = 'Average Link Load: T=%s C=%s' % (topology, nfv_cache_size)
+    desc['title'] = 'D_Aware Average Link Load: T=%s C=%s' % (topology, nfv_cache_size)
     desc['xlabel'] = 'sfc length'
     desc['ylabel'] = 'Average Link Load (Mbps)'
     desc['xparam'] = ('workload', 'sfc_len')
@@ -190,7 +190,7 @@ def plot_link_load_vs_sfc_len(resultset, topology, nfv_cache_size, sfc_len_range
 
 def plot_link_load_vs_nfv_cache_size(resultset, topology, sfc_len,  nfv_cache_size_range, policies, plotdir):
     desc = {}
-    desc['title'] = 'Average Link Load : T=%s L=%s' % (topology, sfc_len)
+    desc['title'] = 'D_Aware Average Link Load : T=%s L=%s' % (topology, sfc_len)
     desc['xlabel'] = 'nfv cache size'
     desc['ylabel'] = 'Average Link Load (Mbps)'
     desc['xscale'] = 'linear'
@@ -212,9 +212,9 @@ def plot_link_load_vs_nfv_cache_size(resultset, topology, sfc_len,  nfv_cache_si
 
 def plot_latency_vs_sfc_len(resultset, topology, nfv_cache_size, sfc_len_range, policies, plotdir):
     desc = {}
-    desc['title'] = 'Latency: T=%s C=%s' % (topology, nfv_cache_size)
+    desc['title'] = 'D_Aware Average Service Execution Time: T=%s C=%s' % (topology, nfv_cache_size)
     desc['xlabel'] = 'sfc length'
-    desc['ylabel'] = 'Latency (ms)'
+    desc['ylabel'] = 'Time (ms)'
     desc['xparam'] = ('workload', 'sfc_len')
     desc['xvals'] = sfc_len_range
     desc['filter'] = {'topology': {'name': topology},
@@ -233,7 +233,7 @@ def plot_latency_vs_sfc_len(resultset, topology, nfv_cache_size, sfc_len_range, 
 
 def plot_latency_vs_nfv_cache_size(resultset, topology, sfc_len, nfv_cache_size_range, policies, plotdir):
     desc = {}
-    desc['title'] = 'Latency: T=%s L=%s' % (topology, sfc_len)
+    desc['title'] = 'D_Aware Average Service Execution Time: T=%s L=%s' % (topology, sfc_len)
     desc['xlabel'] = 'nfv cache size'
     desc['ylabel'] = 'Latency'
     desc['xscale'] = 'linear'
@@ -261,7 +261,7 @@ def plot_cache_hits_vs_topology(resultset, sfc_len, nfv_cache_size, topology_ran
     if 'NO_CACHE' in policies:
         policies.remove('NO_CACHE')
     desc = {}
-    desc['title'] = 'SFC hit ratio: L=%s C=%s' % (sfc_len, nfv_cache_size)
+    desc['title'] = 'D_Aware SFC hit ratio: L=%s C=%s' % (sfc_len, nfv_cache_size)
     desc['ylabel'] = 'SFC hit ratio'
     desc['xparam'] = ('topology', 'name')
     desc['xvals'] = topology_range
@@ -292,7 +292,7 @@ def plot_link_load_vs_topology(resultset, sfc_len,  nfv_cache_size, topology_ran
     topologies considered
     """
     desc = {}
-    desc['title'] = 'Average Link Load: L=%s C=%s' % (sfc_len, nfv_cache_size)
+    desc['title'] = 'D_Aware Average Link Load: L=%s C=%s' % (sfc_len, nfv_cache_size)
     desc['ylabel'] = 'Average Link Load (Mbps)'
     desc['xparam'] = ('topology', 'name')
     desc['xvals'] = topology_range

@@ -1,5 +1,6 @@
 import networkx as nx
 from nfvpysim.scenarios.topology import *
+from collections import OrderedDict
 import fnss
 from nfvpysim.execution.network import *
 import random
@@ -7,6 +8,31 @@ from collections import defaultdict
 from itertools import cycle
 
 
+
+topo = topology_tatanld()
+b = nx.betweenness_centrality(topo)
+ord = dict(sorted(b.items(), key=lambda x: x[1], reverse=True))
+print(b)
+print()
+print(ord)
+print(list(ord)[:9])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
 def select_random_sfc():
     services = {
 
@@ -42,9 +68,6 @@ def get_delay(service):
     }
 
 
-
-
-
 def get_delay(dict_services, service):
     for k, v in dict_services.items():
         for k1, v1 in v.items():
@@ -68,6 +91,14 @@ services = {
 
 a = get_delay(services, [1,2,3])
 #print(a)
+
+
+"""
+
+
+
+
+
 
 """
 opo = topology_kdl()
@@ -155,7 +186,17 @@ def vnfs_assignment(nfv_nodes, vnfs):
     else:
         return dict(zip(nfv_nodes, cycle(vnfs)))
 
+sfcs = {
+    1: [1, 2, 3],
+    2: [1, 5, 4],
+    3: [2, 3, 5, 6],
+    4: [3, 2, 5, 8],
+    5: [3, 5, 6, 7],
+    6: [3, 5, 2, 3, 4],
+    7: [5, 4, 6, 2, 3],
+    8: [3, 5, 6, 7, 8],
 
+}
     
     
     

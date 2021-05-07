@@ -3,6 +3,8 @@ from nfvpysim.scenarios.topology import *
 from nfvpysim.scenarios.requests import *
 import math
 import csv
+import random
+
 
 
 __all__ = [
@@ -16,6 +18,31 @@ __all__ = [
 def truncate(number, digits):
     stepper = 10.0 ** digits
     return math.trunc(stepper * number) / stepper
+
+
+def generate_uniform_delay(lower, upper):
+    delay = random.uniform(lower, upper)
+    return round(delay, 2)
+
+
+def get_uniform_delay_sfc(sfc):
+    sfcs_delay = {
+         1: generate_uniform_delay(10, 15),  # nat
+         2: generate_uniform_delay(20, 25),  # fw
+         3: generate_uniform_delay(20, 25),  # ids
+         4: generate_uniform_delay(15, 20),  # wanopt
+         5: generate_uniform_delay(15, 20),  # lb
+         6: generate_uniform_delay(20, 25),  # encrypt
+         7: generate_uniform_delay(20, 25),  # decrypts
+         8: generate_uniform_delay(25, 30),  # dpi
+
+    }
+    delay_sfc = 0
+    for vnf in sfc:
+        if vnf in sfcs_delay.keys():
+            delay_sfc += sfcs_delay[vnf]
+
+    return delay_sfc
 
 
 
@@ -81,7 +108,7 @@ class StationaryWorkloadSfcByLen:
                     egress_node = random.choice(self.egress_nodes)
                     self.req = RequestSfcByLen()
                     self.sfc = self.req.gen_sfc_by_len(self.sfc_len)
-                    delay = get_delay(self.sfc)
+                    delay = get_uniform_delay_sfc(self.sfc)
                     sfc_id = truncate(t_event, 2)
                     log = (req_counter >= self.n_warmup)
                     event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': self.sfc, 'delay': delay, 'log': log}
@@ -135,7 +162,7 @@ class StationaryWorkloadVarLenSfc:
             egress_node = random.choice(self.egress_nodes)
             self.req = RequestVarLenSfc()
             self.sfc = self.req.var_len_seq_sfc()
-            delay = get_delay(self.sfc)
+            delay = get_uniform_delay_sfc(self.sfc)
             sfc_id = truncate(t_event, 2)
             log = (req_counter >= self.n_warmup)
             event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': self.sfc, 'delay': delay, 'log': log}
@@ -191,7 +218,7 @@ class StationaryWorkloadRandomSfc:
             egress_node = random.choice(self.egress_nodes)
             req = RequestRandomSfc()
             self.sfc = req.select_random_sfc()
-            delay = get_delay(self.sfc)
+            #delay = get_delay(self.sfc)
             if delay is None:
                 continue
             sfc_id = truncate(t_event, 2)

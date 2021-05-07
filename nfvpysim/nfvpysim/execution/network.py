@@ -5,7 +5,7 @@ import random
 from collections import defaultdict
 from nfvpysim.registry import CACHE_POLICY
 from nfvpysim.util import path_links
-from nfvpysim.execution.collectors import LatencyCollector
+from collections import OrderedDict
 import logging
 
 # from multi_key_dict import multi_key_dict
@@ -338,13 +338,13 @@ class NetworkModelFirstOrder:
         # self.nfv_cache[node].list_nfv_cache()
 
         first_order_sfcs = [
-            [2, 4],
-            [5, 4],
-            [7, 3],
-            [6, 3],
-            [8, 7],
-            [8, 4],
-            [5, 8],
+            [2, 6],
+            [7, 5],
+            [3, 8],
+            [4, 2],
+            [3, 4],
+            [4, 3],
+            [1, 3],
 
 
         ]
@@ -496,13 +496,13 @@ class NetworkModelProposal:
 
         # all hod_vnfs found on the training phase
         hods_vnfs = [
-            [3, 7, 5],
-            [8, 6, 5],
-            [1, 7, 4],
-            [5, 3, 1, 7, 8],
-            [5, 2, 3],
-            [1, 2, 6],
-            [2, 5, 8],
+            [5, 2, 1, 4, 3],
+            [7, 2, 1, 4, 8],
+            [6, 2, 1, 4, 5],
+            [3, 2, 1, 4, 7],
+            [6, 8, 1, 4, 3],
+            [5, 8, 1, 4, 3],
+            [3, 7, 1, 4, 2],
 
 
 
@@ -532,6 +532,13 @@ class NetworkModelProposal:
                     #self.nfv_cache[target_nfv_node].list_nfv_cache()
         
         """
+
+    @staticmethod
+    def get_top_betw_nodes(topology, n_of_nodes):
+        dict_nodes_betw = nx.betweenness_centrality(topology)
+        ord_dict = dict(sorted(dict_nodes_betw.items(), key=lambda x: x[1], reverse=True))
+        return list(ord_dict[:n_of_nodes])
+
 
     @staticmethod
     def shortest_path_len(topology, source_node, dest_node):
