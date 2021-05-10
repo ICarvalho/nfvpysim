@@ -1,3 +1,5 @@
+from operator import itemgetter
+
 import networkx as nx
 from nfvpysim.scenarios.topology import *
 from collections import OrderedDict
@@ -8,7 +10,20 @@ from collections import defaultdict
 from itertools import cycle
 
 
+topo = topology_tatanld()
+def get_top_betw_nodes(topology, n_of_nodes):
+    dict_nodes_betw = nx.betweenness_centrality(topology)
+    ord_dict =  OrderedDict(sorted(dict_nodes_betw.items(), key=itemgetter(1), reverse=True))
+    return dict(list(ord_dict.items())[0:n_of_nodes])
 
+a = get_top_betw_nodes(topo, 30)
+print(nx.betweenness_centrality(topo))
+print()
+print(a)
+
+
+
+"""
 topo = topology_tatanld()
 b = nx.betweenness_centrality(topo)
 ord = dict(sorted(b.items(), key=lambda x: x[1], reverse=True))
@@ -16,20 +31,7 @@ print(b)
 print()
 print(ord)
 print(dict(ord))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+"""
 
 
 """

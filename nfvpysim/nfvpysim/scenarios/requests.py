@@ -21,13 +21,13 @@ class RequestRandomSfc:
         services = {
 
             1: {'sfc': [1, 2, 3], 'delay': 120},
-            2: {'sfc': [1, 5, 4], 'delay': 100},
-            3: {'sfc': [2, 3, 5, 6], 'delay': 150},
-            4: {'sfc': [3, 2, 5, 8], 'delay': 150},
-            5: {'sfc': [3, 5, 6, 7], 'delay': 170},
-            6: {'sfc': [3, 5, 2, 3, 4], 'delay': 200},
-            7: {'sfc': [5, 4, 6, 2, 3], 'delay': 220},
-            8: {'sfc': [3, 5, 6, 7, 8], 'delay': 250},
+            2: {'sfc': [1, 5, 4], 'delay': 150},
+            3: {'sfc': [2, 3, 5, 6], 'delay': 200},
+            4: {'sfc': [3, 2, 5, 8], 'delay': 220},
+            5: {'sfc': [3, 5, 6, 7], 'delay': 200},
+            6: {'sfc': [3, 5, 2, 3, 4], 'delay': 300},
+            7: {'sfc': [5, 4, 6, 2, 3], 'delay': 300},
+            8: {'sfc': [3, 5, 6, 7, 8], 'delay': 300},
 
         }
         key = random.choice(list(services.keys()))

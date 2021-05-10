@@ -52,13 +52,13 @@ def get_delay(service):
     dict_services = {
 
         1: {'sfc': [1, 2, 3], 'delay': 120},
-        2: {'sfc': [1, 5, 4], 'delay': 100},
+        2: {'sfc': [1, 5, 4], 'delay': 150},
         3: {'sfc': [2, 3, 5, 6], 'delay': 200},
-        4: {'sfc': [3, 2, 5, 8], 'delay': 200},
-        5: {'sfc': [3, 5, 6, 7], 'delay': 250},
+        4: {'sfc': [3, 2, 5, 8], 'delay': 220},
+        5: {'sfc': [3, 5, 6, 7], 'delay': 200},
         6: {'sfc': [3, 5, 2, 3, 4], 'delay': 300},
         7: {'sfc': [5, 4, 6, 2, 3], 'delay': 300},
-        8: {'sfc': [3, 5, 6, 7, 8], 'delay': 320},
+        8: {'sfc': [3, 5, 6, 7, 8], 'delay': 300},
 
     }
     for k, v in dict_services.items():
@@ -224,7 +224,7 @@ class StationaryWorkloadRandomSfc:
             event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': self.sfc, 'delay': delay, 'log': log}
             #file_lines = [str(i),',', str(sfc)[1:-1], '\n']
             #f.writelines(file_lines)
-            yield (t_event, event)
+            yield t_event, event
             req_counter += 1
             #f.close() n_warmup=0,  n_measured=4 * 10 ** 5,
         return
