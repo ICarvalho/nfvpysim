@@ -50,6 +50,15 @@ class NetworkViewTapAlgo:
     def link_delay(self, u, v):
         return self.model.link_delay[(u, v)]
 
+    def delay_path(self, path):
+        sum_delay = 0
+        for hop in range(1, len(path)):
+            u = path[hop - 1]
+            v = path[hop]
+            sum_delay += self.link_delay(u, v)
+        return sum_delay
+
+
     def topology(self):
         return self.model.topology
 
@@ -119,6 +128,8 @@ class NetworkViewFirstOrder:
         return self.model.topology
 
 
+
+
 class NetworkViewProposal:
 
     def __init__(self, model):
@@ -149,6 +160,11 @@ class NetworkViewProposal:
 
     def topology(self):
         return self.model.topology
+
+
+
+################################### NetworkModelTapAlgo ##################################################
+
 
 
 class NetworkModelTapAlgo:
@@ -297,6 +313,7 @@ class NetworkModelTapAlgo:
             return nx.shortest_path_length(source, target)
 
 
+################################### NetworkModelBaseLine ##################################################
 
 
 class NetworkModelBaseLine:
@@ -454,6 +471,11 @@ class NetworkModelBaseLine:
     def get_shortest_path_between_two_nodes(self, source, target):
         if self.topology.node[source]['stack'][0] == 'nfv_node':
             return nx.shortest_path_length(source, target)
+
+
+
+
+################################### NetworkModelFirstOrder ##################################################
 
 
 class NetworkModelFirstOrder:
@@ -909,16 +931,23 @@ class NetworkController:
         if node in self.model.nfv_cache:
             return self.model.nfv_cache[node].sum_vnfs_cpu_node()
 
-    def nodes_used_cpu(self, path):
+    def nodes_rem_cpu(self, path):
         dict_nodes_cpu_used = {}
         for node in path:
-            dict_nodes_cpu_used[node] = self.sum_vnfs_cpu_on_node(node)
+            dict_nodes_cpu_used[node] = 100 - self.sum_vnfs_cpu_on_node(node)
         return dict_nodes_cpu_used
 
     def path_capacity_rem_cpu(self, path):
-        dict_cpu_nodes = self.nodes_used_cpu(path)
+        dict_cpu_nodes = self.nodes_rem_cpu(path)
         return sum(dict_cpu_nodes.values())
 
+    def sort_paths_min_cpu_use(self, paths):
+        list_of_paths = []
+        for path in paths:
+            path_rem_cpu = self.path_capacity_rem_cpu(path)
+            path_cpu = list(zip(path, path_rem_cpu))
+            list_of_paths.append(path_cpu)
+        return sorted(list_of_paths, key=itemgetter(1))
 
 
     def find_nfv_node_with_min_cpu_alloc(self, source, target):

@@ -10,15 +10,8 @@ from collections import defaultdict
 from itertools import cycle
 
 
-topo = topology_tatanld()
-def get_top_betw_nodes(topology, n_of_nodes):
-    dict_nodes_betw = nx.betweenness_centrality(topology)
-    ord_dict =  OrderedDict(sorted(dict_nodes_betw.items(), key=itemgetter(1), reverse=True))
-    return dict(list(ord_dict.items())[0:n_of_nodes])
-
-a = get_top_betw_nodes(topo, 30)
-print(nx.betweenness_centrality(topo))
-print()
+la = [[1,2,3],10], [[2,3,5], 1000], [[1,0,0],2]
+a = sorted(la, key=itemgetter(0))
 print(a)
 
 

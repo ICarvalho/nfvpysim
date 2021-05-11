@@ -62,7 +62,7 @@ class FirstOrder(Policy):
             v = path[hop]
             self.controller.forward_request_vnf_hop(u, v)
             delay_sfc[sfc_id] += self.view.link_delay(u, v)
-            if self.view.is_nfv_node(v):
+            if self.view.is_nfv_node(v) and v != egress_node:
                 for vnf in sfc:
                     if self.controller.get_vnf(v, vnf) and vnf_status[vnf] == 0:
                         vnf_status[vnf] = 1
@@ -121,7 +121,7 @@ class Greedy(Policy):
             v = path[hop]
             self.controller.forward_request_vnf_hop(u, v)
             delay_sfc[sfc_id] += self.view.link_delay(u, v)
-            if self.view.is_nfv_node(v):
+            if self.view.is_nfv_node(v) and v != egress_node:
                 for vnf in sfc:
                     if self.controller.get_vnf(v, vnf) and vnf_status[vnf] == 0:
                         vnf_status[vnf] = 1
@@ -185,6 +185,8 @@ class Hod(Policy):
                             self.controller.vnf_proc(vnf)
                             self.controller.proc_vnf_payload(u, v)
                         elif vnf_status[vnf] == 1:
+                            continue
+                        elif not self.controller.get_vnf(v, vnf):
                             continue
                     else:
                         missed_vnfs.append(vnf)
