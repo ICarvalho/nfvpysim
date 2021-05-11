@@ -49,6 +49,7 @@ class TapAlgo(Policy):
         return sum_vnfs_cpu
 
     def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
+        self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, delay, log)
         topology = self.view.topology()
         paths = self.controller.get_all_paths(topology, ingress_node, egress_node)
         sum_cpu = TapAlgo.sum_vnfs_cpu(sfc)
@@ -58,6 +59,8 @@ class TapAlgo(Policy):
                 nfv_nodes =self.controller.nfv_nodes_path(topology, path)
                 for node in nfv_nodes:
                     dict_node_cpu[node] = self.controller.sum_vnfs_cpu(node)
+                node_max_cpu = min(dict_node_cpu.keys())
+                node_avail_cpu = min(dict_node_cpu.values())
 
 
 
