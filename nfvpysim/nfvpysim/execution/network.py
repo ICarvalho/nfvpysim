@@ -914,6 +914,10 @@ class NetworkController:
             self.collector.get_sess_latency()
 
 
+    def get_all_paths(self, topology, ingress_node, egress_node):
+        return self.model.calculate_all_shortest_paths(topology, ingress_node, egress_node)
+
+
     def put_vnf(self, node, vnf):
         if node in self.model.nfv_cache:
             return self.model.nfv_cache[node].add_vnf(vnf)
@@ -948,6 +952,9 @@ class NetworkController:
             path_cpu = list(zip(path, path_rem_cpu))
             list_of_paths.append(path_cpu)
         return sorted(list_of_paths, key=itemgetter(1))
+
+    def nfv_nodes_path(self, topology, path):
+        return self.model.get_nfv_nodes_path(topology, path)
 
 
     def find_nfv_node_with_min_cpu_alloc(self, source, target):

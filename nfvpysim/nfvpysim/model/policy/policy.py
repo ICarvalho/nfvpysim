@@ -1,4 +1,4 @@
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 from collections import defaultdict
 from nfvpysim.registry import register_policy
 
@@ -6,6 +6,7 @@ from nfvpysim.registry import register_policy
 
 __all__ = [
     'Policy',
+    'TapAlgo',
     'FirstOrder',
     'Greedy',
     'Hod'
@@ -21,6 +22,50 @@ class Policy:
     @abstractmethod
     def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
         raise NotImplementedError('The selected policy must implement a process event method')
+
+
+
+@register_policy('TAP_ALGO')
+class TapAlgo(Policy):
+    def __init__(self, view, controller, **kwargs):
+        super(TapAlgo, self).__init__(view, controller)
+
+    @staticmethod
+    def sum_vnfs_cpu(vnfs):
+        vnfs_cpu = {1: 10,  # nat
+                    2: 25,  # fw
+                    3: 25,  # ids
+                    4: 20,  # wanopt
+                    5: 20,  # lb
+                    6: 25,  # encrypt
+                    7: 25,  # decrypts
+                    8: 30,  # dpi
+                    }
+
+        sum_vnfs_cpu = 0
+        for vnf in vnfs:
+            if vnf in vnfs_cpu.keys():
+                sum_vnfs_cpu += vnfs_cpu[vnf]
+        return sum_vnfs_cpu
+
+    def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
+        topology = self.view.topology()
+        paths = self.controller.get_all_paths(topology, ingress_node, egress_node)
+        sum_cpu = TapAlgo.sum_vnfs_cpu(sfc)
+        dict_node_cpu = {}
+        for path in paths:
+            if self.controller.path_capacity_rem_cpu(path) > sum_cpu and self.view.delay_path(path) < delay:
+                nfv_nodes =self.controller.nfv_nodes_path(topology, path)
+                for node in nfv_nodes:
+                    dict_node_cpu[node] = self.controller.sum_vnfs_cpu(node)
+
+
+
+
+
+
+
+
 
 
 @register_policy('FIRST_ORDER')
