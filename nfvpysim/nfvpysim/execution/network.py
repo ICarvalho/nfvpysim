@@ -16,16 +16,18 @@ __all__ = [
     'NetworkModelFirstOrder',
     'NetworkModelBaseLine',
     'NetworkModelProposal',
+    'NetworkViewTapAlgo',
     'NetworkViewFirstOrder',
     'NetworkViewBaseLine',
     'NetworkViewProposal',
+    'NetworkModelTapAlgo',
     'NetworkController'
 ]
 
 class NetworkViewTapAlgo:
 
     def __init__(self, model):
-        if not isinstance(model, NetworkModelBaseLine):
+        if not isinstance(model, NetworkModelTapAlgo):
             raise ValueError('The model argument must be an instance of '
                              'NetworkModel')
 
@@ -227,7 +229,8 @@ class NetworkModelTapAlgo:
         # for node in self.nfv_cache:
         # print(node)
         # self.nfv_cache[node].list_nfv_cache()
-        # sfcs = [[5, 7, 8, 3], [7, 6], [5, 4, 2], [2, 5, 3, 7], [1, 3] ]
+        #sfcs = [[5, 7, 8, 3], [7, 6], [5, 4, 2], [2, 5, 3, 7], [1, 3] ]
+        sfcs = [2, 3, 1, 5, 6, 7, 8, 4]
 
 
         # place a single vnf in all nfv-nodes
@@ -243,17 +246,17 @@ class NetworkModelTapAlgo:
         """
 
 
-        """
+
         target_nfv_nodes = vnfs_assignment(self.nfv_cache, sfcs)
         for node in self.nfv_cache:
             if node in target_nfv_nodes.keys():
                 #print(node)
-                vnfs = target_nfv_nodes[node]
-                for vnf in vnfs:
-                    self.nfv_cache[node].add_vnf(vnf)
+                vnf = target_nfv_nodes[node]
+                #for vnf in vnfs:
+                self.nfv_cache[node].add_vnf(vnf)
                     #self.nfv_cache[node].list_nfv_cache()
         
-        """
+
 
 
     @staticmethod
@@ -936,22 +939,22 @@ class NetworkController:
             return self.model.nfv_cache[node].sum_vnfs_cpu_node()
 
     def nodes_rem_cpu(self, path):
-        dict_nodes_cpu_used = {}
+        rem_cpu = 0
         for node in path:
-            dict_nodes_cpu_used[node] = 100 - self.sum_vnfs_cpu_on_node(node)
-        return dict_nodes_cpu_used
+            if node in self.model.nfv_cache:
+                cpu = self.sum_vnfs_cpu_on_node(node)
+                rem_cpu += 100 - cpu
+        return rem_cpu
 
-    def path_capacity_rem_cpu(self, path):
-        dict_cpu_nodes = self.nodes_rem_cpu(path)
-        return sum(dict_cpu_nodes.values())
+
 
     def sort_paths_min_cpu_use(self, paths):
-        list_of_paths = []
+        dict_of_paths = {}
         for path in paths:
-            path_rem_cpu = self.path_capacity_rem_cpu(path)
-            path_cpu = list(zip(path, path_rem_cpu))
-            list_of_paths.append(path_cpu)
-        return sorted(list_of_paths, key=itemgetter(1))
+            path_rem_cpu = self.nodes_rem_cpu(path)
+            dict_of_paths[path_rem_cpu] = path
+            selected_path = min(dict_of_paths, key=dict_of_paths.get)
+            return selected_path
 
     def nfv_nodes_path(self, topology, path):
         return self.model.get_nfv_nodes_path(topology, path)

@@ -76,12 +76,12 @@ NFV_NODE_CACHE_POLICY = 'NFV_CACHE'
 # List of topologies tested
 # Topology implementations are located in ./icarus/scenarios/topology.py
 # Remove topologies not needed
-TOPOLOGIES =  ['GEANT','TATANLD', 'ION', 'BESTEL', 'USCARRIER', 'COGENTCO', 'COLT', 'INTERROUTE']
+TOPOLOGIES =  ['GEANT', 'TATANLD'] #, 'ION', 'BESTEL', 'USCARRIER', 'COGENTCO', 'COLT', 'INTERROUTE']
 
 # List of caching and routing strategies
 # The code is located in ./icarus/models/strategy/*.py
 # Remove strategies not needed
-POLICIES = ['GREEDY', 'FIRST_ORDER', 'HOD']  # 'GREEDY_WITHOUT_PLACEMENT',
+POLICIES = ['GREEDY', 'FIRST_ORDER', 'HOD', 'TAP_ALGO']  # 'GREEDY_WITHOUT_PLACEMENT',
 
 # Instantiate experiment queue
 EXPERIMENT_QUEUE = deque()

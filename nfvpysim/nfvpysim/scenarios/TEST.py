@@ -10,9 +10,26 @@ from collections import defaultdict
 from itertools import cycle
 
 
+
+topo = topology_tatanld()
+def calculate_all_shortest_paths(topology, ingress_node, egress_node):
+    return [p for p in nx.all_shortest_paths(topology, ingress_node, egress_node)]
+a = calculate_all_shortest_paths(topo, 1, 2)
+print(a)
+
+b = [[1, 3, 4], [2, 4, 4], [3, 4, 5]]
+
+for l in a:
+    for number in l:
+        print(number)
+
+
+"""
 la = [[1,2,3],10], [[2,3,5], 1000], [[1,0,0],2]
 a = sorted(la, key=itemgetter(0))
-print(a)
+print(a[0][0])
+"""
+
 
 
 

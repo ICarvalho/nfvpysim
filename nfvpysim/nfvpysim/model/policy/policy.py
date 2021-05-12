@@ -48,26 +48,60 @@ class TapAlgo(Policy):
                 sum_vnfs_cpu += vnfs_cpu[vnf]
         return sum_vnfs_cpu
 
-    def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
-        self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, delay, log)
+
+    def find_path(self, ingress_node, egress_node, sfc, delay):
         topology = self.view.topology()
-        paths = self.controller.get_all_paths(topology, ingress_node, egress_node)
-        sum_cpu = TapAlgo.sum_vnfs_cpu(sfc)
+        paths = self.controller.get_all_paths(topology, ingress_node, egress_node) #list of (list) paths
+        target_path = self.controller.sort_paths_min_cpu_use(paths)
+        sum_cpu_sfc = TapAlgo.sum_vnfs_cpu(sfc)
         dict_node_cpu = {}
-        for path in paths:
-            if self.controller.path_capacity_rem_cpu(path) > sum_cpu and self.view.delay_path(path) < delay:
-                nfv_nodes =self.controller.nfv_nodes_path(topology, path)
-                for node in nfv_nodes:
-                    dict_node_cpu[node] = self.controller.sum_vnfs_cpu(node)
-                node_max_cpu = min(dict_node_cpu.keys())
-                node_avail_cpu = min(dict_node_cpu.values())
+        if self.controller.nodes_rem_cpu(target_path) > sum_cpu_sfc and self.view.delay_path(target_path) < delay:
+            nfv_nodes =self.controller.nfv_nodes_path(topology, target_path)
+            for node in nfv_nodes:
+                dict_node_cpu[node] = self.controller.sum_vnfs_cpu(node)
+            node_max_cpu = min(dict_node_cpu.keys())
+            node_max_cpu_avail = dict_node_cpu[node_max_cpu]
+            for node in target_path:
+                if node == node_max_cpu:
+                    if sum_cpu_sfc <= node_max_cpu_avail:
+                        self.controller.put_sfc(node, sfc)
+                    else:
+                        continue
+                else:
+                    continue
+
+        return target_path
 
 
 
+    def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
+        delay_sfc = defaultdict(int) # dict to store the delay taken to run the sfc over the path
+        vnf_status = {vnf: 0 for vnf in sfc}  # 0 - not processed / 1 - processed
+        sum_cpu_sfc = TapAlgo.sum_vnfs_cpu(sfc)
+        self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, delay, log)
+        path = self.find_path(ingress_node, egress_node, sfc, delay)
+        for hop in range(1, len(path)):
+            delay_sfc[sfc_id] = 0
+            u = path[hop - 1]
+            v = path[hop]
+            self.controller.forward_request_vnf_hop(u, v)
+            delay_sfc[sfc_id] += self.view.link_delay(u, v)
+            if self.view.is_nfv_node(v) and v != egress_node:
+                for vnf in sfc:
+                    if self.controller.get_vnf(v, vnf) and vnf_status[vnf] == 0:
+                        vnf_status[vnf] = 1
+                        self.controller.proc_vnf_payload(u, v)
+                        self.controller.vnf_proc(vnf)
+                    elif vnf_status[vnf] == 1:
+                        continue
+                    elif not self.controller.get_vnf(v, vnf):
+                        continue
+            delay_sfc[sfc_id] += sum_cpu_sfc
+            if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
+                self.controller.sfc_hit(sfc_id)
+                break
 
-
-
-
+        self.controller.end_session()
 
 
 

@@ -44,6 +44,7 @@ POLICY_STYLE = {
     'GREEDY': 'r--D',
     'HOD': 'k--^',
     'FIRST_ORDER': 'm--s',
+    'TAP_ALGO': 'c-s',
     # 'HR_MULTICAST':    'm-^',
     # 'HR_HYBRID_AM':    'c-s',
     # 'HR_HYBRID_SM':    'r-v',
@@ -62,6 +63,7 @@ POLICY_LEGEND = {
     'GREEDY': 'RND_PLC',
     'HOD': 'HOD',
     'FIRST_ORDER': 'FIRST_ORD',
+    'TAP_ALGO': 'TAP_ALGO',
     # 'HR_SYMM':         'HR Symm',
     # 'HR_ASYMM':        'HR Asymm',
     # 'HR_MULTICAST':    'HR Multicast',
@@ -80,6 +82,7 @@ POLICY_BAR_COLOR_CACHE_SIZE = {
     'GREEDY': 'darkorange',
     'HOD': 'royalblue',
     'FIRST_ORDER': 'green',
+    'TAP_ALGO': 'k',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
@@ -89,6 +92,7 @@ POLICY_BAR_COLOR_LATENCY = {
     'GREEDY': 'darkorange',
     'HOD': 'royalblue',
     'FIRST_ORDER': 'green',
+    'TAP_ALGO': 'k',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
@@ -98,6 +102,7 @@ POLICY_BAR_COLOR_LINK_LOAD = {
     'GREEDY': 'darkorange',
     'HOD': 'royalblue',
     'FIRST_ORDER': 'green',
+    'TAP_ALGO': 'k',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
@@ -108,6 +113,7 @@ POLICY_BAR_HATCH = {
     'GREEDY': '\\',
     'HOD': 'x',
     'FIRST_ORDER': '+',
+    'TAP_ALGO': '**',
     # 'NO_CACHE':     'x',
     # 'HR_ASYMM':     '+',
     # 'HR_SYMM':      '\\'
