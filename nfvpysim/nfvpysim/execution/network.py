@@ -947,17 +947,16 @@ class NetworkController:
         return rem_cpu
 
 
-
     def sort_paths_min_cpu_use(self, paths):
         dict_of_paths = {}
         for path in paths:
             path_rem_cpu = self.nodes_rem_cpu(path)
             dict_of_paths[path_rem_cpu] = path
             selected_path = min(dict_of_paths, key=dict_of_paths.get)
-            return selected_path
+            return dict_of_paths[selected_path]
 
-    def nfv_nodes_path(self, topology, path):
-        return self.model.get_nfv_nodes_path(topology, path)
+    def nfv_nodes_path(self,  path):
+        return self.model.get_nfv_nodes_path(path)
 
 
     def find_nfv_node_with_min_cpu_alloc(self, source, target):
