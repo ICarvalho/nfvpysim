@@ -28,10 +28,10 @@ plt.rcParams['text.usetex'] = False
 plt.rcParams['figure.figsize'] = 12, 5
 
 # Size of font in legends
-LEGEND_SIZE = 14
+LEGEND_SIZE = 12
 
 # Line width in pixels
-LINE_WIDTH = 0.6
+LINE_WIDTH = 1.5
 
 # Plot
 PLOT_EMPTY_GRAPHS = True
@@ -44,6 +44,7 @@ POLICY_STYLE = {
     'GREEDY': 'r--D',
     'HOD': 'k--^',
     'FIRST_ORDER': 'm--s',
+    'TAP_ALGO': 'c-s',
     # 'HR_MULTICAST':    'm-^',
     # 'HR_HYBRID_AM':    'c-s',
     # 'HR_HYBRID_SM':    'r-v',
@@ -62,6 +63,7 @@ POLICY_LEGEND = {
     'GREEDY': 'RND_PLC',
     'HOD': 'HOD',
     'FIRST_ORDER': 'FIRST_ORD',
+    'TAP_ALGO': 'TAP_ALGO',
     # 'HR_SYMM':         'HR Symm',
     # 'HR_ASYMM':        'HR Asymm',
     # 'HR_MULTICAST':    'HR Multicast',
@@ -78,8 +80,9 @@ POLICY_LEGEND = {
 # Color and hatch styles for bar charts of cache hit ratio and link load vs topology
 POLICY_BAR_COLOR_CACHE_SIZE = {
     'GREEDY': 'darkorange',
-    'HOD': 'royalblue',
-    'FIRST_ORDER': 'green',
+    'HOD': 'steelblue',
+    'FIRST_ORDER': 'g',
+    'TAP_ALGO': 'gold',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
@@ -87,8 +90,9 @@ POLICY_BAR_COLOR_CACHE_SIZE = {
 
 POLICY_BAR_COLOR_LATENCY = {
     'GREEDY': 'darkorange',
-    'HOD': 'royalblue',
-    'FIRST_ORDER': 'green',
+    'HOD': 'steelblue',
+    'FIRST_ORDER': 'g',
+    'TAP_ALGO': 'gold',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
@@ -96,8 +100,9 @@ POLICY_BAR_COLOR_LATENCY = {
 
 POLICY_BAR_COLOR_LINK_LOAD = {
     'GREEDY': 'darkorange',
-    'HOD': 'royalblue',
-    'FIRST_ORDER': 'green',
+    'HOD': 'steelblue',
+    'FIRST_ORDER': 'g',
+    'TAP_ALGO': 'gold',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
@@ -105,9 +110,10 @@ POLICY_BAR_COLOR_LINK_LOAD = {
 
 
 POLICY_BAR_HATCH = {
-    'GREEDY': '\\',
-    'HOD': 'x',
-    'FIRST_ORDER': '+',
+    'GREEDY': '//',
+    'HOD': '...',
+    'FIRST_ORDER': 'x',
+    'TAP_ALGO': '\\',
     # 'NO_CACHE':     'x',
     # 'HR_ASYMM':     '+',
     # 'HR_SYMM':      '\\'
@@ -137,7 +143,7 @@ def plot_cache_hits_vs_n_sfc_requests(resultset, topology, nfv_cache_size, n_mea
     desc['line_width'] = LINE_WIDTH
     desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
-    plot_lines(resultset, desc, 'ACCEPTANCE_RATIO_T=%s@C=%s.pdf'
+    plot_lines(resultset, desc, 'ACCEPTANCE_RATIO_T=%s@C=%s.png'
                % (topology, n_measured_range), plotdir)
 
 
@@ -187,7 +193,7 @@ def plot_link_load_vs_n_sfc_requests(resultset, topology, nfv_cache_size, n_meas
     desc['line_style'] = POLICY_STYLE
     desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
-    plot_lines(resultset, desc, 'LINK_LOAD_INTERNAL_T=%s@C=%s.pdf'
+    plot_lines(resultset, desc, 'LINK_LOAD_INTERNAL_T=%s@C=%s.png'
                % (topology, n_measured_range), plotdir)
 
 
@@ -234,7 +240,7 @@ def plot_latency_vs_n_sfc_requests(resultset, topology, nfv_cache_size, n_measur
     desc['line_style'] = POLICY_STYLE
     desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
-    plot_lines(resultset, desc, 'LATENCY_T=%s@C=%s.pdf'
+    plot_lines(resultset, desc, 'LATENCY_T=%s@C=%s.png'
                % (topology, nfv_cache_size), plotdir)
 
 
@@ -285,7 +291,7 @@ def plot_cache_hits_vs_topology(resultset, n_measured, nfv_cache_size, topology_
     desc['bar_hatch'] = POLICY_BAR_HATCH
     desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
-    plot_bar_chart(resultset, desc, 'SFC_HIT_RATIO_A=%s_C=%s.pdf'
+    plot_bar_chart(resultset, desc, 'SFC_HIT_RATIO_A=%s_C=%s.png'
                    % (n_measured, nfv_cache_size), plotdir)
 
 
@@ -313,7 +319,7 @@ def plot_link_load_vs_topology(resultset, n_measured, nfv_cache_size, topology_r
     desc['bar_hatch'] = POLICY_BAR_HATCH
     desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
-    plot_bar_chart(resultset, desc, 'LINK_LOAD_INTERNAL_L=%s_C=%s.pdf'
+    plot_bar_chart(resultset, desc, 'LINK_LOAD_INTERNAL_L=%s_C=%s.png'
                    % (n_measured, nfv_cache_size), plotdir)
 
 
@@ -341,7 +347,7 @@ def plot_latency_vs_topology(resultset, n_measured, nfv_cache_size, topology_ran
     desc['bar_hatch'] = POLICY_BAR_HATCH
     desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
-    plot_bar_chart(resultset, desc, 'LATENCY_L=%s_C=%s.pdf'
+    plot_bar_chart(resultset, desc, 'LATENCY_L=%s_C=%s.png'
                    % (n_measured, nfv_cache_size), plotdir)
 
 

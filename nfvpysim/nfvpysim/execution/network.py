@@ -544,11 +544,13 @@ class NetworkModelFirstOrder:
         # self.nfv_cache[node].list_nfv_cache()
 
         first_order_sfcs = [
-            [5, 4],
-            [4, 6],
-            [7, 8],
+            [4, 1],
             [2, 3],
-            [3, 5],
+            [8, 1],
+            [8, 4],
+            [4, 2],
+            [2, 1],
+            [8, 1],
 
 
         ]
@@ -700,11 +702,13 @@ class NetworkModelProposal:
 
         # all hod_vnfs found on the training phase
         hods_vnfs = [
-            [6, 2, 3],
-            [1, 5, 2, 3],
-            [3, 2, 5, 6, 7],
-            [2, 5, 8],
-            [2, 3, 4, 5],
+            [4, 1, 6],
+            [1, 4, 3],
+            [5, 4, 8],
+            [2, 1, 5],
+            [6, 3, 5],
+            [8, 4, 3, 1, 7],
+            [3, 5, 8, 7, 2],
 
 
 
