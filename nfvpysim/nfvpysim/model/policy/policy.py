@@ -8,6 +8,7 @@ __all__ = [
     'Policy',
     'TapAlgo',
     'FirstOrder',
+    'Markov',
     'Greedy',
     'Hod'
 ]
@@ -98,6 +99,65 @@ class TapAlgo(Policy):
                 break
 
         self.controller.end_session()
+
+
+
+@register_policy('MARKOV')
+class Markov(Policy):
+    def __init__(self, view, controller, **kwargs):
+        super(Markov, self).__init__(view, controller)
+
+    @staticmethod
+    def sum_vnfs_cpu(vnfs):
+        vnfs_cpu = {1: 10,  # nat
+                    2: 25,  # fw
+                    3: 25,  # ids
+                    4: 20,  # wanopt
+                    5: 20,  # lb
+                    6: 25,  # encrypt
+                    7: 25,  # decrypts
+                    8: 30,  # dpi
+                    }
+
+        sum_vnfs_cpu = 0
+        for vnf in vnfs:
+            if vnf in vnfs_cpu.keys():
+                sum_vnfs_cpu += vnfs_cpu[vnf]
+        return sum_vnfs_cpu
+
+    def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
+        delay_sfc = defaultdict(int)  # dict to store the delay taken to run the sfc over the path
+        path = self.view.shortest_path(ingress_node, egress_node)
+        self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, delay, log)
+        vnf_status = {vnf: 0 for vnf in sfc}  # 0 - not processed / 1 - processed
+        sum_cpu_sfc = FirstOrder.sum_vnfs_cpu(sfc)  # total time processing of the sfc
+        # for u, v in path_links(path):
+        for hop in range(1, len(path)):
+            delay_sfc[sfc_id] = 0
+            u = path[hop - 1]
+            v = path[hop]
+            self.controller.forward_request_vnf_hop(u, v)
+            delay_sfc[sfc_id] += self.view.link_delay(u, v)
+            if self.view.is_nfv_node(v) and v != egress_node:
+                for vnf in sfc:
+                    if self.controller.get_vnf(v, vnf) and vnf_status[vnf] == 0:
+                        vnf_status[vnf] = 1
+                        self.controller.proc_vnf_payload(u, v)
+                        self.controller.vnf_proc(vnf)
+                    elif vnf_status[vnf] == 1:
+                        continue
+                    elif not self.controller.get_vnf(v, vnf):
+                        continue
+            delay_sfc[sfc_id] += sum_cpu_sfc
+            if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
+                self.controller.sfc_hit(sfc_id)
+                break
+
+        self.controller.end_session()
+
+
+
+
 
 
 @register_policy('FIRST_ORDER')
