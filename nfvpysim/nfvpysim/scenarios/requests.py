@@ -5,7 +5,7 @@ class RequestSfcByLen:
     @staticmethod
     def gen_sfc_by_len(sfc_len):
         sfc = []
-        vnfs = [1, 2, 3, 4, 5, 6, 7, 8]
+        vnfs = [0, 1, 2, 3, 4, 5, 6, 7]
         len = 0
         while len < sfc_len:
             vnf = random.choice(vnfs)
@@ -20,14 +20,21 @@ class RequestRandomSfc:
     def select_random_sfc():
         services = {
 
-            1: {'sfc': [1, 2, 3], 'delay': 120},
-            2: {'sfc': [1, 5, 4], 'delay': 150},
-            3: {'sfc': [2, 3, 5, 6], 'delay': 200},
-            4: {'sfc': [3, 2, 5, 8], 'delay': 220},
-            5: {'sfc': [3, 5, 6, 7], 'delay': 200},
-            6: {'sfc': [3, 5, 2, 3, 4], 'delay': 300},
-            7: {'sfc': [5, 4, 6, 2, 3], 'delay': 300},
-            8: {'sfc': [3, 5, 6, 7, 8], 'delay': 300},
+            1: {'sfc': [0, 1, 2], 'delay': 80},
+            2: {'sfc': [0, 4, 3], 'delay': 100},
+            3: {'sfc': [3, 7, 2], 'delay': 110},
+            4: {'sfc': [1, 2, 4, 5], 'delay': 200},
+            5: {'sfc': [2, 1, 4, 7], 'delay': 200},
+            6: {'sfc': [2, 4, 5, 6], 'delay': 150},
+            7: {'sfc': [3, 6, 7, 2], 'delay': 180},
+            8: {'sfc': [1, 2, 6, 7], 'delay': 170},
+            9: {'sfc': [2, 4, 1, 2, 3], 'delay': 200},
+            10: {'sfc': [4, 3, 5, 1, 2], 'delay': 210},
+            11: {'sfc': [2, 4, 5, 6, 7], 'delay': 250},
+            12: {'sfc': [0, 4, 3, 5, 6], 'delay': 230},
+            13: {'sfc': [2, 4, 5, 6, 7], 'delay': 230},
+            14: {'sfc': [2, 4, 5, 6, 7, 3], 'delay': 300},
+            15: {'sfc': [4, 3, 5, 6, 0, 1, 2, 7], 'delay': 330},
 
         }
         key = random.choice(list(services.keys()))
@@ -39,14 +46,14 @@ class RequestVarLenSfc:
     @staticmethod
     def var_len_seq_sfc():
         var_len_sfc = []
-        sfcs = {1: 15,  # nat
-                2: 25,  # fw
-                3: 25,  # ids
-                4: 20,  # wanopt
-                5: 20,  # lb
-                6: 25,  # encrypt
-                7: 25,  # decrypts
-                8: 30,  # dpi
+        sfcs = {0: 15,  # nat
+                1: 25,  # fw
+                2: 25,  # ids
+                3: 20,  # wanopt
+                4: 20,  # lb
+                5: 25,  # encrypt
+                6: 25,  # decrypts
+                7: 30,  # dpi
                 }
         sfc_len = random.randint(1, 8)
         sum_cpu = 0

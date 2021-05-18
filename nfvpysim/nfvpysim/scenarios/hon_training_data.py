@@ -17,6 +17,6 @@ output_file = open('/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/
 
 
 start_train_index = 0
-end_train_index =   1 * 10 **3
+end_train_index =   1 * 10 **6
 get_training_data(input_file, output_file, start_train_index, end_train_index)
 
