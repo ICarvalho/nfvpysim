@@ -20,21 +20,21 @@ class RequestRandomSfc:
     def select_random_sfc():
         services = {
 
-            1: {'sfc': [0, 1, 2], 'delay': 80},
+            1: {'sfc': [0, 1, 2], 'delay': 100},
             2: {'sfc': [0, 4, 3], 'delay': 100},
-            3: {'sfc': [3, 7, 2], 'delay': 110},
+            3: {'sfc': [3, 7, 2], 'delay': 100},
             4: {'sfc': [1, 2, 4, 5], 'delay': 200},
             5: {'sfc': [2, 1, 4, 7], 'delay': 200},
-            6: {'sfc': [2, 4, 5, 6], 'delay': 150},
-            7: {'sfc': [3, 6, 7, 2], 'delay': 180},
-            8: {'sfc': [1, 2, 6, 7], 'delay': 170},
-            9: {'sfc': [2, 4, 1, 2, 3], 'delay': 200},
-            10: {'sfc': [4, 3, 5, 1, 2], 'delay': 210},
-            11: {'sfc': [2, 4, 5, 6, 7], 'delay': 250},
-            12: {'sfc': [0, 4, 3, 5, 6], 'delay': 230},
-            13: {'sfc': [2, 4, 5, 6, 7], 'delay': 230},
-            14: {'sfc': [2, 4, 5, 6, 7, 3], 'delay': 300},
-            15: {'sfc': [4, 3, 5, 6, 0, 1, 2, 7], 'delay': 330},
+            6: {'sfc': [2, 4, 5, 6], 'delay': 200},
+            7: {'sfc': [3, 6, 7, 2], 'delay': 200},
+            8: {'sfc': [1, 2, 6, 7], 'delay': 200},
+            9: {'sfc': [2, 4, 1, 2, 3], 'delay': 350},
+            10: {'sfc': [4, 3, 5, 1, 2], 'delay': 350},
+            11: {'sfc': [2, 4, 5, 6, 7], 'delay': 350},
+            12: {'sfc': [0, 4, 3, 5, 6], 'delay': 350},
+            13: {'sfc': [2, 4, 5, 6, 7], 'delay': 350},
+            14: {'sfc': [2, 4, 5, 6, 7, 3], 'delay': 400},
+            15: {'sfc': [4, 3, 5, 6, 0, 1, 2, 7], 'delay': 450},
 
         }
         key = random.choice(list(services.keys()))
@@ -55,7 +55,7 @@ class RequestVarLenSfc:
                 6: 25,  # decrypts
                 7: 30,  # dpi
                 }
-        sfc_len = random.randint(1, 8)
+        sfc_len = random.randint(0, 7)
         sum_cpu = 0
         while sfc_len != 0:
             vnf, cpu = random.choice(list(sfcs.items()))

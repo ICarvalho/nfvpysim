@@ -33,15 +33,15 @@ class NfvCache:
         print(self.nfvcache)
 
     def sum_vnfs_cpu_node(self):
-        vnfs_cpu =  {1: 15,  # nat
-                     2: 25,  # fw
-                     3: 25,  # ids
-                     4: 20,  # wanopt
-                     5: 20,  # lb
-                     6: 25,  # encrypt
-                     7: 25,  # decrypts
-                     8: 30,  # dpi
-                    }
+        vnfs_cpu =  {0: 15,  # nat
+                     1: 25,  # fw
+                     2: 25,  # ids
+                     3: 20,  # wanopt
+                     4: 20,  # lb
+                     5: 25,  # encrypt
+                     6: 25,  # decrypts
+                     7: 30,  # dpi
+                     }
 
         sum_vnfs_cpu = 0
         for vnf in self.nfvcache:

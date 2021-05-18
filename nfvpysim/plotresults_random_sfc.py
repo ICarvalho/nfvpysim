@@ -25,10 +25,10 @@ plt.rcParams['pdf.use14corefonts'] = True
 plt.rcParams['text.usetex'] = False
 
 # Aspect ratio of the output figures
-plt.rcParams['figure.figsize'] = 12, 5
+plt.rcParams['figure.figsize'] = 15, 7
 
 # Size of font in legends
-LEGEND_SIZE = 12
+LEGEND_SIZE = 5
 
 # Line width in pixels
 LINE_WIDTH = 1.5
@@ -80,10 +80,10 @@ POLICY_LEGEND = {
 
 # Color and hatch styles for bar charts of cache hit ratio and link load vs topology
 POLICY_BAR_COLOR_CACHE_SIZE = {
-    'GREEDY': 'darkorange',
-    'HOD': 'steelblue',
-    'FIRST_ORDER': 'g',
-    'TAP_ALGO': 'gold',
+    'GREEDY': 'dimgray',
+    'HOD': 'black',
+    'FIRST_ORDER': 'lightgray',
+    'TAP_ALGO': 'grey',
     'MARKOV': 'silver',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
@@ -91,10 +91,10 @@ POLICY_BAR_COLOR_CACHE_SIZE = {
 }
 
 POLICY_BAR_COLOR_LATENCY = {
-    'GREEDY': 'darkorange',
-    'HOD': 'steelblue',
-    'FIRST_ORDER': 'g',
-    'TAP_ALGO': 'gold',
+    'GREEDY': 'dimgray',
+    'HOD': 'black',
+    'FIRST_ORDER': 'lightgray',
+    'TAP_ALGO': 'grey',
     'MARKOV': 'silver',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
@@ -102,10 +102,10 @@ POLICY_BAR_COLOR_LATENCY = {
 }
 
 POLICY_BAR_COLOR_LINK_LOAD = {
-    'GREEDY': 'darkorange',
-    'HOD': 'steelblue',
-    'FIRST_ORDER': 'g',
-    'TAP_ALGO': 'gold',
+    'GREEDY': 'dimgray',
+    'HOD': 'black',
+    'FIRST_ORDER': 'lightgray',
+    'TAP_ALGO': 'grey',
     'MARKOV': 'silver',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
@@ -114,11 +114,11 @@ POLICY_BAR_COLOR_LINK_LOAD = {
 
 
 POLICY_BAR_HATCH = {
-    'GREEDY': '//',
-    'HOD': '...',
+    'GREEDY': '/',
+    'HOD': 'o',
     'FIRST_ORDER': 'x',
-    'TAP_ALGO': '\\',
-    'MARKOV': '+',
+    'TAP_ALGO': '..',
+    'MARKOV': '-',
     # 'NO_CACHE':     'x',
     # 'HR_ASYMM':     '+',
     # 'HR_SYMM':      '\\'
@@ -196,6 +196,7 @@ def plot_link_load_vs_n_sfc_requests(resultset, topology, nfv_cache_size, sfc_re
     desc['legend_loc'] = 'best'
     desc['line_style'] = POLICY_STYLE
     desc['legend'] = POLICY_LEGEND
+    desc['legend_size'] = LEGEND_SIZE
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
     plot_lines(resultset, desc, 'LINK_LOAD_INTERNAL_T=%s@C=%s.png'
                % (topology, sfc_req_rate_range), plotdir)
@@ -243,6 +244,7 @@ def plot_latency_vs_nfv_cache_size(resultset, topology, nfv_cache_size, n_measur
     desc['legend_loc'] = 'best'
     desc['line_style'] = POLICY_STYLE
     desc['legend'] = POLICY_LEGEND
+    desc['legend_size'] = LEGEND_SIZE
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
     plot_lines(resultset, desc, 'LATENCY_T=%s@C=%s.png'
                % (topology, nfv_cache_size), plotdir)
@@ -295,6 +297,7 @@ def plot_cache_hits_vs_topology(resultset, n_measured, nfv_cache_size, topology_
     desc['bar_color'] = POLICY_BAR_COLOR_CACHE_SIZE
     desc['bar_hatch'] = POLICY_BAR_HATCH
     desc['legend'] = POLICY_LEGEND
+    desc['legend_size'] = LEGEND_SIZE
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
     plot_bar_chart(resultset, desc, 'SFC_HIT_RATIO_N=%s_C=%s.png'
                    % (n_measured, nfv_cache_size), plotdir)
@@ -352,6 +355,7 @@ def plot_latency_vs_topology(resultset, n_measured, nfv_cache_size, topology_ran
     desc['bar_color'] = POLICY_BAR_COLOR_LATENCY
     desc['bar_hatch'] = POLICY_BAR_HATCH
     desc['legend'] = POLICY_LEGEND
+    desc['legend_size'] = LEGEND_SIZE
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
     plot_bar_chart(resultset, desc, 'LATENCY_L=%s_C=%s.png'
                    % (n_measured, nfv_cache_size), plotdir)

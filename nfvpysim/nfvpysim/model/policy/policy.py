@@ -32,14 +32,14 @@ class TapAlgo(Policy):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {1: 10,  # nat
-                    2: 25,  # fw
-                    3: 25,  # ids
-                    4: 20,  # wanopt
-                    5: 20,  # lb
-                    6: 25,  # encrypt
-                    7: 25,  # decrypts
-                    8: 30,  # dpi
+        vnfs_cpu = {0: 15,  # nat
+                    1: 25,  # fw
+                    2: 25,  # ids
+                    3: 20,  # wanopt
+                    4: 20,  # lb
+                    5: 25,  # encrypt
+                    6: 25,  # decrypts
+                    7: 30,  # dpi
                     }
 
         sum_vnfs_cpu = 0
@@ -83,16 +83,13 @@ class TapAlgo(Policy):
             v = path[hop]
             self.controller.forward_request_vnf_hop(u, v)
             delay_sfc[sfc_id] += self.view.link_delay(u, v)
-            if self.view.is_nfv_node(v) and v != egress_node:
+            if self.view.is_nfv_node(v):
                 for vnf in sfc:
-                    if self.controller.get_vnf(v, vnf) and vnf_status[vnf] == 0:
-                        vnf_status[vnf] = 1
-                        self.controller.proc_vnf_payload(u, v)
-                        self.controller.vnf_proc(vnf)
-                    elif vnf_status[vnf] == 1:
-                        continue
-                    elif not self.controller.get_vnf(v, vnf):
-                        continue
+                    if self.controller.get_vnf(v, vnf):
+                        if vnf_status[vnf] == 0:
+                            vnf_status[vnf] = 1
+                            self.controller.vnf_proc(vnf)
+                            self.controller.proc_vnf_payload(u, v)
             delay_sfc[sfc_id] += sum_cpu_sfc
             if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
                 self.controller.sfc_hit(sfc_id)
@@ -109,15 +106,15 @@ class Markov(Policy):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {1: 10,  # nat
-                    2: 25,  # fw
-                    3: 25,  # ids
-                    4: 20,  # wanopt
-                    5: 20,  # lb
-                    6: 25,  # encrypt
-                    7: 25,  # decrypts
-                    8: 30,  # dpi
-                    }
+        vnfs_cpu = {0: 15,  # nat
+                1: 25,  # fw
+                2: 25,  # ids
+                3: 20,  # wanopt
+                4: 20,  # lb
+                5: 25,  # encrypt
+                6: 25,  # decrypts
+                7: 30,  # dpi
+                }
 
         sum_vnfs_cpu = 0
         for vnf in vnfs:
@@ -138,16 +135,13 @@ class Markov(Policy):
             v = path[hop]
             self.controller.forward_request_vnf_hop(u, v)
             delay_sfc[sfc_id] += self.view.link_delay(u, v)
-            if self.view.is_nfv_node(v) and v != egress_node:
+            if self.view.is_nfv_node(v):
                 for vnf in sfc:
-                    if self.controller.get_vnf(v, vnf) and vnf_status[vnf] == 0:
-                        vnf_status[vnf] = 1
-                        self.controller.proc_vnf_payload(u, v)
-                        self.controller.vnf_proc(vnf)
-                    elif vnf_status[vnf] == 1:
-                        continue
-                    elif not self.controller.get_vnf(v, vnf):
-                        continue
+                    if self.controller.get_vnf(v, vnf):
+                        if vnf_status[vnf] == 0:
+                            vnf_status[vnf] = 1
+                            self.controller.vnf_proc(vnf)
+                            self.controller.proc_vnf_payload(u, v)
             delay_sfc[sfc_id] += sum_cpu_sfc
             if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
                 self.controller.sfc_hit(sfc_id)
@@ -167,15 +161,15 @@ class FirstOrder(Policy):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {1: 10,  # nat
-                    2: 25,  # fw
-                    3: 25,  # ids
-                    4: 20,  # wanopt
-                    5: 20,  # lb
-                    6: 25,  # encrypt
-                    7: 25,  # decrypts
-                    8: 30,  # dpi
-                    }
+        vnfs_cpu = {0: 15,  # nat
+                1: 25,  # fw
+                2: 25,  # ids
+                3: 20,  # wanopt
+                4: 20,  # lb
+                5: 25,  # encrypt
+                6: 25,  # decrypts
+                7: 30,  # dpi
+                }
 
         sum_vnfs_cpu = 0
         for vnf in vnfs:
@@ -196,16 +190,13 @@ class FirstOrder(Policy):
             v = path[hop]
             self.controller.forward_request_vnf_hop(u, v)
             delay_sfc[sfc_id] += self.view.link_delay(u, v)
-            if self.view.is_nfv_node(v) and v != egress_node:
+            if self.view.is_nfv_node(v):
                 for vnf in sfc:
-                    if self.controller.get_vnf(v, vnf) and vnf_status[vnf] == 0:
-                        vnf_status[vnf] = 1
-                        self.controller.proc_vnf_payload(u, v)
-                        self.controller.vnf_proc(vnf)
-                    elif vnf_status[vnf] == 1:
-                        continue
-                    elif not self.controller.get_vnf(v, vnf):
-                        continue
+                    if self.controller.get_vnf(v, vnf):
+                        if vnf_status[vnf] == 0:
+                            vnf_status[vnf] = 1
+                            self.controller.vnf_proc(vnf)
+                            self.controller.proc_vnf_payload(u, v)
             delay_sfc[sfc_id] += sum_cpu_sfc
             if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
                 self.controller.sfc_hit(sfc_id)
@@ -222,14 +213,14 @@ class Greedy(Policy):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {1: 10,  # nat
-                    2: 25,  # fw
-                    3: 25,  # ids
-                    4: 20,  # wanopt
-                    5: 20,  # lb
-                    6: 25,  # encrypt
-                    7: 25,  # decrypts
-                    8: 30,  # dpi
+        vnfs_cpu = {0: 15,  # nat
+                1: 25,  # fw
+                2: 25,  # ids
+                3: 20,  # wanopt
+                4: 20,  # lb
+                5: 25,  # encrypt
+                6: 25,  # decrypts
+                7: 30,  # dpi
                     }
 
         sum_vnfs_cpu = 0
@@ -251,16 +242,13 @@ class Greedy(Policy):
             v = path[hop]
             self.controller.forward_request_vnf_hop(u, v)
             delay_sfc[sfc_id] += self.view.link_delay(u, v)
-            if self.view.is_nfv_node(v) and v != egress_node:
+            if self.view.is_nfv_node(v):
                 for vnf in sfc:
-                    if self.controller.get_vnf(v, vnf) and vnf_status[vnf] == 0:
-                        vnf_status[vnf] = 1
-                        self.controller.proc_vnf_payload(u, v)
-                        self.controller.vnf_proc(vnf)
-                    elif vnf_status[vnf] == 1:
-                        continue
-                    elif not self.controller.get_vnf(v, vnf):
-                        continue
+                    if self.controller.get_vnf(v, vnf):
+                        if vnf_status[vnf] == 0:
+                            vnf_status[vnf] = 1
+                            self.controller.vnf_proc(vnf)
+                            self.controller.proc_vnf_payload(u, v)
             delay_sfc[sfc_id] += sum_cpu_sfc
             if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
                 self.controller.sfc_hit(sfc_id)
@@ -277,15 +265,15 @@ class Hod(Policy):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {1: 10,  # nat
-                    2: 25,  # fw
-                    3: 25,  # ids
-                    4: 20,  # wanopt
-                    5: 20,  # lb
-                    6: 25,  # encrypt
-                    7: 25,  # decrypts
-                    8: 30,  # dpi
-                    }
+        vnfs_cpu = {0: 15,  # nat
+                1: 25,  # fw
+                2: 25,  # ids
+                3: 20,  # wanopt
+                4: 20,  # lb
+                5: 25,  # encrypt
+                6: 25,  # decrypts
+                7: 30,  # dpi
+                }
 
         sum_vnfs_cpu = 0
         for vnf in vnfs:
@@ -302,9 +290,11 @@ class Hod(Policy):
         sum_cpu_sfc = FirstOrder.sum_vnfs_cpu(sfc)  # total time processing of the sfc
         # for u, v in path_links(path):
         for hop in range(1, len(path)):
+            delay_sfc[sfc_id] = 0
             u = path[hop - 1]
             v = path[hop]
             self.controller.forward_request_vnf_hop(u, v)
+            delay_sfc[sfc_id] += self.view.link_delay(u, v)
             if self.view.is_nfv_node(v) and v != egress_node:
                 for vnf in sfc:
                     if self.controller.get_vnf(v, vnf):
@@ -313,8 +303,6 @@ class Hod(Policy):
                             self.controller.vnf_proc(vnf)
                             self.controller.proc_vnf_payload(u, v)
                         elif vnf_status[vnf] == 1:
-                            continue
-                        elif not self.controller.get_vnf(v, vnf):
                             continue
                     else:
                         missed_vnfs.append(vnf)
@@ -328,7 +316,7 @@ class Hod(Policy):
                     for missed_vnf in missed_vnfs:
                         vnf_status[missed_vnf] = 1
                         self.controller.put_vnf(v, missed_vnf)
-                        # self.controller.vnf_proc(missed_vnf)
+                        #self.controller.vnf_proc(missed_vnf)
                         self.controller.proc_vnf_payload(u, v)
             delay_sfc[sfc_id] += sum_cpu_sfc
             if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
