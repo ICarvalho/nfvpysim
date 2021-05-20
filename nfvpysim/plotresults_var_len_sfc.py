@@ -25,10 +25,10 @@ plt.rcParams['pdf.use14corefonts'] = True
 plt.rcParams['text.usetex'] = False
 
 # Aspect ratio of the output figures
-plt.rcParams['figure.figsize'] = 12, 5
+plt.rcParams['figure.figsize'] = 15, 7
 
 # Size of font in legends
-LEGEND_SIZE = 12
+LEGEND_SIZE = 5
 
 # Line width in pixels
 LINE_WIDTH = 1.5
@@ -64,6 +64,7 @@ POLICY_LEGEND = {
     'HOD': 'HOD',
     'FIRST_ORDER': 'FIRST_ORD',
     'TAP_ALGO': 'TAP_ALGO',
+    'MARKOV': 'MARKOV',
     # 'HR_SYMM':         'HR Symm',
     # 'HR_ASYMM':        'HR Asymm',
     # 'HR_MULTICAST':    'HR Multicast',
@@ -79,30 +80,33 @@ POLICY_LEGEND = {
 
 # Color and hatch styles for bar charts of cache hit ratio and link load vs topology
 POLICY_BAR_COLOR_CACHE_SIZE = {
-    'GREEDY': 'darkorange',
-    'HOD': 'steelblue',
-    'FIRST_ORDER': 'g',
-    'TAP_ALGO': 'gold',
+    'GREEDY': 'dimgray',
+    'HOD': 'black',
+    'FIRST_ORDER': 'lightgray',
+    'TAP_ALGO': 'grey',
+    'MARKOV': 'silver',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
 }
 
 POLICY_BAR_COLOR_LATENCY = {
-    'GREEDY': 'darkorange',
-    'HOD': 'steelblue',
-    'FIRST_ORDER': 'g',
-    'TAP_ALGO': 'gold',
+    'GREEDY': 'dimgray',
+    'HOD': 'black',
+    'FIRST_ORDER': 'lightgray',
+    'TAP_ALGO': 'grey',
+    'MARKOV': 'silver',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
 }
 
 POLICY_BAR_COLOR_LINK_LOAD = {
-    'GREEDY': 'darkorange',
-    'HOD': 'steelblue',
-    'FIRST_ORDER': 'g',
-    'TAP_ALGO': 'gold',
+    'GREEDY': 'dimgray',
+    'HOD': 'black',
+    'FIRST_ORDER': 'lightgray',
+    'TAP_ALGO': 'grey',
+    'MARKOV': 'silver',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
@@ -110,16 +114,15 @@ POLICY_BAR_COLOR_LINK_LOAD = {
 
 
 POLICY_BAR_HATCH = {
-    'GREEDY': '//',
-    'HOD': '...',
+    'GREEDY': '/',
+    'HOD': 'o',
     'FIRST_ORDER': 'x',
-    'TAP_ALGO': '\\',
+    'TAP_ALGO': '..',
+    'MARKOV': '-',
     # 'NO_CACHE':     'x',
     # 'HR_ASYMM':     '+',
     # 'HR_SYMM':      '\\'
 }
-
-
 
 def plot_cache_hits_vs_n_sfc_requests(resultset, topology, nfv_cache_size, n_measured_range, policies, plotdir):
     if 'NO_CACHE' in policies:
