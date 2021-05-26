@@ -67,9 +67,10 @@ class Holu(Policy):
         n_nodes = len(sfc)
         top_ranked_nodes = nlargest(n_nodes, nodes_rank, key=nodes_rank.get) # list of nodes
         for top_ranked_node in top_ranked_nodes:
+            self.controller.forward_request_path(ingress_node, top_ranked_node)
             for vnf in sfc:
-                self.controller.forward_request_path(ingress_node, top_ranked_node)
                 self.controller.put_vnf(top_ranked_node, vnf)
+                sfc.remove(vnf)
                 break
 
 
