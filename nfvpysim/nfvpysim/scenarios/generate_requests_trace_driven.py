@@ -13,7 +13,7 @@ class GenerateTraceDrivenRequests:
                 for j in range(1, l +1 ):
                     req = RequestSfcByLen()
                     sfc = req.gen_sfc_by_len(l)
-                    file_lines = [str(i), ',',  str(sfc)[1:-1], '\n']
+                    file_lines = [str(i),',', str(sfc)[1:-1], '\n']
                     f.writelines(file_lines)
 
         f.close()
@@ -26,7 +26,7 @@ class GenerateTraceDrivenRequests:
             for i in range(1, n_reqs + 1):
                 req = RequestRandomSfc()
                 sfc = req.select_random_sfc()
-                file_lines = [str(i), ',', str(sfc)[1:-1], '\n']
+                file_lines = [str(i),',',str(sfc)[1:-1],'\n']
                 f.writelines(file_lines)
             f.close()
 
@@ -37,7 +37,7 @@ class GenerateTraceDrivenRequests:
             for i in range(1, n_reqs + 1):
                 req = RequestVarLenSfc()
                 sfc = req.var_len_seq_sfc()
-                file_lines = [str(i), ',', str(sfc)[1:-1], '\n']
+                file_lines = [str(i),',',str(sfc)[1:-1], '\n']
                 f.writelines(file_lines)
             f.close()
 
@@ -47,8 +47,8 @@ class GenerateTraceDrivenRequests:
 #req_sfc_by_len.gen_sfc_by_len(10 ** 4, [2, 3, 4, 5, 6, 7, 8])
 
 
-#req_rand_sfc = GenerateTraceDrivenRequests()
-#req_rand_sfc.gen_random_sfc(10 ** 6)
+req_rand_sfc = GenerateTraceDrivenRequests()
+req_rand_sfc.gen_random_sfc(10 ** 6)
 
-req_var_len_sfc = GenerateTraceDrivenRequests()
-req_var_len_sfc.gen_var_len_sfc(10 ** 6)
+#req_var_len_sfc = GenerateTraceDrivenRequests()
+#req_var_len_sfc.gen_var_len_sfc(10 ** 6)

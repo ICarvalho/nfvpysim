@@ -30,6 +30,7 @@ class DataCollector:
     def request_vnf_hop(self, u, v, main_path=True):
         pass
 
+
     def vnf_proc_payload(self, u, v, main_path=True):
         pass
 

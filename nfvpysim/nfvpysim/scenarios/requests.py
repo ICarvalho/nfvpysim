@@ -20,7 +20,7 @@ class RequestRandomSfc:
     def select_random_sfc():
         services = {
 
-            1: {'sfc': [0, 1, 2], 'delay': 100},
+            1: {'sfc': [0,1,2], 'delay': 100},
             2: {'sfc': [0, 4, 3], 'delay': 100},
             3: {'sfc': [3, 7, 2], 'delay': 100},
             4: {'sfc': [1, 2, 4, 5], 'delay': 200},
@@ -30,7 +30,7 @@ class RequestRandomSfc:
             8: {'sfc': [1, 2, 6, 7], 'delay': 200},
             9: {'sfc': [2, 4, 1, 2, 3], 'delay': 350},
             10: {'sfc': [4, 3, 5, 1, 2], 'delay': 350},
-            11: {'sfc': [2, 4, 5, 6, 7], 'delay': 350},
+            11: {'sfc': [4, 3, 5, 6, 7], 'delay': 350},
             12: {'sfc': [0, 4, 3, 5, 6], 'delay': 350},
             13: {'sfc': [2, 4, 5, 6, 7], 'delay': 350},
             14: {'sfc': [2, 4, 5, 6, 7, 3], 'delay': 400},

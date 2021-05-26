@@ -1,11 +1,13 @@
 from abc import abstractmethod, ABC
 from collections import defaultdict
 from nfvpysim.registry import register_policy
+from heapq import nlargest
 
 # from nfvpysim.util import path_links
 
 __all__ = [
     'Policy',
+    'Holu',
     'TapAlgo',
     'FirstOrder',
     'Markov',
@@ -15,7 +17,6 @@ __all__ = [
 
 
 class Policy:
-
     def __init__(self, view, controller, **kwargs):
         self.view = view
         self.controller = controller
@@ -23,6 +24,86 @@ class Policy:
     @abstractmethod
     def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
         raise NotImplementedError('The selected policy must implement a process event method')
+
+
+
+@register_policy('HOLU')
+class Holu(Policy):
+    def __init__(self, view, controller, **kwargs):
+        super(Holu, self).__init__(view, controller)
+
+    @staticmethod
+    def sum_vnfs_cpu(vnfs):
+        vnfs_cpu = {0: 15,  # nat
+                    1: 25,  # fw
+                    2: 25,  # ids
+                    3: 20,  # wanopt
+                    4: 20,  # lb
+                    5: 25,  # encrypt
+                    6: 25,  # decrypts
+                    7: 30,  # dpi
+                    }
+
+        sum_vnfs_cpu = 0
+        for vnf in vnfs:
+            if vnf in vnfs_cpu.keys():
+                sum_vnfs_cpu += vnfs_cpu[vnf]
+        return sum_vnfs_cpu
+
+
+    def get_nodes_rank(self, sfc):
+        node_rank_dict = {}
+        topology = self.view.topology()
+        for node in topology.nodes():
+            node_rank_dict[node] = 0
+            for vnf in sfc:
+                node_rank_dict[node] += self.controller.get_node_rank(topology, node, vnf)
+        return node_rank_dict
+
+
+    def find_path(self, ingress_node, egress_node, sfc, delay):
+        topology = self.view.topology()
+        nodes_rank = self.get_nodes_rank(sfc)
+        n_nodes = len(sfc)
+        top_ranked_nodes = nlargest(n_nodes, nodes_rank, key=nodes_rank.get) # list of nodes
+        for top_ranked_node in top_ranked_nodes:
+            for vnf in sfc:
+                self.controller.forward_request_path(ingress_node, top_ranked_node)
+                self.controller.put_vnf(top_ranked_node, vnf)
+                break
+
+
+
+
+
+    def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
+        delay_sfc = defaultdict(int)  # dict to store the delay taken to run the sfc over the path
+        nodes_rank = self.get_nodes_rank(sfc)
+        path = self.view.shortest_path(ingress_node, egress_node)
+        self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, delay, log)
+        vnf_status = {vnf: 0 for vnf in sfc}  # 0 - not processed / 1 - processed
+        sum_cpu_sfc = Holu.sum_vnfs_cpu(sfc)  # total time processing of the sfc
+        # for u, v in path_links(path):
+        for hop in range(1, len(path)):
+            delay_sfc[sfc_id] = 0
+            u = path[hop - 1]
+            v = path[hop]
+            self.controller.forward_request_vnf_hop(u, v)
+            delay_sfc[sfc_id] += self.view.link_delay(u, v)
+            if self.view.is_nfv_node(v):
+                for vnf in sfc:
+                    if self.controller.get_vnf(v, vnf):
+                        if vnf_status[vnf] == 0:
+                            vnf_status[vnf] = 1
+                            self.controller.vnf_proc(vnf)
+                            self.controller.proc_vnf_payload(u, v)
+            delay_sfc[sfc_id] += sum_cpu_sfc
+            if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
+                self.controller.sfc_hit(sfc_id)
+                break
+
+        self.controller.end_session()
+
 
 
 @register_policy('TAP_ALGO')

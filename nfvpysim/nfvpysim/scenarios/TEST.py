@@ -11,7 +11,50 @@ from itertools import cycle
 
 
 
+
+
+
+"""
+from heapq import nlargest
+
+# Initialize dictionary
+test_dict = {'gfg' : 1, 'is' : 4, 'best' : 6, 'for' : 7, 'geeks' : 3 }
+
+# Initialize N
+N = 3
+
+# printing original dictionary
+print("The original dictionary is : " + str(test_dict))
+
+# N largest values in dictionary
+# Using nlargest
+res = nlargest(N, test_dict, key = test_dict.get)
+
+# printing result
+print("The top N value pairs are  " + str(res))
+"""
+
+
+
+
+
+
 topo = topology_tatanld()
+paths = dict(nx.all_pairs_shortest_path(topo))
+node = 7
+betw = nx.betweenness_centrality(topo)
+print(paths[20][30])
+#print(betw)
+#if node in topo.nodes:
+    ##print(round(betw[node], 4))
+
+
+
+
+
+
+
+"""
 def calculate_all_shortest_paths(topology, ingress_node, egress_node):
     return [p for p in nx.all_shortest_paths(topology, ingress_node, egress_node)]
 a = calculate_all_shortest_paths(topo, 1, 2)
@@ -22,6 +65,8 @@ b = [[1, 3, 4], [2, 4, 4], [3, 4, 5]]
 for l in a:
     for number in l:
         print(number)
+"""
+
 
 
 """
