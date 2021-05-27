@@ -57,7 +57,7 @@ N_MEASURED_REQUESTS = [ 10 ** 3]
 
 
 # Number of requests per second (over the whole network)
-SFC_REQ_RATES = 100.0
+SFC_REQ_RATES = 10.0
 
 # vnf allocation policy
 VNF_ALLOCATION_POLICY = 'STATIC'
@@ -76,12 +76,12 @@ NFV_NODE_CACHE_POLICY = 'NFV_CACHE'
 # List of topologies tested
 # Topology implementations are located in ./icarus/scenarios/topology.py
 # Remove topologies not needed
-TOPOLOGIES =  ['TATANLD',  'ION',  'BESTEL', 'USCARRIER',  'COGENTCO', 'COLT', 'INTERROUTE']
+TOPOLOGIES =  ['GEANT'] #'TATANLD',  'ION',  'BESTEL', 'USCARRIER',  'COGENTCO', 'COLT', 'INTERROUTE']
 
 # List of caching and routing strategies
 # The code is located in ./icarus/models/strategy/*.py
 # Remove strategies not needed
-POLICIES = ['GREEDY',  'HOD', 'TAP_ALGO', 'MARKOV']  # 'GREEDY_WITHOUT_PLACEMENT',
+POLICIES = ['HOLU']  # 'GREEDY_WITHOUT_PLACEMENT',
 
 # Instantiate experiment queue
 EXPERIMENT_QUEUE = deque()

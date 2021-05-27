@@ -1,3 +1,4 @@
+import itertools
 from operator import itemgetter
 
 import networkx as nx
@@ -11,6 +12,37 @@ from itertools import cycle
 
 
 
+d = {'pw': 1, 'bw': 0.5}
+a = sum(d.values())
+print(a)
+
+
+
+
+
+
+
+
+
+"""
+
+l = [1, 2, 3, 4]
+a = itertools.combinations(l,2)
+#print(r)
+
+
+def get_dist(topo, pairs):
+    dist = {}
+    for pair in pairs:
+        dist[pair] = [nx.dijkstra_path(topo, pair[i], pair[i+1]) for n1 in range(len(pairs) for n2 in range(n1+1, len(pairs)))]
+    return dist.values()
+topo = topology_tatanld()
+d = get_dist(topo, a)
+print(d)
+#print(d[(1, 2)])
+
+
+"""
 
 
 
@@ -43,7 +75,7 @@ topo = topology_tatanld()
 paths = dict(nx.all_pairs_shortest_path(topo))
 node = 7
 betw = nx.betweenness_centrality(topo)
-print(paths[20][30])
+#print(paths[20][30])
 #print(betw)
 #if node in topo.nodes:
     ##print(round(betw[node], 4))

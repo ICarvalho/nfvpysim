@@ -35,23 +35,40 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
         A tree with the aggregated simulation results from all collectors
         :param nfv_cache_policy:
     """
+    model_holu = NetworkModelHolu(topology, nfv_cache_policy, **netconf)
     model_tap_algo = NetworkModelTapAlgo(topology, nfv_cache_policy, **netconf)
     model_markov = NetworkModelMarkov(topology, nfv_cache_policy, **netconf)
     model_first_order = NetworkModelFirstOrder(topology, nfv_cache_policy, **netconf)
     model_baseline = NetworkModelBaseLine(topology, nfv_cache_policy, **netconf)
     model_proposal = NetworkModelProposal(topology, nfv_cache_policy, **netconf)
 
+    view_holu = NetworkViewHolu(model_holu)
     view_markov = NetworkViewMarkov(model_markov)
     view_tap_algo = NetworkViewTapAlgo(model_tap_algo)
     view_first_order = NetworkViewFirstOrder(model_first_order)
     view_baseline = NetworkViewBaseLine(model_baseline)
     view_proposal = NetworkViewProposal(model_proposal)
 
+    controller_holu = NetworkController(model_holu)
     controller_markov = NetworkController(model_markov)
     controller_tap_algo = NetworkController(model_tap_algo)
     controller_first_order = NetworkController(model_first_order)
     controller_baseline = NetworkController(model_baseline)
     controller_proposal = NetworkController(model_proposal)
+
+    if policy['name'] == 'HOLU':
+        collectors_inst_holu = [DATA_COLLECTOR[name](view_holu, **params)
+                                for name, params in collectors.items()]
+        collector_holu = CollectorProxy(view_holu, collectors_inst_holu)
+        controller_holu.attach_collector(collector_holu)
+
+        policy_name_holu = policy['name']
+        policy_args_holu = {k: v for k, v in policy.items() if k != 'name'}
+        policy_inst_holu = POLICY[policy_name_holu](view_holu, controller_holu, **policy_args_holu)
+
+        for time, event in workload:
+            policy_inst_holu.process_event(time, **event)
+        return collector_holu.results()
 
     if policy['name'] == 'MARKOV':
         collectors_inst_markov = [DATA_COLLECTOR[name](view_markov, **params)

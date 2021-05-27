@@ -11,26 +11,26 @@ __all__ = [
 class NfvCache:
 
     def __init__(self, max_size):
-        self.nfvcache = deque(maxlen=int(max_size))
+        self.nfv_cache = deque(maxlen=int(max_size))
         self.max_size = max_size
         if self.max_size <= 0:
             raise ValueError('max_size must be positive')
 
     def add_vnf(self, vnf):
         if not self.has_vnf(vnf):
-            self.nfvcache.append(vnf)
+            self.nfv_cache.append(vnf)
 
     def get_vnf(self, vnf):
         return self.has_vnf(vnf)
 
     def has_vnf(self, vnf):
-        return vnf in self.nfvcache
+        return vnf in self.nfv_cache
 
     def remove_vnf(self, vnf):
-        return self.nfvcache.remove(vnf)
+        return self.nfv_cache.remove(vnf)
 
     def list_nfv_cache(self):
-        print(self.nfvcache)
+        print(self.nfv_cache)
 
     def sum_vnfs_cpu_node(self):
         vnfs_cpu =  {0: 15,  # nat
@@ -44,7 +44,7 @@ class NfvCache:
                      }
 
         sum_vnfs_cpu = 0
-        for vnf in self.nfvcache:
+        for vnf in self.nfv_cache:
             if self.has_vnf(vnf) and vnf in vnfs_cpu.keys():
                 sum_vnfs_cpu += vnfs_cpu[vnf]
         return sum_vnfs_cpu

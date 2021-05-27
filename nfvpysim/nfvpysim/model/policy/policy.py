@@ -1,7 +1,10 @@
 from abc import abstractmethod, ABC
 from collections import defaultdict
+
+import networkx as nx
 from nfvpysim.registry import register_policy
 from heapq import nlargest
+import itertools
 
 # from nfvpysim.util import path_links
 
@@ -55,31 +58,46 @@ class Holu(Policy):
         node_rank_dict = {}
         topology = self.view.topology()
         for node in topology.nodes():
-            node_rank_dict[node] = 0
             for vnf in sfc:
-                node_rank_dict[node] += self.controller.get_node_rank(topology, node, vnf)
+                node_rank_dict[node] = self.controller.get_node_rank(topology, node, vnf)
         return node_rank_dict
 
-
-    def find_path(self, ingress_node, egress_node, sfc, delay):
+    """
+    def find_path(self, sfc):
         topology = self.view.topology()
         nodes_rank = self.get_nodes_rank(sfc)
         n_nodes = len(sfc)
-        top_ranked_nodes = nlargest(n_nodes, nodes_rank, key=nodes_rank.get) # list of nodes
+        top_ranked_nodes = nlargest(n_nodes, nodes_rank, key=nodes_rank.get) # list of n-nodes with highest rank
+        pairs = list(itertools.combinations(top_ranked_nodes, 2))
+        distance = {}
+        for pair in pairs:
+            distance[pair] = nx.dijkstra_path(topology, pair[0], pair[1])
         for top_ranked_node in top_ranked_nodes:
             self.controller.forward_request_path(ingress_node, top_ranked_node)
             for vnf in sfc:
                 self.controller.put_vnf(top_ranked_node, vnf)
                 sfc.remove(vnf)
                 break
+    
+    """
 
 
-
+    def place_vnf_on_top_ranked_nodes(self, topology, sfc):
+        nodes_rank = self.get_nodes_rank(sfc)
+        n_nodes = len(sfc)
+        top_ranked_nodes = nlargest(n_nodes, nodes_rank, key=nodes_rank.get) # list of n-nodes with highest rank
+        for node in topology.nodes():
+            if node in top_ranked_nodes:
+                for vnf in sfc:
+                    self.controller.put_vnf(node, vnf)
+                    sfc.remove(vnf)
+                    break
 
 
     def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
+        topology = self.view.topology()
         delay_sfc = defaultdict(int)  # dict to store the delay taken to run the sfc over the path
-        nodes_rank = self.get_nodes_rank(sfc)
+        self.place_vnf_on_top_ranked_nodes(topology, sfc)
         path = self.view.shortest_path(ingress_node, egress_node)
         self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, delay, log)
         vnf_status = {vnf: 0 for vnf in sfc}  # 0 - not processed / 1 - processed

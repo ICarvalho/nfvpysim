@@ -1297,9 +1297,8 @@ class NetworkController:
         self.session = None
         self.model = model
         self.collector = None
-        self.node_rank = 0
-        self.pw_rank = 0
-        self.betw_node_value = 0
+
+
 
     def attach_collector(self, collector):
         self.collector = collector
@@ -1359,14 +1358,13 @@ class NetworkController:
 
 
     def get_node_rank(self, topology, node, vnf):
+        node_rank = {}
         if node in self.model.nfv_cache:
             if self.model.nfv_cache[node].has_vnf(vnf):
-                self.pw_rank = 1
+                node_rank[node] = 1 + self.model.get_node_betw(topology, node)
             else:
-                self.pw_rank = 0.1
-            self.betw_node_value = self.model.get_node_betw(topology, node)
-            self.node_rank = self.pw_rank + self.betw_node_value
-        return self.node_rank
+                node_rank[node] = 0.1 + self.model.get_node_betw(topology, node)
+        return node_rank[node]
 
 
     def put_vnf(self, node, vnf):
