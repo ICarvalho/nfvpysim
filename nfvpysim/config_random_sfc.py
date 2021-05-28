@@ -24,7 +24,7 @@ RESULTS_FORMAT = 'PICKLE'
 
 # Number of times each experiment is replicated
 # This is necessary for extracting confidence interval of selected metrics
-N_REPLICATIONS = 10
+N_REPLICATIONS = 3
 
 # List of metrics to be measured in the experiments
 # The implementation of data collectors are located in ./icarus/execution/collectors.py
@@ -53,7 +53,7 @@ N_WARMUP_REQUESTS = 0
 
 # Number of measured requests
 
-N_MEASURED_REQUESTS = [ 10 ** 3]
+N_MEASURED_REQUESTS = [10 ** 1]
 
 
 # Number of requests per second (over the whole network)
@@ -76,12 +76,12 @@ NFV_NODE_CACHE_POLICY = 'NFV_CACHE'
 # List of topologies tested
 # Topology implementations are located in ./icarus/scenarios/topology.py
 # Remove topologies not needed
-TOPOLOGIES =  ['GEANT'] #'TATANLD',  'ION',  'BESTEL', 'USCARRIER',  'COGENTCO', 'COLT', 'INTERROUTE']
+TOPOLOGIES =  ['TATANLD',  'ION',  'BESTEL', 'USCARRIER',  'COGENTCO', 'COLT', 'INTERROUTE']
 
 # List of caching and routing strategies
 # The code is located in ./icarus/models/strategy/*.py
 # Remove strategies not needed
-POLICIES = ['HOLU']  # 'GREEDY_WITHOUT_PLACEMENT',
+POLICIES = ['HOLU', 'GREEDY', 'FIRST_ORDER', 'MARKOV', 'HOD']
 
 # Instantiate experiment queue
 EXPERIMENT_QUEUE = deque()

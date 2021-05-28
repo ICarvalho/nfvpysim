@@ -57,7 +57,8 @@ class Holu(Policy):
     def get_nodes_rank(self, sfc):
         node_rank_dict = {}
         topology = self.view.topology()
-        for node in topology.nodes():
+        nfv_nodes = [v for v in topology if topology.node[v]["stack"][0] == "nfv_node"]
+        for node in nfv_nodes:
             for vnf in sfc:
                 node_rank_dict[node] = self.controller.get_node_rank(topology, node, vnf)
         return node_rank_dict
@@ -82,22 +83,22 @@ class Holu(Policy):
     """
 
 
-    def place_vnf_on_top_ranked_nodes(self, topology, sfc):
+    def place_vnf_on_top_ranked_nodes(self, sfc):
         nodes_rank = self.get_nodes_rank(sfc)
+        #for node in nodes_rank:
+            #print(node, nodes_rank[node])
         n_nodes = len(sfc)
         top_ranked_nodes = nlargest(n_nodes, nodes_rank, key=nodes_rank.get) # list of n-nodes with highest rank
-        for node in topology.nodes():
-            if node in top_ranked_nodes:
-                for vnf in sfc:
-                    self.controller.put_vnf(node, vnf)
-                    sfc.remove(vnf)
-                    break
-
+        for node in top_ranked_nodes:
+            for vnf in sfc:
+                self.controller.put_vnf(node, vnf)
+                sfc.remove(vnf)
+                break
+        return None
 
     def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
-        topology = self.view.topology()
         delay_sfc = defaultdict(int)  # dict to store the delay taken to run the sfc over the path
-        self.place_vnf_on_top_ranked_nodes(topology, sfc)
+        self.place_vnf_on_top_ranked_nodes(sfc)
         path = self.view.shortest_path(ingress_node, egress_node)
         self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, delay, log)
         vnf_status = {vnf: 0 for vnf in sfc}  # 0 - not processed / 1 - processed

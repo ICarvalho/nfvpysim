@@ -51,6 +51,9 @@ class NetworkViewHolu:
     def is_nfv_node(self, node):
         return node in self.model.nfv_cache
 
+    def nfv_nodes(self):
+        return self.model.nfv_cache
+
     def link_type(self, u, v):
         return self.model.link_type[(u, v)]
 
@@ -1358,13 +1361,14 @@ class NetworkController:
 
 
     def get_node_rank(self, topology, node, vnf):
-        node_rank = {}
+        node_rank = 0
         if node in self.model.nfv_cache:
+            betw_value = self.model.get_node_betw(topology, node)
             if self.model.nfv_cache[node].has_vnf(vnf):
-                node_rank[node] = 1 + self.model.get_node_betw(topology, node)
+                node_rank = 1 + betw_value
             else:
-                node_rank[node] = 0.1 + self.model.get_node_betw(topology, node)
-        return node_rank[node]
+                node_rank = 0.1 + betw_value
+        return node_rank
 
 
     def put_vnf(self, node, vnf):
