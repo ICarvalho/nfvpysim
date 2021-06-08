@@ -9,12 +9,12 @@ class GenerateTraceDrivenRequests:
         with open("sfc_reqs_sfc_by_len.csv", 'w', newline='\n') as f:
             writer = csv.writer(f)
             for i in range(1, n_reqs + 1):
-                l = random.choice(sfc_lens)
-                for j in range(1, l +1 ):
+                for j in sfc_lens:
                     req = RequestSfcByLen()
-                    sfc = req.gen_sfc_by_len(l)
+                    sfc = req.gen_sfc_by_len(j)
                     file_lines = [str(i),',', str(sfc)[1:-1], '\n']
                     f.writelines(file_lines)
+                    continue
 
         f.close()
 
@@ -44,7 +44,7 @@ class GenerateTraceDrivenRequests:
 
 
 #req_sfc_by_len = GenerateTraceDrivenRequests()
-#req_sfc_by_len.gen_sfc_by_len(10 ** 4, [2, 3, 4, 5, 6, 7, 8])
+#req_sfc_by_len.gen_sfc_by_len(10 ** 2, [2,3])
 
 
 req_rand_sfc = GenerateTraceDrivenRequests()

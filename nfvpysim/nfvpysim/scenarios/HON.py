@@ -20,8 +20,8 @@ import math
 
 
 ## Initialize algorithm parameters
-MaxOrder = 8
-MinSupport = 30
+MaxOrder = 7
+MinSupport = 50
 
 #/home/igor/PycharmProjects/HON/hon-master/data/sfc.csv
 
@@ -55,7 +55,7 @@ OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios
 ########################################################################################################################
 
 LastStepsHoldOutForTesting = 0
-MinimumLengthForTraining = 3
+MinimumLengthForTraining = 1
 InputFileDeliminator = ','
 Verbose = True
 

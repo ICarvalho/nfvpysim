@@ -133,7 +133,7 @@ def plot_cache_hits_vs_n_sfc_requests(resultset, topology, nfv_cache_size, n_mea
     desc = {}
     desc['title'] = '(D_Aware) Sfc hit ratio: T=%s C=%s' % (topology, nfv_cache_size)
     desc['ylabel'] = 'Sfc hit ratio'
-    desc['xscale'] = 'linear'
+    desc['xscale'] = 'log'
     desc['xlabel'] = '#_of_sfc_requests'
     desc['xparam'] = ('workload', 'n_measured')
     desc['xvals'] = n_measured_range
@@ -182,10 +182,10 @@ def plot_cache_hits_vs_cache_size(resultset, topology, sfc_len, nfv_cache_size_r
 
 def plot_link_load_vs_n_sfc_requests(resultset, topology, nfv_cache_size, sfc_req_rate_range, policies, plotdir):
     desc = {}
-    desc['title'] = 'Average Link Load: T=%s C=%s' % (topology, nfv_cache_size)
+    desc['title'] = 'Average Network Throughput: T=%s C=%s' % (topology, nfv_cache_size)
     desc['xlabel'] = '#_of_sfc_requests'
-    desc['ylabel'] = 'Average Link Load (Mbps)'
-    desc['xscale'] = 'linear'
+    desc['ylabel'] = 'Throughput (Mbps)'
+    desc['xscale'] = 'log'
     desc['xparam'] = ('workload', ' sfc_req_rate')
     desc['xvals'] = sfc_req_rate_range
     desc['filter'] = {'topology': {'name': topology},
@@ -200,7 +200,7 @@ def plot_link_load_vs_n_sfc_requests(resultset, topology, nfv_cache_size, sfc_re
     desc['legend'] = POLICY_LEGEND
     desc['legend_size'] = LEGEND_SIZE
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
-    plot_lines(resultset, desc, 'LINK_LOAD_INTERNAL_T=%s@C=%s.png'
+    plot_lines(resultset, desc, 'THROUGHPUT_INTERNAL_T=%s@C=%s.png'
                % (topology, sfc_req_rate_range), plotdir)
 
 
@@ -234,7 +234,7 @@ def plot_latency_vs_nfv_cache_size(resultset, topology, nfv_cache_size, n_measur
     desc['title'] = '(D_Aware)Latency: T=%s C=%s' % (topology, nfv_cache_size)
     desc['xlabel'] = '#_of_sfc_requests'
     desc['ylabel'] = 'Latency (ms)'
-    desc['xscale'] = 'linear'
+    desc['xscale'] = 'log'
     desc['xparam'] = ('workload', 'n_measured')
     desc['xvals'] = n_measured_range
     desc['filter'] = {'topology': {'name': topology},
@@ -286,7 +286,7 @@ def plot_cache_hits_vs_topology(resultset, n_measured, nfv_cache_size, topology_
     desc['title'] = '(D_Aware) SFC hit ratio: Number_of_request=%s C=%s' % (n_measured, nfv_cache_size)
     desc['ylabel'] = 'SFC hit ratio'
     desc['xlabel'] = 'Topology'
-    desc['xscale'] = 'linear'
+    desc['xscale'] = 'log'
     desc['xparam'] = ('topology', 'name')
     desc['xvals'] = topology_range
     desc['filter'] = {'vnf_allocation': {'network_cache': nfv_cache_size},
@@ -313,9 +313,9 @@ def plot_link_load_vs_topology(resultset, n_measured, nfv_cache_size, topology_r
     topologies considered
     """
     desc = {}
-    desc['title'] = 'Average Link Load: L=%s C=%s' % (n_measured, nfv_cache_size)
-    desc['ylabel'] = 'Average Link Load (Mbps)'
-    desc['xscale'] = 'linear'
+    desc['title'] = 'Average Network Troughtput: L=%s C=%s' % (n_measured, nfv_cache_size)
+    desc['ylabel'] = 'Troughtput (Mbps)'
+    desc['xscale'] = 'log'
     desc['xparam'] = ('topology', 'name')
     desc['xvals'] = topology_range
     desc['filter'] = {'vnf_allocation': {'network_cache': nfv_cache_size},
@@ -329,7 +329,7 @@ def plot_link_load_vs_topology(resultset, n_measured, nfv_cache_size, topology_r
     desc['bar_hatch'] = POLICY_BAR_HATCH
     desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
-    plot_bar_chart(resultset, desc, 'LINK_LOAD_INTERNAL_L=%s_C=%s.png'
+    plot_bar_chart(resultset, desc, 'THROUGHPUT_INTERNAL_L=%s_C=%s.png'
                    % (n_measured, nfv_cache_size), plotdir)
 
 
@@ -344,7 +344,7 @@ def plot_latency_vs_topology(resultset, n_measured, nfv_cache_size, topology_ran
     desc['title'] = '(D_Aware) - Average Service Execution Time: Number_of_requests=%s C=%s' % (n_measured, nfv_cache_size)
     desc['ylabel'] = 'Time (ms)'
     desc['xlabel'] = 'Topology'
-    desc['xscale'] = 'linear'
+    desc['xscale'] = 'log'
     desc['xparam'] = ('topology', 'name')
     desc['xvals'] = topology_range
     desc['filter'] = {'vnf_allocation': {'network_cache': nfv_cache_size},

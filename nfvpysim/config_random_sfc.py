@@ -32,7 +32,7 @@ N_REPLICATIONS = 3
 DATA_COLLECTORS = [
            'ACCEPTANCE_RATIO',  # Measure acceptance hit ratio
            'LATENCY',  # Measure request and response latency (based on static link delays)
-           'LINK_LOAD',  # Measure link loads
+                      # Measure link loads
 
                    ]
 
@@ -53,7 +53,7 @@ N_WARMUP_REQUESTS = 0
 
 # Number of measured requests
 
-N_MEASURED_REQUESTS = [10 ** 1]
+N_MEASURED_REQUESTS = [10 ** 2, 10 ** 3, 10 ** 4, 10 **5, 10 ** 6]
 
 
 # Number of requests per second (over the whole network)
@@ -81,7 +81,7 @@ TOPOLOGIES =  ['TATANLD',  'ION',  'BESTEL', 'USCARRIER',  'COGENTCO', 'COLT', '
 # List of caching and routing strategies
 # The code is located in ./icarus/models/strategy/*.py
 # Remove strategies not needed
-POLICIES = ['HOLU', 'GREEDY', 'FIRST_ORDER', 'MARKOV', 'HOD']
+POLICIES = ['GREEDY', 'MARKOV', 'HOD', 'TAP_ALGO']
 
 # Instantiate experiment queue
 EXPERIMENT_QUEUE = deque()

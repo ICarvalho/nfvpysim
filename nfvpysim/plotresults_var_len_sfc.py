@@ -45,7 +45,7 @@ POLICY_STYLE = {
     'HOD': 'k--^',
     'FIRST_ORDER': 'm--s',
     'TAP_ALGO': 'c-s',
-    # 'HR_MULTICAST':    'm-^',
+    'HOLU':    'g-^',
     # 'HR_HYBRID_AM':    'c-s',
     # 'HR_HYBRID_SM':    'r-v',
     # 'LCE':             'b--p',
@@ -65,7 +65,7 @@ POLICY_LEGEND = {
     'FIRST_ORDER': 'FIRST_ORD',
     'TAP_ALGO': 'TAP_ALGO',
     'MARKOV': 'MARKOV',
-    # 'HR_SYMM':         'HR Symm',
+    'HOLU':         'HOLU',
     # 'HR_ASYMM':        'HR Asymm',
     # 'HR_MULTICAST':    'HR Multicast',
     # 'HR_HYBRID_AM':    'HR Hybrid AM',
@@ -85,7 +85,7 @@ POLICY_BAR_COLOR_CACHE_SIZE = {
     'FIRST_ORDER': 'lightgray',
     'TAP_ALGO': 'grey',
     'MARKOV': 'silver',
-    # 'NO_CACHE':     '0.5',
+    'HOLU':     'gainsboro',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
 }
@@ -96,6 +96,7 @@ POLICY_BAR_COLOR_LATENCY = {
     'FIRST_ORDER': 'lightgray',
     'TAP_ALGO': 'grey',
     'MARKOV': 'silver',
+    'HOLU':     'gainsboro',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
@@ -107,6 +108,7 @@ POLICY_BAR_COLOR_LINK_LOAD = {
     'FIRST_ORDER': 'lightgray',
     'TAP_ALGO': 'grey',
     'MARKOV': 'silver',
+    'HOLU': 'gainsboro',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
@@ -119,10 +121,11 @@ POLICY_BAR_HATCH = {
     'FIRST_ORDER': 'x',
     'TAP_ALGO': '..',
     'MARKOV': '-',
-    # 'NO_CACHE':     'x',
+    'HOLU':     '|',
     # 'HR_ASYMM':     '+',
     # 'HR_SYMM':      '\\'
 }
+
 
 def plot_cache_hits_vs_n_sfc_requests(resultset, topology, nfv_cache_size, n_measured_range, policies, plotdir):
     if 'NO_CACHE' in policies:
