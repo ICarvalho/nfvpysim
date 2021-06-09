@@ -56,7 +56,7 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
     controller_baseline = NetworkController(model_baseline)
     controller_proposal = NetworkController(model_proposal)
 
-    if policy['name'] == 'HOLU':
+    if policy['name'] == 'BCSP':
         collectors_inst_holu = [DATA_COLLECTOR[name](view_holu, **params)
                                 for name, params in collectors.items()]
         collector_holu = CollectorProxy(view_holu, collectors_inst_holu)
@@ -113,7 +113,7 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
             policy_inst_first_order.process_event(time, **event)
         return collector_first_order.results()
 
-    if policy['name'] == 'GREEDY':
+    if policy['name'] == 'BASELINE':
         collectors_inst_baseline = [DATA_COLLECTOR[name](view_baseline, **params)
                                     for name, params in collectors.items()]
         collector_baseline = CollectorProxy(view_baseline, collectors_inst_baseline)

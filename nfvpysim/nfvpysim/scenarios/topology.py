@@ -630,8 +630,22 @@ def topology_datacenter_two_tier(**kwargs):
 
     return NfvTopology(topology)
 
+
+#topo  = topology_colt()
+#b = nx.betweenness_centrality(topo)
+#print(b)
+
 """
-topo = topology_geant()
+topo = topology_tatanld()
+print("ingress_nodes:", len(topo.ingress_nodes()))
+print("egress_nodes:", len(topo.egress_nodes()))
+print("nfv_nodes:", len(topo.nfv_nodes()))
+print()
+"""
+
+
+
+"""
 
 deg = nx.degree(topo)
 node1 = [v for v in topo.nodes() if deg[v] == 1]
@@ -644,7 +658,7 @@ node7 = [v for v in topo.nodes() if deg[v] == 7]
 node8 = [v for v in topo.nodes() if deg[v] == 8]
 node9 = [v for v in topo.nodes() if deg[v] == 9]
 node10 = [v for v in topo.nodes() if deg[v] == 10]
-#print(nx.info(topo))
+#
 
 print("Number of nodes of the topology:", topo.number_of_nodes())
 print(" degree 1: ", len(node1), "nodes" " -->", node1)

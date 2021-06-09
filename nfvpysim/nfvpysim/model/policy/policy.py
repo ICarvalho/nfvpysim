@@ -10,11 +10,11 @@ import itertools
 
 __all__ = [
     'Policy',
-    'Holu',
+    'Bcsp',
     'TapAlgo',
     'FirstOrder',
     'Markov',
-    'Greedy',
+    'Baseline',
     'Hod'
 ]
 
@@ -30,10 +30,14 @@ class Policy:
 
 
 
-@register_policy('HOLU')
-class Holu(Policy):
+@register_policy('BCSP')
+class Bcsp(Policy):
     def __init__(self, view, controller, **kwargs):
-        super(Holu, self).__init__(view, controller)
+        super(Bcsp, self).__init__(view, controller)
+        topology = view.topology()
+        self.betw =  nx.betweenness_centrality(topology)
+        self.nfv_nodes = [v for v in topology if topology.node[v]["stack"][0] == "nfv_node"]
+
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
@@ -53,56 +57,33 @@ class Holu(Policy):
                 sum_vnfs_cpu += vnfs_cpu[vnf]
         return sum_vnfs_cpu
 
-
-    def get_nodes_rank(self, sfc):
-        node_rank_dict = {}
-        topology = self.view.topology()
-        nfv_nodes = [v for v in topology if topology.node[v]["stack"][0] == "nfv_node"]
-        for node in nfv_nodes:
-            for vnf in sfc:
-                node_rank_dict[node] = self.controller.get_node_rank(topology, node, vnf)
-        return node_rank_dict
-
-    """
-    def find_path(self, sfc):
-        topology = self.view.topology()
-        nodes_rank = self.get_nodes_rank(sfc)
-        n_nodes = len(sfc)
-        top_ranked_nodes = nlargest(n_nodes, nodes_rank, key=nodes_rank.get) # list of n-nodes with highest rank
-        pairs = list(itertools.combinations(top_ranked_nodes, 2))
-        distance = {}
-        for pair in pairs:
-            distance[pair] = nx.dijkstra_path(topology, pair[0], pair[1])
-        for top_ranked_node in top_ranked_nodes:
-            self.controller.forward_request_path(ingress_node, top_ranked_node)
-            for vnf in sfc:
-                self.controller.put_vnf(top_ranked_node, vnf)
-                sfc.remove(vnf)
-                break
-    
-    """
+    def find_highest_betw_node(self, path):
+        max_betw = -1
+        highest_betw_node = None
+        for node in path:
+            if self.betw[node] > max_betw and node in self.nfv_nodes:
+                max_betw = self.betw[node]
+                highest_betw_node = node
+        return highest_betw_node
 
 
-    def place_vnf_on_top_ranked_nodes(self, sfc):
-        nodes_rank = self.get_nodes_rank(sfc)
-        #for node in nodes_rank:
-            #print(node, nodes_rank[node])
-        n_nodes = len(sfc)
-        top_ranked_nodes = nlargest(n_nodes, nodes_rank, key=nodes_rank.get) # list of n-nodes with highest rank
-        for node in top_ranked_nodes:
-            for vnf in sfc:
-                self.controller.put_vnf(node, vnf)
-                sfc.remove(vnf)
-                break
+    def place_sfc_on_highest_betw_node(self, path, sfc):
+        highest_betw_node = self.find_highest_betw_node(path)
+        for node in path:
+            if node == highest_betw_node:
+                for vnf in sfc:
+                    self.controller.put_vnf(node, vnf)
         return None
+
+
 
     def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
         delay_sfc = defaultdict(int)  # dict to store the delay taken to run the sfc over the path
-        self.place_vnf_on_top_ranked_nodes(sfc)
         path = self.view.shortest_path(ingress_node, egress_node)
+        self.place_sfc_on_highest_betw_node(path, sfc)
         self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, delay, log)
         vnf_status = {vnf: 0 for vnf in sfc}  # 0 - not processed / 1 - processed
-        sum_cpu_sfc = Holu.sum_vnfs_cpu(sfc)  # total time processing of the sfc
+        sum_cpu_sfc = Bcsp.sum_vnfs_cpu(sfc)  # total time processing of the sfc
         # for u, v in path_links(path):
         for hop in range(1, len(path)):
             delay_sfc[sfc_id] = 0
@@ -306,11 +287,11 @@ class FirstOrder(Policy):
         self.controller.end_session()
 
 
-@register_policy('GREEDY')
-class Greedy(Policy):
+@register_policy('BASELINE')
+class Baseline(Policy):
 
     def __init__(self, view, controller, **kwargs):
-        super(Greedy, self).__init__(view, controller)
+        super(Baseline, self).__init__(view, controller)
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):

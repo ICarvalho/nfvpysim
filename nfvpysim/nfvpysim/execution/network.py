@@ -281,7 +281,7 @@ class NetworkModelHolu:
             else (dict(nx.all_pairs_dijkstra_path(topology)))
 
         self.topology = topology
-        self.nfv_cache = None
+        self.node_betw = {}
 
         self.link_type = nx.get_edge_attributes(topology, 'type')
         self.link_delay = fnss.get_delays(topology)
@@ -323,6 +323,10 @@ class NetworkModelHolu:
         self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_cache_size[node], **policy_args)
                           for node in nfv_cache_size}
 
+        self.nfv_nodes_betw = {node: NetworkModelHolu.get_node_betw(topology, node) for node in NetworkModelHolu.get_nfv_nodes(topology)}
+
+
+
 
 
         # for node in self.nfv_cache:
@@ -357,14 +361,9 @@ class NetworkModelHolu:
 
     @staticmethod
     def get_node_betw(topology, node):
-        betw = NetworkModelHolu.get_betw(topology)
-        betw_node = round(betw[node], 4)
-        return betw_node
+        node_betw = nx.betweenness_centrality(topology)
+        return node_betw[node]
 
-
-    @staticmethod
-    def get_betw(topology):
-        return nx.betweenness_centrality(topology)
 
 
     @staticmethod
@@ -967,16 +966,16 @@ class NetworkModelFirstOrder:
         # self.nfv_cache[node].list_nfv_cache()
 
         first_order_sfcs = [
+            [4, 3],
             [3, 5],
             [1, 2],
-            [4, 3],
             [0, 1],
             [5, 6],
-            [2, 4],
             [6, 7],
+            [1, 2],
+            [2, 4],
             [7, 2],
             [0, 4],
-            [3, 6],
         ]
 
         # place a single vnf in all nfv-nodes
@@ -1360,15 +1359,14 @@ class NetworkController:
         return self.model.calculate_all_shortest_paths(topology, ingress_node, egress_node)
 
 
-    def get_node_rank(self, topology, node, vnf):
-        node_rank = 0
+    def get_node_rank(self, node, sfc):
         if node in self.model.nfv_cache:
-            betw_value = self.model.get_node_betw(topology, node)
-            if self.model.nfv_cache[node].has_vnf(vnf):
-                node_rank = 1 + betw_value
-            else:
-                node_rank = 0.1 + betw_value
-        return node_rank
+            for vnf in sfc:
+                if self.model.nfv_cache[node].has_vnf(vnf):
+                    self.model.nfv_nodes_betw[node] += 1
+                else:
+                    self.model.nfv_nodes_betw[node] += 0.1
+        return self.model.nfv_nodes_betw[node]
 
 
     def put_vnf(self, node, vnf):

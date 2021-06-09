@@ -20,7 +20,7 @@ import math
 
 
 ## Initialize algorithm parameters
-MaxOrder = 7
+MaxOrder = 1
 MinSupport = 50
 
 #/home/igor/PycharmProjects/HON/hon-master/data/sfc.csv
