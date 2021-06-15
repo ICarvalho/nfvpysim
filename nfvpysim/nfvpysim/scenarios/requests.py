@@ -55,18 +55,15 @@ class RequestVarLenSfc:
                 6: 25,  # decrypts
                 7: 30,  # dpi
                 }
-        sfc_len = random.randint(0, 7)
-        sum_cpu = 0
+        sfc_len = random.randint(2, 8)
         while sfc_len != 0:
-            vnf, cpu = random.choice(list(sfcs.items()))
+            vnf = random.choice(list(sfcs.keys()))
             if vnf not in var_len_sfc:
                 var_len_sfc.append(vnf)
                 sfc_len -= 1
-                sum_cpu += cpu
-                if sum_cpu > 100 or sfc_len == 0:
+                if sfc_len == 0:
                     break
-                elif sum_cpu <= 100 and sfc_len != 0:
-                    sfc_len -= 1
+
         return var_len_sfc
 
 
