@@ -78,6 +78,28 @@ def get_delay(service):
                 return v.get('delay', v)
 
 
+
+def get_delay_vnfs(vnfs):
+    vnfs_cpu = {0: 20,  # nat
+                1: 25,  # fw
+                2: 30,  # ids
+                3: 35,  # wanopt
+                4: 40,  # lb
+                5: 45,  # encrypt
+                6: 50,  # decrypts
+                7: 55,  # dpi
+                }
+    sum_vnfs_cpu = 0
+    for vnf in vnfs:
+        if vnf in vnfs_cpu.keys():
+            sum_vnfs_cpu += vnfs_cpu[vnf]
+
+    return sum_vnfs_cpu
+
+
+
+
+
 @register_workload('STATIONARY_SFC_BY_LEN')
 class StationaryWorkloadSfcByLen:
 
@@ -245,7 +267,7 @@ class StationaryWorkloadRandomSfc:
 @register_workload('TRACE_DRIVEN')
 class TraceDrivenWorkload:
     def __init__(self, topology, n_warmup, n_measured,
-                 sfc_reqs_file='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/sfc_test_data.csv', rate=1.0, **kwargs):
+                 sfc_reqs_file='/home/igor/PycharmProjects/TESE/nfvpysim/sfc_seq_len_2_test.csv', rate=1.0, **kwargs):
         # Set high buffering to avoid one-line reads
         self.buffering = 64 * 1024 * 1024
         self.n_warmup = n_warmup
@@ -265,8 +287,9 @@ class TraceDrivenWorkload:
                 ingress_node= random.choice(self.ingress_nodes)
                 egress_node = random.choice(self.egress_nodes)
                 sfc_id = truncate(t_event, 2)
+                delay = get_delay_vnfs(sfc)
                 log = (req_counter >= self.n_warmup)
-                event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
+                event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'delay': delay, 'log': log}
                 yield t_event, event
                 req_counter += 1
                 if req_counter >= self.n_warmup + self.n_measured:

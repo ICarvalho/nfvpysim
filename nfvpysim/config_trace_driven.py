@@ -32,7 +32,7 @@ N_REPLICATIONS = 3
 DATA_COLLECTORS = [
     'ACCEPTANCE_RATIO',  # Measure acceptance hit ratio
     'LATENCY',  # Measure request and response latency (based on static link delays)
-    'LINK_LOAD',  # Measure link loads
+    #'LINK_LOAD',  # Measure link loads
 
 ]
 
@@ -46,7 +46,6 @@ DATA_COLLECTORS = [
 # Number of content requests that are measured after warmup
 VNF_ALLOCATION_SPACE = [8]
 
-SFC_LENS = [2, 3, 4, 5, 6, 7, 8]
 
 # Number of warmup requests
 N_WARMUP_REQUESTS = 0
@@ -89,8 +88,8 @@ EXPERIMENT_QUEUE = deque()
 
 # Create tree of experiment configuration
 default = Tree()
-default['workload'] = {'name':  'STATIONARY_SFC_BY_LEN',
-                       'sfc_len': SFC_LENS,
+default['workload'] = {'name':  'TRACE_DRIVEN',
+                       'reqs_file': '/home/igor/PycharmProjects/TESE/nfvpysim/sfc_seq_len_2_test.csv',
                        'n_warmup': N_WARMUP_REQUESTS,
                        'n_measured': N_MEASURED_REQUESTS
                        }
@@ -101,15 +100,13 @@ default['nfv_cache_policy']['name'] = NFV_NODE_CACHE_POLICY
 
 
 # Create experiments multiplexing all desired parameters
-for sfc_len in SFC_LENS:
-    for policy in POLICIES:
-        for topology in TOPOLOGIES:
-            for vnf_allocation_space in VNF_ALLOCATION_SPACE:
-                experiment = copy.deepcopy(default)
-                experiment['workload']['sfc_len'] = sfc_len
-                experiment['policy']['name'] = policy
-                experiment['topology']['name'] = topology
-                experiment['vnf_allocation']['network_cache'] = vnf_allocation_space
-                experiment['desc'] = "policy: %s, topology: %s, network cache: %s" \
+for policy in POLICIES:
+    for topology in TOPOLOGIES:
+        for vnf_allocation_space in VNF_ALLOCATION_SPACE:
+            experiment = copy.deepcopy(default)
+            experiment['policy']['name'] = policy
+            experiment['topology']['name'] = topology
+            experiment['vnf_allocation']['network_cache'] = vnf_allocation_space
+            experiment['desc'] = "policy: %s, topology: %s, network cache: %s" \
                                      % (policy, topology, str(vnf_allocation_space))
-                EXPERIMENT_QUEUE.append(experiment)
+            EXPERIMENT_QUEUE.append(experiment)
