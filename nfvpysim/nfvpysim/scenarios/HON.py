@@ -20,7 +20,7 @@ import math
 
 
 ## Initialize algorithm parameters
-MaxOrder = 2
+MaxOrder = 8
 MinSupport = 50
 
 #/home/igor/PycharmProjects/HON/hon-master/data/sfc.csv
@@ -39,10 +39,10 @@ MinSupport = 50
 
 
 
-InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/sfc_seq_len_2_training.csv'
+InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/sfc_seq_len_8_training.csv'
 
-OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/sfc_seq_len_2_rules.csv'
-OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/sfc_seq_len_2_output.csv'
+OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/sfc_seq_len_8_rules.csv'
+OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/sfc_seq_len_8_output.csv'
 
 
 

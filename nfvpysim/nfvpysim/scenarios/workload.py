@@ -141,7 +141,7 @@ class StationaryWorkloadSfcByLen:
                     egress_node = random.choice(self.egress_nodes)
                     self.req = RequestSfcByLen()
                     self.sfc = self.req.gen_sfc_by_len(self.sfc_len)
-                    delay = get_uniform_delay_sfc(self.sfc)
+                    delay = get_delay_vnfs(self.sfc)
                     sfc_id = truncate(t_event, 2)
                     log = (req_counter >= self.n_warmup)
                     event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': self.sfc, 'delay': delay, 'log': log}

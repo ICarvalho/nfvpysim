@@ -5,7 +5,7 @@ import pandas as pd
 #file = "hon_random_sfc_rules.csv"
 
 
-file = "sfc_seq_len_2_rules.csv"
+file = "sfc_seq_len_8_rules.csv"
 
-df = pd.read_csv(file,  header=None, delimiter=',', names=list(range(3)))
-print(df.nlargest(10, columns=[2]))
+df = pd.read_csv(file,  header=None, delimiter=',', names=list(range(9)))
+print(df.nlargest(10, columns=[7]))
