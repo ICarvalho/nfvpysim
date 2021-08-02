@@ -1362,17 +1362,11 @@ class NetworkModelProposalDegree: # DEGREE_CENTRALITY
             [0, 1, 4, 2, 3, 6, 5],
             [7, 1, 4, 2, 3, 6, 0],
 
-
-
-
-
-
-
         ]
 
         # place vnfs on top-20 nfv_nodes with the highest betweenness_centrality value
-        betw_nfv_nodes = NetworkModelProposal.get_top_betw_nodes(topology, 30)
-        target_nfv_nodes = hod_vnfs_assignment(betw_nfv_nodes, hods_vnfs)
+        deg_nfv_nodes = NetworkModelProposalDegree.get_top_degree_nodes(topology, 30)
+        target_nfv_nodes = hod_vnfs_assignment(deg_nfv_nodes, hods_vnfs)
         for node in self.nfv_cache:
             if node in target_nfv_nodes.keys():
                 #print(node)
@@ -1410,9 +1404,9 @@ class NetworkModelProposalDegree: # DEGREE_CENTRALITY
         """
 
     @staticmethod
-    def get_top_betw_nodes(topology, n_of_nodes):
-        dict_nodes_betw = nx.betweenness_centrality(topology)
-        ord_dict =  OrderedDict(sorted(dict_nodes_betw.items(), key=itemgetter(1), reverse=True))
+    def get_top_degree_nodes(topology, n_of_nodes):
+        dict_nodes_deg = nx.degree_centrality(topology)
+        ord_dict =  OrderedDict(sorted(dict_nodes_deg.items(), key=itemgetter(1), reverse=True))
         return dict(list(ord_dict.items())[0:n_of_nodes])
 
 
@@ -1586,16 +1580,11 @@ class NetworkModelProposalCloseness: # CLOSENESS_CENTRALITY
             [7, 1, 4, 2, 3, 6, 0],
 
 
-
-
-
-
-
         ]
 
         # place vnfs on top-20 nfv_nodes with the highest betweenness_centrality value
-        betw_nfv_nodes = NetworkModelProposal.get_top_betw_nodes(topology, 30)
-        target_nfv_nodes = hod_vnfs_assignment(betw_nfv_nodes, hods_vnfs)
+        close_nfv_nodes = NetworkModelProposalCloseness.get_top_close_nodes(topology, 30)
+        target_nfv_nodes = hod_vnfs_assignment(close_nfv_nodes, hods_vnfs)
         for node in self.nfv_cache:
             if node in target_nfv_nodes.keys():
                 #print(node)
@@ -1633,9 +1622,9 @@ class NetworkModelProposalCloseness: # CLOSENESS_CENTRALITY
         """
 
     @staticmethod
-    def get_top_betw_nodes(topology, n_of_nodes):
-        dict_nodes_betw = nx.betweenness_centrality(topology)
-        ord_dict =  OrderedDict(sorted(dict_nodes_betw.items(), key=itemgetter(1), reverse=True))
+    def get_top_close_nodes(topology, n_of_nodes):
+        dict_nodes_close = nx.closeness_centrality(topology)
+        ord_dict =  OrderedDict(sorted(dict_nodes_close.items(), key=itemgetter(1), reverse=True))
         return dict(list(ord_dict.items())[0:n_of_nodes])
 
 
@@ -1820,8 +1809,8 @@ class NetworkModelProposalPageRank: # PAGERANK_CENTRALITY
         ]
 
         # place vnfs on top-20 nfv_nodes with the highest betweenness_centrality value
-        betw_nfv_nodes = NetworkModelProposal.get_top_betw_nodes(topology, 30)
-        target_nfv_nodes = hod_vnfs_assignment(betw_nfv_nodes, hods_vnfs)
+        pg_rank_nfv_nodes = NetworkModelProposalPageRank.get_top_pg_rank_nodes(topology, 30)
+        target_nfv_nodes = hod_vnfs_assignment(pg_rank_nfv_nodes, hods_vnfs)
         for node in self.nfv_cache:
             if node in target_nfv_nodes.keys():
                 #print(node)
@@ -1859,9 +1848,9 @@ class NetworkModelProposalPageRank: # PAGERANK_CENTRALITY
         """
 
     @staticmethod
-    def get_top_betw_nodes(topology, n_of_nodes):
-        dict_nodes_betw = nx.betweenness_centrality(topology)
-        ord_dict =  OrderedDict(sorted(dict_nodes_betw.items(), key=itemgetter(1), reverse=True))
+    def get_top_pg_rank_nodes(topology, n_of_nodes):
+        dict_nodes_pg_rank = nx.pagerank(topology, alpha=0.9)
+        ord_dict =  OrderedDict(sorted(dict_nodes_pg_rank.items(), key=itemgetter(1), reverse=True))
         return dict(list(ord_dict.items())[0:n_of_nodes])
 
 
@@ -1965,7 +1954,7 @@ class NetworkModelProposalPageRank: # PAGERANK_CENTRALITY
 
 ############################################################################################################
 
-class NetworkModelProposalKatz: # KATZ_CENTRALITY
+class NetworkModelProposalEigenVector: # EIGEN_VECTOR_CENTRALITY
     """
     Models the internal state of the network.
     This object should never be edited by VNF Allocation Policies directly, but only
@@ -2044,8 +2033,8 @@ class NetworkModelProposalKatz: # KATZ_CENTRALITY
         ]
 
         # place vnfs on top-20 nfv_nodes with the highest betweenness_centrality value
-        betw_nfv_nodes = NetworkModelProposal.get_top_betw_nodes(topology, 30)
-        target_nfv_nodes = hod_vnfs_assignment(betw_nfv_nodes, hods_vnfs)
+        eigen_nfv_nodes = NetworkModelProposalEigenVector.get_top_eigen_nodes(topology, 30)
+        target_nfv_nodes = hod_vnfs_assignment(eigen_nfv_nodes, hods_vnfs)
         for node in self.nfv_cache:
             if node in target_nfv_nodes.keys():
                 #print(node)
@@ -2083,9 +2072,9 @@ class NetworkModelProposalKatz: # KATZ_CENTRALITY
         """
 
     @staticmethod
-    def get_top_betw_nodes(topology, n_of_nodes):
-        dict_nodes_betw = nx.betweenness_centrality(topology)
-        ord_dict =  OrderedDict(sorted(dict_nodes_betw.items(), key=itemgetter(1), reverse=True))
+    def get_top_eigen_nodes(topology, n_of_nodes):
+        dict_nodes_eigen = nx.eigenvector_centrality(topology)
+        ord_dict =  OrderedDict(sorted(dict_nodes_eigen.items(), key=itemgetter(1), reverse=True))
         return dict(list(ord_dict.items())[0:n_of_nodes])
 
 
