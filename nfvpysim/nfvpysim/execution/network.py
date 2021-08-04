@@ -25,6 +25,14 @@ __all__ = [
     'NetworkViewBaseLine',
     'NetworkViewProposal',
     'NetworkModelTapAlgo',
+    'NetworkViewDeg',
+    'NetworkViewClose',
+    'NetworkViewPage',
+    'NetworkViewEigen',
+    'NetworkModelProposalDegree',
+    'NetworkModelProposalCloseness',
+    'NetworkModelProposalPageRank',
+    'NetworkModelProposalEigenVector',
     'NetworkController'
 ]
 
@@ -256,6 +264,196 @@ class NetworkViewProposal:
 
     def topology(self):
         return self.model.topology
+
+
+
+
+class NetworkViewDeg:
+
+    def __init__(self, model):
+        if not isinstance(model, NetworkModelProposalDegree):
+            raise ValueError('The model argument must be an instance of '
+                             'NetworkModel')
+
+        self.model = model
+
+    def shortest_path(self, ingress_node, egress_node):
+        return self.model.shortest_path[ingress_node][egress_node]
+
+    def all_pairs_shortest_paths(self):
+        return self.model.shortest_path
+
+    def nfv_cache_nodes(self, size=True):
+        return {v: c.maxlen for v, c in self.model.nfv_cache.items()} if size \
+            else list(self.model.nfv_cache.keys())
+
+    def is_nfv_node(self, node):
+        return node in self.model.nfv_cache
+
+    def nfv_nodes(self):
+        return self.model.nfv_cache
+
+    def link_type(self, u, v):
+        return self.model.link_type[(u, v)]
+
+    def link_delay(self, u, v):
+        return self.model.link_delay[(u, v)]
+
+    def delay_path(self, path):
+        sum_delay = 0
+        for hop in range(1, len(path)):
+            u = path[hop - 1]
+            v = path[hop]
+            sum_delay += self.link_delay(u, v)
+        return sum_delay
+
+
+    def topology(self):
+        return self.model.topology
+
+
+
+
+
+
+class NetworkViewClose:
+
+    def __init__(self, model):
+        if not isinstance(model, NetworkModelProposalCloseness):
+            raise ValueError('The model argument must be an instance of '
+                             'NetworkModel')
+
+        self.model = model
+
+    def shortest_path(self, ingress_node, egress_node):
+        return self.model.shortest_path[ingress_node][egress_node]
+
+    def all_pairs_shortest_paths(self):
+        return self.model.shortest_path
+
+    def nfv_cache_nodes(self, size=True):
+        return {v: c.maxlen for v, c in self.model.nfv_cache.items()} if size \
+            else list(self.model.nfv_cache.keys())
+
+    def is_nfv_node(self, node):
+        return node in self.model.nfv_cache
+
+    def nfv_nodes(self):
+        return self.model.nfv_cache
+
+    def link_type(self, u, v):
+        return self.model.link_type[(u, v)]
+
+    def link_delay(self, u, v):
+        return self.model.link_delay[(u, v)]
+
+    def delay_path(self, path):
+        sum_delay = 0
+        for hop in range(1, len(path)):
+            u = path[hop - 1]
+            v = path[hop]
+            sum_delay += self.link_delay(u, v)
+        return sum_delay
+
+
+    def topology(self):
+        return self.model.topology
+
+
+class NetworkViewPage:
+
+    def __init__(self, model):
+        if not isinstance(model, NetworkModelProposalPageRank):
+            raise ValueError('The model argument must be an instance of '
+                             'NetworkModel')
+
+        self.model = model
+
+    def shortest_path(self, ingress_node, egress_node):
+        return self.model.shortest_path[ingress_node][egress_node]
+
+    def all_pairs_shortest_paths(self):
+        return self.model.shortest_path
+
+    def nfv_cache_nodes(self, size=True):
+        return {v: c.maxlen for v, c in self.model.nfv_cache.items()} if size \
+            else list(self.model.nfv_cache.keys())
+
+    def is_nfv_node(self, node):
+        return node in self.model.nfv_cache
+
+    def nfv_nodes(self):
+        return self.model.nfv_cache
+
+    def link_type(self, u, v):
+        return self.model.link_type[(u, v)]
+
+    def link_delay(self, u, v):
+        return self.model.link_delay[(u, v)]
+
+    def delay_path(self, path):
+        sum_delay = 0
+        for hop in range(1, len(path)):
+            u = path[hop - 1]
+            v = path[hop]
+            sum_delay += self.link_delay(u, v)
+        return sum_delay
+
+
+    def topology(self):
+        return self.model.topology
+
+
+
+
+class NetworkViewEigen:
+
+    def __init__(self, model):
+        if not isinstance(model, NetworkModelProposalEigenVector):
+            raise ValueError('The model argument must be an instance of '
+                             'NetworkModel')
+
+        self.model = model
+
+    def shortest_path(self, ingress_node, egress_node):
+        return self.model.shortest_path[ingress_node][egress_node]
+
+    def all_pairs_shortest_paths(self):
+        return self.model.shortest_path
+
+    def nfv_cache_nodes(self, size=True):
+        return {v: c.maxlen for v, c in self.model.nfv_cache.items()} if size \
+            else list(self.model.nfv_cache.keys())
+
+    def is_nfv_node(self, node):
+        return node in self.model.nfv_cache
+
+    def nfv_nodes(self):
+        return self.model.nfv_cache
+
+    def link_type(self, u, v):
+        return self.model.link_type[(u, v)]
+
+    def link_delay(self, u, v):
+        return self.model.link_delay[(u, v)]
+
+    def delay_path(self, path):
+        sum_delay = 0
+        for hop in range(1, len(path)):
+            u = path[hop - 1]
+            v = path[hop]
+            sum_delay += self.link_delay(u, v)
+        return sum_delay
+
+
+    def topology(self):
+        return self.model.topology
+
+
+
+
+
+
 
 
 
@@ -1125,16 +1323,18 @@ class NetworkModelProposal: # BETWEENESS_CENTRALITY
 
         # all hod_vnfs found on the training phase
         hods_vnfs = [
-            [1, 7, 5, 2, 3, 6, 4],
-            [0, 4, 5, 2, 3, 6, 1],
-            [1, 0, 5, 2, 3, 6, 4],
-            [0, 1, 5, 2, 3, 6, 7],
-            [7, 0, 4, 2, 3, 6, 1],
-            [1, 0, 4, 2, 3, 6, 5],
-            [5, 0, 4, 2, 3, 6, 7],
-            [5, 7, 4, 2, 3, 6, 1],
-            [0, 1, 4, 2, 3, 6, 5],
-            [7, 1, 4, 2, 3, 6, 0],
+            [4, 3, 5, 6],
+            [4, 5, 6, 7],
+            [4, 1, 2, 3],
+            [0, 1, 2, 7],
+            [3, 6, 7, 2],
+            [5, 6, 7, 3],
+            [3, 5, 6, 0],
+            [3, 5, 6, 7],
+            [1, 4, 7],
+            [2, 4, 5],
+            [0, 4, 3],
+
 
 
 
@@ -1351,17 +1551,17 @@ class NetworkModelProposalDegree: # DEGREE_CENTRALITY
 
         # all hod_vnfs found on the training phase
         hods_vnfs = [
-            [1, 7, 5, 2, 3, 6, 4],
-            [0, 4, 5, 2, 3, 6, 1],
-            [1, 0, 5, 2, 3, 6, 4],
-            [0, 1, 5, 2, 3, 6, 7],
-            [7, 0, 4, 2, 3, 6, 1],
-            [1, 0, 4, 2, 3, 6, 5],
-            [5, 0, 4, 2, 3, 6, 7],
-            [5, 7, 4, 2, 3, 6, 1],
-            [0, 1, 4, 2, 3, 6, 5],
-            [7, 1, 4, 2, 3, 6, 0],
-
+            [4, 3, 5, 6],
+            [4, 5, 6, 7],
+            [4, 1, 2, 3],
+            [0, 1, 2, 7],
+            [3, 6, 7, 2],
+            [5, 6, 7, 3],
+            [3, 5, 6, 0],
+            [3, 5, 6, 7],
+            [1, 4, 7],
+            [2, 4, 5],
+            [0, 4, 3],
         ]
 
         # place vnfs on top-20 nfv_nodes with the highest betweenness_centrality value
@@ -1568,16 +1768,17 @@ class NetworkModelProposalCloseness: # CLOSENESS_CENTRALITY
 
         # all hod_vnfs found on the training phase
         hods_vnfs = [
-            [1, 7, 5, 2, 3, 6, 4],
-            [0, 4, 5, 2, 3, 6, 1],
-            [1, 0, 5, 2, 3, 6, 4],
-            [0, 1, 5, 2, 3, 6, 7],
-            [7, 0, 4, 2, 3, 6, 1],
-            [1, 0, 4, 2, 3, 6, 5],
-            [5, 0, 4, 2, 3, 6, 7],
-            [5, 7, 4, 2, 3, 6, 1],
-            [0, 1, 4, 2, 3, 6, 5],
-            [7, 1, 4, 2, 3, 6, 0],
+            [4, 3, 5, 6],
+            [4, 5, 6, 7],
+            [4, 1, 2, 3],
+            [0, 1, 2, 7],
+            [3, 6, 7, 2],
+            [5, 6, 7, 3],
+            [3, 5, 6, 0],
+            [3, 5, 6, 7],
+            [1, 4, 7],
+            [2, 4, 5],
+            [0, 4, 3],
 
 
         ]
@@ -1789,17 +1990,17 @@ class NetworkModelProposalPageRank: # PAGERANK_CENTRALITY
 
         # all hod_vnfs found on the training phase
         hods_vnfs = [
-            [1, 7, 5, 2, 3, 6, 4],
-            [0, 4, 5, 2, 3, 6, 1],
-            [1, 0, 5, 2, 3, 6, 4],
-            [0, 1, 5, 2, 3, 6, 7],
-            [7, 0, 4, 2, 3, 6, 1],
-            [1, 0, 4, 2, 3, 6, 5],
-            [5, 0, 4, 2, 3, 6, 7],
-            [5, 7, 4, 2, 3, 6, 1],
-            [0, 1, 4, 2, 3, 6, 5],
-            [7, 1, 4, 2, 3, 6, 0],
-
+            [4, 3, 5, 6],
+            [4, 5, 6, 7],
+            [4, 1, 2, 3],
+            [0, 1, 2, 7],
+            [3, 6, 7, 2],
+            [5, 6, 7, 3],
+            [3, 5, 6, 0],
+            [3, 5, 6, 7],
+            [1, 4, 7],
+            [2, 4, 5],
+            [0, 4, 3],
 
 
 
@@ -2013,16 +2214,17 @@ class NetworkModelProposalEigenVector: # EIGEN_VECTOR_CENTRALITY
 
         # all hod_vnfs found on the training phase
         hods_vnfs = [
-            [1, 7, 5, 2, 3, 6, 4],
-            [0, 4, 5, 2, 3, 6, 1],
-            [1, 0, 5, 2, 3, 6, 4],
-            [0, 1, 5, 2, 3, 6, 7],
-            [7, 0, 4, 2, 3, 6, 1],
-            [1, 0, 4, 2, 3, 6, 5],
-            [5, 0, 4, 2, 3, 6, 7],
-            [5, 7, 4, 2, 3, 6, 1],
-            [0, 1, 4, 2, 3, 6, 5],
-            [7, 1, 4, 2, 3, 6, 0],
+            [4, 3, 5, 6],
+            [4, 5, 6, 7],
+            [4, 1, 2, 3],
+            [0, 1, 2, 7],
+            [3, 6, 7, 2],
+            [5, 6, 7, 3],
+            [3, 5, 6, 0],
+            [3, 5, 6, 7],
+            [1, 4, 7],
+            [2, 4, 5],
+            [0, 4, 3],
 
 
 
@@ -2073,7 +2275,7 @@ class NetworkModelProposalEigenVector: # EIGEN_VECTOR_CENTRALITY
 
     @staticmethod
     def get_top_eigen_nodes(topology, n_of_nodes):
-        dict_nodes_eigen = nx.eigenvector_centrality(topology)
+        dict_nodes_eigen = nx.eigenvector_centrality(topology, max_iter=500)
         ord_dict =  OrderedDict(sorted(dict_nodes_eigen.items(), key=itemgetter(1), reverse=True))
         return dict(list(ord_dict.items())[0:n_of_nodes])
 
