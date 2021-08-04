@@ -41,11 +41,18 @@ PLOT_EMPTY_GRAPHS = True
 # On-path strategies: dashed lines
 # No-cache: dotted line
 POLICY_STYLE = {
-    'BASELINE': 'r--D',
-    'HOD': 'k--^',
-    'FIRST_ORDER': 'm--s',
-    'TAP_ALGO': 'c-s',
-    'BCSP':    'g-^',
+    'HOD_BETW': 'k--^',
+    'HOD_DEG': 'b--p',
+    'HOD_CLOSE': 'r--<',
+    'HOD_PAGE': 'g-->',
+    'HOD_EIGEN': 'c--s'
+
+
+    #'BASELINE': 'r--D',
+    #'HOD': 'k--^',
+    #'FIRST_ORDER': 'm--s',
+    #'TAP_ALGO': 'c-s',
+    #'BCSP':    'g-^',
     # 'HR_HYBRID_AM':    'c-s',
     # 'HR_HYBRID_SM':    'r-v',
     # 'LCE':             'b--p',
@@ -60,12 +67,20 @@ POLICY_STYLE = {
 
 # This dict maps name of strategies to names to be displayed in the legend
 POLICY_LEGEND = {
-    'BASELINE': 'BASELINE',
-    'HOD': 'HOD',
-    'FIRST_ORDER': 'FIRST_ORD',
-    'TAP_ALGO': 'TAP_VNF',
-    'MARKOV': 'MARKOV',
-    'BCSP':         'BCSP',
+
+    'HOD_BETW': 'HOD_BETW',
+    'HOD_DEG': 'HOD_DEG',
+    'HOD_CLOSE': 'HOD_CLOSE',
+    'HOD_PAGE': 'HOD_PAGE',
+    'HOD_EIGEN': 'HOD_EIGEN'
+
+
+    #'BASELINE': 'BASELINE',
+    #'HOD': 'HOD',
+    #'FIRST_ORDER': 'FIRST_ORD',
+    #'TAP_ALGO': 'TAP_VNF',
+    #'MARKOV': 'MARKOV',
+    #'BCSP':         'BCSP',
     # 'HR_ASYMM':        'HR Asymm',
     # 'HR_MULTICAST':    'HR Multicast',
     # 'HR_HYBRID_AM':    'HR Hybrid AM',
@@ -80,35 +95,60 @@ POLICY_LEGEND = {
 
 # Color and hatch styles for bar charts of cache hit ratio and link load vs topology
 POLICY_BAR_COLOR_CACHE_SIZE = {
-    'BASELINE': 'dimgray',
-    'HOD': 'black',
-    'FIRST_ORDER': 'lightgray',
-    'TAP_ALGO': 'grey',
-    'MARKOV': 'silver',
-    'BCSP':     'gainsboro',
+
+    'HOD_BETW': 'navy',
+    'HOD_DEG': 'darkorange',
+    'HOD_CLOSE': 'darkred',
+    'HOD_PAGE': 'green',
+    'HOD_EIGEN': 'coral'
+
+
+
+    #'BASELINE': 'dimgray',
+    #'HOD': 'black',
+    #'FIRST_ORDER': 'lightgray',
+    #'TAP_ALGO': 'grey',
+    #'MARKOV': 'silver',
+    #'BCSP':     'gainsboro',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
 }
 
 POLICY_BAR_COLOR_LATENCY = {
-    'BASELINE': 'dimgray',
-    'HOD': 'black',
-    'FIRST_ORDER': 'lightgray',
-    'TAP_ALGO': 'grey',
-    'MARKOV': 'silver',
-    'BCSP':     'gainsboro',
+
+    'HOD_BETW': 'navy',
+    'HOD_DEG': 'darkorange',
+    'HOD_CLOSE': 'darkred',
+    'HOD_PAGE': 'green',
+    'HOD_EIGEN': 'coral'
+
+
+    #'BASELINE': 'dimgray',
+    #'HOD': 'black',
+    #'FIRST_ORDER': 'lightgray',
+    #'TAP_ALGO': 'grey',
+    #'MARKOV': 'silver',
+    #'BCSP':     'gainsboro',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
 }
 
 POLICY_BAR_COLOR_LINK_LOAD = {
-    'BASELINE': 'dimgray',
-    'HOD': 'black',
-    'FIRST_ORDER': 'lightgray',
-    'TAP_ALGO': 'grey',
-    'MARKOV': 'silver',
-    'BCSP': 'gainsboro',
+
+    'HOD_BETW': 'navy',
+    'HOD_DEG': 'darkorange',
+    'HOD_CLOSE': 'darkred',
+    'HOD_PAGE': 'green',
+    'HOD_EIGEN': 'coral'
+
+
+    #'BASELINE': 'dimgray',
+    #'HOD': 'black',
+    #'FIRST_ORDER': 'lightgray',
+    #'TAP_ALGO': 'grey',
+    #'MARKOV': 'silver',
+    #'BCSP': 'gainsboro',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
@@ -116,12 +156,21 @@ POLICY_BAR_COLOR_LINK_LOAD = {
 
 
 POLICY_BAR_HATCH = {
-    'BASELINE': '/',
-    'HOD': 'o',
-    'FIRST_ORDER': 'x',
-    'TAP_ALGO': '..',
-    'MARKOV': '-',
-    'BCSP':     '++',
+
+    'HOD_BETW': '/',
+    'HOD_DEG': '.',
+    'HOD_CLOSE': '-',
+    'HOD_PAGE': '\\',
+    'HOD_EIGEN': '+'
+
+
+
+    #'BASELINE': '/',
+    #'HOD': 'o',
+    #'FIRST_ORDER': 'x',
+    #'TAP_ALGO': '..',
+    #'MARKOV': '-',
+    #'BCSP':     '++',
     # 'HR_ASYMM':     '+',
     # 'HR_SYMM':      '\\'
 }
