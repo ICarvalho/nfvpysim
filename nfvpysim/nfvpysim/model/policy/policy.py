@@ -185,6 +185,52 @@ class TapAlgo(Policy):
 
 
 
+@register_policy('HOD_FF')
+class HodFf(Policy):
+    def __init__(self, view, controller, **kwargs):
+        super(HodFf, self).__init__(view, controller)
+
+    @staticmethod
+    def sum_vnfs_cpu(vnfs):
+        vnfs_cpu = {0: 15,  # nat
+                    1: 25,  # fw
+                    2: 25,  # ids
+                    3: 20,  # wanopt
+                    4: 20,  # lb
+                    5: 25,  # encrypt
+                    6: 25,  # decrypts
+                    7: 30,  # dpi
+                    }
+
+        sum_vnfs_cpu = 0
+        for vnf in vnfs:
+            if vnf in vnfs_cpu.keys():
+                sum_vnfs_cpu += vnfs_cpu[vnf]
+        return sum_vnfs_cpu
+
+
+    def first_fit_search(self, path, sfc):
+        sum_cpu_nodes = {}
+        sum_vnfs_sfc = HodFf.sum_vnfs_cpu(sfc)
+        for node in path:
+            sum_cpu_nodes[node] = self.controller.sum_vnfs_cpu_on_node(node)
+            if sum_cpu_nodes[node] <= sum_vnfs_sfc:
+                return node
+            else:
+                continue
+
+
+
+
+
+
+
+
+
+
+
+
+
 @register_policy('MARKOV')
 class Markov(Policy):
     def __init__(self, view, controller, **kwargs):

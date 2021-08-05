@@ -193,7 +193,7 @@ def plot_cache_hits_vs_n_sfc_requests(resultset, topology, nfv_cache_size, n_mea
     desc['ycondnames'] = [('policy', 'name')] * len(policies)
     desc['ycondvals'] = policies
     desc['errorbar'] = True
-    desc['legend_loc'] = 'best'
+    desc['legend_loc'] = 'lower center'
     desc['line_style'] = POLICY_STYLE
     desc['line_width'] = LINE_WIDTH
     desc['legend'] = POLICY_LEGEND
@@ -244,7 +244,7 @@ def plot_link_load_vs_n_sfc_requests(resultset, topology, nfv_cache_size, sfc_re
     desc['ycondnames'] = [('policy', 'name')] * len(policies)
     desc['ycondvals'] = policies
     desc['errorbar'] = True
-    desc['legend_loc'] = 'best'
+    desc['legend_loc'] = 'lower center'
     desc['line_style'] = POLICY_STYLE
     desc['legend'] = POLICY_LEGEND
     desc['legend_size'] = LEGEND_SIZE
@@ -292,7 +292,7 @@ def plot_latency_vs_nfv_cache_size(resultset, topology, nfv_cache_size, n_measur
     desc['ycondnames'] = [('policy', 'name')] * len(policies)
     desc['ycondvals'] = policies
     desc['errorbar'] = True
-    desc['legend_loc'] = 'best'
+    desc['legend_loc'] = 'lower center'
     desc['line_style'] = POLICY_STYLE
     desc['legend'] = POLICY_LEGEND
     desc['legend_size'] = LEGEND_SIZE
@@ -344,7 +344,7 @@ def plot_cache_hits_vs_topology(resultset, n_measured, nfv_cache_size, topology_
     desc['ycondnames'] = [('policy', 'name')] * len(policies)
     desc['ycondvals'] = policies
     desc['errorbar'] = True
-    desc['legend_loc'] = 'best'
+    desc['legend_loc'] = 'lower center'
     desc['bar_color'] = POLICY_BAR_COLOR_CACHE_SIZE
     desc['bar_hatch'] = POLICY_BAR_HATCH
     desc['legend'] = POLICY_LEGEND
@@ -373,7 +373,7 @@ def plot_link_load_vs_topology(resultset, n_measured, nfv_cache_size, topology_r
     desc['ycondnames'] = [('policy', 'name')] * len(policies)
     desc['ycondvals'] = policies
     desc['errorbar'] = True
-    desc['legend_loc'] = 'best'
+    desc['legend_loc'] = 'lower center'
     desc['bar_color'] = POLICY_BAR_COLOR_LINK_LOAD
     desc['bar_hatch'] = POLICY_BAR_HATCH
     desc['legend'] = POLICY_LEGEND
@@ -402,7 +402,7 @@ def plot_latency_vs_topology(resultset, n_measured, nfv_cache_size, topology_ran
     desc['ycondnames'] = [('policy', 'name')] * len(policies)
     desc['ycondvals'] = policies
     desc['errorbar'] = True
-    desc['legend_loc'] = 'best'
+    desc['legend_loc'] = 'upper right'
     desc['bar_color'] = POLICY_BAR_COLOR_LATENCY
     desc['bar_hatch'] = POLICY_BAR_HATCH
     desc['legend'] = POLICY_LEGEND
