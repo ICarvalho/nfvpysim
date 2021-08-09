@@ -2495,10 +2495,6 @@ class NetworkController:
 
 
 
-
-
-
-
     def sort_paths_min_cpu_use(self, paths):
         dict_of_paths = {}
         for path in paths:
