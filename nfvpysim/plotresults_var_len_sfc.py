@@ -45,7 +45,7 @@ POLICY_STYLE = {
     'HOD': 'k--^',
     'FIRST_ORDER': 'm--s',
     'TAP_ALGO': 'c-s',
-    # 'HR_MULTICAST':    'm-^',
+    'HOLU':    'g-^',
     # 'HR_HYBRID_AM':    'c-s',
     # 'HR_HYBRID_SM':    'r-v',
     # 'LCE':             'b--p',
@@ -65,7 +65,7 @@ POLICY_LEGEND = {
     'FIRST_ORDER': 'FIRST_ORD',
     'TAP_ALGO': 'TAP_ALGO',
     'MARKOV': 'MARKOV',
-    # 'HR_SYMM':         'HR Symm',
+    'HOLU':         'HOLU',
     # 'HR_ASYMM':        'HR Asymm',
     # 'HR_MULTICAST':    'HR Multicast',
     # 'HR_HYBRID_AM':    'HR Hybrid AM',
@@ -85,7 +85,7 @@ POLICY_BAR_COLOR_CACHE_SIZE = {
     'FIRST_ORDER': 'lightgray',
     'TAP_ALGO': 'grey',
     'MARKOV': 'silver',
-    # 'NO_CACHE':     '0.5',
+    'HOLU':     'gainsboro',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
 }
@@ -96,6 +96,7 @@ POLICY_BAR_COLOR_LATENCY = {
     'FIRST_ORDER': 'lightgray',
     'TAP_ALGO': 'grey',
     'MARKOV': 'silver',
+    'HOLU':     'gainsboro',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
@@ -107,6 +108,7 @@ POLICY_BAR_COLOR_LINK_LOAD = {
     'FIRST_ORDER': 'lightgray',
     'TAP_ALGO': 'grey',
     'MARKOV': 'silver',
+    'HOLU': 'gainsboro',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
@@ -119,10 +121,11 @@ POLICY_BAR_HATCH = {
     'FIRST_ORDER': 'x',
     'TAP_ALGO': '..',
     'MARKOV': '-',
-    # 'NO_CACHE':     'x',
+    'HOLU':     '|',
     # 'HR_ASYMM':     '+',
     # 'HR_SYMM':      '\\'
 }
+
 
 def plot_cache_hits_vs_n_sfc_requests(resultset, topology, nfv_cache_size, n_measured_range, policies, plotdir):
     if 'NO_CACHE' in policies:
@@ -383,7 +386,7 @@ def run(config, results, plotdir):
     for topology in topologies:
         for nfv_cache_size in nfv_cache_sizes:
             logger.info(
-            'Plotting sfc hit ratio for topology %s and cache size %s vs number of sfc requests' % (topology, str(nfv_cache_size)))
+                'Plotting sfc hit ratio for topology %s and cache size %s vs number of sfc requests' % (topology, str(nfv_cache_size)))
             plot_cache_hits_vs_n_sfc_requests(resultset, topology, nfv_cache_size, n_of_sfc_requests, policies, plotdir)
             logger.info('Plotting link load for topology %s vs cache size %s' % (topology, str(nfv_cache_size)))
             plot_link_load_vs_n_sfc_requests(resultset, topology, nfv_cache_size, n_of_sfc_requests, policies, plotdir)
@@ -391,14 +394,14 @@ def run(config, results, plotdir):
             plot_latency_vs_n_sfc_requests(resultset, topology, nfv_cache_size, n_of_sfc_requests, policies, plotdir)
 
     #for topology in topologies:
-        #for sfc_len in sfc_lens:
-            #logger.info(
-            #'Plotting cache hit ratio for topology %s and alpha %s vs cache size' % (topology, str(sfc_len)))
-            #plot_cache_hits_vs_cache_size(resultset, topology, sfc_len, nfv_cache_sizes, policies, plotdir)
-            #logger.info('Plotting link load for topology %s and sfc_len %s vs cache size' % (topology, str(sfc_len)))
-            #plot_link_load_vs_nfv_cache_size(resultset, topology, sfc_len, nfv_cache_sizes, policies, plotdir)
-            #logger.info('Plotting latency for topology %s and sfc_len %s vs cache size' % (topology, str(sfc_len)))
-            #plot_latency_vs_nfv_cache_size(resultset, topology, sfc_len, nfv_cache_sizes, policies, plotdir)
+    #for sfc_len in sfc_lens:
+    #logger.info(
+    #'Plotting cache hit ratio for topology %s and alpha %s vs cache size' % (topology, str(sfc_len)))
+    #plot_cache_hits_vs_cache_size(resultset, topology, sfc_len, nfv_cache_sizes, policies, plotdir)
+    #logger.info('Plotting link load for topology %s and sfc_len %s vs cache size' % (topology, str(sfc_len)))
+    #plot_link_load_vs_nfv_cache_size(resultset, topology, sfc_len, nfv_cache_sizes, policies, plotdir)
+    #logger.info('Plotting latency for topology %s and sfc_len %s vs cache size' % (topology, str(sfc_len)))
+    #plot_latency_vs_nfv_cache_size(resultset, topology, sfc_len, nfv_cache_sizes, policies, plotdir)
 
     for nfv_cache_size in nfv_cache_sizes:
         for n_of_sfc_request in n_of_sfc_requests:

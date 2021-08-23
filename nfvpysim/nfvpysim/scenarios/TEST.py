@@ -1,3 +1,4 @@
+import itertools
 from operator import itemgetter
 
 import networkx as nx
@@ -11,7 +12,81 @@ from itertools import cycle
 
 
 
+d = {'pw': 1, 'bw': 0.5}
+a = sum(d.values())
+print(a)
+
+
+
+
+
+
+
+
+
+"""
+
+l = [1, 2, 3, 4]
+a = itertools.combinations(l,2)
+#print(r)
+
+
+def get_dist(topo, pairs):
+    dist = {}
+    for pair in pairs:
+        dist[pair] = [nx.dijkstra_path(topo, pair[i], pair[i+1]) for n1 in range(len(pairs) for n2 in range(n1+1, len(pairs)))]
+    return dist.values()
 topo = topology_tatanld()
+d = get_dist(topo, a)
+print(d)
+#print(d[(1, 2)])
+
+
+"""
+
+
+
+"""
+from heapq import nlargest
+
+# Initialize dictionary
+test_dict = {'gfg' : 1, 'is' : 4, 'best' : 6, 'for' : 7, 'geeks' : 3 }
+
+# Initialize N
+N = 3
+
+# printing original dictionary
+print("The original dictionary is : " + str(test_dict))
+
+# N largest values in dictionary
+# Using nlargest
+res = nlargest(N, test_dict, key = test_dict.get)
+
+# printing result
+print("The top N value pairs are  " + str(res))
+"""
+
+
+
+
+
+
+topo = topology_tatanld()
+paths = dict(nx.all_pairs_shortest_path(topo))
+node = 7
+betw = nx.betweenness_centrality(topo)
+#print(paths[20][30])
+#print(betw)
+#if node in topo.nodes:
+    ##print(round(betw[node], 4))
+
+
+
+
+
+
+
+"""
 def calculate_all_shortest_paths(topology, ingress_node, egress_node):
     return [p for p in nx.all_shortest_paths(topology, ingress_node, egress_node)]
 a = calculate_all_shortest_paths(topo, 1, 2)
@@ -22,6 +97,8 @@ b = [[1, 3, 4], [2, 4, 4], [3, 4, 5]]
 for l in a:
     for number in l:
         print(number)
+"""
+
 
 
 """

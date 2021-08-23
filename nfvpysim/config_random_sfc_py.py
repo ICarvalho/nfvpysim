@@ -24,17 +24,18 @@ RESULTS_FORMAT = 'PICKLE'
 
 # Number of times each experiment is replicated
 # This is necessary for extracting confidence interval of selected metrics
-N_REPLICATIONS = 10
+N_REPLICATIONS = 20
 
 # List of metrics to be measured in the experiments
 # The implementation of data collectors are located in ./icarus/execution/collectors.py
 # Remove collectors not needed
 DATA_COLLECTORS = [
-           'ACCEPTANCE_RATIO',  # Measure acceptance hit ratio
-           'LATENCY',  # Measure request and response latency (based on static link delays)
-           'LINK_LOAD',  # Measure link loads
+    'ACCEPTANCE_RATIO',
+    'LINK_LOAD',      # Measure acceptance hit ratio
+    'LATENCY',  # Measure request and response latency (based on static link delays)
+    # Measure link loads
 
-                   ]
+]
 
 
 
@@ -53,11 +54,11 @@ N_WARMUP_REQUESTS = 0
 
 # Number of measured requests
 
-N_MEASURED_REQUESTS = [ 10 ** 3]
+N_MEASURED_REQUESTS = [10 ** 4]
 
 
 # Number of requests per second (over the whole network)
-SFC_REQ_RATES = 100.0
+SFC_REQ_RATES = 10.0
 
 # vnf allocation policy
 VNF_ALLOCATION_POLICY = 'STATIC'
@@ -76,12 +77,12 @@ NFV_NODE_CACHE_POLICY = 'NFV_CACHE'
 # List of topologies tested
 # Topology implementations are located in ./icarus/scenarios/topology.py
 # Remove topologies not needed
-TOPOLOGIES =  ['TATANLD',  'ION',  'BESTEL', 'USCARRIER',  'COGENTCO', 'COLT', 'INTERROUTE']
+TOPOLOGIES =  ['ION',  'BESTEL',  'COGENTCO', 'COLT']
 
 # List of caching and routing strategies
 # The code is located in ./icarus/models/strategy/*.py
 # Remove strategies not needed
-POLICIES = ['GREEDY',  'HOD', 'TAP_ALGO', 'MARKOV']  # 'GREEDY_WITHOUT_PLACEMENT',
+POLICIES = ['BASELINE', 'MARKOV', 'HOD', 'TAP_ALGO', 'FIRST_ORDER']
 
 # Instantiate experiment queue
 EXPERIMENT_QUEUE = deque()

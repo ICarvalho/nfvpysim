@@ -24,7 +24,7 @@ RESULTS_FORMAT = 'PICKLE'
 
 # Number of times each experiment is replicated
 # This is necessary for extracting confidence interval of selected metrics
-N_REPLICATIONS = 5
+N_REPLICATIONS = 3
 
 # List of metrics to be measured in the experiments
 # The implementation of data collectors are located in ./icarus/execution/collectors.py
@@ -32,7 +32,7 @@ N_REPLICATIONS = 5
 DATA_COLLECTORS = [
     'ACCEPTANCE_RATIO',  # Measure acceptance hit ratio
     'LATENCY',  # Measure request and response latency (based on static link delays)
-
+    #'LINK_LOAD',  # Measure link loads
 
 ]
 
@@ -46,14 +46,13 @@ DATA_COLLECTORS = [
 # Number of content requests that are measured after warmup
 VNF_ALLOCATION_SPACE = [8]
 
-SFC_LENS = [2, 4, 6, 8]
 
 # Number of warmup requests
 N_WARMUP_REQUESTS = 0
 
 # Number of measured requests
 
-N_MEASURED_REQUESTS = 1 * 10 ** 3
+N_MEASURED_REQUESTS = 1 * 10 ** 4
 
 
 
@@ -77,7 +76,7 @@ NFV_NODE_CACHE_POLICY = 'NFV_CACHE'
 # List of topologies tested
 # Topology implementations are located in ./icarus/scenarios/topology.py
 # Remove topologies not needed
-TOPOLOGIES = ['ION',  'BESTEL',  'COGENTCO', 'COLT']
+TOPOLOGIES = ['TATANLD', 'ION', 'BESTEL', 'USCARRIER',  'COLT']
 
 # List of caching and routing strategies
 # The code is located in ./icarus/models/strategy/*.py
@@ -89,8 +88,8 @@ EXPERIMENT_QUEUE = deque()
 
 # Create tree of experiment configuration
 default = Tree()
-default['workload'] = {'name':  'STATIONARY_SFC_BY_LEN',
-                       'sfc_len': SFC_LENS,
+default['workload'] = {'name':  'TRACE_DRIVEN',
+                       'reqs_file': '/home/igor/PycharmProjects/TESE/nfvpysim/sfc_seq_len_2_test.csv',
                        'n_warmup': N_WARMUP_REQUESTS,
                        'n_measured': N_MEASURED_REQUESTS
                        }
@@ -101,15 +100,13 @@ default['nfv_cache_policy']['name'] = NFV_NODE_CACHE_POLICY
 
 
 # Create experiments multiplexing all desired parameters
-for sfc_len in SFC_LENS:
-    for policy in POLICIES:
-        for topology in TOPOLOGIES:
-            for vnf_allocation_space in VNF_ALLOCATION_SPACE:
-                experiment = copy.deepcopy(default)
-                experiment['workload']['sfc_len'] = sfc_len
-                experiment['policy']['name'] = policy
-                experiment['topology']['name'] = topology
-                experiment['vnf_allocation']['network_cache'] = vnf_allocation_space
-                experiment['desc'] = "policy: %s, topology: %s, network cache: %s" \
+for policy in POLICIES:
+    for topology in TOPOLOGIES:
+        for vnf_allocation_space in VNF_ALLOCATION_SPACE:
+            experiment = copy.deepcopy(default)
+            experiment['policy']['name'] = policy
+            experiment['topology']['name'] = topology
+            experiment['vnf_allocation']['network_cache'] = vnf_allocation_space
+            experiment['desc'] = "policy: %s, topology: %s, network cache: %s" \
                                      % (policy, topology, str(vnf_allocation_space))
-                EXPERIMENT_QUEUE.append(experiment)
+            EXPERIMENT_QUEUE.append(experiment)

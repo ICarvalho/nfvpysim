@@ -30,11 +30,11 @@ N_REPLICATIONS = 10
 # The implementation of data collectors are located in ./icarus/execution/collectors.py
 # Remove collectors not needed
 DATA_COLLECTORS = [
-           'ACCEPTANCE_RATIO',  # Measure acceptance hit ratio
-           'LATENCY',  # Measure request and response latency (based on static link delays)
-           'LINK_LOAD',  # Measure link loads
+    'ACCEPTANCE_RATIO',  # Measure acceptance hit ratio
+    'LATENCY',  # Measure request and response latency (based on static link delays)
+    'LINK_LOAD',  # Measure link loads
 
-                   ]
+]
 
 
 
@@ -53,7 +53,7 @@ N_WARMUP_REQUESTS = 0
 
 # Number of measured requests
 
-N_MEASURED_REQUESTS = [10 ** 4]
+N_MEASURED_REQUESTS = [10 ** 2]
 
 
 # Number of requests per second (over the whole network)
@@ -74,12 +74,12 @@ NFV_NODE_CACHE_POLICY = 'NFV_CACHE'
 # List of topologies tested
 # Topology implementations are located in ./icarus/scenarios/topology.py
 # Remove topologies not needed
-TOPOLOGIES = ['TATANLD' , 'ION', 'BESTEL', 'USCARRIER',  'COLT']
+TOPOLOGIES = ['ION',  'BESTEL',  'COGENTCO', 'COLT']
 
 # List of caching and routing strategies
 # The code is located in ./icarus/models/strategy/*.py
 # Remove strategies not needed
-POLICIES = ['GREEDY', 'FIRST_ORDER', 'HOD', 'TAP_ALGO']  # 'GREEDY_WITHOUT_PLACEMENT',
+POLICIES = ['BASELINE', 'MARKOV', 'HOD', 'TAP_ALGO', 'FIRST_ORDER']  # 'GREEDY_WITHOUT_PLACEMENT',
 
 # Instantiate experiment queue
 EXPERIMENT_QUEUE = deque()

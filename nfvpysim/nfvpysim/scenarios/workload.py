@@ -51,27 +51,53 @@ def get_delay(service):
 
     dict_services = {
 
-        1: {'sfc': [0, 1, 2], 'delay': 100},
-        2: {'sfc': [0, 4, 3], 'delay': 100},
-        3: {'sfc': [3, 7, 2], 'delay': 100},
-        4: {'sfc': [1, 2, 4, 5], 'delay': 200},
-        5: {'sfc': [2, 1, 4, 7], 'delay': 200},
-        6: {'sfc': [2, 4, 5, 6], 'delay': 200},
-        7: {'sfc': [3, 6, 7, 2], 'delay': 200},
-        8: {'sfc': [1, 2, 6, 7], 'delay': 200},
-        9: {'sfc': [2, 4, 1, 2, 3], 'delay': 350},
-        10: {'sfc': [4, 3, 5, 1, 2], 'delay': 350},
-        11: {'sfc': [2, 4, 5, 6, 7], 'delay': 350},
-        12: {'sfc': [0, 4, 3, 5, 6], 'delay': 350},
-        13: {'sfc': [2, 4, 5, 6, 7], 'delay': 350},
-        14: {'sfc': [2, 4, 5, 6, 7, 3], 'delay': 400},
-        15: {'sfc': [4, 3, 5, 6, 0, 1, 2, 7], 'delay': 450},
+
+
+            1: {'sfc': [0, 1, 2], 'delay': 100},
+            2: {'sfc': [0, 4, 3], 'delay': 100},
+            3: {'sfc': [3, 7, 2], 'delay': 100},
+            4: {'sfc': [1, 2, 4, 5], 'delay': 200},
+            5: {'sfc': [2, 1, 4, 7], 'delay': 200},
+            6: {'sfc': [2, 4, 5, 6], 'delay': 200},
+            7: {'sfc': [3, 6, 7, 2], 'delay': 200},
+            8: {'sfc': [1, 2, 6, 7], 'delay': 200},
+            9: {'sfc': [2, 4, 1, 2, 3], 'delay': 350},
+            10: {'sfc': [4, 3, 5, 1, 2], 'delay': 350},
+            11: {'sfc': [4, 3, 5, 6, 7], 'delay': 350},
+            12: {'sfc': [0, 4, 3, 5, 6], 'delay': 350},
+            13: {'sfc': [2, 4, 5, 6, 7], 'delay': 350},
+            14: {'sfc': [2, 4, 5, 6, 7, 3], 'delay': 400},
+            15: {'sfc': [4, 3, 5, 6, 0, 1, 2, 7], 'delay': 450},
+
+
 
     }
     for k, v in dict_services.items():
         for k1, v1 in v.items():
             if v1 == service:
                 return v.get('delay', v)
+
+
+
+def get_delay_vnfs(vnfs):
+    vnfs_cpu = {0: 20,  # nat
+                1: 25,  # fw
+                2: 30,  # ids
+                3: 35,  # wanopt
+                4: 40,  # lb
+                5: 45,  # encrypt
+                6: 50,  # decrypts
+                7: 55,  # dpi
+                }
+    sum_vnfs_cpu = 0
+    for vnf in vnfs:
+        if vnf in vnfs_cpu.keys():
+            sum_vnfs_cpu += vnfs_cpu[vnf]
+
+    return sum_vnfs_cpu
+
+
+
 
 
 @register_workload('STATIONARY_SFC_BY_LEN')
@@ -115,7 +141,7 @@ class StationaryWorkloadSfcByLen:
                     egress_node = random.choice(self.egress_nodes)
                     self.req = RequestSfcByLen()
                     self.sfc = self.req.gen_sfc_by_len(self.sfc_len)
-                    delay = get_uniform_delay_sfc(self.sfc)
+                    delay = get_delay_vnfs(self.sfc)
                     sfc_id = truncate(t_event, 2)
                     log = (req_counter >= self.n_warmup)
                     event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': self.sfc, 'delay': delay, 'log': log}
@@ -241,7 +267,7 @@ class StationaryWorkloadRandomSfc:
 @register_workload('TRACE_DRIVEN')
 class TraceDrivenWorkload:
     def __init__(self, topology, n_warmup, n_measured,
-                 sfc_reqs_file='/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/sfc_test_data.csv', rate=1.0, **kwargs):
+                 sfc_reqs_file='/home/igor/PycharmProjects/TESE/nfvpysim/sfc_seq_len_2_test.csv', rate=1.0, **kwargs):
         # Set high buffering to avoid one-line reads
         self.buffering = 64 * 1024 * 1024
         self.n_warmup = n_warmup
@@ -261,8 +287,9 @@ class TraceDrivenWorkload:
                 ingress_node= random.choice(self.ingress_nodes)
                 egress_node = random.choice(self.egress_nodes)
                 sfc_id = truncate(t_event, 2)
+                delay = get_delay_vnfs(sfc)
                 log = (req_counter >= self.n_warmup)
-                event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'log': log}
+                event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'delay': delay, 'log': log}
                 yield t_event, event
                 req_counter += 1
                 if req_counter >= self.n_warmup + self.n_measured:
