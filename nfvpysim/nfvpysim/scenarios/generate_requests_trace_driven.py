@@ -32,7 +32,7 @@ class GenerateTraceDrivenRequests:
 
     @staticmethod
     def gen_var_len_sfc(n_reqs):
-        with open("sfc_reqs_sfc_var_len.csv", 'w', newline='\n') as f:
+        with open("sfc_reqs_sfc_var_len_1000_000.csv", 'w', newline='\n') as f:
             writer = csv.writer(f)
             for i in range(1, n_reqs + 1):
                 req = RequestVarLenSfc()
@@ -47,8 +47,8 @@ class GenerateTraceDrivenRequests:
 #req_sfc_by_len.gen_sfc_by_len(10 ** 2, [2,3])
 
 
-req_rand_sfc = GenerateTraceDrivenRequests()
-req_rand_sfc.gen_random_sfc(10 ** 6)
+#req_rand_sfc = GenerateTraceDrivenRequests()
+#req_rand_sfc.gen_random_sfc(1 * 10 ** 6)
 
-#req_var_len_sfc = GenerateTraceDrivenRequests()
-#req_var_len_sfc.gen_var_len_sfc(10 ** 6)
+req_var_len_sfc = GenerateTraceDrivenRequests()
+req_var_len_sfc.gen_var_len_sfc(1 * 10 ** 6)
