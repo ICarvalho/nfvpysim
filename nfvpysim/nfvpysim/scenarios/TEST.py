@@ -12,11 +12,12 @@ from itertools import cycle
 
 
 
-d = {'pw': 1, 'bw': 0.5}
-a = sum(d.values())
-print(a)
 
 
+
+topo = topology_tatanld()
+delays = nx.get_edge_attributes(topo, 'delay')
+print(dict(delays))
 
 
 
@@ -71,10 +72,9 @@ print("The top N value pairs are  " + str(res))
 
 
 
-topo = topology_tatanld()
-paths = dict(nx.all_pairs_shortest_path(topo))
-node = 7
-betw = nx.betweenness_centrality(topo)
+#paths = dict(nx.all_pairs_shortest_path(topo))
+#node = 7
+#betw = nx.betweenness_centrality(topo)
 #print(paths[20][30])
 #print(betw)
 #if node in topo.nodes:

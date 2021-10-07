@@ -24,14 +24,14 @@ RESULTS_FORMAT = 'PICKLE'
 
 # Number of times each experiment is replicated
 # This is necessary for extracting confidence interval of selected metrics
-N_REPLICATIONS = 20
+N_REPLICATIONS = 5
 
 # List of metrics to be measured in the experiments
 # The implementation of data collectors are located in ./icarus/execution/collectors.py
 # Remove collectors not needed
 DATA_COLLECTORS = [
     'ACCEPTANCE_RATIO',
-    'LINK_LOAD',      # Measure acceptance hit ratio
+    'LINK_LOAD',    # Measure acceptance hit ratio
     'LATENCY',  # Measure request and response latency (based on static link delays)
     # Measure link loads
 
@@ -54,7 +54,7 @@ N_WARMUP_REQUESTS = 0
 
 # Number of measured requests
 
-N_MEASURED_REQUESTS = [10 ** 4]
+N_MEASURED_REQUESTS = [10 ** 3]
 
 
 # Number of requests per second (over the whole network)
@@ -67,8 +67,6 @@ VNF_ALLOCATION_POLICY = 'STATIC'
 
 # cache size of an nfv_nodes
 
-VNF_PLACEMENT = 'HOD_PLACEMENT'
-#, 'HOD_PLACEMENT', 'RANDOM_VAR_LEN_PLACEMENT']
 
 # NFV cache policy for storing VNFs
 NFV_NODE_CACHE_POLICY = 'NFV_CACHE'
@@ -77,12 +75,13 @@ NFV_NODE_CACHE_POLICY = 'NFV_CACHE'
 # List of topologies tested
 # Topology implementations are located in ./icarus/scenarios/topology.py
 # Remove topologies not needed
-TOPOLOGIES =  ['ION',  'BESTEL',  'COGENTCO', 'COLT']
+TOPOLOGIES =  ['ION',  'BESTEL',  'COGENTCO', 'COLT', 'GEANT', 'TATANLD', 'INTERROUTE', 'VIATEL', 'USCARRIER']
 
 # List of caching and routing strategies
 # The code is located in ./icarus/models/strategy/*.py
 # Remove strategies not needed
-POLICIES = ['BASELINE', 'MARKOV', 'HOD', 'TAP_ALGO', 'FIRST_ORDER']
+#POLICIES = ['BASELINE', 'MARKOV', 'HOD', 'TAP_ALGO', 'FIRST_ORDER']
+POLICIES = ['HOD_BETW', 'HOD_DEG', 'HOD_CLOSE', 'HOD_PAGE', 'HOD_EIGEN']
 
 # Instantiate experiment queue
 EXPERIMENT_QUEUE = deque()
@@ -96,7 +95,7 @@ default['workload'] = {'name': 'STATIONARY_RANDOM_SFC', # 'sfc_len': SFC_LEN,
 
 default['vnf_allocation']['name'] = VNF_ALLOCATION_POLICY
 default['nfv_cache_policy']['name'] = NFV_NODE_CACHE_POLICY
-#default['vnf_placement']['name'] = VNF_PLACEMENT
+
 
 
 

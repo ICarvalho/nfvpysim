@@ -41,11 +41,18 @@ PLOT_EMPTY_GRAPHS = True
 # On-path strategies: dashed lines
 # No-cache: dotted line
 POLICY_STYLE = {
-    'BASELINE': 'r--D',
-    'HOD': 'k--^',
-    'FIRST_ORDER': 'm--s',
-    'TAP_ALGO': 'c-s',
-    'BCSP':    'g-^',
+    'HOD_BETW': 'k--^',
+    'HOD_DEG': 'b--p',
+    'HOD_CLOSE': 'r--<',
+    'HOD_PAGE': 'g-->',
+    'HOD_EIGEN': 'c--s'
+
+
+    #'BASELINE': 'r--D',
+    #'HOD': 'k--^',
+    #'FIRST_ORDER': 'm--s',
+    #'TAP_ALGO': 'c-s',
+    #'BCSP':    'g-^',
     # 'HR_HYBRID_AM':    'c-s',
     # 'HR_HYBRID_SM':    'r-v',
     # 'LCE':             'b--p',
@@ -60,12 +67,20 @@ POLICY_STYLE = {
 
 # This dict maps name of strategies to names to be displayed in the legend
 POLICY_LEGEND = {
-    'BASELINE': 'BASELINE',
-    'HOD': 'HOD',
-    'FIRST_ORDER': 'FIRST_ORD',
-    'TAP_ALGO': 'TAP_VNF',
-    'MARKOV': 'MARKOV',
-    'BCSP':         'BCSP',
+
+    'HOD_BETW': 'HOD_BETW',
+    'HOD_DEG': 'HOD_DEG',
+    'HOD_CLOSE': 'HOD_CLOSE',
+    'HOD_PAGE': 'HOD_PAGE',
+    'HOD_EIGEN': 'HOD_EIGEN'
+
+
+    #'BASELINE': 'BASELINE',
+    #'HOD': 'HOD',
+    #'FIRST_ORDER': 'FIRST_ORD',
+    #'TAP_ALGO': 'TAP_VNF',
+    #'MARKOV': 'MARKOV',
+    #'BCSP':         'BCSP',
     # 'HR_ASYMM':        'HR Asymm',
     # 'HR_MULTICAST':    'HR Multicast',
     # 'HR_HYBRID_AM':    'HR Hybrid AM',
@@ -80,35 +95,60 @@ POLICY_LEGEND = {
 
 # Color and hatch styles for bar charts of cache hit ratio and link load vs topology
 POLICY_BAR_COLOR_CACHE_SIZE = {
-    'BASELINE': 'dimgray',
-    'HOD': 'black',
-    'FIRST_ORDER': 'lightgray',
-    'TAP_ALGO': 'grey',
-    'MARKOV': 'silver',
-    'BCSP':     'gainsboro',
+
+    'HOD_BETW': 'navy',
+    'HOD_DEG': 'darkorange',
+    'HOD_CLOSE': 'darkred',
+    'HOD_PAGE': 'green',
+    'HOD_EIGEN': 'coral'
+
+
+
+    #'BASELINE': 'dimgray',
+    #'HOD': 'black',
+    #'FIRST_ORDER': 'lightgray',
+    #'TAP_ALGO': 'grey',
+    #'MARKOV': 'silver',
+    #'BCSP':     'gainsboro',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
 }
 
 POLICY_BAR_COLOR_LATENCY = {
-    'BASELINE': 'dimgray',
-    'HOD': 'black',
-    'FIRST_ORDER': 'lightgray',
-    'TAP_ALGO': 'grey',
-    'MARKOV': 'silver',
-    'BCSP':     'gainsboro',
+
+    'HOD_BETW': 'navy',
+    'HOD_DEG': 'darkorange',
+    'HOD_CLOSE': 'darkred',
+    'HOD_PAGE': 'green',
+    'HOD_EIGEN': 'coral'
+
+
+    #'BASELINE': 'dimgray',
+    #'HOD': 'black',
+    #'FIRST_ORDER': 'lightgray',
+    #'TAP_ALGO': 'grey',
+    #'MARKOV': 'silver',
+    #'BCSP':     'gainsboro',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
 }
 
 POLICY_BAR_COLOR_LINK_LOAD = {
-    'BASELINE': 'dimgray',
-    'HOD': 'black',
-    'FIRST_ORDER': 'lightgray',
-    'TAP_ALGO': 'grey',
-    'MARKOV': 'silver',
-    'BCSP': 'gainsboro',
+
+    'HOD_BETW': 'navy',
+    'HOD_DEG': 'darkorange',
+    'HOD_CLOSE': 'darkred',
+    'HOD_PAGE': 'green',
+    'HOD_EIGEN': 'coral'
+
+
+    #'BASELINE': 'dimgray',
+    #'HOD': 'black',
+    #'FIRST_ORDER': 'lightgray',
+    #'TAP_ALGO': 'grey',
+    #'MARKOV': 'silver',
+    #'BCSP': 'gainsboro',
     # 'NO_CACHE':     '0.5',
     # 'HR_ASYMM':     '0.6',
     # 'HR_SYMM':      '0.7'
@@ -116,12 +156,21 @@ POLICY_BAR_COLOR_LINK_LOAD = {
 
 
 POLICY_BAR_HATCH = {
-    'BASELINE': '/',
-    'HOD': 'o',
-    'FIRST_ORDER': 'x',
-    'TAP_ALGO': '..',
-    'MARKOV': '-',
-    'BCSP':     '++',
+
+    'HOD_BETW': '/',
+    'HOD_DEG': '.',
+    'HOD_CLOSE': '-',
+    'HOD_PAGE': '\\',
+    'HOD_EIGEN': '+'
+
+
+
+    #'BASELINE': '/',
+    #'HOD': 'o',
+    #'FIRST_ORDER': 'x',
+    #'TAP_ALGO': '..',
+    #'MARKOV': '-',
+    #'BCSP':     '++',
     # 'HR_ASYMM':     '+',
     # 'HR_SYMM':      '\\'
 }
@@ -144,7 +193,7 @@ def plot_cache_hits_vs_n_sfc_requests(resultset, topology, nfv_cache_size, n_mea
     desc['ycondnames'] = [('policy', 'name')] * len(policies)
     desc['ycondvals'] = policies
     desc['errorbar'] = True
-    desc['legend_loc'] = 'best'
+    desc['legend_loc'] = 'lower center'
     desc['line_style'] = POLICY_STYLE
     desc['line_width'] = LINE_WIDTH
     desc['legend'] = POLICY_LEGEND
@@ -195,7 +244,7 @@ def plot_link_load_vs_n_sfc_requests(resultset, topology, nfv_cache_size, sfc_re
     desc['ycondnames'] = [('policy', 'name')] * len(policies)
     desc['ycondvals'] = policies
     desc['errorbar'] = True
-    desc['legend_loc'] = 'best'
+    desc['legend_loc'] = 'lower center'
     desc['line_style'] = POLICY_STYLE
     desc['legend'] = POLICY_LEGEND
     desc['legend_size'] = LEGEND_SIZE
@@ -243,7 +292,7 @@ def plot_latency_vs_nfv_cache_size(resultset, topology, nfv_cache_size, n_measur
     desc['ycondnames'] = [('policy', 'name')] * len(policies)
     desc['ycondvals'] = policies
     desc['errorbar'] = True
-    desc['legend_loc'] = 'best'
+    desc['legend_loc'] = 'lower center'
     desc['line_style'] = POLICY_STYLE
     desc['legend'] = POLICY_LEGEND
     desc['legend_size'] = LEGEND_SIZE
@@ -295,7 +344,7 @@ def plot_cache_hits_vs_topology(resultset, n_measured, nfv_cache_size, topology_
     desc['ycondnames'] = [('policy', 'name')] * len(policies)
     desc['ycondvals'] = policies
     desc['errorbar'] = True
-    desc['legend_loc'] = 'best'
+    desc['legend_loc'] = 'lower center'
     desc['bar_color'] = POLICY_BAR_COLOR_CACHE_SIZE
     desc['bar_hatch'] = POLICY_BAR_HATCH
     desc['legend'] = POLICY_LEGEND
@@ -324,7 +373,7 @@ def plot_link_load_vs_topology(resultset, n_measured, nfv_cache_size, topology_r
     desc['ycondnames'] = [('policy', 'name')] * len(policies)
     desc['ycondvals'] = policies
     desc['errorbar'] = True
-    desc['legend_loc'] = 'best'
+    desc['legend_loc'] = 'lower center'
     desc['bar_color'] = POLICY_BAR_COLOR_LINK_LOAD
     desc['bar_hatch'] = POLICY_BAR_HATCH
     desc['legend'] = POLICY_LEGEND
@@ -353,7 +402,7 @@ def plot_latency_vs_topology(resultset, n_measured, nfv_cache_size, topology_ran
     desc['ycondnames'] = [('policy', 'name')] * len(policies)
     desc['ycondvals'] = policies
     desc['errorbar'] = True
-    desc['legend_loc'] = 'best'
+    desc['legend_loc'] = 'upper right'
     desc['bar_color'] = POLICY_BAR_COLOR_LATENCY
     desc['bar_hatch'] = POLICY_BAR_HATCH
     desc['legend'] = POLICY_LEGEND

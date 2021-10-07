@@ -25,6 +25,14 @@ __all__ = [
     'NetworkViewBaseLine',
     'NetworkViewProposal',
     'NetworkModelTapAlgo',
+    'NetworkViewDeg',
+    'NetworkViewClose',
+    'NetworkViewPage',
+    'NetworkViewEigen',
+    'NetworkModelProposalDegree',
+    'NetworkModelProposalCloseness',
+    'NetworkModelProposalPageRank',
+    'NetworkModelProposalEigenVector',
     'NetworkController'
 ]
 
@@ -260,6 +268,196 @@ class NetworkViewProposal:
 
 
 
+class NetworkViewDeg:
+
+    def __init__(self, model):
+        if not isinstance(model, NetworkModelProposalDegree):
+            raise ValueError('The model argument must be an instance of '
+                             'NetworkModel')
+
+        self.model = model
+
+    def shortest_path(self, ingress_node, egress_node):
+        return self.model.shortest_path[ingress_node][egress_node]
+
+    def all_pairs_shortest_paths(self):
+        return self.model.shortest_path
+
+    def nfv_cache_nodes(self, size=True):
+        return {v: c.maxlen for v, c in self.model.nfv_cache.items()} if size \
+            else list(self.model.nfv_cache.keys())
+
+    def is_nfv_node(self, node):
+        return node in self.model.nfv_cache
+
+    def nfv_nodes(self):
+        return self.model.nfv_cache
+
+    def link_type(self, u, v):
+        return self.model.link_type[(u, v)]
+
+    def link_delay(self, u, v):
+        return self.model.link_delay[(u, v)]
+
+    def delay_path(self, path):
+        sum_delay = 0
+        for hop in range(1, len(path)):
+            u = path[hop - 1]
+            v = path[hop]
+            sum_delay += self.link_delay(u, v)
+        return sum_delay
+
+
+    def topology(self):
+        return self.model.topology
+
+
+
+
+
+
+class NetworkViewClose:
+
+    def __init__(self, model):
+        if not isinstance(model, NetworkModelProposalCloseness):
+            raise ValueError('The model argument must be an instance of '
+                             'NetworkModel')
+
+        self.model = model
+
+    def shortest_path(self, ingress_node, egress_node):
+        return self.model.shortest_path[ingress_node][egress_node]
+
+    def all_pairs_shortest_paths(self):
+        return self.model.shortest_path
+
+    def nfv_cache_nodes(self, size=True):
+        return {v: c.maxlen for v, c in self.model.nfv_cache.items()} if size \
+            else list(self.model.nfv_cache.keys())
+
+    def is_nfv_node(self, node):
+        return node in self.model.nfv_cache
+
+    def nfv_nodes(self):
+        return self.model.nfv_cache
+
+    def link_type(self, u, v):
+        return self.model.link_type[(u, v)]
+
+    def link_delay(self, u, v):
+        return self.model.link_delay[(u, v)]
+
+    def delay_path(self, path):
+        sum_delay = 0
+        for hop in range(1, len(path)):
+            u = path[hop - 1]
+            v = path[hop]
+            sum_delay += self.link_delay(u, v)
+        return sum_delay
+
+
+    def topology(self):
+        return self.model.topology
+
+
+class NetworkViewPage:
+
+    def __init__(self, model):
+        if not isinstance(model, NetworkModelProposalPageRank):
+            raise ValueError('The model argument must be an instance of '
+                             'NetworkModel')
+
+        self.model = model
+
+    def shortest_path(self, ingress_node, egress_node):
+        return self.model.shortest_path[ingress_node][egress_node]
+
+    def all_pairs_shortest_paths(self):
+        return self.model.shortest_path
+
+    def nfv_cache_nodes(self, size=True):
+        return {v: c.maxlen for v, c in self.model.nfv_cache.items()} if size \
+            else list(self.model.nfv_cache.keys())
+
+    def is_nfv_node(self, node):
+        return node in self.model.nfv_cache
+
+    def nfv_nodes(self):
+        return self.model.nfv_cache
+
+    def link_type(self, u, v):
+        return self.model.link_type[(u, v)]
+
+    def link_delay(self, u, v):
+        return self.model.link_delay[(u, v)]
+
+    def delay_path(self, path):
+        sum_delay = 0
+        for hop in range(1, len(path)):
+            u = path[hop - 1]
+            v = path[hop]
+            sum_delay += self.link_delay(u, v)
+        return sum_delay
+
+
+    def topology(self):
+        return self.model.topology
+
+
+
+
+class NetworkViewEigen:
+
+    def __init__(self, model):
+        if not isinstance(model, NetworkModelProposalEigenVector):
+            raise ValueError('The model argument must be an instance of '
+                             'NetworkModel')
+
+        self.model = model
+
+    def shortest_path(self, ingress_node, egress_node):
+        return self.model.shortest_path[ingress_node][egress_node]
+
+    def all_pairs_shortest_paths(self):
+        return self.model.shortest_path
+
+    def nfv_cache_nodes(self, size=True):
+        return {v: c.maxlen for v, c in self.model.nfv_cache.items()} if size \
+            else list(self.model.nfv_cache.keys())
+
+    def is_nfv_node(self, node):
+        return node in self.model.nfv_cache
+
+    def nfv_nodes(self):
+        return self.model.nfv_cache
+
+    def link_type(self, u, v):
+        return self.model.link_type[(u, v)]
+
+    def link_delay(self, u, v):
+        return self.model.link_delay[(u, v)]
+
+    def delay_path(self, path):
+        sum_delay = 0
+        for hop in range(1, len(path)):
+            u = path[hop - 1]
+            v = path[hop]
+            sum_delay += self.link_delay(u, v)
+        return sum_delay
+
+
+    def topology(self):
+        return self.model.topology
+
+
+
+
+
+
+
+
+
+
 ################################### NetworkModelHolu ##################################################
 
 
@@ -300,12 +498,12 @@ class NetworkModelHolu:
                 if 'cache_size' in stack_props:
                     nfv_cache_size[node] = stack_props['cache_size']
 
-        if any(c < 8 for c in nfv_cache_size.values()):
-            logger.warning('Some nfv node caches have size less than 8.'
-                           'I am setting them to 8 and run the experiment anyway')
-            for node in nfv_cache_size:
-                if nfv_cache_size[node] < 8:
-                    nfv_cache_size[node] = 8
+        #if any(c < 8 for c in nfv_cache_size.values()):
+            #logger.warning('Some nfv node caches have size less than 8.'
+                           #'I am setting them to 8 and run the experiment anyway')
+            #for node in nfv_cache_size:
+                #if nfv_cache_size[node] < 8:
+                    #nfv_cache_size[node] = 8
 
         # use when the len(vnfs) < len(nfv_nodes)
         def vnfs_assignment(nfv_nodes, vnfs):
@@ -466,12 +664,12 @@ class NetworkModelTapAlgo:
             if stack_name == 'nfv_node':
                 if 'cache_size' in stack_props:
                     nfv_cache_size[node] = stack_props['cache_size']
-        if any(c < 8 for c in nfv_cache_size.values()):
-            logger.warning('Some nfv node caches have size less than 8.'
-                           'I am setting them to 8 and run the experiment anyway')
-            for node in nfv_cache_size:
-                if nfv_cache_size[node] < 8:
-                    nfv_cache_size[node] = 8
+        #if any(c < 8 for c in nfv_cache_size.values()):
+            #logger.warning('Some nfv node caches have size less than 8.'
+                           #'I am setting them to 8 and run the experiment anyway')
+            #for node in nfv_cache_size:
+                #if nfv_cache_size[node] < 8:
+                    #fv_cache_size[node] = 8
 
         # use when the len(vnfs) < len(nfv_nodes)
         def vnfs_assignment(nfv_nodes, vnfs):
@@ -616,12 +814,12 @@ class NetworkModelBaseLine:
             if stack_name == 'nfv_node':
                 if 'cache_size' in stack_props:
                     nfv_cache_size[node] = stack_props['cache_size']
-        if any(c < 8 for c in nfv_cache_size.values()):
-            logger.warning('Some nfv node caches have size less than 8.'
-                           'I am setting them to 8 and run the experiment anyway')
-            for node in nfv_cache_size:
-                if nfv_cache_size[node] < 8:
-                    nfv_cache_size[node] = 8
+        #if any(c < 8 for c in nfv_cache_size.values()):
+            #ogger.warning('Some nfv node caches have size less than 8.'
+                           #'I am setting them to 8 and run the experiment anyway')
+            #for node in nfv_cache_size:
+                #if nfv_cache_size[node] < 8:
+                    #nfv_cache_size[node] = 8
 
         # use when the len(vnfs) < len(nfv_nodes)
         def vnfs_assignment(nfv_nodes, vnfs):
@@ -778,12 +976,12 @@ class NetworkModelMarkov:
             if stack_name == 'nfv_node':
                 if 'cache_size' in stack_props:
                     nfv_cache_size[node] = stack_props['cache_size']
-        if any(c < 8 for c in nfv_cache_size.values()):
-            logger.warning('Some nfv node caches have size less than 8.'
-                           'I am setting them to 8 and run the experiment anyway')
-            for node in nfv_cache_size:
-                if nfv_cache_size[node] < 8:
-                    nfv_cache_size[node] = 8
+        #if any(c < 8 for c in nfv_cache_size.values()):
+          # logger.warning('Some nfv node caches have size less than 8.'
+                          # 'I am setting them to 8 and run the experiment anyway')
+            #for node in nfv_cache_size:
+                #if nfv_cache_size[node] < 8:
+                    #nfv_cache_size[node] = 8
 
         # use when the len(vnfs) < len(nfv_nodes)
         def vnfs_assignment(nfv_nodes, vnfs):
@@ -940,12 +1138,12 @@ class NetworkModelFirstOrder:
             if stack_name == 'nfv_node':
                 if 'cache_size' in stack_props:
                     nfv_cache_size[node] = stack_props['cache_size']
-        if any(c < 8 for c in nfv_cache_size.values()):
-            logger.warning('Some nfv node caches have size less than 8.'
-                           'I am setting them to 8 and run the experiment anyway')
-            for node in nfv_cache_size:
-                if nfv_cache_size[node] < 8:
-                    nfv_cache_size[node] = 8
+        #if any(c < 8 for c in nfv_cache_size.values()):
+            #logger.warning('Some nfv node caches have size less than 8.'
+                           #'I am setting them to 8 and run the experiment anyway')
+            #for node in nfv_cache_size:
+                #if nfv_cache_size[node] < 8:
+                    #nfv_cache_size[node] = 8
 
         # use when the len(vnfs) < len(nfv_nodes)
         def vnfs_assignment(nfv_nodes, vnfs):
@@ -1103,12 +1301,12 @@ class NetworkModelProposal: # BETWEENESS_CENTRALITY
                 if 'cache_size' in stack_props:
                     # self.nfv_nodes.append(node)
                     nfv_cache_size[node] = stack_props['cache_size']
-        if any(c < 8 for c in nfv_cache_size.values()):
-            logger.warning('Some nfv node caches have size less than 8. '
-                           'I am setting them to 8 and run the experiment anyway')
-            for node in nfv_cache_size:
-                if nfv_cache_size[node] < 8:
-                    nfv_cache_size[node] = 8
+        #if any(c < 8 for c in nfv_cache_size.values()):
+            #logger.warning('Some nfv node caches have size less than 8. '
+                           #'I am setting them to 8 and run the experiment anyway')
+            #for node in nfv_cache_size:
+                #if nfv_cache_size[node] < 8:
+                    #nfv_cache_size[node] = 8
 
         policy_name = nfv_cache_policy['name']
         # policy_name = 'NFV_CACHE'
@@ -1125,16 +1323,18 @@ class NetworkModelProposal: # BETWEENESS_CENTRALITY
 
         # all hod_vnfs found on the training phase
         hods_vnfs = [
-            [1, 7, 5, 2, 3, 6, 4],
-            [0, 4, 5, 2, 3, 6, 1],
-            [1, 0, 5, 2, 3, 6, 4],
-            [0, 1, 5, 2, 3, 6, 7],
-            [7, 0, 4, 2, 3, 6, 1],
-            [1, 0, 4, 2, 3, 6, 5],
-            [5, 0, 4, 2, 3, 6, 7],
-            [5, 7, 4, 2, 3, 6, 1],
-            [0, 1, 4, 2, 3, 6, 5],
-            [7, 1, 4, 2, 3, 6, 0],
+            [4, 3, 5, 6],
+            [4, 5, 6, 7],
+            [4, 1, 2, 3],
+            [0, 1, 2, 7],
+            [3, 6, 7, 2],
+            [5, 6, 7, 3],
+            [3, 5, 6, 0],
+            [3, 5, 6, 7],
+            [1, 4, 7],
+            [2, 4, 5],
+            [0, 4, 3],
+
 
 
 
@@ -1145,7 +1345,7 @@ class NetworkModelProposal: # BETWEENESS_CENTRALITY
         ]
 
         # place vnfs on top-20 nfv_nodes with the highest betweenness_centrality value
-        betw_nfv_nodes = NetworkModelProposal.get_top_betw_nodes(topology, 30)
+        betw_nfv_nodes = NetworkModelProposal.get_top_betw_nodes(topology, 10)
         target_nfv_nodes = hod_vnfs_assignment(betw_nfv_nodes, hods_vnfs)
         for node in self.nfv_cache:
             if node in target_nfv_nodes.keys():
@@ -1329,12 +1529,12 @@ class NetworkModelProposalDegree: # DEGREE_CENTRALITY
                 if 'cache_size' in stack_props:
                     # self.nfv_nodes.append(node)
                     nfv_cache_size[node] = stack_props['cache_size']
-        if any(c < 8 for c in nfv_cache_size.values()):
-            logger.warning('Some nfv node caches have size less than 8. '
-                           'I am setting them to 8 and run the experiment anyway')
-            for node in nfv_cache_size:
-                if nfv_cache_size[node] < 8:
-                    nfv_cache_size[node] = 8
+        #if any(c < 8 for c in nfv_cache_size.values()):
+            #logger.warning('Some nfv node caches have size less than 8. '
+                           #'I am setting them to 8 and run the experiment anyway')
+            #for node in nfv_cache_size:
+                #if nfv_cache_size[node] < 8:
+                    #nfv_cache_size[node] = 8
 
         policy_name = nfv_cache_policy['name']
         # policy_name = 'NFV_CACHE'
@@ -1351,21 +1551,21 @@ class NetworkModelProposalDegree: # DEGREE_CENTRALITY
 
         # all hod_vnfs found on the training phase
         hods_vnfs = [
-            [1, 7, 5, 2, 3, 6, 4],
-            [0, 4, 5, 2, 3, 6, 1],
-            [1, 0, 5, 2, 3, 6, 4],
-            [0, 1, 5, 2, 3, 6, 7],
-            [7, 0, 4, 2, 3, 6, 1],
-            [1, 0, 4, 2, 3, 6, 5],
-            [5, 0, 4, 2, 3, 6, 7],
-            [5, 7, 4, 2, 3, 6, 1],
-            [0, 1, 4, 2, 3, 6, 5],
-            [7, 1, 4, 2, 3, 6, 0],
-
+            [4, 3, 5, 6],
+            [4, 5, 6, 7],
+            [4, 1, 2, 3],
+            [0, 1, 2, 7],
+            [3, 6, 7, 2],
+            [5, 6, 7, 3],
+            [3, 5, 6, 0],
+            [3, 5, 6, 7],
+            [1, 4, 7],
+            [2, 4, 5],
+            [0, 4, 3],
         ]
 
         # place vnfs on top-20 nfv_nodes with the highest betweenness_centrality value
-        deg_nfv_nodes = NetworkModelProposalDegree.get_top_degree_nodes(topology, 30)
+        deg_nfv_nodes = NetworkModelProposalDegree.get_top_degree_nodes(topology, 10)
         target_nfv_nodes = hod_vnfs_assignment(deg_nfv_nodes, hods_vnfs)
         for node in self.nfv_cache:
             if node in target_nfv_nodes.keys():
@@ -1546,12 +1746,12 @@ class NetworkModelProposalCloseness: # CLOSENESS_CENTRALITY
                 if 'cache_size' in stack_props:
                     # self.nfv_nodes.append(node)
                     nfv_cache_size[node] = stack_props['cache_size']
-        if any(c < 8 for c in nfv_cache_size.values()):
-            logger.warning('Some nfv node caches have size less than 8. '
-                           'I am setting them to 8 and run the experiment anyway')
-            for node in nfv_cache_size:
-                if nfv_cache_size[node] < 8:
-                    nfv_cache_size[node] = 8
+        #if any(c < 8 for c in nfv_cache_size.values()):
+            #logger.warning('Some nfv node caches have size less than 8. '
+                           #'I am setting them to 8 and run the experiment anyway')
+            #for node in nfv_cache_size:
+                #if nfv_cache_size[node] < 8:
+                    #nfv_cache_size[node] = 8
 
         policy_name = nfv_cache_policy['name']
         # policy_name = 'NFV_CACHE'
@@ -1568,22 +1768,23 @@ class NetworkModelProposalCloseness: # CLOSENESS_CENTRALITY
 
         # all hod_vnfs found on the training phase
         hods_vnfs = [
-            [1, 7, 5, 2, 3, 6, 4],
-            [0, 4, 5, 2, 3, 6, 1],
-            [1, 0, 5, 2, 3, 6, 4],
-            [0, 1, 5, 2, 3, 6, 7],
-            [7, 0, 4, 2, 3, 6, 1],
-            [1, 0, 4, 2, 3, 6, 5],
-            [5, 0, 4, 2, 3, 6, 7],
-            [5, 7, 4, 2, 3, 6, 1],
-            [0, 1, 4, 2, 3, 6, 5],
-            [7, 1, 4, 2, 3, 6, 0],
+            [4, 3, 5, 6],
+            [4, 5, 6, 7],
+            [4, 1, 2, 3],
+            [0, 1, 2, 7],
+            [3, 6, 7, 2],
+            [5, 6, 7, 3],
+            [3, 5, 6, 0],
+            [3, 5, 6, 7],
+            [1, 4, 7],
+            [2, 4, 5],
+            [0, 4, 3],
 
 
         ]
 
         # place vnfs on top-20 nfv_nodes with the highest betweenness_centrality value
-        close_nfv_nodes = NetworkModelProposalCloseness.get_top_close_nodes(topology, 30)
+        close_nfv_nodes = NetworkModelProposalCloseness.get_top_close_nodes(topology, 10)
         target_nfv_nodes = hod_vnfs_assignment(close_nfv_nodes, hods_vnfs)
         for node in self.nfv_cache:
             if node in target_nfv_nodes.keys():
@@ -1767,12 +1968,12 @@ class NetworkModelProposalPageRank: # PAGERANK_CENTRALITY
                 if 'cache_size' in stack_props:
                     # self.nfv_nodes.append(node)
                     nfv_cache_size[node] = stack_props['cache_size']
-        if any(c < 8 for c in nfv_cache_size.values()):
-            logger.warning('Some nfv node caches have size less than 8. '
-                           'I am setting them to 8 and run the experiment anyway')
-            for node in nfv_cache_size:
-                if nfv_cache_size[node] < 8:
-                    nfv_cache_size[node] = 8
+        #if any(c < 8 for c in nfv_cache_size.values()):
+            #logger.warning('Some nfv node caches have size less than 8. '
+                           #'I am setting them to 8 and run the experiment anyway')
+            #for node in nfv_cache_size:
+                #if nfv_cache_size[node] < 8:
+                    #nfv_cache_size[node] = 8
 
         policy_name = nfv_cache_policy['name']
         # policy_name = 'NFV_CACHE'
@@ -1789,17 +1990,17 @@ class NetworkModelProposalPageRank: # PAGERANK_CENTRALITY
 
         # all hod_vnfs found on the training phase
         hods_vnfs = [
-            [1, 7, 5, 2, 3, 6, 4],
-            [0, 4, 5, 2, 3, 6, 1],
-            [1, 0, 5, 2, 3, 6, 4],
-            [0, 1, 5, 2, 3, 6, 7],
-            [7, 0, 4, 2, 3, 6, 1],
-            [1, 0, 4, 2, 3, 6, 5],
-            [5, 0, 4, 2, 3, 6, 7],
-            [5, 7, 4, 2, 3, 6, 1],
-            [0, 1, 4, 2, 3, 6, 5],
-            [7, 1, 4, 2, 3, 6, 0],
-
+            [4, 3, 5, 6],
+            [4, 5, 6, 7],
+            [4, 1, 2, 3],
+            [0, 1, 2, 7],
+            [3, 6, 7, 2],
+            [5, 6, 7, 3],
+            [3, 5, 6, 0],
+            [3, 5, 6, 7],
+            [1, 4, 7],
+            [2, 4, 5],
+            [0, 4, 3],
 
 
 
@@ -1809,7 +2010,7 @@ class NetworkModelProposalPageRank: # PAGERANK_CENTRALITY
         ]
 
         # place vnfs on top-20 nfv_nodes with the highest betweenness_centrality value
-        pg_rank_nfv_nodes = NetworkModelProposalPageRank.get_top_pg_rank_nodes(topology, 30)
+        pg_rank_nfv_nodes = NetworkModelProposalPageRank.get_top_pg_rank_nodes(topology, 10)
         target_nfv_nodes = hod_vnfs_assignment(pg_rank_nfv_nodes, hods_vnfs)
         for node in self.nfv_cache:
             if node in target_nfv_nodes.keys():
@@ -1991,12 +2192,12 @@ class NetworkModelProposalEigenVector: # EIGEN_VECTOR_CENTRALITY
                 if 'cache_size' in stack_props:
                     # self.nfv_nodes.append(node)
                     nfv_cache_size[node] = stack_props['cache_size']
-        if any(c < 8 for c in nfv_cache_size.values()):
-            logger.warning('Some nfv node caches have size less than 8. '
-                           'I am setting them to 8 and run the experiment anyway')
-            for node in nfv_cache_size:
-                if nfv_cache_size[node] < 8:
-                    nfv_cache_size[node] = 8
+        #if any(c < 8 for c in nfv_cache_size.values()):
+            #ogger.warning('Some nfv node caches have size less than 8. '
+                           #'I am setting them to 8 and run the experiment anyway')
+            #for node in nfv_cache_size:
+                #if nfv_cache_size[node] < 8:
+                    #nfv_cache_size[node] = 8
 
         policy_name = nfv_cache_policy['name']
         # policy_name = 'NFV_CACHE'
@@ -2013,16 +2214,17 @@ class NetworkModelProposalEigenVector: # EIGEN_VECTOR_CENTRALITY
 
         # all hod_vnfs found on the training phase
         hods_vnfs = [
-            [1, 7, 5, 2, 3, 6, 4],
-            [0, 4, 5, 2, 3, 6, 1],
-            [1, 0, 5, 2, 3, 6, 4],
-            [0, 1, 5, 2, 3, 6, 7],
-            [7, 0, 4, 2, 3, 6, 1],
-            [1, 0, 4, 2, 3, 6, 5],
-            [5, 0, 4, 2, 3, 6, 7],
-            [5, 7, 4, 2, 3, 6, 1],
-            [0, 1, 4, 2, 3, 6, 5],
-            [7, 1, 4, 2, 3, 6, 0],
+            [4, 3, 5, 6],
+            [4, 5, 6, 7],
+            [4, 1, 2, 3],
+            [0, 1, 2, 7],
+            [3, 6, 7, 2],
+            [5, 6, 7, 3],
+            [3, 5, 6, 0],
+            [3, 5, 6, 7],
+            [1, 4, 7],
+            [2, 4, 5],
+            [0, 4, 3],
 
 
 
@@ -2033,7 +2235,7 @@ class NetworkModelProposalEigenVector: # EIGEN_VECTOR_CENTRALITY
         ]
 
         # place vnfs on top-20 nfv_nodes with the highest betweenness_centrality value
-        eigen_nfv_nodes = NetworkModelProposalEigenVector.get_top_eigen_nodes(topology, 30)
+        eigen_nfv_nodes = NetworkModelProposalEigenVector.get_top_eigen_nodes(topology, 10)
         target_nfv_nodes = hod_vnfs_assignment(eigen_nfv_nodes, hods_vnfs)
         for node in self.nfv_cache:
             if node in target_nfv_nodes.keys():
@@ -2073,7 +2275,7 @@ class NetworkModelProposalEigenVector: # EIGEN_VECTOR_CENTRALITY
 
     @staticmethod
     def get_top_eigen_nodes(topology, n_of_nodes):
-        dict_nodes_eigen = nx.eigenvector_centrality(topology)
+        dict_nodes_eigen = nx.eigenvector_centrality(topology, max_iter=500)
         ord_dict =  OrderedDict(sorted(dict_nodes_eigen.items(), key=itemgetter(1), reverse=True))
         return dict(list(ord_dict.items())[0:n_of_nodes])
 
@@ -2290,6 +2492,7 @@ class NetworkController:
                 cpu = self.sum_vnfs_cpu_on_node(node)
                 rem_cpu += 100 - cpu
         return rem_cpu
+
 
 
     def sort_paths_min_cpu_use(self, paths):

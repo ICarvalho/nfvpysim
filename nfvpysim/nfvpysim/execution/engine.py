@@ -20,7 +20,7 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
     netconf : dict
         Dictionary of attributes to initialize the network model
     policy : tree
-        Strategy definition. It is tree describing the name of the strategy
+        Strategy definition. It is tree describing the name of the strategyJunto com Stacks 2.0 também v
         to use and a list of initialization attributes
     nfv_cache_policy : tree
         Cache policy definition. It is tree describing the name of the cache
@@ -41,6 +41,10 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
     model_first_order = NetworkModelFirstOrder(topology, nfv_cache_policy, **netconf)
     model_baseline = NetworkModelBaseLine(topology, nfv_cache_policy, **netconf)
     model_proposal = NetworkModelProposal(topology, nfv_cache_policy, **netconf)
+    model_hod_deg = NetworkModelProposalDegree(topology, nfv_cache_policy, **netconf)
+    model_hod_close = NetworkModelProposalCloseness(topology, nfv_cache_policy, **netconf)
+    model_hod_page = NetworkModelProposalPageRank(topology, nfv_cache_policy, **netconf)
+    model_hod_eigen = NetworkModelProposalEigenVector(topology, nfv_cache_policy, **netconf)
 
     view_holu = NetworkViewHolu(model_holu)
     view_markov = NetworkViewMarkov(model_markov)
@@ -48,6 +52,10 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
     view_first_order = NetworkViewFirstOrder(model_first_order)
     view_baseline = NetworkViewBaseLine(model_baseline)
     view_proposal = NetworkViewProposal(model_proposal)
+    view_deg = NetworkViewDeg(model_hod_deg)
+    view_close = NetworkViewClose(model_hod_close)
+    view_page = NetworkViewPage(model_hod_page)
+    view_eigen = NetworkViewEigen(model_hod_eigen)
 
     controller_holu = NetworkController(model_holu)
     controller_markov = NetworkController(model_markov)
@@ -55,6 +63,10 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
     controller_first_order = NetworkController(model_first_order)
     controller_baseline = NetworkController(model_baseline)
     controller_proposal = NetworkController(model_proposal)
+    controller_deg = NetworkController(model_hod_deg)
+    controller_close = NetworkController(model_hod_close)
+    controller_page = NetworkController(model_hod_page)
+    controller_eigen = NetworkController(model_hod_eigen)
 
     if policy['name'] == 'BCSP':
         collectors_inst_holu = [DATA_COLLECTOR[name](view_holu, **params)
@@ -127,7 +139,7 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
             policy_inst_baseline.process_event(time, **event)
         return collector_baseline.results()
 
-    if policy['name'] == 'HOD':
+    if policy['name'] == 'HOD_BETW':
         collectors_inst_proposal = [DATA_COLLECTOR[name](view_proposal, **params)
                                     for name, params in collectors.items()]
         collector_proposal = CollectorProxy(view_proposal, collectors_inst_proposal)
@@ -140,6 +152,65 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
         for time, event in workload:
             policy_inst_proposal.process_event(time, **event)
         return collector_proposal.results()
+
+    if policy['name'] == 'HOD_DEG':
+        collectors_inst_hod_deg = [DATA_COLLECTOR[name](view_deg, **params)
+                                   for name, params in collectors.items()]
+        collector_hod_deg = CollectorProxy(view_deg, collectors_inst_hod_deg)
+        controller_deg.attach_collector(collector_hod_deg)
+
+        policy_name_hod_deg = policy['name']
+        policy_args_hod_deg = {k: v for k, v in policy.items() if k != 'name'}
+        policy_inst_hod_deg = POLICY[policy_name_hod_deg](view_deg, controller_deg, **policy_args_hod_deg)
+
+        for time, event in workload:
+            policy_inst_hod_deg.process_event(time, **event)
+        return collector_hod_deg.results()
+
+    if policy['name'] == 'HOD_CLOSE':
+        collectors_inst_hod_close = [DATA_COLLECTOR[name](view_close, **params)
+                                     for name, params in collectors.items()]
+        collector_hod_close = CollectorProxy(view_close, collectors_inst_hod_close)
+        controller_close.attach_collector(collector_hod_close)
+
+        policy_name_hod_close = policy['name']
+        policy_args_hod_close = {k: v for k, v in policy.items() if k != 'name'}
+        policy_inst_hod_close = POLICY[policy_name_hod_close](view_close, controller_close, **policy_args_hod_close)
+
+        for time, event in workload:
+            policy_inst_hod_close.process_event(time, **event)
+        return collector_hod_close.results()
+
+
+    if policy['name'] == 'HOD_PAGE':
+        collectors_inst_hod_page = [DATA_COLLECTOR[name](view_page, **params)
+                                    for name, params in collectors.items()]
+        collector_hod_page = CollectorProxy(view_page, collectors_inst_hod_page)
+        controller_page.attach_collector(collector_hod_page)
+
+        policy_name_hod_page = policy['name']
+        policy_args_hod_page = {k: v for k, v in policy.items() if k != 'name'}
+        policy_inst_hod_page = POLICY[policy_name_hod_page](view_page, controller_page, **policy_args_hod_page)
+
+        for time, event in workload:
+            policy_inst_hod_page.process_event(time, **event)
+        return collector_hod_page.results()
+
+
+    if policy['name'] == 'HOD_EIGEN':
+        collectors_inst_hod_eigen = [DATA_COLLECTOR[name](view_eigen, **params)
+                                    for name, params in collectors.items()]
+        collector_hod_eigen = CollectorProxy(view_eigen, collectors_inst_hod_eigen)
+        controller_eigen.attach_collector(collector_hod_eigen)
+
+        policy_name_hod_eigen = policy['name']
+        policy_args_hod_eigen = {k: v for k, v in policy.items() if k != 'name'}
+        policy_inst_hod_eigen = POLICY[policy_name_hod_eigen](view_eigen, controller_eigen, **policy_args_hod_eigen)
+
+        for time, event in workload:
+            policy_inst_hod_eigen.process_event(time, **event)
+        return collector_hod_eigen.results()
+
 
 
 """

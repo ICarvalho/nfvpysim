@@ -17,6 +17,16 @@ import BuildRulesFastParameterFreeFreq
 import BuildNetwork
 import itertools
 import math
+import time
+import tracemalloc
+
+
+
+
+tracemalloc.start()
+
+
+
 
 
 ## Initialize algorithm parameters
@@ -35,19 +45,19 @@ MinSupport = 50
 
 #InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_random_sfc_training_data.csv'
 #InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_by_len_training_data.csv'
-#InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_var_len_training_data.csv'
+InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_var_len_training_data_700_000.csv'
 
 
 
-InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/sfc_seq_len_8_training.csv'
+#InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/sfc_seq_len_8_training.csv'
 
-OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/sfc_seq_len_8_rules.csv'
-OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/sfc_seq_len_8_output.csv'
+#OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/sfc_seq_len_8_rules.csv'
+#OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/sfc_seq_len_8_output.csv'
 
 
 
-#OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_random_sfc_rules.csv'
-#OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_random_sfc_output.csv'
+OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_random_sfc_rules.csv'
+OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_random_sfc_output.csv'
 
 #OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_var_len_rules.csv'
 #OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_var_len_output.csv'
@@ -58,7 +68,7 @@ OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios
 
 
 
-
+start_time = time.time()
 
 ########################################################################################################################
 
@@ -182,6 +192,11 @@ def BuildHONfreq(InputFileName, OutputNetworkFile):
     DumpNetwork(Network, OutputNetworkFile)
     VPrint('Done: '+InputFileName)
 
+
+def truncate_value(number, digits):
+    stepper = 10.0 ** digits
+    return math.trunc(stepper * number) / stepper
+
 ###########################################
 # Main function
 ###########################################
@@ -196,3 +211,19 @@ if __name__ == "__main__":
     Network = BuildNetwork.BuildNetwork(Rules)
     #VPrint(Network)
     DumpNetwork(Network, OutputNetworkFile)
+    print()
+    print("--------------------RUNNING TIME----------------------------")
+    final_time = time.time() - start_time
+
+    print("--- TIME: %s seconds ---" % (truncate_value(final_time, 2)))
+
+
+    print()
+
+    print("***************** PERFORMANCE INFO *******************")
+
+    print()
+    current, peak = tracemalloc.get_traced_memory()
+    print(f"MEMORY USAGE: {truncate_value(current / 10**6, 2)}MB; Peak was {truncate_value(peak / 10**6,2)}MB")
+    tracemalloc.stop()
+    print()
