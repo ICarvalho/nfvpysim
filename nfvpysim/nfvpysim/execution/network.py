@@ -13,12 +13,11 @@ import logging
 logger = logging.getLogger('orchestration')
 
 __all__ = [
-    'NetworkModelHolu',
+
     'NetworkModelFirstOrder',
     'NetworkModelMarkov',
     'NetworkModelBaseLine',
     'NetworkModelProposal',
-    'NetworkViewHolu',
     'NetworkViewTapAlgo',
     'NetworkViewFirstOrder',
     'NetworkViewMarkov',
@@ -37,48 +36,6 @@ __all__ = [
 ]
 
 
-class NetworkViewHolu:
-
-    def __init__(self, model):
-        if not isinstance(model, NetworkModelHolu):
-            raise ValueError('The model argument must be an instance of '
-                             'NetworkModel')
-
-        self.model = model
-
-    def shortest_path(self, ingress_node, egress_node):
-        return self.model.shortest_path[ingress_node][egress_node]
-
-    def all_pairs_shortest_paths(self):
-        return self.model.shortest_path
-
-    def nfv_cache_nodes(self, size=True):
-        return {v: c.maxlen for v, c in self.model.nfv_cache.items()} if size \
-            else list(self.model.nfv_cache.keys())
-
-    def is_nfv_node(self, node):
-        return node in self.model.nfv_cache
-
-    def nfv_nodes(self):
-        return self.model.nfv_cache
-
-    def link_type(self, u, v):
-        return self.model.link_type[(u, v)]
-
-    def link_delay(self, u, v):
-        return self.model.link_delay[(u, v)]
-
-    def delay_path(self, path):
-        sum_delay = 0
-        for hop in range(1, len(path)):
-            u = path[hop - 1]
-            v = path[hop]
-            sum_delay += self.link_delay(u, v)
-        return sum_delay
-
-
-    def topology(self):
-        return self.model.topology
 
 
 class NetworkViewMarkov:
@@ -459,166 +416,6 @@ class NetworkViewEigen:
 
 
 ################################### NetworkModelHolu ##################################################
-
-
-class NetworkModelHolu:
-    """
-    Models the internal state of the network.
-    This object should never be edited by VNF Allocation Policies directly, but only
-    through calls to the network controller.
-
-    """
-
-    def __init__(self, topology, nfv_cache_policy, shortest_path=None):  #
-
-        if not isinstance(topology, fnss.Topology):
-            raise ValueError('The topology argument must be an'
-                             'instance of fnss.Topology or   of its subclasses')
-
-        self.shortest_path = dict(shortest_path) if shortest_path is not None \
-            else (dict(nx.all_pairs_dijkstra_path(topology)))
-
-        self.topology = topology
-        self.node_betw = {}
-
-        self.link_type = nx.get_edge_attributes(topology, 'type')
-        self.link_delay = fnss.get_delays(topology)
-
-        if not topology.is_directed():
-            for (u, v), link_type in list(self.link_type.items()):
-                self.link_type[(v, u)] = link_type
-
-            for (u, v), delay in list(self.link_delay.items()):
-                self.link_delay[(v, u)] = delay
-
-        nfv_cache_size = {}
-        for node in topology.nodes():
-            stack_name, stack_props = fnss.get_stack(topology, node)
-            if stack_name == 'nfv_node':
-                if 'cache_size' in stack_props:
-                    nfv_cache_size[node] = stack_props['cache_size']
-
-        #if any(c < 8 for c in nfv_cache_size.values()):
-            #logger.warning('Some nfv node caches have size less than 8.'
-                           #'I am setting them to 8 and run the experiment anyway')
-            #for node in nfv_cache_size:
-                #if nfv_cache_size[node] < 8:
-                    #nfv_cache_size[node] = 8
-
-        # use when the len(vnfs) < len(nfv_nodes)
-        def vnfs_assignment(nfv_nodes, vnfs):
-            if len(nfv_nodes) < len(vnfs):
-                return dict(zip(cycle(nfv_nodes), vnfs))
-            else:
-                return dict(zip(nfv_nodes, cycle(vnfs)))
-
-
-
-        policy_name = nfv_cache_policy['name']
-        # policy_name = 'NFV_CACHE'
-        policy_args = {k: v for k, v in nfv_cache_policy.items() if k != 'name'}
-        # The actual cache objects storing the vnfs
-        self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_cache_size[node], **policy_args)
-                          for node in nfv_cache_size}
-
-        self.nfv_nodes_betw = {node: NetworkModelHolu.get_node_betw(topology, node) for node in NetworkModelHolu.get_nfv_nodes(topology)}
-
-
-
-
-
-        # for node in self.nfv_cache:
-        # print(node)
-        # self.nfv_cache[node].list_nfv_cache()
-        #sfcs = [[5, 7, 8, 3], [7, 6], [5, 4, 2], [2, 5, 3, 7], [1, 3] ]
-        sfcs = [2, 3, 1, 5, 6, 7, 8, 4]
-
-
-        # place a single vnf in all nfv-nodes
-        """
-        target_nfv_nodes = vnfs_assignment(self.nfv_cache, sfcs)
-        for node in self.nfv_cache:
-            if node in target_nfv_nodes.keys():
-                # print(node)
-                vnf = target_nfv_nodes[node]
-                # for vnf in sfc:
-                self.nfv_cache[node].add_vnf(vnf)
-                # self.nfv_cache[node].list_nfv_cache()
-        """
-
-
-
-        target_nfv_nodes = vnfs_assignment(self.nfv_cache, sfcs)
-        for node in self.nfv_cache:
-            if node in target_nfv_nodes.keys():
-                #print(node)
-                vnf = target_nfv_nodes[node]
-                #for vnf in vnfs:
-                self.nfv_cache[node].add_vnf(vnf)
-                #self.nfv_cache[node].list_nfv_cache()
-
-    @staticmethod
-    def get_node_betw(topology, node):
-        node_betw = nx.betweenness_centrality(topology)
-        return node_betw[node]
-
-
-
-    @staticmethod
-    def shortest_path(topology, ingress_node, egress_node):
-        return nx.shortest_path(topology, ingress_node, egress_node)
-
-    @staticmethod
-    def calculate_all_shortest_paths(topology, ingress_node, egress_node):
-        return [p for p in nx.all_shortest_paths(topology, ingress_node, egress_node)]
-
-    @staticmethod
-    def get_ingress_nodes(topology):
-
-        if isinstance(topology, fnss.Topology):
-            ing_nodes = []
-            for node in topology.nodes():
-                stack_name, stack_props = fnss.get_stack(topology, node)
-                if stack_name == 'ingress_node':
-                    ing_nodes.append(node)
-
-            return ing_nodes
-
-    @staticmethod
-    def get_egress_nodes(topology):
-
-        if isinstance(topology, fnss.Topology):
-            egr_nodes = []
-            for node in topology.nodes():
-                stack_name, stack_props = fnss.get_stack(topology, node)
-                if stack_name == 'egress_node':
-                    egr_nodes.append(node)
-
-            return egr_nodes
-
-    @staticmethod
-    def get_nfv_nodes(topology):
-        return [v for v in topology if topology.node[v]['stack'][0] == 'nfv_node']
-
-    def get_nfv_nodes_path(self, path):
-
-        nfv_nodes = []
-        for node in path:
-            if self.topology.node[node]['stack'][0] == 'nfv_node':
-                nfv_nodes.append(node)
-        return nfv_nodes
-
-    def get_ingress_node_path(self, path):
-        for node in path:
-            return self.topology.node[node]['stack'][0] == 'ingress_node'
-
-    def get_egress_node_path(self, path):
-        for node in path:
-            return self.topology.node[node]['stack'][0] == 'egress_node'
-
-    def get_shortest_path_between_two_nodes(self, source, target):
-        if self.topology.node[source]['stack'][0] == 'nfv_node':
-            return nx.shortest_path_length(source, target)
 
 
 
