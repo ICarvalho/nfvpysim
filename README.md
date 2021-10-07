@@ -1,6 +1,6 @@
 # nfvpysim - NFV Python Simulator for SFC
  
-nfvpysim is a Python-based discrete-event simulator used to assess VNF placement schemes in Service Function Chaining. 
+nfvpysim is a Python-based discrete-event simulator used to assess VNF placement schemes in Service Function Chaining. The simulator was built to validate the use of Higher-Order Dependencies as the basis of a VNF placement scheme. 
 
 
 
