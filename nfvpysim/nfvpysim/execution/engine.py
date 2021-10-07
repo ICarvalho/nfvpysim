@@ -35,10 +35,9 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
         A tree with the aggregated simulation results from all collectors
         :param nfv_cache_policy:
     """
-    model_holu = NetworkModelHolu(topology, nfv_cache_policy, **netconf)
+
     model_tap_algo = NetworkModelTapAlgo(topology, nfv_cache_policy, **netconf)
     model_markov = NetworkModelMarkov(topology, nfv_cache_policy, **netconf)
-    model_first_order = NetworkModelFirstOrder(topology, nfv_cache_policy, **netconf)
     model_baseline = NetworkModelBaseLine(topology, nfv_cache_policy, **netconf)
     model_proposal = NetworkModelProposal(topology, nfv_cache_policy, **netconf)
     model_hod_deg = NetworkModelProposalDegree(topology, nfv_cache_policy, **netconf)
@@ -46,10 +45,9 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
     model_hod_page = NetworkModelProposalPageRank(topology, nfv_cache_policy, **netconf)
     model_hod_eigen = NetworkModelProposalEigenVector(topology, nfv_cache_policy, **netconf)
 
-    view_holu = NetworkViewHolu(model_holu)
+
     view_markov = NetworkViewMarkov(model_markov)
     view_tap_algo = NetworkViewTapAlgo(model_tap_algo)
-    view_first_order = NetworkViewFirstOrder(model_first_order)
     view_baseline = NetworkViewBaseLine(model_baseline)
     view_proposal = NetworkViewProposal(model_proposal)
     view_deg = NetworkViewDeg(model_hod_deg)
@@ -57,10 +55,9 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
     view_page = NetworkViewPage(model_hod_page)
     view_eigen = NetworkViewEigen(model_hod_eigen)
 
-    controller_holu = NetworkController(model_holu)
+
     controller_markov = NetworkController(model_markov)
     controller_tap_algo = NetworkController(model_tap_algo)
-    controller_first_order = NetworkController(model_first_order)
     controller_baseline = NetworkController(model_baseline)
     controller_proposal = NetworkController(model_proposal)
     controller_deg = NetworkController(model_hod_deg)
@@ -68,19 +65,7 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
     controller_page = NetworkController(model_hod_page)
     controller_eigen = NetworkController(model_hod_eigen)
 
-    if policy['name'] == 'BCSP':
-        collectors_inst_holu = [DATA_COLLECTOR[name](view_holu, **params)
-                                for name, params in collectors.items()]
-        collector_holu = CollectorProxy(view_holu, collectors_inst_holu)
-        controller_holu.attach_collector(collector_holu)
 
-        policy_name_holu = policy['name']
-        policy_args_holu = {k: v for k, v in policy.items() if k != 'name'}
-        policy_inst_holu = POLICY[policy_name_holu](view_holu, controller_holu, **policy_args_holu)
-
-        for time, event in workload:
-            policy_inst_holu.process_event(time, **event)
-        return collector_holu.results()
 
     if policy['name'] == 'MARKOV':
         collectors_inst_markov = [DATA_COLLECTOR[name](view_markov, **params)
@@ -110,20 +95,7 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
             policy_inst_tap_algo.process_event(time, **event)
         return collector_tap_algo.results()
 
-    if policy['name'] == 'FIRST_ORDER':
-        collectors_inst_first_order = [DATA_COLLECTOR[name](view_first_order, **params)
-                                       for name, params in collectors.items()]
-        collector_first_order = CollectorProxy(view_first_order, collectors_inst_first_order)
-        controller_first_order.attach_collector(collector_first_order)
 
-        policy_name_first_order = policy['name']
-        policy_args_first_order = {k: v for k, v in policy.items() if k != 'name'}
-        policy_inst_first_order = POLICY[policy_name_first_order](view_first_order, controller_first_order,
-                                                                  **policy_args_first_order)
-
-        for time, event in workload:
-            policy_inst_first_order.process_event(time, **event)
-        return collector_first_order.results()
 
     if policy['name'] == 'BASELINE':
         collectors_inst_baseline = [DATA_COLLECTOR[name](view_baseline, **params)
