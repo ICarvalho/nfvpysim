@@ -68,11 +68,19 @@ POLICY_STYLE = {
 # This dict maps name of strategies to names to be displayed in the legend
 POLICY_LEGEND = {
 
-    'HOD_BETW': 'HOD_BETW',
-    'HOD_DEG': 'HOD_DEG',
-    'HOD_CLOSE': 'HOD_CLOSE',
-    'HOD_PAGE': 'HOD_PAGE',
-    'HOD_EIGEN': 'HOD_EIGEN'
+    'HOD_VNF': 'HOD_VNF',
+    'BASELINE': 'GREEDY',
+    'FIRST_FIT': 'FIRST_FIT',
+    'FIRST_ORDER': 'SECOND_ORD',
+    'TAP_ALGO': 'TAP_ALGO',
+    'MARKOV': 'MARKOV',
+
+
+
+    #'HOD_DEG': 'HOD_DEG',
+    #'HOD_CLOSE': 'HOD_CLOSE',
+    #'HOD_PAGE': 'HOD_PAGE',
+    #'HOD_EIGEN': 'HOD_EIGEN'
 
 
     #'BASELINE': 'BASELINE',
@@ -96,11 +104,12 @@ POLICY_LEGEND = {
 # Color and hatch styles for bar charts of cache hit ratio and link load vs topology
 POLICY_BAR_COLOR_CACHE_SIZE = {
 
-    'HOD_BETW': 'navy',
-    'HOD_DEG': 'darkorange',
-    'HOD_CLOSE': 'darkred',
-    'HOD_PAGE': 'green',
-    'HOD_EIGEN': 'coral'
+    'HOD_VNF': 'blue',
+    'BASELINE': 'darkorange',
+    'FIRST_FIT': 'darkred',
+    'FIRST_ORDER': 'green',
+    'TAP_ALGO': 'k',
+    'MARKOV': 'pink'
 
 
 
@@ -116,11 +125,12 @@ POLICY_BAR_COLOR_CACHE_SIZE = {
 
 POLICY_BAR_COLOR_LATENCY = {
 
-    'HOD_BETW': 'navy',
-    'HOD_DEG': 'darkorange',
-    'HOD_CLOSE': 'darkred',
-    'HOD_PAGE': 'green',
-    'HOD_EIGEN': 'coral'
+    'HOD_VNF': 'blue',
+    'BASELINE': 'darkorange',
+    'FIRST_FIT': 'darkred',
+    'FIRST_ORDER': 'green',
+    'TAP_ALGO': 'k',
+    'MARKOV': 'pink'
 
 
     #'BASELINE': 'dimgray',
@@ -136,11 +146,12 @@ POLICY_BAR_COLOR_LATENCY = {
 
 POLICY_BAR_COLOR_LINK_LOAD = {
 
-    'HOD_BETW': 'navy',
-    'HOD_DEG': 'darkorange',
-    'HOD_CLOSE': 'darkred',
-    'HOD_PAGE': 'green',
-    'HOD_EIGEN': 'coral'
+    'HOD_VNF': 'blue',
+    'BASELINE': 'darkorange',
+    'FIRST_FIT': 'darkred',
+    'FIRST_ORDER': 'green',
+    'TAP_ALGO': 'k',
+    'MARKOV': 'pink'
 
 
     #'BASELINE': 'dimgray',
@@ -157,11 +168,13 @@ POLICY_BAR_COLOR_LINK_LOAD = {
 
 POLICY_BAR_HATCH = {
 
-    'HOD_BETW': '/',
-    'HOD_DEG': '.',
-    'HOD_CLOSE': '-',
-    'HOD_PAGE': '\\',
-    'HOD_EIGEN': '+'
+    'HOD_VNF': '/',
+    'BASELINE': '.',
+    'FIRST_FIT': '-',
+    'FIRST_ORDER': '\\',
+    'TAP_ALGO': '..',
+    'MARKOV': 'x',
+
 
 
 
@@ -463,8 +476,8 @@ def run(config, results, plotdir):
         for n_of_sfc_request in n_of_sfc_requests:
             logger.info('Plotting cache hit ratio for cache size %s vs alpha %s against topologies' % (str(nfv_cache_size), str(n_of_sfc_request)))
             plot_cache_hits_vs_topology(resultset, n_of_sfc_request, nfv_cache_size, topologies, policies, plotdir)
-            logger.info('Plotting link load for cache size %s  vs sfc_len %s against topologies' % (str(nfv_cache_size), str(n_of_sfc_request)))
-            plot_link_load_vs_topology(resultset, n_of_sfc_request, nfv_cache_size, topologies, policies, plotdir)
+            #logger.info('Plotting link load for cache size %s  vs sfc_len %s against topologies' % (str(nfv_cache_size), str(n_of_sfc_request)))
+            #plot_link_load_vs_topology(resultset, n_of_sfc_request, nfv_cache_size, topologies, policies, plotdir)
             plot_latency_vs_topology(resultset, n_of_sfc_request, nfv_cache_size, topologies, policies, plotdir)
             logger.info('Plotting average service execution for cache size %s  vs sfc_len %s against topologies' % (str(nfv_cache_size), str(n_of_sfc_request)))
 

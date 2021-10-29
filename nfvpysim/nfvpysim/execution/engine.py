@@ -45,8 +45,9 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
     model_hod_close = NetworkModelProposalCloseness(topology, nfv_cache_policy, **netconf)
     model_hod_page = NetworkModelProposalPageRank(topology, nfv_cache_policy, **netconf)
     model_hod_eigen = NetworkModelProposalEigenVector(topology, nfv_cache_policy, **netconf)
+    model_first_fit = NetworkModelFirstFit(topology, nfv_cache_policy, **netconf)
 
-    view_holu = NetworkViewHolu(model_holu)
+    #view_holu = NetworkViewHolu(model_holu)
     view_markov = NetworkViewMarkov(model_markov)
     view_tap_algo = NetworkViewTapAlgo(model_tap_algo)
     view_first_order = NetworkViewFirstOrder(model_first_order)
@@ -56,8 +57,9 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
     view_close = NetworkViewClose(model_hod_close)
     view_page = NetworkViewPage(model_hod_page)
     view_eigen = NetworkViewEigen(model_hod_eigen)
+    view_first_fit = NetworkViewFirstFit(model_first_fit)
 
-    controller_holu = NetworkController(model_holu)
+    #controller_holu = NetworkController(model_holu)
     controller_markov = NetworkController(model_markov)
     controller_tap_algo = NetworkController(model_tap_algo)
     controller_first_order = NetworkController(model_first_order)
@@ -67,20 +69,21 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
     controller_close = NetworkController(model_hod_close)
     controller_page = NetworkController(model_hod_page)
     controller_eigen = NetworkController(model_hod_eigen)
+    controller_first_fit = NetworkController(model_first_fit)
 
-    if policy['name'] == 'BCSP':
-        collectors_inst_holu = [DATA_COLLECTOR[name](view_holu, **params)
+    if policy['name'] == 'FIRST_FIT':
+        collectors_inst_first_fit = [DATA_COLLECTOR[name](view_first_fit, **params)
                                 for name, params in collectors.items()]
-        collector_holu = CollectorProxy(view_holu, collectors_inst_holu)
-        controller_holu.attach_collector(collector_holu)
+        collector_first_fit = CollectorProxy(view_first_fit, collectors_inst_first_fit)
+        controller_first_fit.attach_collector(collector_first_fit)
 
-        policy_name_holu = policy['name']
-        policy_args_holu = {k: v for k, v in policy.items() if k != 'name'}
-        policy_inst_holu = POLICY[policy_name_holu](view_holu, controller_holu, **policy_args_holu)
+        policy_name_first_fit = policy['name']
+        policy_args_first_fit = {k: v for k, v in policy.items() if k != 'name'}
+        policy_inst_first_fit = POLICY[policy_name_first_fit](view_first_fit, controller_first_fit, **policy_args_first_fit)
 
         for time, event in workload:
-            policy_inst_holu.process_event(time, **event)
-        return collector_holu.results()
+            policy_inst_first_fit.process_event(time, **event)
+        return collector_first_fit.results()
 
     if policy['name'] == 'MARKOV':
         collectors_inst_markov = [DATA_COLLECTOR[name](view_markov, **params)
@@ -139,7 +142,7 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
             policy_inst_baseline.process_event(time, **event)
         return collector_baseline.results()
 
-    if policy['name'] == 'HOD_BETW':
+    if policy['name'] == 'HOD_VNF':
         collectors_inst_proposal = [DATA_COLLECTOR[name](view_proposal, **params)
                                     for name, params in collectors.items()]
         collector_proposal = CollectorProxy(view_proposal, collectors_inst_proposal)

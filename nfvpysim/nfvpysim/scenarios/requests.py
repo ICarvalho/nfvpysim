@@ -34,7 +34,12 @@ class RequestRandomSfc:
             12: {'sfc': [0, 4, 3, 5, 6], 'delay': 350},
             13: {'sfc': [2, 4, 5, 6, 7], 'delay': 350},
             14: {'sfc': [2, 4, 5, 6, 7, 3], 'delay': 400},
-            15: {'sfc': [4, 3, 5, 6, 0, 1, 2, 7], 'delay': 450},
+            15: {'sfc': [1, 3, 5, 4, 7, 3], 'delay': 420},
+            16: {'sfc': [2, 1, 4, 3, 7, 8], 'delay': 420},
+            17: {'sfc': [4, 3, 5, 6, 0, 1, 2, 7], 'delay': 450},
+            18: {'sfc': [1, 2, 6, 3, 5, 4, 7, 0], 'delay': 450},
+            19: {'sfc': [0, 1, 2, 4, 3, 7, 5, 6], 'delay': 450},
+            20: {'sfc': [3, 0, 1, 4, 5, 7, 6, 2], 'delay': 450},
 
         }
         key = random.choice(list(services.keys()))
@@ -46,14 +51,14 @@ class RequestVarLenSfc:
     @staticmethod
     def var_len_seq_sfc():
         var_len_sfc = []
-        sfcs = {0: 15,  # nat
+        sfcs = {0: 20,  # nat
                 1: 25,  # fw
-                2: 25,  # ids
-                3: 20,  # wanopt
-                4: 20,  # lb
-                5: 25,  # encrypt
-                6: 25,  # decrypts
-                7: 30,  # dpi
+                2: 30,  # ids
+                3: 35,  # wanopt
+                4: 40,  # lb
+                5: 45,  # encrypt
+                6: 50,  # decrypts
+                7: 55,  # dpi
                 }
         sfc_len = random.randint(2, 8)
         while sfc_len != 0:

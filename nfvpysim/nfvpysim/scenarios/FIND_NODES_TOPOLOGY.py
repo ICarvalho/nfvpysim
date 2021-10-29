@@ -17,7 +17,8 @@ __all__ = [
     'topology_interroute',
     'topology_colt',
     'topology_viatel',
-    'topology_uscarrier'
+    'topology_uscarrier',
+    'topology_barabasi_albert'
 
 ]
 
@@ -616,6 +617,72 @@ def topology_datacenter_two_tier(**kwargs):
 
 
 
+@register_topology_factory('BARABASI_ALBERT')
+def topology_barabasi_albert(**kwargs):
+    # create a topology with 10 core switches, 20 edge switches and 10 hosts
+    # per switch (i.e. 200 hosts in total)
+    topology = fnss.barabasi_albert_topology(500, 5, 10)
+    deg = nx.degree(topology)
+    ingress_nodes = [v for v in topology.nodes() if deg[v] == 1]   #
+    egress_nodes = [v for v in topology.nodes() if deg[v] == 2]  #
+    nfv_nodes = [v for v in topology.nodes() if deg[v] > 2 and v not in ingress_nodes + egress_nodes]  #
+    topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
+
+
+
+    # Add stacks to nodes
+    for v in ingress_nodes:
+        fnss.add_stack(topology, v, 'ingress_node')
+
+    for v in egress_nodes:
+        fnss.add_stack(topology, v, 'egress_node')
+
+    for v in nfv_nodes:
+        fnss.add_stack(topology, v, 'nfv_node', {'cache_size': {}})
+
+
+    # Set weight and delay on all links
+    fnss.set_weights_constant(topology, 1.0)
+    fnss.set_delays_constant(topology, INTERNAL_LINK_DELAY, 'ms')
+    # label links as internal or external
+    for u, v in topology.edges():
+        if u in egress_nodes or v in egress_nodes:
+            topology.adj[u][v]['type'] = 'external'
+            # this prevents egress nodes to be used to route traffic
+            fnss.set_weights_constant(topology, 1000.0, [(u, v)])
+            fnss.set_delays_constant(topology, EXTERNAL_LINK_DELAY, 'ms', [(u, v)])
+        else:
+            topology.adj[u][v]['type'] = 'internal'
+
+    return NfvTopology(topology)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 """
@@ -644,8 +711,16 @@ l = set_list_of_nodes(topo)
 
 
 
-topo = topology_interroute()
+topo = topology_barabasi_albert()
+print(topo)
 
+
+
+
+
+
+
+"""
 deg = nx.degree(topo)
 node1 = [v for v in topo.nodes() if deg[v] == 1]
 node2 = [v for v in topo.nodes() if deg[v] == 2]
@@ -658,7 +733,9 @@ node8 = [v for v in topo.nodes() if deg[v] == 8]
 node9 = [v for v in topo.nodes() if deg[v] == 9]
 node10 = [v for v in topo.nodes() if deg[v] == 10]
 #print(nx.info(topo))
+"""
 
+'''
 print("Number of nodes of the topology:", topo.number_of_nodes())
 print(" degree 1: ", len(node1), "nodes" " -->", node1)
 print(" degree 2: ", len(node2), "nodes" " -->", node2)
@@ -670,5 +747,8 @@ print(" degree 7: ", len(node7), "nodes" " -->", node7)
 print(" degree 8: ", len(node8), "nodes" " -->", node8)
 print(" degree 9: ", len(node9), "nodes" " -->", node9)
 print(" degree 10: ", len(node10), "nodes" " -->", node10)
+
+'''
+
 
 

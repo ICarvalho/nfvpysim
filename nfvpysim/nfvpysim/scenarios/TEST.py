@@ -15,8 +15,8 @@ from itertools import cycle
 
 
 
-topo = topology_tatanld()
-delays = nx.get_edge_attributes(topo, 'delay')
+topo = topology_barabasi_albert()
+delays = nx.get_edge_attributes(list(topo), 'delay')
 print(dict(delays))
 
 

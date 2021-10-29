@@ -3,8 +3,7 @@ from collections import defaultdict
 
 import networkx as nx
 from nfvpysim.registry import register_policy
-from heapq import nlargest
-import itertools
+
 
 # from nfvpysim.util import path_links
 
@@ -19,7 +18,8 @@ __all__ = [
     'HodDeg',
     'HodClose',
     'HodPage',
-    'HodEigen'
+    'HodEigen',
+    'FirstFit'
 ]
 
 
@@ -150,8 +150,8 @@ class TapAlgo(Policy):
                 if node == node_max_cpu:
                     if sum_cpu_sfc <= node_max_cpu_avail:
                         self.controller.put_sfc(node, sfc)
-                    else:
-                        continue
+                        break
+
                 else:
                     continue
 
@@ -185,10 +185,10 @@ class TapAlgo(Policy):
 
 
 
-@register_policy('HOD_FF')
-class HodFf(Policy):
+@register_policy('FIRST_FIT')
+class FirstFit(Policy, ABC):
     def __init__(self, view, controller, **kwargs):
-        super(HodFf, self).__init__(view, controller)
+        super(FirstFit, self).__init__(view, controller)
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
@@ -211,24 +211,43 @@ class HodFf(Policy):
 
     def first_fit_search(self, path, sfc):
         sum_cpu_nodes = {}
-        sum_vnfs_sfc = HodFf.sum_vnfs_cpu(sfc)
+        sum_vnfs_sfc = FirstFit.sum_vnfs_cpu(sfc)
         for node in path:
             sum_cpu_nodes[node] = self.controller.sum_vnfs_cpu_on_node(node)
             if sum_cpu_nodes[node] <= sum_vnfs_sfc:
-                return node
+                self.controller.put_sfc(node, sfc)
+                break
             else:
                 continue
 
 
 
+    def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
+        delay_sfc = defaultdict(int)  # dict to store the delay taken to run the sfc over the path
+        vnf_status = {vnf: 0 for vnf in sfc}  # 0 - not processed / 1 - processed
+        sum_cpu_sfc = FirstFit.sum_vnfs_cpu(sfc)
+        self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, delay, log)
+        path = self.view.shortest_path(ingress_node, egress_node)
 
+        for hop in range(1, len(path)):
+            delay_sfc[sfc_id] = 0
+            u = path[hop - 1]
+            v = path[hop]
+            self.controller.forward_request_vnf_hop(u, v)
+            delay_sfc[sfc_id] += self.view.link_delay(u, v)
+            if self.view.is_nfv_node(v):
+                for vnf in sfc:
+                    if self.controller.get_vnf(v, vnf):
+                        if vnf_status[vnf] == 0:
+                            vnf_status[vnf] = 1
+                            self.controller.vnf_proc(vnf)
+                            self.controller.proc_vnf_payload(u, v)
+            delay_sfc[sfc_id] += sum_cpu_sfc
+            if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
+                self.controller.sfc_hit(sfc_id)
+                break
 
-
-
-
-
-
-
+        self.controller.end_session()
 
 
 @register_policy('MARKOV')
@@ -390,7 +409,7 @@ class Baseline(Policy):
 
 
 
-@register_policy('HOD_BETW')
+@register_policy('HOD_VNF')
 class Hod(Policy):
 
     def __init__(self, view, controller, **kwargs):
