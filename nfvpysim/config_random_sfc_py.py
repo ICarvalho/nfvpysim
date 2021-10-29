@@ -18,7 +18,6 @@ PARALLEL_EXECUTION = True
 N_PROCESSES = cpu_count()
 
 # Format in which results are saved.
-# Result readers and writers are located in module ./icarus/results/readwrite.py
 # Currently only PICKLE is supported
 RESULTS_FORMAT = 'PICKLE'
 
@@ -27,7 +26,7 @@ RESULTS_FORMAT = 'PICKLE'
 N_REPLICATIONS = 3
 
 # List of metrics to be measured in the experiments
-# The implementation of data collectors are located in ./icarus/execution/collectors.py
+#
 # Remove collectors not needed
 DATA_COLLECTORS = [
     'ACCEPTANCE_RATIO',
@@ -72,13 +71,11 @@ NFV_NODE_CACHE_POLICY = 'NFV_CACHE'
 
 
 # List of topologies tested
-# Topology implementations are located in ./icarus/scenarios/topology.py
 # Remove topologies not needed
 
 TOPOLOGIES =  [ 'TATANLD', 'ION', 'BESTEL', 'USCARRIER', 'KDL', 'COGENTCO', 'COLT', 'INTERROUTE', ]
 
 # List of caching and routing strategies
-# The code is located in ./icarus/models/strategy/*.py
 # Remove strategies not needed
 POLICIES = ['BASELINE', 'MARKOV', 'HOD_VNF', 'FIRST_ORDER']
 #POLICIES = ['HOD_VNF', 'HOD_DEG', 'HOD_CLOSE', 'HOD_PAGE', 'HOD_EIGEN']
@@ -88,7 +85,7 @@ EXPERIMENT_QUEUE = deque()
 
 # Create tree of experiment configuration
 default = Tree()
-default['workload'] = {'name': 'STATIONARY_RANDOM_SFC', # 'sfc_len': SFC_LEN,
+default['workload'] = {'name': 'STATIONARY_RANDOM_SFC',
                        'n_warmup': N_WARMUP_REQUESTS,
                        'n_measured': N_MEASURED_REQUESTS,
                        'sfc_req_rate': SFC_REQ_RATES}

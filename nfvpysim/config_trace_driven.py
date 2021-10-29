@@ -32,7 +32,7 @@ N_REPLICATIONS = 3
 DATA_COLLECTORS = [
     'ACCEPTANCE_RATIO',  # Measure acceptance hit ratio
     'LATENCY',  # Measure request and response latency (based on static link delays)
-    #'LINK_LOAD',  # Measure link loads
+
 
 ]
 
