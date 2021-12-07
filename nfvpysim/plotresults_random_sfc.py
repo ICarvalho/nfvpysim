@@ -211,7 +211,7 @@ def plot_cache_hits_vs_n_sfc_requests(resultset, topology, nfv_cache_size, n_mea
     desc['line_width'] = LINE_WIDTH
     desc['legend'] = POLICY_LEGEND
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
-    plot_lines(resultset, desc, 'ACCEPTANCE_RATIO_T=%s@C=%s.png'
+    plot_lines(resultset, desc, 'ACCEPTANCE_RATIO_T=%s@C=%s.pdf'
                % (topology, n_measured_range), plotdir)
 
 
@@ -244,9 +244,9 @@ def plot_cache_hits_vs_cache_size(resultset, topology, sfc_len, nfv_cache_size_r
 
 def plot_link_load_vs_n_sfc_requests(resultset, topology, nfv_cache_size, sfc_req_rate_range, policies, plotdir):
     desc = {}
-    desc['title'] = 'Average Network Throughput: T=%s C=%s' % (topology, nfv_cache_size)
+    desc['title'] = 'Average Link Load Consumption: T=%s C=%s' % (topology, nfv_cache_size)
     desc['xlabel'] = '#_of_sfc_requests'
-    desc['ylabel'] = 'Throughput (Mbps)'
+    desc['ylabel'] = 'Link Load (Mbps)'
     desc['xscale'] = 'log'
     desc['xparam'] = ('workload', ' sfc_req_rate')
     desc['xvals'] = sfc_req_rate_range
@@ -266,7 +266,7 @@ def plot_link_load_vs_n_sfc_requests(resultset, topology, nfv_cache_size, sfc_re
                % (topology, sfc_req_rate_range), plotdir)
 
 
-"""
+
 def plot_link_load_vs_nfv_cache_size(resultset, topology, sfc_len, nfv_cache_size_range, policies, plotdir):
     desc = {}
     desc['title'] = 'Internal link load: T=%s L=%s' % (topology, sfc_len)
@@ -287,7 +287,7 @@ def plot_link_load_vs_nfv_cache_size(resultset, topology, sfc_len, nfv_cache_siz
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
     plot_lines(resultset, desc, 'LINK_LOAD_INTERNAL_T=%s@L=%s.pdf'
                % (topology, sfc_len), plotdir)
-"""
+
 
 
 
@@ -359,11 +359,10 @@ def plot_cache_hits_vs_topology(resultset, n_measured, nfv_cache_size, topology_
     desc['errorbar'] = True
     desc['legend_loc'] = 'lower center'
     desc['bar_color'] = POLICY_BAR_COLOR_CACHE_SIZE
-    desc['bar_hatch'] = POLICY_BAR_HATCH
     desc['legend'] = POLICY_LEGEND
     desc['legend_size'] = LEGEND_SIZE
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
-    plot_bar_chart(resultset, desc, 'SFC_HIT_RATIO_N=%s_C=%s.png'
+    plot_bar_chart(resultset, desc, 'SFC_HIT_RATIO_N=%s_C=%s.pdf'
                    % (n_measured, nfv_cache_size), plotdir)
 
 
@@ -375,14 +374,14 @@ def plot_link_load_vs_topology(resultset, n_measured, nfv_cache_size, topology_r
     topologies considered
     """
     desc = {}
-    desc['title'] = 'Average Network Troughtput: L=%s C=%s' % (n_measured, nfv_cache_size)
-    desc['ylabel'] = 'Troughtput (Mbps)'
+    desc['title'] = 'Average Link Load Consumption: L=%s C=%s' % (n_measured, nfv_cache_size)
+    desc['ylabel'] = 'Link Load (Mbps)'
     desc['xscale'] = 'log'
     desc['xparam'] = ('topology', 'name')
     desc['xvals'] = topology_range
     desc['filter'] = {'vnf_allocation': {'network_cache': nfv_cache_size},
                       'workload': {'name': 'STATIONARY_RANDOM_SFC', 'n_measured': n_measured}}
-    desc['ymetrics'] = [('LINK_LOAD', 'MEAN')] * len(policies)
+    desc['ymetrics'] = [('LINK_LOAD', 'MEAN_INTERNAL')] * len(policies)
     desc['ycondnames'] = [('policy', 'name')] * len(policies)
     desc['ycondvals'] = policies
     desc['errorbar'] = True
@@ -421,7 +420,7 @@ def plot_latency_vs_topology(resultset, n_measured, nfv_cache_size, topology_ran
     desc['legend'] = POLICY_LEGEND
     desc['legend_size'] = LEGEND_SIZE
     desc['plotempty'] = PLOT_EMPTY_GRAPHS
-    plot_bar_chart(resultset, desc, 'LATENCY_L=%s_C=%s.png'
+    plot_bar_chart(resultset, desc, 'LATENCY_L=%s_C=%s.pdf'
                    % (n_measured, nfv_cache_size), plotdir)
 
 
@@ -454,12 +453,12 @@ def run(config, results, plotdir):
     for topology in topologies:
         for nfv_cache_size in nfv_cache_sizes:
             logger.info(
-                'Plotting sfc hit ratio for topology %s and cache size %s vs number of sfc requests' % (topology, str(nfv_cache_size)))
+            'Plotting sfc hit ratio for topology %s and cache size %s vs number of sfc requests' % (topology, str(nfv_cache_size)))
             plot_cache_hits_vs_n_sfc_requests(resultset, topology, nfv_cache_size, n_of_sfc_requests, policies, plotdir)
             logger.info('Plotting link load for topology %s vs cache size %s' % (topology, str(nfv_cache_size)))
             plot_link_load_vs_n_sfc_requests(resultset, topology, nfv_cache_size, n_of_sfc_requests, policies, plotdir)
-            #logger.info('Plotting link load for topology %s vs cache size %s' % (topology, str(nfv_cache_size)))
-            #plot_link_load_vs_topology(resultset, topology, nfv_cache_size, n_of_sfc_requests, policies, plotdir)
+            logger.info('Plotting link load for topology %s vs cache size %s' % (topology, str(nfv_cache_size)))
+            plot_link_load_vs_topology(resultset, topology, nfv_cache_size, n_of_sfc_requests, policies, plotdir)
 
 
     #for topology in topologies:
@@ -476,8 +475,8 @@ def run(config, results, plotdir):
         for n_of_sfc_request in n_of_sfc_requests:
             logger.info('Plotting cache hit ratio for cache size %s vs alpha %s against topologies' % (str(nfv_cache_size), str(n_of_sfc_request)))
             plot_cache_hits_vs_topology(resultset, n_of_sfc_request, nfv_cache_size, topologies, policies, plotdir)
-            #logger.info('Plotting link load for cache size %s  vs sfc_len %s against topologies' % (str(nfv_cache_size), str(n_of_sfc_request)))
-            #plot_link_load_vs_topology(resultset, n_of_sfc_request, nfv_cache_size, topologies, policies, plotdir)
+            logger.info('Plotting link load for cache size %s  vs sfc_len %s against topologies' % (str(nfv_cache_size), str(n_of_sfc_request)))
+            plot_link_load_vs_topology(resultset, n_of_sfc_request, nfv_cache_size, topologies, policies, plotdir)
             plot_latency_vs_topology(resultset, n_of_sfc_request, nfv_cache_size, topologies, policies, plotdir)
             logger.info('Plotting average service execution for cache size %s  vs sfc_len %s against topologies' % (str(nfv_cache_size), str(n_of_sfc_request)))
 

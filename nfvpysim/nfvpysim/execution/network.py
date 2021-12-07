@@ -78,9 +78,19 @@ class NetworkViewHolu:
             sum_delay += self.link_delay(u, v)
         return sum_delay
 
-
     def topology(self):
         return self.model.topology
+
+
+    def get_vnf_instances(self, vnf):
+        n_vnf_inst = 0
+        for node in self.model.nfv_cache:
+            if self.model.nfv_cache[node].has_vnf(vnf):
+                n_vnf_inst += 1
+
+        return n_vnf_inst
+
+
 
 
 class NetworkViewMarkov:
@@ -122,6 +132,14 @@ class NetworkViewMarkov:
 
     def topology(self):
         return self.model.topology
+
+    def get_vnf_instances(self, vnf):
+        n_vnf_inst = 0
+        for node in self.model.nfv_cache:
+            if self.model.nfv_cache[node].has_vnf(vnf):
+                n_vnf_inst += 1
+
+        return n_vnf_inst
 
 
 
@@ -168,6 +186,14 @@ class NetworkViewTapAlgo:
     def topology(self):
         return self.model.topology
 
+    def get_vnf_instances(self, vnf):
+        n_vnf_inst = 0
+        for node in self.model.nfv_cache:
+            if self.model.nfv_cache[node].has_vnf(vnf):
+                n_vnf_inst += 1
+
+        return n_vnf_inst
+
 
 
 
@@ -212,6 +238,14 @@ class NetworkViewFirstFit:
     def topology(self):
         return self.model.topology
 
+    def get_vnf_instances(self, vnf):
+        n_vnf_inst = 0
+        for node in self.model.nfv_cache:
+            if self.model.nfv_cache[node].has_vnf(vnf):
+                n_vnf_inst += 1
+
+        return n_vnf_inst
+
 
 
 class NetworkViewBaseLine:
@@ -245,6 +279,14 @@ class NetworkViewBaseLine:
     def topology(self):
         return self.model.topology
 
+    def get_vnf_instances(self, vnf):
+        n_vnf_inst = 0
+        for node in self.model.nfv_cache:
+            if self.model.nfv_cache[node].has_vnf(vnf):
+                n_vnf_inst += 1
+
+        return n_vnf_inst
+
 
 class NetworkViewFirstOrder:
 
@@ -276,6 +318,14 @@ class NetworkViewFirstOrder:
 
     def topology(self):
         return self.model.topology
+
+    def get_vnf_instances(self, vnf):
+        n_vnf_inst = 0
+        for node in self.model.nfv_cache:
+            if self.model.nfv_cache[node].has_vnf(vnf):
+                n_vnf_inst += 1
+
+        return n_vnf_inst
 
 
 
@@ -310,6 +360,14 @@ class NetworkViewProposal:
 
     def topology(self):
         return self.model.topology
+
+    def get_vnf_instances(self, vnf):
+        n_vnf_inst = 0
+        for node in self.model.nfv_cache:
+            if self.model.nfv_cache[node].has_vnf(vnf):
+                n_vnf_inst += 1
+
+        return n_vnf_inst
 
 
 
@@ -356,6 +414,14 @@ class NetworkViewDeg:
 
     def topology(self):
         return self.model.topology
+
+    def get_vnf_instances(self, vnf):
+        n_vnf_inst = 0
+        for node in self.model.nfv_cache:
+            if self.model.nfv_cache[node].has_vnf(vnf):
+                n_vnf_inst += 1
+
+        return n_vnf_inst
 
 
 
@@ -405,6 +471,14 @@ class NetworkViewClose:
     def topology(self):
         return self.model.topology
 
+    def get_vnf_instances(self, vnf):
+        n_vnf_inst = 0
+        for node in self.model.nfv_cache:
+            if self.model.nfv_cache[node].has_vnf(vnf):
+                n_vnf_inst += 1
+
+        return n_vnf_inst
+
 
 class NetworkViewPage:
 
@@ -448,6 +522,14 @@ class NetworkViewPage:
 
     def topology(self):
         return self.model.topology
+
+    def get_vnf_instances(self, vnf):
+        n_vnf_inst = 0
+        for node in self.model.nfv_cache:
+            if self.model.nfv_cache[node].has_vnf(vnf):
+                n_vnf_inst += 1
+
+        return n_vnf_inst
 
 
 
@@ -494,6 +576,14 @@ class NetworkViewEigen:
 
     def topology(self):
         return self.model.topology
+
+    def get_vnf_instances(self, vnf):
+        n_vnf_inst = 0
+        for node in self.model.nfv_cache:
+            if self.model.nfv_cache[node].has_vnf(vnf):
+                n_vnf_inst += 1
+
+        return n_vnf_inst
 
 
 
@@ -1672,7 +1762,7 @@ class NetworkModelProposal: # BETWEENESS_CENTRALITY
                 nfv_nodes.append(node)
         for nfv_node in nfv_nodes:
             dist_nfv_node_egr_node[nfv_node] = len(self.get_shortest_path_between_two_nodes(nfv_node, egr_node))
-            closest_node = min(dist_nfv_node_egr_node, key=lambda k: dist_nfv_node_egr_node[k]) if len(
+            closest_node = max(dist_nfv_node_egr_node, key=lambda k: dist_nfv_node_egr_node[k]) if len(
                 dist_nfv_node_egr_node) > 0 \
                 else None
         return closest_node
@@ -2678,6 +2768,7 @@ class NetworkController:
                 else:
                     self.model.nfv_nodes_betw[node] += 0.1
         return self.model.nfv_nodes_betw[node]
+
 
 
     def put_vnf(self, node, vnf):

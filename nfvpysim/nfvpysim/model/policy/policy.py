@@ -458,6 +458,7 @@ class Hod(Policy):
                             continue
                     else:
                         missed_vnfs.append(vnf)
+                    print("The number of instances are", self.view.get_vnf_instances(vnf))
 
             if len(missed_vnfs) != 0:
                 sum_cpu_missed_vnfs = Hod.sum_vnfs_cpu(missed_vnfs)
@@ -474,6 +475,7 @@ class Hod(Policy):
             if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
                 self.controller.sfc_hit(sfc_id)
                 break
+
 
         self.controller.end_session()
 

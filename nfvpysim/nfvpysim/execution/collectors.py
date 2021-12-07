@@ -2,7 +2,6 @@ from nfvpysim.util import Tree
 from nfvpysim.registry import register_data_collector
 from nfvpysim.tools.stats import cdf
 import collections
-import random
 
 
 
@@ -10,7 +9,8 @@ __all__ = [
     'DataCollector',
     'CollectorProxy',
     'AcceptanceRatioCollector',
-    'LatencyCollector'
+    'LatencyCollector',
+    'LinkLoadCollector'
            ]
 
 
@@ -100,6 +100,67 @@ class CollectorProxy(DataCollector):
 
     def results(self):
         return Tree(**{c.name: c.results() for c in self.collectors['results']})
+
+
+
+@register_data_collector('LINK_LOAD')
+class LinkLoadCollector(DataCollector):
+    """Data collector measuring the link load
+    """
+
+    def __init__(self, view, req_size=1000, **params):
+        """Constructor
+        Parameters
+        ----------
+        view : NetworkView
+            The network view instance
+        req_size : int
+            Average size (in bytes) of a request
+        content_size : int
+            Average size (in byte) of a content
+        """
+        super().__init__(view, **params)
+        self.view = view
+        self.req_count = collections.defaultdict(int)
+        if req_size <= 0:
+            raise ValueError('req_size  must be positive')
+        self.req_size = req_size
+
+        self.t_start = -1
+        self.t_end = 1
+
+
+    def start_session(self, timestamp, sfc_id,  ingress_node, egress_node, sfc, delay):
+        if self.t_start < 0:
+            self.t_start = timestamp
+        self.t_end = timestamp
+
+    def request_vnf_hop(self, u, v,  path=True):
+        self.req_count[(u, v)] += 1
+
+
+
+    def results(self):
+        duration = self.t_end - self.t_start
+        used_links = set(self.req_count.keys())
+        link_loads = {link: (self.req_size * self.req_count[link]) / duration
+                      for link in used_links}
+        link_loads_int = {link: load
+                          for link, load in link_loads.items()
+                          if self.view.link_type(*link) == 'internal'}
+        link_loads_ext = {link: load
+                          for link, load in link_loads.items()
+                          if self.view.link_type(*link) == 'external'}
+        mean_load_int = sum(link_loads_int.values()) / len(link_loads_int) \
+            if len(link_loads_int) > 0 else 0
+        mean_load_ext = sum(link_loads_ext.values()) / len(link_loads_ext) \
+            if len(link_loads_ext) > 0 else 0
+        return Tree({'MEAN_INTERNAL':     mean_load_int,
+                     'MEAN_EXTERNAL':     mean_load_ext,
+                     'PER_LINK_INTERNAL': link_loads_int,
+                     'PER_LINK_EXTERNAL': link_loads_ext})
+
+
 
 
 

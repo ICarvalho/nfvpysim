@@ -23,7 +23,7 @@ RESULTS_FORMAT = 'PICKLE'
 
 # Number of times each experiment is replicated
 # This is necessary for extracting confidence interval of selected metrics
-N_REPLICATIONS = 3
+N_REPLICATIONS = 10
 
 # List of metrics to be measured in the experiments
 #
@@ -31,7 +31,7 @@ N_REPLICATIONS = 3
 DATA_COLLECTORS = [
     'ACCEPTANCE_RATIO',
     'LATENCY',  # Measure request and response latency (based on static link delays)
-    # Measure link loads
+    'LINK_LOAD'# Measure link loads
 
 ]
 
@@ -52,7 +52,7 @@ N_WARMUP_REQUESTS = 0
 
 # Number of measured requests
 
-N_MEASURED_REQUESTS = [10 ** 4]
+N_MEASURED_REQUESTS = [10 ** 2]
 
 
 # Number of requests per second (over the whole network)
@@ -73,7 +73,8 @@ NFV_NODE_CACHE_POLICY = 'NFV_CACHE'
 # List of topologies tested
 # Remove topologies not needed
 
-TOPOLOGIES =  [ 'TATANLD', 'ION', 'BESTEL', 'USCARRIER', 'KDL', 'COGENTCO', 'COLT', 'INTERROUTE', ]
+#TOPOLOGIES =  ['TATANLD', 'ION', 'BESTEL', 'USCARRIER',  'COGENTCO', 'COLT']
+TOPOLOGIES =  ['TATANLD', 'ION', 'BESTEL', 'USCARRIER',  'COGENTCO']
 
 # List of caching and routing strategies
 # Remove strategies not needed

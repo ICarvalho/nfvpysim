@@ -241,7 +241,7 @@ def run_scenario(settings, params, curr_exp, n_exp):
             return None
 
 
-        """
+
         if 'vnf_placement' in tree:
             vnf_placement_spec = tree['vnf_placement']
             vnf_placement_name = vnf_placement_spec.pop('name')
@@ -249,10 +249,10 @@ def run_scenario(settings, params, curr_exp, n_exp):
                 logger.error('No implementation of vnf_placement %s was found.' % vnf_placement_name)
                 return None
             VNF_PLACEMENT[vnf_placement_name](topology) 
+
+
         """
-
-
-        vnf_placement_spec = tree['vnf_placement']
+         vnf_placement_spec = tree['vnf_placement']
         vnf_placement_name = vnf_placement_spec.pop('name')
         if vnf_placement_name not in VNF_PLACEMENT:
             logger.error('No implementation of vnf_placement %s was found' % vnf_placement_name)
@@ -260,8 +260,6 @@ def run_scenario(settings, params, curr_exp, n_exp):
         VNF_PLACEMENT[vnf_placement_name](topology, nfv_cache_policy, **vnf_placement_spec)
         
         """
-
-
 
 
 
@@ -301,6 +299,4 @@ def run_scenario(settings, params, curr_exp, n_exp):
     except Exception as e:
         err_type = str(type(e)).split("'")[1].split(".")[0]
         err_message = e
-        logger.error('Experiment %d/%d | Failed | %s: %s\n%s',
-                     curr_exp, n_exp, err_type, err_message,
-                     traceback.format_exc())
+        logger.error('Experiment %d/%d | Failed | %s: %s\n%s', curr_exp, n_exp, err_type, err_message, traceback.format_exc())
