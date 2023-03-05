@@ -7,7 +7,6 @@ if sys.version_info[:2] < (2, 7):
     raise ImportError(m % sys.version_info[:2])
 del sys
 
-
 # Import release information
 import nfvpysim.release as release
 
@@ -15,21 +14,20 @@ __author__ = release.author
 __version__ = release.version
 __license__ = release.license_short
 
-
 # List of all modules (even outside Icarus) that contain classes or function
 # needed to be registered with the registry (via a register decorator)
 # This code ensures that the modules are imported and hence the decorators are
 # executed and the classes/functions registered.
 __modules_to_register = [
-     'nfvpysim.model.cache',
-     'nfvpysim.model.policy',
-     'nfvpysim.results.readwrite',
-     'nfvpysim.execution.collectors',
-     'nfvpysim.scenarios.topology',
-     'nfvpysim.scenarios.vnf_cache_allocation',
-     'nfvpysim.scenarios.vnf_placement',
-     'nfvpysim.scenarios.workload',
-                         ]
+    'nfvpysim.model.cache',
+    'nfvpysim.model.policy',
+    'nfvpysim.results.readwrite',
+    'nfvpysim.execution.collectors',
+    'nfvpysim.scenarios.topology',
+    'nfvpysim.scenarios.vnf_cache_allocation',
+    'nfvpysim.scenarios.vnf_placement',
+    'nfvpysim.scenarios.workload',
+]
 
 for m in __modules_to_register:
     # This try/catch is needed to support reload(icarus)
