@@ -5,8 +5,6 @@ import math
 import csv
 import random
 
-
-
 __all__ = [
     'StationaryWorkloadSfcByLen',
     'StationaryWorkloadVarLenSfc',
@@ -27,14 +25,14 @@ def generate_uniform_delay(lower, upper):
 
 def get_uniform_delay_sfc(sfc):
     sfcs_delay = {
-         1: generate_uniform_delay(10, 15),  # nat
-         2: generate_uniform_delay(20, 25),  # fw
-         3: generate_uniform_delay(20, 25),  # ids
-         4: generate_uniform_delay(15, 20),  # wanopt
-         5: generate_uniform_delay(15, 20),  # lb
-         6: generate_uniform_delay(20, 25),  # encrypt
-         7: generate_uniform_delay(20, 25),  # decrypts
-         8: generate_uniform_delay(25, 30),  # dpi
+        1: generate_uniform_delay(10, 15),  # nat
+        2: generate_uniform_delay(20, 25),  # fw
+        3: generate_uniform_delay(20, 25),  # ids
+        4: generate_uniform_delay(15, 20),  # wanopt
+        5: generate_uniform_delay(15, 20),  # lb
+        6: generate_uniform_delay(20, 25),  # encrypt
+        7: generate_uniform_delay(20, 25),  # decrypts
+        8: generate_uniform_delay(25, 30),  # dpi
 
     }
     delay_sfc = 0
@@ -45,43 +43,35 @@ def get_uniform_delay_sfc(sfc):
     return delay_sfc
 
 
-
-
 def get_delay(service):
-
     dict_services = {
 
-
-
-            1: {'sfc': [0, 1, 2], 'delay': 100},
-            2: {'sfc': [0, 4, 3], 'delay': 100},
-            3: {'sfc': [3, 7, 2], 'delay': 100},
-            4: {'sfc': [1, 2, 4, 5], 'delay': 200},
-            5: {'sfc': [2, 1, 4, 7], 'delay': 200},
-            6: {'sfc': [2, 4, 5, 6], 'delay': 200},
-            7: {'sfc': [3, 6, 7, 2], 'delay': 200},
-            8: {'sfc': [1, 2, 6, 7], 'delay': 200},
-            9: {'sfc': [2, 4, 1, 2, 3], 'delay': 350},
-            10: {'sfc': [4, 3, 5, 1, 2], 'delay': 350},
-            11: {'sfc': [4, 3, 5, 6, 7], 'delay': 350},
-            12: {'sfc': [0, 4, 3, 5, 6], 'delay': 350},
-            13: {'sfc': [2, 4, 5, 6, 7], 'delay': 350},
-            14: {'sfc': [2, 4, 5, 6, 7, 3], 'delay': 400},
-            15: {'sfc': [1, 3, 5, 4, 7, 3], 'delay': 420},
-            16: {'sfc': [2, 1, 4, 3, 7, 8], 'delay': 420},
-            17: {'sfc': [4, 3, 5, 6, 0, 1, 2, 7], 'delay': 450},
-            18: {'sfc': [1, 2, 6, 3, 5, 4, 7, 0], 'delay': 450},
-            19: {'sfc': [0, 1, 2, 4, 3, 7, 5, 6], 'delay': 450},
-            20: {'sfc': [3, 0, 1, 4, 5, 7, 6, 2], 'delay': 450},
-
-
+        1: {'sfc': [0, 1, 2], 'delay': 100},
+        2: {'sfc': [0, 4, 3], 'delay': 100},
+        3: {'sfc': [3, 7, 2], 'delay': 100},
+        4: {'sfc': [1, 2, 4, 5], 'delay': 200},
+        5: {'sfc': [2, 1, 4, 7], 'delay': 200},
+        6: {'sfc': [2, 4, 5, 6], 'delay': 200},
+        7: {'sfc': [3, 6, 7, 2], 'delay': 200},
+        8: {'sfc': [1, 2, 6, 7], 'delay': 200},
+        9: {'sfc': [2, 4, 1, 2, 3], 'delay': 350},
+        10: {'sfc': [4, 3, 5, 1, 2], 'delay': 350},
+        11: {'sfc': [4, 3, 5, 6, 7], 'delay': 350},
+        12: {'sfc': [0, 4, 3, 5, 6], 'delay': 350},
+        13: {'sfc': [2, 4, 5, 6, 7], 'delay': 350},
+        14: {'sfc': [2, 4, 5, 6, 7, 3], 'delay': 400},
+        15: {'sfc': [1, 3, 5, 4, 7, 3], 'delay': 420},
+        16: {'sfc': [2, 1, 4, 3, 7, 8], 'delay': 420},
+        17: {'sfc': [4, 3, 5, 6, 0, 1, 2], 'delay': 450},
+        18: {'sfc': [1, 2, 6, 3, 5, 4, 7], 'delay': 450},
+        19: {'sfc': [0, 1, 2, 4, 3, 7, 5, 6], 'delay': 500},
+        20: {'sfc': [3, 0, 1, 4, 5, 7, 6, 2], 'delay': 500},
 
     }
     for k, v in dict_services.items():
         for k1, v1 in v.items():
             if v1 == service:
                 return v.get('delay', v)
-
 
 
 def get_delay_vnfs(vnfs):
@@ -102,12 +92,8 @@ def get_delay_vnfs(vnfs):
     return sum_vnfs_cpu
 
 
-
-
-
 @register_workload('STATIONARY_SFC_BY_LEN')
 class StationaryWorkloadSfcByLen:
-
     """
     This function generates events on the fly, i.e. instead of creating an
     event schedule to be kept in memory, returns an iterator that generates
@@ -122,15 +108,14 @@ class StationaryWorkloadSfcByLen:
 
     """
 
-    def __init__(self, topology, sfc_len, sfc_req_rate=1.0, n_warmup= 0, n_measured= 1* 10 ** 4, seed=None, **kwargs):
+    def __init__(self, topology, sfc_len, sfc_req_rate=1.0, n_warmup=0, n_measured=1 * 10 ** 4, seed=None, **kwargs):
         self.sfc_len = sfc_len
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
-        self.egress_nodes =  [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
+        self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
         self.sfc_req_rate = sfc_req_rate
         self.n_warmup = n_warmup
         self.n_measured = n_measured
         random.seed(seed)
-
 
     def __iter__(self):
         req_counter = 0
@@ -149,14 +134,14 @@ class StationaryWorkloadSfcByLen:
                     delay = get_delay_vnfs(self.sfc)
                     sfc_id = truncate(t_event, 2)
                     log = (req_counter >= self.n_warmup)
-                    event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': self.sfc, 'delay': delay, 'log': log}
-                    #file_lines = [str(sfc)[1:-1], '\n'] #str(i),',',
-                    #f.writelines(file_lines)
+                    event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node,
+                             'sfc': self.sfc, 'delay': delay, 'log': log}
+                    # file_lines = [str(sfc)[1:-1], '\n'] #str(i),',',
+                    # f.writelines(file_lines)
                     yield t_event, event
                     req_counter += 1
                 f.close()
             return
-
 
 
 @register_workload('STATIONARY_VAR_LEN_SFC')
@@ -175,8 +160,7 @@ class StationaryWorkloadVarLenSfc:
 
     """
 
-    def __init__(self, topology, sfc_req_rate =1.0, n_warmup=0, n_measured=4 * 10 ** 5, seed=None):
-
+    def __init__(self, topology, sfc_req_rate=1.0, n_warmup=0, n_measured=4 * 10 ** 5, seed=None):
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
         self.rate = sfc_req_rate
@@ -184,17 +168,15 @@ class StationaryWorkloadVarLenSfc:
         self.n_warmup = n_warmup
         random.seed(seed)
 
-
-
     def __iter__(self):
         req_counter = 0
         t_event = 0.0
-        #header = ['id', 'sfc']
-        #with open('var_seq_len_sfc.csv', 'w', newline='\n') as f:
-        #writer = csv.writer(f)
-        #writer.writerow(header)
+        # header = ['id', 'sfc']
+        # with open('var_seq_len_sfc.csv', 'w', newline='\n') as f:
+        # writer = csv.writer(f)
+        # writer.writerow(header)
         while req_counter < self.n_warmup + self.n_measured:
-            #for i in range(0, self.n_req):
+            # for i in range(0, self.n_req):
             t_event += (random.expovariate(self.rate))
             ingress_node = random.choice(self.ingress_nodes)
             egress_node = random.choice(self.egress_nodes)
@@ -203,12 +185,13 @@ class StationaryWorkloadVarLenSfc:
             delay = get_uniform_delay_sfc(self.sfc)
             sfc_id = truncate(t_event, 2)
             log = (req_counter >= self.n_warmup)
-            event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': self.sfc, 'delay': delay, 'log': log}
-            #file_lines = [str(i),',', str(sfc)[1:-1], '\n']
-            #f.writelines(file_lines)
+            event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': self.sfc,
+                     'delay': delay, 'log': log}
+            # file_lines = [str(i),',', str(sfc)[1:-1], '\n']
+            # f.writelines(file_lines)
             yield t_event, event
             req_counter += 1
-            #f.close() n_warmup=0,  n_measured=4 * 10 ** 5,
+            # f.close() n_warmup=0,  n_measured=4 * 10 ** 5,
         return
 
 
@@ -228,8 +211,7 @@ class StationaryWorkloadRandomSfc:
 
     """
 
-    def __init__(self, topology, sfc_req_rate, n_warmup, n_measured=20**1, seed=None):
-
+    def __init__(self, topology, sfc_req_rate, n_warmup, n_measured=20 ** 1, seed=None):
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
         self.sfc_req_rate = sfc_req_rate
@@ -237,20 +219,17 @@ class StationaryWorkloadRandomSfc:
         self.n_warmup = n_warmup
         random.seed(seed)
 
-
-
     def __iter__(self):
         req_counter = 0
         t_event = 0.0
 
-        #header = ['id', 'sfc']
-        #with open('var_seq_len_sfc.csv', 'w', newline='\n') as f:
-        #writer = csv.writer(f)
-        #writer.writerow(header)
-
+        # header = ['id', 'sfc']
+        # with open('var_seq_len_sfc.csv', 'w', newline='\n') as f:
+        # writer = csv.writer(f)
+        # writer.writerow(header)
 
         while req_counter < self.n_warmup + self.n_measured:
-            #for i in range(0, self.n_req):
+            # for i in range(0, self.n_req):
             t_event += (random.expovariate(self.sfc_req_rate))
             ingress_node = random.choice(self.ingress_nodes)
             egress_node = random.choice(self.egress_nodes)
@@ -259,20 +238,20 @@ class StationaryWorkloadRandomSfc:
             delay = get_delay(self.sfc)
             sfc_id = truncate(t_event, 2)
             log = (req_counter >= self.n_warmup)
-            event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': self.sfc, 'delay': delay, 'log': log}
-            #file_lines = [str(i),',', str(sfc)[1:-1], '\n']
-            #f.writelines(file_lines)
+            event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': self.sfc,
+                     'delay': delay, 'log': log}
+            # file_lines = [str(i),',', str(sfc)[1:-1], '\n']
+            # f.writelines(file_lines)
             yield t_event, event
             req_counter += 1
-            #f.close() n_warmup=0,  n_measured=4 * 10 ** 5,
+            # f.close() n_warmup=0,  n_measured=4 * 10 ** 5,
         return
-
 
 
 @register_workload('TRACE_DRIVEN')
 class TraceDrivenWorkload:
     def __init__(self, topology, n_warmup, n_measured,
-                 sfc_reqs_file='/home/igor/PycharmProjects/TESE/nfvpysim/sfc_seq_len_2_test.csv', rate=1.0, **kwargs):
+                 sfc_reqs_file='/home/vitor/PycharmProjects/nfvpysim/sfc_seq_len_2_test.csv', rate=1.0, **kwargs):
         # Set high buffering to avoid one-line reads
         self.buffering = 64 * 1024 * 1024
         self.n_warmup = n_warmup
@@ -282,19 +261,19 @@ class TraceDrivenWorkload:
         self.ingress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'ingress_node']
         self.egress_nodes = [v for v in topology.nodes() if topology.node[v]['stack'][0] == 'egress_node']
 
-
     def __iter__(self):
         req_counter = 0
         t_event = 0.0
         with open(self.sfc_reqs_file, 'r', buffering=self.buffering) as sfc_file:
             for sfc in sfc_file:
                 t_event += (random.expovariate(self.rate))
-                ingress_node= random.choice(self.ingress_nodes)
+                ingress_node = random.choice(self.ingress_nodes)
                 egress_node = random.choice(self.egress_nodes)
                 sfc_id = truncate(t_event, 2)
                 delay = get_delay_vnfs(sfc)
                 log = (req_counter >= self.n_warmup)
-                event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc, 'delay': delay, 'log': log}
+                event = {'sfc_id': sfc_id, 'ingress_node': ingress_node, 'egress_node': egress_node, 'sfc': sfc,
+                         'delay': delay, 'log': log}
                 yield t_event, event
                 req_counter += 1
                 if req_counter >= self.n_warmup + self.n_measured:
@@ -302,31 +281,10 @@ class TraceDrivenWorkload:
             raise ValueError("Trace did not contain enough requests")
 
 
-
-#topo = topology_tatanld()
-#r = StationaryWorkloadRandomSfc(topo, 10**5, 0)
-#for i in r:
-    #print(i)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# topo = topology_tatanld()
+# r = StationaryWorkloadRandomSfc(topo, 10**5, 0)
+# for i in r:
+# print(i)
 
 
 """
@@ -357,7 +315,3 @@ sfcs = [{1: 15, 2: 25}, # [nat - fw]
 
 
 """
-
-
-
-

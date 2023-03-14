@@ -1,6 +1,7 @@
-from nfvpysim.scenarios.requests import *
 import csv
-import random
+
+from nfvpysim.scenarios.requests import *
+
 
 class GenerateTraceDrivenRequests:
 

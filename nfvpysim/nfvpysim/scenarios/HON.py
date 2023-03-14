@@ -20,52 +20,41 @@ import math
 import time
 import tracemalloc
 
-
-
-
 tracemalloc.start()
 
-
-
-
-
 ## Initialize algorithm parameters
-MaxOrder = 2
+MaxOrder = 8
 MinSupport = 50
 
-#/home/igor/PycharmProjects/HON/hon-master/data/sfc.csv
+# /home/igor/PycharmProjects/HON/hon-master/data/sfc.csv
 
 ## Initialize user parameters
-#InputFileName = '/home/igor/PycharmProjects/HON/hon-master/data/traces-simulated-mesh-v100000-t100-mo4.csv'
-#OutputRulesFile = '../data/rules-syn.csv'
-#OutputNetworkFile = '../data/network-syn.csv'
+# InputFileName = '/home/igor/PycharmProjects/HON/hon-master/data/traces-simulated-mesh-v100000-t100-mo4.csv'
+# OutputRulesFile = '../data/rules-syn.csv'
+# OutputNetworkFile = '../data/network-syn.csv'
 
 ## Initialize user parameters
 
 
-InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_random_sfc_training_data.csv'
-#InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_by_len_training_data.csv'
-#InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_var_len_training_data.csv'
+InputFileName = '/home/vitor/PycharmProjects/nfvpysim/nfvpysim/nfvpysim/scenarios/hon_random_sfc_training_data.csv'
+# InputFileName = '/home/vitor/PycharmProjects/nfvpysim/nfvpysim/nfvpysim/scenarios/hon_sfc_by_len_training_data.csv'
+# InputFileName = '/home/vitor/PycharmProjects/nfvpysim/nfvpysim/scenarios/hon_sfc_var_len_training_data.csv'
 
 
+# InputFileName = '/home/vitor/PycharmProjects/nfvpysim/nfvpysim/sfc_seq_len_8_training.csv'
 
-#InputFileName = '/home/igor/PycharmProjects/TESE/nfvpysim/sfc_seq_len_8_training.csv'
-
-#OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/sfc_seq_len_8_rules.csv'
-#OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/sfc_seq_len_8_output.csv'
-
+# OutputRulesFile = '/home/vitor/PycharmProjects/nfvpysim/nfvpysim/scenarios/sfc_seq_len_8_rules.csv'
+# OutputNetworkFile = '/home/vitor/PycharmProjects/nfvpysim/nfvpysim/scenarios/sfc_seq_len_8_output.csv'
 
 
-OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_random_sfc_rules.csv'
-OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_random_sfc_output.csv'
+OutputRulesFile = '/home/vitor/PycharmProjects/nfvpysim/nfvpysim/nfvpysim/scenarios/hon_random_sfc_rules.csv'
+OutputNetworkFile = '/home/vitor/PycharmProjects/nfvpysim/nfvpysim/nfvpysim/scenarios/hon_random_sfc_output.csv'
 
-#OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_var_len_rules.csv'
-#OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_var_len_output.csv'
+# OutputRulesFile = '/home/vitor/PycharmProjects/nfvpysim/nfvpysim/scenarios/hon_sfc_var_len_rules.csv'
+# OutputNetworkFile = '/home/vitor/PycharmProjects/nfvpysim/nfvpysim/scenarios/hon_sfc_var_len_output.csv'
 
-#OutputRulesFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_by_len_rules.csv'
-#OutputNetworkFile = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_by_len_output.csv'
-
-
+# OutputRulesFile = '/home/vitor/PycharmProjects/nfvpysim/nfvpysim/scenarios/hon_sfc_by_len_rules.csv'
+# OutputNetworkFile = '/home/vitor/PycharmProjects/nfvpysim/nfvpysim/scenarios/hon_sfc_by_len_output.csv'
 
 
 start_time = time.time()
@@ -111,7 +100,6 @@ def ReadSequentialData(InputFileName):
 
             RawTrajectories.append([ship, movements])
 
-
     return RawTrajectories
 
 
@@ -120,15 +108,13 @@ def truncate(number, digits):
     return math.trunc(stepper * number) / stepper
 
 
-
-
 def BuildTrainingAndTesting(RawTrajectories):
     VPrint('Building training and testing')
     Training = []
     Testing = []
     for trajectory in RawTrajectories:
         ship, movement = trajectory
-        movement = [key for key,grp in itertools.groupby(movement)] # remove adjacent duplications
+        movement = [key for key, grp in itertools.groupby(movement)]  # remove adjacent duplications
         if LastStepsHoldOutForTesting > 0:
             Training.append([ship, movement[:-LastStepsHoldOutForTesting]])
             Testing.append([ship, movement[-LastStepsHoldOutForTesting]])
@@ -136,12 +122,15 @@ def BuildTrainingAndTesting(RawTrajectories):
             Training.append([ship, movement])
     return Training, Testing
 
+
 def DumpRules(Rules, OutputRulesFile):
     VPrint('Dumping rules to file')
     with open(OutputRulesFile, 'w') as f:
         for Source in Rules:
             for Target in Rules[Source]:
-                f.write(''.join([','.join([str(x) for x in Source]), ',',Target, ',', str(truncate(Rules[Source][Target],4))]) + '\n')
+                f.write(''.join([','.join([str(x) for x in Source]), ',', Target, ',',
+                                 str(truncate(Rules[Source][Target], 4))]) + '\n')
+
 
 def DumpNetwork(Network, OutputNetworkFile):
     VPrint('Dumping network to file')
@@ -152,6 +141,7 @@ def DumpNetwork(Network, OutputNetworkFile):
                 f.write(''.join([SequenceToNode(source), SequenceToNode(target), str(Network[source][target])]) + '\n')
                 LineCount += 1
     VPrint(str(LineCount) + ' lines written.')
+
 
 def SequenceToNode(seq):
     curr = seq[-1]
@@ -166,6 +156,7 @@ def SequenceToNode(seq):
     else:
         return node
 
+
 def VPrint(string):
     if Verbose:
         print(string)
@@ -179,7 +170,8 @@ def BuildHON(InputFileName, OutputNetworkFile):
     # DumpRules(Rules, OutputRulesFile)
     Network = BuildNetwork.BuildNetwork(Rules)
     DumpNetwork(Network, OutputNetworkFile)
-    VPrint('Done: '+InputFileName)
+    VPrint('Done: ' + InputFileName)
+
 
 def BuildHONfreq(InputFileName, OutputNetworkFile):
     print('FREQ mode!')
@@ -190,12 +182,13 @@ def BuildHONfreq(InputFileName, OutputNetworkFile):
     # DumpRules(Rules, OutputRulesFile)
     Network = BuildNetwork.BuildNetwork(Rules)
     DumpNetwork(Network, OutputNetworkFile)
-    VPrint('Done: '+InputFileName)
+    VPrint('Done: ' + InputFileName)
 
 
 def truncate_value(number, digits):
     stepper = 10.0 ** digits
     return math.trunc(stepper * number) / stepper
+
 
 ###########################################
 # Main function
@@ -209,7 +202,7 @@ if __name__ == "__main__":
     Rules = BuildRulesFastParameterFree.ExtractRules(TrainingTrajectory, MaxOrder, MinSupport)
     DumpRules(Rules, OutputRulesFile)
     Network = BuildNetwork.BuildNetwork(Rules)
-    #VPrint(Network)
+    # VPrint(Network)
     DumpNetwork(Network, OutputNetworkFile)
     print()
     print("--------------------RUNNING TIME----------------------------")
@@ -217,13 +210,12 @@ if __name__ == "__main__":
 
     print("--- TIME: %s seconds ---" % (truncate_value(final_time, 2)))
 
-
     print()
 
     print("***************** PERFORMANCE INFO *******************")
 
     print()
     current, peak = tracemalloc.get_traced_memory()
-    print(f"MEMORY USAGE: {truncate_value(current / 10**6, 2)}MB; Peak was {truncate_value(peak / 10**6,2)}MB")
+    print(f"MEMORY USAGE: {truncate_value(current / 10 ** 6, 2)}MB; Peak was {truncate_value(peak / 10 ** 6, 2)}MB")
     tracemalloc.stop()
     print()

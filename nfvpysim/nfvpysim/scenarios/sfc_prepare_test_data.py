@@ -1,7 +1,7 @@
 import csv
 
-input_file = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/hon_sfc_by_len_test_data.csv'
-output_file = '/home/igor/PycharmProjects/TESE/nfvpysim/nfvpysim/scenarios/sfc_test_data.csv'
+input_file = '/home/vitor/PycharmProjects/nfvpysim/nfvpysim/scenarios/hon_sfc_by_len_test_data.csv'
+output_file = '/home/vitor/PycharmProjects/nfvpysim/nfvpysim/nfvpysim/scenarios/sfc_test_data.csv'
 
 
 cols_to_remove = [0] # Column indexes to be removed (starts at 0)

@@ -4,7 +4,6 @@ from collections import defaultdict
 import networkx as nx
 from nfvpysim.registry import register_policy
 
-
 # from nfvpysim.util import path_links
 
 __all__ = [
@@ -15,6 +14,7 @@ __all__ = [
     'Markov',
     'Baseline',
     'Hod',
+    'HodOff',
     'HodDeg',
     'HodClose',
     'HodPage',
@@ -33,26 +33,24 @@ class Policy:
         raise NotImplementedError('The selected policy must implement a process event method')
 
 
-
 @register_policy('BCSP')
 class Bcsp(Policy):
     def __init__(self, view, controller, **kwargs):
         super(Bcsp, self).__init__(view, controller)
         topology = view.topology()
-        self.betw =  nx.betweenness_centrality(topology)
+        self.betw = nx.betweenness_centrality(topology)
         self.nfv_nodes = [v for v in topology if topology.node[v]["stack"][0] == "nfv_node"]
-
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {0: 15,  # nat
+        vnfs_cpu = {0: 20,  # nat
                     1: 25,  # fw
-                    2: 25,  # ids
-                    3: 20,  # wanopt
-                    4: 20,  # lb
-                    5: 25,  # encrypt
-                    6: 25,  # decrypts
-                    7: 30,  # dpi
+                    2: 30,  # ids
+                    3: 35,  # wanopt
+                    4: 40,  # lb
+                    5: 45,  # encrypt
+                    6: 50,  # decrypts
+                    7: 55,  # dpi
                     }
 
         sum_vnfs_cpu = 0
@@ -70,7 +68,6 @@ class Bcsp(Policy):
                 highest_betw_node = node
         return highest_betw_node
 
-
     def place_sfc_on_highest_betw_node(self, path, sfc):
         highest_betw_node = self.find_highest_betw_node(path)
         for node in path:
@@ -78,8 +75,6 @@ class Bcsp(Policy):
                 for vnf in sfc:
                     self.controller.put_vnf(node, vnf)
         return None
-
-
 
     def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
         delay_sfc = defaultdict(int)  # dict to store the delay taken to run the sfc over the path
@@ -102,13 +97,12 @@ class Bcsp(Policy):
                             vnf_status[vnf] = 1
                             self.controller.vnf_proc(vnf)
                             self.controller.proc_vnf_payload(u, v)
+            delay_sfc[sfc_id] += sum_cpu_sfc
             if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
-                delay_sfc[sfc_id] += sum_cpu_sfc
                 self.controller.sfc_hit(sfc_id)
                 break
 
         self.controller.end_session()
-
 
 
 @register_policy('TAP_ALGO')
@@ -118,14 +112,14 @@ class TapAlgo(Policy):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {0: 15,  # nat
+        vnfs_cpu = {0: 20,  # nat
                     1: 25,  # fw
-                    2: 25,  # ids
-                    3: 20,  # wanopt
-                    4: 20,  # lb
-                    5: 25,  # encrypt
-                    6: 25,  # decrypts
-                    7: 30,  # dpi
+                    2: 30,  # ids
+                    3: 35,  # wanopt
+                    4: 40,  # lb
+                    5: 45,  # encrypt
+                    6: 50,  # decrypts
+                    7: 55,  # dpi
                     }
 
         sum_vnfs_cpu = 0
@@ -176,13 +170,12 @@ class TapAlgo(Policy):
                             vnf_status[vnf] = 1
                             self.controller.vnf_proc(vnf)
                             self.controller.proc_vnf_payload(u, v)
+            delay_sfc[sfc_id] += sum_cpu_sfc
             if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
                 self.controller.sfc_hit(sfc_id)
-                delay_sfc[sfc_id] += sum_cpu_sfc
                 break
 
         self.controller.end_session()
-
 
 
 @register_policy('FIRST_FIT')
@@ -192,14 +185,14 @@ class FirstFit(Policy, ABC):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {0: 15,  # nat
+        vnfs_cpu = {0: 20,  # nat
                     1: 25,  # fw
-                    2: 25,  # ids
-                    3: 20,  # wanopt
-                    4: 20,  # lb
-                    5: 25,  # encrypt
-                    6: 25,  # decrypts
-                    7: 30,  # dpi
+                    2: 30,  # ids
+                    3: 35,  # wanopt
+                    4: 40,  # lb
+                    5: 45,  # encrypt
+                    6: 50,  # decrypts
+                    7: 55,  # dpi
                     }
 
         sum_vnfs_cpu = 0
@@ -207,7 +200,6 @@ class FirstFit(Policy, ABC):
             if vnf in vnfs_cpu.keys():
                 sum_vnfs_cpu += vnfs_cpu[vnf]
         return sum_vnfs_cpu
-
 
     def first_fit_search(self, path, sfc):
         sum_cpu_nodes = {}
@@ -217,10 +209,7 @@ class FirstFit(Policy, ABC):
             if sum_cpu_nodes[node] <= sum_vnfs_sfc:
                 self.controller.put_sfc(node, sfc)
                 break
-            else:
-                continue
-
-
+        return
 
     def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
         delay_sfc = defaultdict(int)  # dict to store the delay taken to run the sfc over the path
@@ -257,15 +246,15 @@ class Markov(Policy):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {0: 15,  # nat
-                1: 25,  # fw
-                2: 25,  # ids
-                3: 20,  # wanopt
-                4: 20,  # lb
-                5: 25,  # encrypt
-                6: 25,  # decrypts
-                7: 30,  # dpi
-                }
+        vnfs_cpu = {0: 20,  # nat
+                    1: 25,  # fw
+                    2: 30,  # ids
+                    3: 35,  # wanopt
+                    4: 40,  # lb
+                    5: 45,  # encrypt
+                    6: 50,  # decrypts
+                    7: 55,  # dpi
+                    }
 
         sum_vnfs_cpu = 0
         for vnf in vnfs:
@@ -301,10 +290,6 @@ class Markov(Policy):
         self.controller.end_session()
 
 
-
-
-
-
 @register_policy('FIRST_ORDER')
 class FirstOrder(Policy):
     def __init__(self, view, controller, **kwargs):
@@ -312,15 +297,15 @@ class FirstOrder(Policy):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {0: 15,  # nat
-                1: 25,  # fw
-                2: 25,  # ids
-                3: 20,  # wanopt
-                4: 20,  # lb
-                5: 25,  # encrypt
-                6: 25,  # decrypts
-                7: 30,  # dpi
-                }
+        vnfs_cpu = {0: 20,  # nat
+                    1: 25,  # fw
+                    2: 30,  # ids
+                    3: 35,  # wanopt
+                    4: 40,  # lb
+                    5: 45,  # encrypt
+                    6: 50,  # decrypts
+                    7: 55,  # dpi
+                    }
 
         sum_vnfs_cpu = 0
         for vnf in vnfs:
@@ -364,14 +349,14 @@ class Baseline(Policy):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {0: 15,  # nat
-                1: 25,  # fw
-                2: 25,  # ids
-                3: 20,  # wanopt
-                4: 20,  # lb
-                5: 25,  # encrypt
-                6: 25,  # decrypts
-                7: 30,  # dpi
+        vnfs_cpu = {0: 20,  # nat
+                    1: 25,  # fw
+                    2: 30,  # ids
+                    3: 35,  # wanopt
+                    4: 40,  # lb
+                    5: 45,  # encrypt
+                    6: 50,  # decrypts
+                    7: 55,  # dpi
                     }
 
         sum_vnfs_cpu = 0
@@ -408,24 +393,23 @@ class Baseline(Policy):
         self.controller.end_session()
 
 
-
 @register_policy('HOD_VNF')
 class Hod(Policy):
 
-    def __init__(self, view, controller, **kwargs):
+    def __init__(self, view, controller):
         super(Hod, self).__init__(view, controller)
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {0: 15,  # nat
-                1: 25,  # fw
-                2: 25,  # ids
-                3: 20,  # wanopt
-                4: 20,  # lb
-                5: 25,  # encrypt
-                6: 25,  # decrypts
-                7: 30,  # dpi
-                }
+        vnfs_cpu = {0: 20,  # nat
+                    1: 25,  # fw
+                    2: 30,  # ids
+                    3: 35,  # wanopt
+                    4: 40,  # lb
+                    5: 45,  # encrypt
+                    6: 50,  # decrypts
+                    7: 55,  # dpi
+                    }
 
         sum_vnfs_cpu = 0
         for vnf in vnfs:
@@ -454,11 +438,11 @@ class Hod(Policy):
                             vnf_status[vnf] = 1
                             self.controller.vnf_proc(vnf)
                             self.controller.proc_vnf_payload(u, v)
-                        elif vnf_status[vnf] == 1:
+                        else:
                             continue
                     else:
                         missed_vnfs.append(vnf)
-                    print("The number of instances are", self.view.get_vnf_instances(vnf))
+                        # print("The number of instances are", self.view.get_vnf_instances(vnf))
 
             if len(missed_vnfs) != 0:
                 sum_cpu_missed_vnfs = Hod.sum_vnfs_cpu(missed_vnfs)
@@ -469,16 +453,66 @@ class Hod(Policy):
                     for missed_vnf in missed_vnfs:
                         vnf_status[missed_vnf] = 1
                         self.controller.put_vnf(v, missed_vnf)
-                        #self.controller.vnf_proc(missed_vnf)
+                        self.controller.vnf_proc(missed_vnf)
                         self.controller.proc_vnf_payload(u, v)
             delay_sfc[sfc_id] += sum_cpu_sfc
             if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
                 self.controller.sfc_hit(sfc_id)
                 break
 
-
         self.controller.end_session()
 
+
+@register_policy('HOD_VNF_OFF')
+class HodOff(Policy):
+
+    def __init__(self, view, controller):
+        super(HodOff, self).__init__(view, controller)
+
+    @staticmethod
+    def sum_vnfs_cpu(vnfs):
+        vnfs_cpu = {0: 20,  # nat
+                    1: 25,  # fw
+                    2: 30,  # ids
+                    3: 35,  # wanopt
+                    4: 40,  # lb
+                    5: 45,  # encrypt
+                    6: 50,  # decrypts
+                    7: 55,  # dpi
+                    }
+
+        sum_vnfs_cpu = 0
+        for vnf in vnfs:
+            if vnf in vnfs_cpu.keys():
+                sum_vnfs_cpu += vnfs_cpu[vnf]
+        return sum_vnfs_cpu
+
+    def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
+        delay_sfc = defaultdict(int)  # dict to store the delay taken to run the sfc over the path
+        path = self.view.shortest_path(ingress_node, egress_node)
+        self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, delay, log)
+        vnf_status = {vnf: 0 for vnf in sfc}  # 0 - not processed / 1 - processed
+        sum_cpu_sfc = Hod.sum_vnfs_cpu(sfc)  # total time processing of the sfc
+        # for u, v in path_links(path):
+        for hop in range(1, len(path)):
+            delay_sfc[sfc_id] = 0
+            u = path[hop - 1]
+            v = path[hop]
+            self.controller.forward_request_vnf_hop(u, v)
+            delay_sfc[sfc_id] += self.view.link_delay(u, v)
+            if self.view.is_nfv_node(v):
+                for vnf in sfc:
+                    if self.controller.get_vnf(v, vnf):
+                        if vnf_status[vnf] == 0:
+                            vnf_status[vnf] = 1
+                            self.controller.vnf_proc(vnf)
+                            self.controller.proc_vnf_payload(u, v)
+            delay_sfc[sfc_id] += sum_cpu_sfc
+            if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
+                self.controller.sfc_hit(sfc_id)
+                break
+
+        self.controller.end_session()
 
 
 @register_policy('HOD_DEG')
@@ -489,14 +523,14 @@ class HodDeg(Policy):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {0: 15,  # nat
+        vnfs_cpu = {0: 20,  # nat
                     1: 25,  # fw
-                    2: 25,  # ids
-                    3: 20,  # wanopt
-                    4: 20,  # lb
-                    5: 25,  # encrypt
-                    6: 25,  # decrypts
-                    7: 30,  # dpi
+                    2: 30,  # ids
+                    3: 35,  # wanopt
+                    4: 40,  # lb
+                    5: 45,  # encrypt
+                    6: 50,  # decrypts
+                    7: 55,  # dpi
                     }
 
         sum_vnfs_cpu = 0
@@ -532,15 +566,15 @@ class HodDeg(Policy):
                         missed_vnfs.append(vnf)
 
             if len(missed_vnfs) != 0:
-                sum_cpu_missed_vnfs = Hod.sum_vnfs_cpu(missed_vnfs)
-                nfv_node_min_cpu_all = self.controller.find_nfv_node_with_min_cpu_alloc(ingress_node, egress_node)
+                # sum_cpu_missed_vnfs = Hod.sum_vnfs_cpu(missed_vnfs)
+                # nfv_node_min_cpu_all = self.controller.find_nfv_node_with_min_cpu_alloc(ingress_node, egress_node)
                 closest_nfv_node = self.controller.get_closest_nfv_node(path)
                 # sum_cpu_vnfs_on_node = self.controller.sum_vnfs_cpu_on_node(closest_nfv_node)
                 if v == closest_nfv_node:  # and v == nfv_node_min_cpu_all:
                     for missed_vnf in missed_vnfs:
                         vnf_status[missed_vnf] = 1
                         self.controller.put_vnf(v, missed_vnf)
-                        #self.controller.vnf_proc(missed_vnf)
+                        # self.controller.vnf_proc(missed_vnf)
                         self.controller.proc_vnf_payload(u, v)
             delay_sfc[sfc_id] += sum_cpu_sfc
             if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
@@ -548,8 +582,6 @@ class HodDeg(Policy):
                 break
 
         self.controller.end_session()
-
-
 
 
 @register_policy('HOD_CLOSE')
@@ -560,14 +592,14 @@ class HodClose(Policy):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {0: 15,  # nat
+        vnfs_cpu = {0: 20,  # nat
                     1: 25,  # fw
-                    2: 25,  # ids
-                    3: 20,  # wanopt
-                    4: 20,  # lb
-                    5: 25,  # encrypt
-                    6: 25,  # decrypts
-                    7: 30,  # dpi
+                    2: 30,  # ids
+                    3: 35,  # wanopt
+                    4: 40,  # lb
+                    5: 45,  # encrypt
+                    6: 50,  # decrypts
+                    7: 55,  # dpi
                     }
 
         sum_vnfs_cpu = 0
@@ -611,7 +643,7 @@ class HodClose(Policy):
                     for missed_vnf in missed_vnfs:
                         vnf_status[missed_vnf] = 1
                         self.controller.put_vnf(v, missed_vnf)
-                        #self.controller.vnf_proc(missed_vnf)
+                        # self.controller.vnf_proc(missed_vnf)
                         self.controller.proc_vnf_payload(u, v)
             delay_sfc[sfc_id] += sum_cpu_sfc
             if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
@@ -619,7 +651,6 @@ class HodClose(Policy):
                 break
 
         self.controller.end_session()
-
 
 
 @register_policy('HOD_PAGE')
@@ -630,14 +661,14 @@ class HodPage(Policy):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {0: 15,  # nat
+        vnfs_cpu = {0: 20,  # nat
                     1: 25,  # fw
-                    2: 25,  # ids
-                    3: 20,  # wanopt
-                    4: 20,  # lb
-                    5: 25,  # encrypt
-                    6: 25,  # decrypts
-                    7: 30,  # dpi
+                    2: 30,  # ids
+                    3: 35,  # wanopt
+                    4: 40,  # lb
+                    5: 45,  # encrypt
+                    6: 50,  # decrypts
+                    7: 55,  # dpi
                     }
 
         sum_vnfs_cpu = 0
@@ -681,7 +712,7 @@ class HodPage(Policy):
                     for missed_vnf in missed_vnfs:
                         vnf_status[missed_vnf] = 1
                         self.controller.put_vnf(v, missed_vnf)
-                        #self.controller.vnf_proc(missed_vnf)
+                        # self.controller.vnf_proc(missed_vnf)
                         self.controller.proc_vnf_payload(u, v)
             delay_sfc[sfc_id] += sum_cpu_sfc
             if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
@@ -689,8 +720,6 @@ class HodPage(Policy):
                 break
 
         self.controller.end_session()
-
-
 
 
 @register_policy('HOD_EIGEN')
@@ -701,14 +730,14 @@ class HodEigen(Policy):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {0: 15,  # nat
+        vnfs_cpu = {0: 20,  # nat
                     1: 25,  # fw
-                    2: 25,  # ids
-                    3: 20,  # wanopt
-                    4: 20,  # lb
-                    5: 25,  # encrypt
-                    6: 25,  # decrypts
-                    7: 30,  # dpi
+                    2: 30,  # ids
+                    3: 35,  # wanopt
+                    4: 40,  # lb
+                    5: 45,  # encrypt
+                    6: 50,  # decrypts
+                    7: 55,  # dpi
                     }
 
         sum_vnfs_cpu = 0
@@ -752,7 +781,7 @@ class HodEigen(Policy):
                     for missed_vnf in missed_vnfs:
                         vnf_status[missed_vnf] = 1
                         self.controller.put_vnf(v, missed_vnf)
-                        #self.controller.vnf_proc(missed_vnf)
+                        # self.controller.vnf_proc(missed_vnf)
                         self.controller.proc_vnf_payload(u, v)
             delay_sfc[sfc_id] += sum_cpu_sfc
             if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
@@ -760,25 +789,6 @@ class HodEigen(Policy):
                 break
 
         self.controller.end_session()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 """

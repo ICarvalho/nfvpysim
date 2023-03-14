@@ -41,30 +41,33 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
     model_first_order = NetworkModelFirstOrder(topology, nfv_cache_policy, **netconf)
     model_baseline = NetworkModelBaseLine(topology, nfv_cache_policy, **netconf)
     model_proposal = NetworkModelProposal(topology, nfv_cache_policy, **netconf)
+    model_proposal_off = NetworkModelProposalOff(topology, nfv_cache_policy, **netconf)
     model_hod_deg = NetworkModelProposalDegree(topology, nfv_cache_policy, **netconf)
     model_hod_close = NetworkModelProposalCloseness(topology, nfv_cache_policy, **netconf)
     model_hod_page = NetworkModelProposalPageRank(topology, nfv_cache_policy, **netconf)
     model_hod_eigen = NetworkModelProposalEigenVector(topology, nfv_cache_policy, **netconf)
     model_first_fit = NetworkModelFirstFit(topology, nfv_cache_policy, **netconf)
 
-    #view_holu = NetworkViewHolu(model_holu)
+    # view_holu = NetworkViewHolu(model_holu)
     view_markov = NetworkViewMarkov(model_markov)
     view_tap_algo = NetworkViewTapAlgo(model_tap_algo)
     view_first_order = NetworkViewFirstOrder(model_first_order)
     view_baseline = NetworkViewBaseLine(model_baseline)
     view_proposal = NetworkViewProposal(model_proposal)
+    view_proposal_off = NetworkViewProposalOff(model_proposal_off)
     view_deg = NetworkViewDeg(model_hod_deg)
     view_close = NetworkViewClose(model_hod_close)
     view_page = NetworkViewPage(model_hod_page)
     view_eigen = NetworkViewEigen(model_hod_eigen)
     view_first_fit = NetworkViewFirstFit(model_first_fit)
 
-    #controller_holu = NetworkController(model_holu)
+    # controller_holu = NetworkController(model_holu)
     controller_markov = NetworkController(model_markov)
     controller_tap_algo = NetworkController(model_tap_algo)
     controller_first_order = NetworkController(model_first_order)
     controller_baseline = NetworkController(model_baseline)
     controller_proposal = NetworkController(model_proposal)
+    controller_proposal_off = NetworkController(model_proposal_off)
     controller_deg = NetworkController(model_hod_deg)
     controller_close = NetworkController(model_hod_close)
     controller_page = NetworkController(model_hod_page)
@@ -73,13 +76,14 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
 
     if policy['name'] == 'FIRST_FIT':
         collectors_inst_first_fit = [DATA_COLLECTOR[name](view_first_fit, **params)
-                                for name, params in collectors.items()]
+                                     for name, params in collectors.items()]
         collector_first_fit = CollectorProxy(view_first_fit, collectors_inst_first_fit)
         controller_first_fit.attach_collector(collector_first_fit)
 
         policy_name_first_fit = policy['name']
         policy_args_first_fit = {k: v for k, v in policy.items() if k != 'name'}
-        policy_inst_first_fit = POLICY[policy_name_first_fit](view_first_fit, controller_first_fit, **policy_args_first_fit)
+        policy_inst_first_fit = POLICY[policy_name_first_fit](view_first_fit, controller_first_fit,
+                                                              **policy_args_first_fit)
 
         for time, event in workload:
             policy_inst_first_fit.process_event(time, **event)
@@ -156,6 +160,21 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
             policy_inst_proposal.process_event(time, **event)
         return collector_proposal.results()
 
+    if policy['name'] == 'HOD_VNF_OFF':
+        collectors_inst_proposal_off = [DATA_COLLECTOR[name](view_proposal, **params)
+                                        for name, params in collectors.items()]
+        collector_proposal_off = CollectorProxy(view_proposal_off, collectors_inst_proposal_off)
+        controller_proposal_off.attach_collector(collector_proposal_off)
+
+        policy_name_proposal_off = policy['name']
+        policy_args_proposal_off = {k: v for k, v in policy.items() if k != 'name'}
+        policy_inst_proposal_off = POLICY[policy_name_proposal_off](view_proposal_off, controller_proposal_off,
+                                                                    **policy_args_proposal_off)
+
+        for time, event in workload:
+            policy_inst_proposal_off.process_event(time, **event)
+        return collector_proposal_off.results()
+
     if policy['name'] == 'HOD_DEG':
         collectors_inst_hod_deg = [DATA_COLLECTOR[name](view_deg, **params)
                                    for name, params in collectors.items()]
@@ -184,7 +203,6 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
             policy_inst_hod_close.process_event(time, **event)
         return collector_hod_close.results()
 
-
     if policy['name'] == 'HOD_PAGE':
         collectors_inst_hod_page = [DATA_COLLECTOR[name](view_page, **params)
                                     for name, params in collectors.items()]
@@ -199,10 +217,9 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
             policy_inst_hod_page.process_event(time, **event)
         return collector_hod_page.results()
 
-
     if policy['name'] == 'HOD_EIGEN':
         collectors_inst_hod_eigen = [DATA_COLLECTOR[name](view_eigen, **params)
-                                    for name, params in collectors.items()]
+                                     for name, params in collectors.items()]
         collector_hod_eigen = CollectorProxy(view_eigen, collectors_inst_hod_eigen)
         controller_eigen.attach_collector(collector_hod_eigen)
 
@@ -213,7 +230,6 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
         for time, event in workload:
             policy_inst_hod_eigen.process_event(time, **event)
         return collector_hod_eigen.results()
-
 
 
 """

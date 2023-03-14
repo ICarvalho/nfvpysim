@@ -10,7 +10,7 @@ __all__ = [
           ]
 
 @register_vnf_allocation('STATIC')
-def static_vnf_allocation(topology, cache_budget, **kwargs):
+def static_vnf_allocation(topology, cache_budget):
 
     nfv_nodes_candidates = topology.graph['nfv_nodes_candidates']
     cache_size = cache_budget
