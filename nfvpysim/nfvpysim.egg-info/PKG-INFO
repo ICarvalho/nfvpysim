@@ -2,8 +2,8 @@ Metadata-Version: 2.1
 Name: nfvpysim
 Version: 0.1.0
 Summary: A scalable simulator for evaluating the performance of in-network caches in Information Centric Networking (ICN)
-Home-page: https://github.com/ICarvalho/TESE
-Download-URL: https://github.com/ICarvalho/TESE
+Home-page: https://github.com/ICarvalho/nfvpysim
+Download-URL: https://github.com/ICarvalho/nfvpysim
 Author: Igor Furtado Carvalho
 Author-email: igfuca@gmail.com
 License: GNU GPLv2 license
