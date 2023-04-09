@@ -283,7 +283,7 @@ class Markov(Policy):
                             self.controller.vnf_proc(vnf)
                             self.controller.proc_vnf_payload(u, v)
             delay_sfc[sfc_id] += sum_cpu_sfc
-            if all(value == 1 for value in vnf_status.values()):
+            if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
                 self.controller.sfc_hit(sfc_id)
                 break
 
@@ -334,7 +334,7 @@ class FirstOrder(Policy):
                             self.controller.vnf_proc(vnf)
                             self.controller.proc_vnf_payload(u, v)
             delay_sfc[sfc_id] += sum_cpu_sfc
-            if all(value == 1 for value in vnf_status.values()):
+            if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
                 self.controller.sfc_hit(sfc_id)
                 break
 
@@ -388,7 +388,7 @@ class Baseline(Policy):
                             self.controller.proc_vnf_payload(u, v)
                 delay_sfc[sfc_id] += sum_cpu_sfc
             # print(delay_sfc[sfc_id])
-            if all(value == 1 for value in vnf_status.values()):
+            if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
                 print(delay_sfc)
                 self.controller.sfc_hit(sfc_id)
                 break
@@ -430,6 +430,7 @@ class Hod(Policy):
         # for u, v in path_links(path):
         delay_sfc[sfc_id] = 0.0
         for hop in range(1, len(path)):
+            delay_sfc[sfc_id] = 0
             u = path[hop - 1]
             v = path[hop]
             self.controller.forward_request_vnf_hop(u, v)
@@ -441,24 +442,26 @@ class Hod(Policy):
                             vnf_status[vnf] = 1
                             self.controller.vnf_proc(vnf)
                             self.controller.proc_vnf_payload(u, v)
+                        elif vnf_status[vnf] == 1:
+                            continue
                     else:
                         missed_vnfs.append(vnf)
-                    # print("The number of instances are", self.view.get_vnf_instances(vnf))
+
             if len(missed_vnfs) != 0:
+                sum_cpu_missed_vnfs = Hod.sum_vnfs_cpu(missed_vnfs)
+                nfv_node_min_cpu_all = self.controller.find_nfv_node_with_min_cpu_alloc(ingress_node, egress_node)
                 closest_nfv_node = self.controller.get_closest_nfv_node(path)
+                # sum_cpu_vnfs_on_node = self.controller.sum_vnfs_cpu_on_node(closest_nfv_node)
                 if v == closest_nfv_node:  # and v == nfv_node_min_cpu_all:
                     for missed_vnf in missed_vnfs:
                         vnf_status[missed_vnf] = 1
                         self.controller.put_vnf(v, missed_vnf)
-                        self.controller.vnf_proc(missed_vnf)
+                        # self.controller.vnf_proc(missed_vnf)
                         self.controller.proc_vnf_payload(u, v)
-                delay_sfc[sfc_id] += sum_cpu_sfc
-                # print("delay_sfc_id:", delay_sfc[sfc_id])
-                # print("delay:", delay)
-                if all(value == 1 for value in vnf_status.values()):
-                    self.controller.sfc_hit(sfc_id)
-                    break
-
+            delay_sfc[sfc_id] += sum_cpu_sfc
+            if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
+                self.controller.sfc_hit(sfc_id)
+                break
         self.controller.end_session()
 
 
@@ -507,7 +510,7 @@ class HodOff(Policy):
                             self.controller.vnf_proc(vnf)
                             self.controller.proc_vnf_payload(u, v)
             delay_sfc[sfc_id] += sum_cpu_sfc
-            if all(value == 1 for value in vnf_status.values()):
+            if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
                 self.controller.sfc_hit(sfc_id)
                 break
 
