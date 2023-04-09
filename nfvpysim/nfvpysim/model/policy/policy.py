@@ -421,6 +421,8 @@ class Hod(Policy):
         return sum_vnfs_cpu
 
     def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
+        print(sfc)
+        print(delay)
         delay_sfc = {}  # dict to store the delay taken to run the sfc over the path
         missed_vnfs = []
         path = self.view.shortest_path(ingress_node, egress_node)
@@ -496,8 +498,8 @@ class HodOff(Policy):
         vnf_status = {vnf: 0 for vnf in sfc}  # 0 - not processed / 1 - processed
         sum_cpu_sfc = Hod.sum_vnfs_cpu(sfc)  # total time processing of the sfc
         # for u, v in path_links(path):
-        delay_sfc[sfc_id] = 0
         for hop in range(1, len(path)):
+            delay_sfc[sfc_id] = 0.0
             u = path[hop - 1]
             v = path[hop]
             self.controller.forward_request_vnf_hop(u, v)
