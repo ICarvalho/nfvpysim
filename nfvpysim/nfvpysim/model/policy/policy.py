@@ -452,11 +452,10 @@ class Hod(Policy):
                         self.controller.put_vnf(v, missed_vnf)
                         self.controller.vnf_proc(missed_vnf)
                         self.controller.proc_vnf_payload(u, v)
-                if delay_sfc[sfc_id] is not None:
-                    if all(value == 1 for value in vnf_status.values() and delay_sfc[sfc_id] <= delay):
-                        delay_sfc[sfc_id] += sum_cpu_sfc
-                        self.controller.sfc_hit(sfc_id)
-                        break
+            delay_sfc[sfc_id] += sum_cpu_sfc
+            if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
+                self.controller.sfc_hit(sfc_id)
+                break
 
         self.controller.end_session()
 
