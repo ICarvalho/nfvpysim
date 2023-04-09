@@ -32,5 +32,5 @@ with few lines of code.
 
 # URL
 
-url = 'https://github.com/ICarvalho/TESE'
+url = 'https://github.com/ICarvalho/nfvpysim'
 download_url = url
