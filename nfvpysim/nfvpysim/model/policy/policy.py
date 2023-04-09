@@ -283,7 +283,7 @@ class Markov(Policy):
                             self.controller.vnf_proc(vnf)
                             self.controller.proc_vnf_payload(u, v)
             delay_sfc[sfc_id] += sum_cpu_sfc
-            if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
+            if all(value == 1 for value in vnf_status.values()):
                 self.controller.sfc_hit(sfc_id)
                 break
 
@@ -334,7 +334,7 @@ class FirstOrder(Policy):
                             self.controller.vnf_proc(vnf)
                             self.controller.proc_vnf_payload(u, v)
             delay_sfc[sfc_id] += sum_cpu_sfc
-            if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
+            if all(value == 1 for value in vnf_status.values()):
                 self.controller.sfc_hit(sfc_id)
                 break
 
@@ -388,7 +388,7 @@ class Baseline(Policy):
                             self.controller.proc_vnf_payload(u, v)
                 delay_sfc[sfc_id] += sum_cpu_sfc
             # print(delay_sfc[sfc_id])
-            if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
+            if all(value == 1 for value in vnf_status.values()):
                 print(delay_sfc)
                 self.controller.sfc_hit(sfc_id)
                 break
@@ -507,7 +507,7 @@ class HodOff(Policy):
                             self.controller.vnf_proc(vnf)
                             self.controller.proc_vnf_payload(u, v)
             delay_sfc[sfc_id] += sum_cpu_sfc
-            if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
+            if all(value == 1 for value in vnf_status.values()):
                 self.controller.sfc_hit(sfc_id)
                 break
 
