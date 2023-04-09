@@ -122,10 +122,10 @@ def topology_geant(**kwargs):
 
 
     # Set weight and delay on all links
-    #fnss.set_weights_constant(topology, 1.0)
-    #fnss.set_delays_constant(topology, INTERNAL_LINK_DELAY, 'ms')
     fnss.set_weights_constant(topology, 1.0)
-    fnss.set_delays_geo_distance(topology, specific_delay=1, default_delay=1, delay_unit='ms')
+    fnss.set_delays_constant(topology, INTERNAL_LINK_DELAY, 'ms')
+    #fnss.set_weights_constant(topology, 1.0)
+    #fnss.set_delays_geo_distance(topology, specific_delay=1, default_delay=1, delay_unit='ms')
     # label links as internal or external
     for u, v in topology.edges():
         if u in egress_nodes or v in egress_nodes:
@@ -221,10 +221,10 @@ def topology_tatanld(**kwargs):
 
 
     # Set weight and delay on all links
-    #fnss.set_weights_constant(topology, 1.0)
-    #fnss.set_delays_constant(topology, INTERNAL_LINK_DELAY, 'ms')
     fnss.set_weights_constant(topology, 1.0)
-    fnss.set_delays_geo_distance(topology, specific_delay=1, default_delay=1, delay_unit='ms')
+    fnss.set_delays_constant(topology, INTERNAL_LINK_DELAY, 'ms')
+    #fnss.set_weights_constant(topology, 1.0)
+    #fnss.set_delays_geo_distance(topology, specific_delay=1, default_delay=1, delay_unit='ms')
     # label links as internal or external
     for u, v in topology.edges():
         if u in egress_nodes or v in egress_nodes:
@@ -365,10 +365,10 @@ def topology_bestel(**kwargs):
 
 
     # Set weight and delay on all links
-    #fnss.set_weights_constant(topology, 1.0)
-    #fnss.set_delays_constant(topology, INTERNAL_LINK_DELAY, 'ms')
     fnss.set_weights_constant(topology, 1.0)
-    fnss.set_delays_geo_distance(topology, specific_delay=1, default_delay=1, delay_unit='ms')
+    fnss.set_delays_constant(topology, INTERNAL_LINK_DELAY, 'ms')
+    #fnss.set_weights_constant(topology, 1.0)
+    #fnss.set_delays_geo_distance(topology, specific_delay=1, default_delay=1, delay_unit='ms')
     # label links as internal or external
     for u, v in topology.edges():
         if u in egress_nodes or v in egress_nodes:
@@ -414,10 +414,10 @@ def topology_uscarrier(**kwargs):
 
 
     # Set weight and delay on all links
-    #fnss.set_weights_constant(topology, 1.0)
-    #fnss.set_delays_constant(topology, INTERNAL_LINK_DELAY, 'ms')
     fnss.set_weights_constant(topology, 1.0)
-    fnss.set_delays_geo_distance(topology, specific_delay=1, default_delay=1, delay_unit='ms')
+    fnss.set_delays_constant(topology, INTERNAL_LINK_DELAY, 'ms')
+    #fnss.set_weights_constant(topology, 1.0)
+    #fnss.set_delays_geo_distance(topology, specific_delay=1, default_delay=1, delay_unit='ms')
     # label links as internal or external
     for u, v in topology.edges():
         if u in egress_nodes or v in egress_nodes:
@@ -460,10 +460,10 @@ def topology_viatel(**kwargs):
 
 
     # Set weight and delay on all links
-    #fnss.set_weights_constant(topology, 1.0)
-    #fnss.set_delays_constant(topology, INTERNAL_LINK_DELAY, 'ms')
     fnss.set_weights_constant(topology, 1.0)
-    fnss.set_delays_geo_distance(topology, specific_delay=1, default_delay=1, delay_unit='ms')
+    fnss.set_delays_constant(topology, INTERNAL_LINK_DELAY, 'ms')
+    #fnss.set_weights_constant(topology, 1.0)
+    #fnss.set_delays_geo_distance(topology, specific_delay=1, default_delay=1, delay_unit='ms')
     # label links as internal or external
     for u, v in topology.edges():
         if u in egress_nodes or v in egress_nodes:
@@ -512,10 +512,10 @@ def topology_cogentco(**kwargs):
 
 
     # Set weight and delay on all links
-    #fnss.set_weights_constant(topology, 1.0)
-    #fnss.set_delays_constant(topology, INTERNAL_LINK_DELAY, 'ms')
     fnss.set_weights_constant(topology, 1.0)
-    fnss.set_delays_geo_distance(topology, specific_delay=1, default_delay=1, delay_unit='ms')
+    fnss.set_delays_constant(topology, INTERNAL_LINK_DELAY, 'ms')
+    #fnss.set_weights_constant(topology, 1.0)
+    #fnss.set_delays_geo_distance(topology, specific_delay=1, default_delay=1, delay_unit='ms')
     # label links as internal or external
     for u, v in topology.edges():
         if u in egress_nodes or v in egress_nodes:
@@ -564,10 +564,10 @@ def topology_colt(**kwargs):
 
 
     # Set weight and delay on all links
-    #fnss.set_weights_constant(topology, 1.0)
-    #fnss.set_delays_constant(topology, INTERNAL_LINK_DELAY, 'ms')
     fnss.set_weights_constant(topology, 1.0)
-    fnss.set_delays_geo_distance(topology, specific_delay=1, default_delay=1, delay_unit='ms')
+    fnss.set_delays_constant(topology, INTERNAL_LINK_DELAY, 'ms')
+    #fnss.set_weights_constant(topology, 1.0)
+    #fnss.set_delays_geo_distance(topology, specific_delay=1, default_delay=1, delay_unit='ms')
     # label links as internal or external
     for u, v in topology.edges():
         if u in egress_nodes or v in egress_nodes:
@@ -617,10 +617,10 @@ def topology_interroute(**kwargs):
 
 
     # Set weight and delay on all links
-    #fnss.set_weights_constant(topology, 1.0)
-    #fnss.set_delays_constant(topology, INTERNAL_LINK_DELAY, 'ms')
     fnss.set_weights_constant(topology, 1.0)
-    fnss.set_delays_geo_distance(topology, specific_delay=1, default_delay=1, delay_unit='ms')
+    fnss.set_delays_constant(topology, INTERNAL_LINK_DELAY, 'ms')
+    #fnss.set_weights_constant(topology, 1.0)
+    #fnss.set_delays_geo_distance(topology, specific_delay=1, default_delay=1, delay_unit='ms')
     # label links as internal or external
     for u, v in topology.edges():
         if u in egress_nodes or v in egress_nodes:
@@ -640,15 +640,12 @@ def topology_interroute(**kwargs):
 def topology_barabasi_albert(**kwargs):
     # create a topology with 10 core switches, 20 edge switches and 10 hosts
     # per switch (i.e. 200 hosts in total)
-    topology = fnss.glp_topology(350, 3, 5, 0.2, 0.48)
+    topology = fnss.barabasi_albert_topology(500, 5, 10)
 
 
-    ingress_nodes = random.sample(list(dict(topology.nodes)), 100)   # 100 random ingress nodes
-
-    egress_nodes = random.sample(list(dict(topology.nodes)), 100)   # 100 random egress nodes
-
+    ingress_nodes = [random.sample(list(dict(topology.nodes)), 100)]   # 100 random ingress nodes
+    egress_nodes = [random.sample(list(dict(topology.nodes)), 100)]   # 100 random egress nodes
     nfv_nodes = [v for v in list(topology.nodes) if v not in ingress_nodes + egress_nodes]  #
-
     topology.graph['nfv_nodes_candidates'] = set(nfv_nodes)
 
 
@@ -735,16 +732,12 @@ def topology_datacenter_two_tier(**kwargs):
 #print(b)
 
 """
-topo = topology_barabasi_albert()
-print("ingress_nodes:", topo.ingress_nodes())
-print("egress_nodes:", topo.egress_nodes())
-print("nfv_nodes:", topo.nfv_nodes())
+topo = topology_tatanld()
+print("ingress_nodes:", len(topo.ingress_nodes()))
+print("egress_nodes:", len(topo.egress_nodes()))
+print("nfv_nodes:", len(topo.nfv_nodes()))
 print()
 """
-
-
-
-
 
 
 """

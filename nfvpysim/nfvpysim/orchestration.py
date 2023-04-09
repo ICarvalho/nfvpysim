@@ -13,13 +13,12 @@ import signal
 import traceback
 
 from nfvpysim.execution import exec_experiment
-from nfvpysim.registry import TOPOLOGY_FACTORY, POLICY, VNF_ALLOCATION,  WORKLOAD, DATA_COLLECTOR, CACHE_POLICY, VNF_PLACEMENT
+from nfvpysim.registry import TOPOLOGY_FACTORY, POLICY, VNF_ALLOCATION, WORKLOAD, DATA_COLLECTOR, CACHE_POLICY, \
+    VNF_PLACEMENT
 from nfvpysim.results import ResultSet
 from nfvpysim.util import SequenceNumber, timestr
 
-
 __all__ = ['Orchestrator', 'run_scenario']
-
 
 logger = logging.getLogger('orchestration')
 
@@ -70,8 +69,8 @@ class Orchestrator(object):
         # Calculate number of experiments and number of processes
         self.n_exp = len(queue) * self.settings.N_REPLICATIONS
         self.n_proc = self.settings.N_PROCESSES \
-                      if self.settings.PARALLEL_EXECUTION \
-                      else 1
+            if self.settings.PARALLEL_EXECUTION \
+            else 1
         logger.info('Starting simulations: %d experiments, %d process(es)'
                     % (self.n_exp, self.n_proc))
 
@@ -92,9 +91,9 @@ class Orchestrator(object):
                 experiment = queue.popleft()
                 for _ in range(self.settings.N_REPLICATIONS):
                     job_queue.append(self.pool.apply_async(run_scenario,
-                            args=(self.settings, experiment,
-                                  self.seq.assign(), self.n_exp),
-                            **callbacks))
+                                                           args=(self.settings, experiment,
+                                                                 self.seq.assign(), self.n_exp),
+                                                           **callbacks))
             self.pool.close()
             # This solution is probably not optimal, but at least makes
             # KeyboardInterrupt work fine, which is crucial if launching the
@@ -117,8 +116,8 @@ class Orchestrator(object):
                 experiment = queue.popleft()
                 for _ in range(self.settings.N_REPLICATIONS):
                     self.experiment_callback(run_scenario(self.settings,
-                                            experiment, self.seq.assign(),
-                                            self.n_exp))
+                                                          experiment, self.seq.assign(),
+                                                          self.n_exp))
                     if self._stop:
                         self.stop()
 
@@ -216,14 +215,13 @@ def run_scenario(settings, params, curr_exp, n_exp):
             return None
         workload = WORKLOAD[workload_name](topology, **workload_spec)
 
-
         # perform allocation space t vnfs on nfv_nodes
         if 'vnf_allocation' in tree:
             vnf_allocation_spec = tree['vnf_allocation']
             vnf_allocation_name = vnf_allocation_spec.pop('name')
             if vnf_allocation_name not in VNF_ALLOCATION:
                 logger.error('No cache placement named %s was found.'
-                         % vnf_allocation_name)
+                             % vnf_allocation_name)
                 return None
             network_cache = vnf_allocation_spec.pop('network_cache')
             # Cache budget is the cumulative number of cache entries across
@@ -231,16 +229,11 @@ def run_scenario(settings, params, curr_exp, n_exp):
             vnf_allocation_spec['cache_budget'] = network_cache
             VNF_ALLOCATION[vnf_allocation_name](topology, **vnf_allocation_spec)
 
-
-
-
         # cache eviction policy definition
         nfv_cache_policy = tree['nfv_cache_policy']
         if nfv_cache_policy['name'] not in CACHE_POLICY:
             logger.error('No implementation of cache policy %s was found.' % nfv_cache_policy['name'])
             return None
-
-
 
         if 'vnf_placement' in tree:
             vnf_placement_spec = tree['vnf_placement']
@@ -248,8 +241,7 @@ def run_scenario(settings, params, curr_exp, n_exp):
             if vnf_placement_name not in VNF_PLACEMENT:
                 logger.error('No implementation of vnf_placement %s was found.' % vnf_placement_name)
                 return None
-            VNF_PLACEMENT[vnf_placement_name](topology) 
-
+            VNF_PLACEMENT[vnf_placement_name](topology)
 
         """
          vnf_placement_spec = tree['vnf_placement']
@@ -258,19 +250,14 @@ def run_scenario(settings, params, curr_exp, n_exp):
             logger.error('No implementation of vnf_placement %s was found' % vnf_placement_name)
             return None
         VNF_PLACEMENT[vnf_placement_name](topology, nfv_cache_policy, **vnf_placement_spec)
-        
+
         """
-
-
-
 
         # caching and routing strategy definition
         policy = tree['policy']
         if policy['name'] not in POLICY:
             logger.error('No implementation of strategy %s was found.' % policy['name'])
             return None
-
-
 
         # Configuration parameters of network model
         netconf = tree['netconf']
@@ -299,4 +286,5 @@ def run_scenario(settings, params, curr_exp, n_exp):
     except Exception as e:
         err_type = str(type(e)).split("'")[1].split(".")[0]
         err_message = e
-        logger.error('Experiment %d/%d | Failed | %s: %s\n%s', curr_exp, n_exp, err_type, err_message, traceback.format_exc())
+        logger.error('Experiment %d/%d | Failed | %s: %s\n%s', curr_exp, n_exp, err_type, err_message,
+                     traceback.format_exc())
