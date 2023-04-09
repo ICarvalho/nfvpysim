@@ -434,7 +434,6 @@ class Hod(Policy):
             v = path[hop]
             self.controller.forward_request_vnf_hop(u, v)
             delay_sfc[sfc_id] += self.view.link_delay(u, v)
-            print(delay_sfc[sfc_id])
             if self.view.is_nfv_node(v) and v != egress_node:
                 for vnf in sfc:
                     if self.controller.get_vnf(v, vnf):
@@ -453,9 +452,12 @@ class Hod(Policy):
                         self.controller.put_vnf(v, missed_vnf)
                         self.controller.vnf_proc(missed_vnf)
                         self.controller.proc_vnf_payload(u, v)
-            delay_sfc[sfc_id] += sum_cpu_sfc
-            if all(value for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
-                self.controller.sfc_hit(sfc_id)
+                delay_sfc[sfc_id] += sum_cpu_sfc
+                # print("delay_sfc_id:", delay_sfc[sfc_id])
+                # print("delay:", delay)
+                if all(value == 1 for value in vnf_status.values()):
+                    self.controller.sfc_hit(sfc_id)
+                    break
 
         self.controller.end_session()
 
