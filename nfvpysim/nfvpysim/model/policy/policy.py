@@ -441,16 +441,11 @@ class Hod(Policy):
                             vnf_status[vnf] = 1
                             self.controller.vnf_proc(vnf)
                             self.controller.proc_vnf_payload(u, v)
-                        elif vnf_status[vnf] == 1:
-                            continue
                     else:
                         missed_vnfs.append(vnf)
                     # print("The number of instances are", self.view.get_vnf_instances(vnf))
             if len(missed_vnfs) != 0:
-                sum_cpu_missed_vnfs = Hod.sum_vnfs_cpu(missed_vnfs)
-                nfv_node_min_cpu_all = self.controller.find_nfv_node_with_min_cpu_alloc(ingress_node, egress_node)
                 closest_nfv_node = self.controller.get_closest_nfv_node(path)
-                # sum_cpu_vnfs_on_node = self.controller.sum_vnfs_cpu_on_node(closest_nfv_node)
                 if v == closest_nfv_node:  # and v == nfv_node_min_cpu_all:
                     for missed_vnf in missed_vnfs:
                         vnf_status[missed_vnf] = 1
@@ -490,7 +485,7 @@ class HodOff(Policy):
         return sum_vnfs_cpu
 
     def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
-        delay_sfc = defaultdict(int)  # dict to store the delay taken to run the sfc over the path
+        delay_sfc = {}  # dict to store the delay taken to run the sfc over the path
         path = self.view.shortest_path(ingress_node, egress_node)
         self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, delay, log)
         vnf_status = {vnf: 0 for vnf in sfc}  # 0 - not processed / 1 - processed
