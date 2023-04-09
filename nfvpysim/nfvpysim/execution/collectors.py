@@ -164,14 +164,14 @@ class LatencyCollector(DataCollector):
         self.sess_count = 0
         self.latency = 0.0
         self.vnf_proc_time = 0.0
-        self.dict_vnfs_cpu_req_proc_delay = {0: 20,  # nat
+        self.dict_vnfs_cpu_req_proc_delay = {0: 15,  # nat
                                              1: 25,  # fw
-                                             2: 30,  # ids
-                                             3: 35,  # wanopt
-                                             4: 40,  # lb
-                                             5: 45,  # encrypt
-                                             6: 50,  # decrypts
-                                             7: 55,  # dpi
+                                             2: 25,  # ids
+                                             3: 20,  # wanopt
+                                             4: 20,  # lb
+                                             5: 25,  # encrypt
+                                             6: 25,  # decrypts
+                                             7: 30  # dpi
                                              }
 
         if cdf:
@@ -260,7 +260,7 @@ class PathStretchCollector(DataCollector):
     path length and the shortest path length.
     """
 
-    def __init__(self, view, cdf=False):
+    def __init__(self, view, cdf=False, **params):
         """Constructor
         Parameters
         ----------
@@ -269,6 +269,7 @@ class PathStretchCollector(DataCollector):
         cdf : bool, optional
             If *True*, also collects a cdf of the path stretch
         """
+        super().__init__(view, **params)
         self.view = view
         self.sp = None
         self.ingress_node = None
@@ -294,7 +295,7 @@ class PathStretchCollector(DataCollector):
     def end_session(self, success=True):
         if not success:
             return
-        req_sp_len= len(self.view.shortest_path(self.ingress_node, self.egress_node))
+        req_sp_len = len(self.view.shortest_path(self.ingress_node, self.egress_node))
         req_stretch = self.req_path_len / req_sp_len
         self.mean_stretch += req_stretch
 

@@ -32,7 +32,7 @@ N_REPLICATIONS = 10
 DATA_COLLECTORS = [
     'ACCEPTANCE_RATIO',
     'LATENCY',  # Measure request and response latency (based on static link delays)
-    'LINK_LOAD',
+    #'LINK_LOAD',
 #   'PATH_STRETCH'
 
 ]
@@ -52,10 +52,11 @@ N_WARMUP_REQUESTS = 0
 
 # Number of measured requests
 
-N_MEASURED_REQUESTS = [10 ** 1, 10 ** 2, 10 ** 3, 10 ** 4, 10 ** 5]
+# N_MEASURED_REQUESTS = [10 ** 1, 10 ** 2, 10 ** 3, 10 ** 4, 10 ** 5]
+N_MEASURED_REQUESTS = [10 ** 2]
 
 # Number of requests per second (over the whole network)
-SFC_REQ_RATES = 100.0
+SFC_REQ_RATES = 10.0
 
 # vnf allocation policy
 VNF_ALLOCATION_POLICY = 'STATIC'
@@ -76,7 +77,7 @@ TOPOLOGIES = ['ION', 'BESTEL', 'USCARRIER', 'COGENTCO']
 
 # List of caching and routing strategies
 # Remove strategies not needed
-POLICIES = ['HOD_VNF', 'HOD_VNF_OFF']
+POLICIES = ['HOD_VNF']
 # POLICIES = ['BASELINE', 'MARKOV', 'HOD_VNF', 'FIRST_ORDER', 'HOD_VNF_OFF']
 # POLICIES = ['HOD_VNF', 'HOD_DEG', 'HOD_CLOSE', 'HOD_PAGE', 'HOD_EIGEN']
 

@@ -43,14 +43,14 @@ class Bcsp(Policy):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {0: 20,  # nat
+        vnfs_cpu = {0: 15,  # nat
                     1: 25,  # fw
-                    2: 30,  # ids
-                    3: 35,  # wanopt
-                    4: 40,  # lb
-                    5: 45,  # encrypt
-                    6: 50,  # decrypts
-                    7: 55,  # dpi
+                    2: 25,  # ids
+                    3: 20,  # wanopt
+                    4: 20,  # lb
+                    5: 25,  # encrypt
+                    6: 25,  # decrypts
+                    7: 30,  # dpi
                     }
 
         sum_vnfs_cpu = 0
@@ -112,14 +112,14 @@ class TapAlgo(Policy):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {0: 20,  # nat
+        vnfs_cpu = {0: 15,  # nat
                     1: 25,  # fw
-                    2: 30,  # ids
-                    3: 35,  # wanopt
-                    4: 40,  # lb
-                    5: 45,  # encrypt
-                    6: 50,  # decrypts
-                    7: 55,  # dpi
+                    2: 25,  # ids
+                    3: 20,  # wanopt
+                    4: 20,  # lb
+                    5: 25,  # encrypt
+                    6: 25,  # decrypts
+                    7: 30,  # dpi
                     }
 
         sum_vnfs_cpu = 0
@@ -185,14 +185,14 @@ class FirstFit(Policy, ABC):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {0: 20,  # nat
+        vnfs_cpu = {0: 15,  # nat
                     1: 25,  # fw
-                    2: 30,  # ids
-                    3: 35,  # wanopt
-                    4: 40,  # lb
-                    5: 45,  # encrypt
-                    6: 50,  # decrypts
-                    7: 55,  # dpi
+                    2: 25,  # ids
+                    3: 20,  # wanopt
+                    4: 20,  # lb
+                    5: 25,  # encrypt
+                    6: 25,  # decrypts
+                    7: 30,  # dpi
                     }
 
         sum_vnfs_cpu = 0
@@ -246,14 +246,14 @@ class Markov(Policy):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {0: 20,  # nat
+        vnfs_cpu = {0: 15,  # nat
                     1: 25,  # fw
-                    2: 30,  # ids
-                    3: 35,  # wanopt
-                    4: 40,  # lb
-                    5: 45,  # encrypt
-                    6: 50,  # decrypts
-                    7: 55,  # dpi
+                    2: 25,  # ids
+                    3: 20,  # wanopt
+                    4: 20,  # lb
+                    5: 25,  # encrypt
+                    6: 25,  # decrypts
+                    7: 30,  # dpi
                     }
 
         sum_vnfs_cpu = 0
@@ -297,14 +297,14 @@ class FirstOrder(Policy):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {0: 20,  # nat
+        vnfs_cpu = {0: 15,  # nat
                     1: 25,  # fw
-                    2: 30,  # ids
-                    3: 35,  # wanopt
-                    4: 40,  # lb
-                    5: 45,  # encrypt
-                    6: 50,  # decrypts
-                    7: 55,  # dpi
+                    2: 25,  # ids
+                    3: 20,  # wanopt
+                    4: 20,  # lb
+                    5: 25,  # encrypt
+                    6: 25,  # decrypts
+                    7: 30,  # dpi
                     }
 
         sum_vnfs_cpu = 0
@@ -349,14 +349,14 @@ class Baseline(Policy):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {0: 20,  # nat
+        vnfs_cpu = {0: 15,  # nat
                     1: 25,  # fw
-                    2: 30,  # ids
-                    3: 35,  # wanopt
-                    4: 40,  # lb
-                    5: 45,  # encrypt
-                    6: 50,  # decrypts
-                    7: 55,  # dpi
+                    2: 25,  # ids
+                    3: 20,  # wanopt
+                    4: 20,  # lb
+                    5: 25,  # encrypt
+                    6: 25,  # decrypts
+                    7: 30  # dpi
                     }
 
         sum_vnfs_cpu = 0
@@ -372,6 +372,7 @@ class Baseline(Policy):
         vnf_status = {vnf: 0 for vnf in sfc}  # 0 - not processed / 1 - processed
         sum_cpu_sfc = FirstOrder.sum_vnfs_cpu(sfc)  # total time processing of the sfc
         # for u, v in path_links(path):
+        delay_sfc[sfc_id] = sum_cpu_sfc
         for hop in range(1, len(path)):
             delay_sfc[sfc_id] = 0
             u = path[hop - 1]
@@ -385,8 +386,10 @@ class Baseline(Policy):
                             vnf_status[vnf] = 1
                             self.controller.vnf_proc(vnf)
                             self.controller.proc_vnf_payload(u, v)
-            delay_sfc[sfc_id] += sum_cpu_sfc
+                delay_sfc[sfc_id] += sum_cpu_sfc
+            # print(delay_sfc[sfc_id])
             if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
+                print(delay_sfc)
                 self.controller.sfc_hit(sfc_id)
                 break
 
@@ -401,14 +404,14 @@ class Hod(Policy):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {0: 20,  # nat
+        vnfs_cpu = {0: 15,  # nat
                     1: 25,  # fw
-                    2: 30,  # ids
-                    3: 35,  # wanopt
-                    4: 40,  # lb
-                    5: 45,  # encrypt
-                    6: 50,  # decrypts
-                    7: 55,  # dpi
+                    2: 25,  # ids
+                    3: 20,  # wanopt
+                    4: 20,  # lb
+                    5: 25,  # encrypt
+                    6: 25,  # decrypts
+                    7: 30  # dpi
                     }
 
         sum_vnfs_cpu = 0
@@ -418,15 +421,15 @@ class Hod(Policy):
         return sum_vnfs_cpu
 
     def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
-        delay_sfc = defaultdict(int)  # dict to store the delay taken to run the sfc over the path
+        delay_sfc = {}  # dict to store the delay taken to run the sfc over the path
         missed_vnfs = []
         path = self.view.shortest_path(ingress_node, egress_node)
         self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, delay, log)
         vnf_status = {vnf: 0 for vnf in sfc}  # 0 - not processed / 1 - processed
         sum_cpu_sfc = Hod.sum_vnfs_cpu(sfc)  # total time processing of the sfc
         # for u, v in path_links(path):
+        delay_sfc[sfc_id] = 0
         for hop in range(1, len(path)):
-            delay_sfc[sfc_id] = 0
             u = path[hop - 1]
             v = path[hop]
             self.controller.forward_request_vnf_hop(u, v)
@@ -438,12 +441,11 @@ class Hod(Policy):
                             vnf_status[vnf] = 1
                             self.controller.vnf_proc(vnf)
                             self.controller.proc_vnf_payload(u, v)
-                        else:
+                        elif vnf_status[vnf] == 1:
                             continue
                     else:
                         missed_vnfs.append(vnf)
-                        # print("The number of instances are", self.view.get_vnf_instances(vnf))
-
+                    # print("The number of instances are", self.view.get_vnf_instances(vnf))
             if len(missed_vnfs) != 0:
                 sum_cpu_missed_vnfs = Hod.sum_vnfs_cpu(missed_vnfs)
                 nfv_node_min_cpu_all = self.controller.find_nfv_node_with_min_cpu_alloc(ingress_node, egress_node)
@@ -471,14 +473,14 @@ class HodOff(Policy):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {0: 20,  # nat
+        vnfs_cpu = {0: 15,  # nat
                     1: 25,  # fw
-                    2: 30,  # ids
-                    3: 35,  # wanopt
-                    4: 40,  # lb
-                    5: 45,  # encrypt
-                    6: 50,  # decrypts
-                    7: 55,  # dpi
+                    2: 25,  # ids
+                    3: 20,  # wanopt
+                    4: 20,  # lb
+                    5: 25,  # encrypt
+                    6: 25,  # decrypts
+                    7: 30  # dpi
                     }
 
         sum_vnfs_cpu = 0
@@ -494,8 +496,8 @@ class HodOff(Policy):
         vnf_status = {vnf: 0 for vnf in sfc}  # 0 - not processed / 1 - processed
         sum_cpu_sfc = Hod.sum_vnfs_cpu(sfc)  # total time processing of the sfc
         # for u, v in path_links(path):
+        delay_sfc[sfc_id] = 0
         for hop in range(1, len(path)):
-            delay_sfc[sfc_id] = 0
             u = path[hop - 1]
             v = path[hop]
             self.controller.forward_request_vnf_hop(u, v)
@@ -523,14 +525,14 @@ class HodDeg(Policy):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {0: 20,  # nat
+        vnfs_cpu = {0: 15,  # nat
                     1: 25,  # fw
-                    2: 30,  # ids
-                    3: 35,  # wanopt
-                    4: 40,  # lb
-                    5: 45,  # encrypt
-                    6: 50,  # decrypts
-                    7: 55,  # dpi
+                    2: 25,  # ids
+                    3: 20,  # wanopt
+                    4: 20,  # lb
+                    5: 25,  # encrypt
+                    6: 25,  # decrypts
+                    7: 30,  # dpi
                     }
 
         sum_vnfs_cpu = 0
@@ -592,14 +594,14 @@ class HodClose(Policy):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {0: 20,  # nat
+        vnfs_cpu = {0: 15,  # nat
                     1: 25,  # fw
-                    2: 30,  # ids
-                    3: 35,  # wanopt
-                    4: 40,  # lb
-                    5: 45,  # encrypt
-                    6: 50,  # decrypts
-                    7: 55,  # dpi
+                    2: 25,  # ids
+                    3: 20,  # wanopt
+                    4: 20,  # lb
+                    5: 25,  # encrypt
+                    6: 25,  # decrypts
+                    7: 30,  # dpi
                     }
 
         sum_vnfs_cpu = 0
@@ -661,14 +663,14 @@ class HodPage(Policy):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {0: 20,  # nat
+        vnfs_cpu = {0: 15,  # nat
                     1: 25,  # fw
-                    2: 30,  # ids
-                    3: 35,  # wanopt
-                    4: 40,  # lb
-                    5: 45,  # encrypt
-                    6: 50,  # decrypts
-                    7: 55,  # dpi
+                    2: 25,  # ids
+                    3: 20,  # wanopt
+                    4: 20,  # lb
+                    5: 25,  # encrypt
+                    6: 25,  # decrypts
+                    7: 30,  # dpi
                     }
 
         sum_vnfs_cpu = 0
@@ -730,14 +732,14 @@ class HodEigen(Policy):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {0: 20,  # nat
+        vnfs_cpu = {0: 15,  # nat
                     1: 25,  # fw
-                    2: 30,  # ids
-                    3: 35,  # wanopt
-                    4: 40,  # lb
-                    5: 45,  # encrypt
-                    6: 50,  # decrypts
-                    7: 55,  # dpi
+                    2: 25,  # ids
+                    3: 20,  # wanopt
+                    4: 20,  # lb
+                    5: 25,  # encrypt
+                    6: 25,  # decrypts
+                    7: 30,  # dpi
                     }
 
         sum_vnfs_cpu = 0

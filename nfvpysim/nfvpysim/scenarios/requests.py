@@ -51,15 +51,17 @@ class RequestVarLenSfc:
     @staticmethod
     def var_len_seq_sfc():
         var_len_sfc = []
-        sfcs = {0: 20,  # nat
+        sfcs = {0: 15,  # nat
                 1: 25,  # fw
-                2: 30,  # ids
-                3: 35,  # wanopt
-                4: 40,  # lb
-                5: 45,  # encrypt
-                6: 50,  # decrypts
-                7: 55,  # dpi
+                2: 25,  # ids
+                3: 20,  # wanopt
+                4: 20,  # lb
+                5: 25,  # encrypt
+                6: 25,  # decrypts
+                7: 30  # dpi
                 }
+
+
         sfc_len = random.randint(2, 8)
         while sfc_len != 0:
             vnf = random.choice(list(sfcs.keys()))
