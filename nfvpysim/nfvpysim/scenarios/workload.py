@@ -70,7 +70,7 @@ def get_delay(service):
     }
     for k, v in dict_services.items():
         for k1, v1 in v.items():
-            if k1 == service:
+            if v1 == service:
                 return v.get('delay', v)
 
 
