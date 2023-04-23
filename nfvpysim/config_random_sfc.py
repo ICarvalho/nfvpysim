@@ -32,7 +32,7 @@ N_REPLICATIONS = 10
 DATA_COLLECTORS = [
     'ACCEPTANCE_RATIO',
     'LATENCY',  # Measure request and response latency (based on static link delays)
-    'LINK_LOAD'
+    # 'LINK_LOAD'
 #   'PATH_STRETCH'
 
 ]
@@ -72,12 +72,12 @@ NFV_NODE_CACHE_POLICY = 'NFV_CACHE'
 # List of topologies tested
 # Remove topologies not needed
 
-# TOPOLOGIES =  ['TATANLD', 'ION', 'BESTEL', 'USCARRIER',  'COGENTCO', 'COLT']
-TOPOLOGIES = ['ION']
+TOPOLOGIES =  ['TATANLD', 'ION', 'BESTEL', 'USCARRIER',  'COGENTCO', 'COLT']
+# TOPOLOGIES = ['ION']
 
 # List of caching and routing strategies
 # Remove strategies not needed
-POLICIES = ['HOD_VNF']
+POLICIES = ['HOD_VNF', 'HOD_VNF_OFF']
 # POLICIES = ['BASELINE', 'MARKOV', 'HOD_VNF', 'FIRST_ORDER', 'HOD_VNF_OFF']
 # POLICIES = ['HOD_VNF', 'HOD_DEG', 'HOD_CLOSE', 'HOD_PAGE', 'HOD_EIGEN']
 
