@@ -164,14 +164,14 @@ class LatencyCollector(DataCollector):
         self.sess_count = 0
         self.latency = 0.0
         self.vnf_proc_time = 0.0
-        self.dict_vnfs_cpu_req_proc_delay = {0: 20,  # nat
+        self.dict_vnfs_cpu_req_proc_delay = {0: 15,  # nat
                                              1: 25,  # fw
-                                             2: 30,  # ids
-                                             3: 35,  # wanopt
-                                             4: 40,  # lb
-                                             5: 45,  # encrypt
-                                             6: 50,  # decrypts
-                                             7: 55  # dpi
+                                             2: 25,  # ids
+                                             3: 20,  # wanopt
+                                             4: 20,  # lb
+                                             5: 25,  # encrypt
+                                             6: 25,  # decrypts
+                                             7: 30  # dpi
                                              }
 
         if cdf:

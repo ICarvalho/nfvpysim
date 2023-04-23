@@ -404,14 +404,14 @@ class Hod(Policy):
 
     @staticmethod
     def sum_vnfs_cpu(vnfs):
-        vnfs_cpu = {0: 20,  # nat
+        vnfs_cpu = {0: 15,  # nat
                     1: 25,  # fw
-                    2: 30,  # ids
-                    3: 35,  # wanopt
-                    4: 40,  # lb
-                    5: 45,  # encrypt
-                    6: 50,  # decrypts
-                    7: 55  # dpi
+                    2: 25,  # ids
+                    3: 20,  # wanopt
+                    4: 20,  # lb
+                    5: 25,  # encrypt
+                    6: 25,  # decrypts
+                    7: 30,  # dpi
                     }
 
         sum_vnfs_cpu = 0
@@ -423,6 +423,7 @@ class Hod(Policy):
     def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
         delay_sfc = defaultdict(int)  # dict to store the delay taken to run the sfc over the path
         missed_vnfs = []
+        print(sfc, delay)
         path = self.view.shortest_path(ingress_node, egress_node)
         self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, delay, log)
         vnf_status = {vnf: 0 for vnf in sfc}  # 0 - not processed / 1 - processed
@@ -447,15 +448,12 @@ class Hod(Policy):
                         missed_vnfs.append(vnf)
 
             if len(missed_vnfs) != 0:
-                sum_cpu_missed_vnfs = Hod.sum_vnfs_cpu(missed_vnfs)
-                nfv_node_min_cpu_all = self.controller.find_nfv_node_with_min_cpu_alloc(ingress_node, egress_node)
                 closest_nfv_node = self.controller.get_closest_nfv_node(path)
-                # sum_cpu_vnfs_on_node = self.controller.sum_vnfs_cpu_on_node(closest_nfv_node)
                 if v == closest_nfv_node:  # and v == nfv_node_min_cpu_all:
                     for missed_vnf in missed_vnfs:
                         vnf_status[missed_vnf] = 1
                         self.controller.put_vnf(v, missed_vnf)
-                        # self.controller.vnf_proc(missed_vnf)
+                        self.controller.vnf_proc(missed_vnf)
                         self.controller.proc_vnf_payload(u, v)
             delay_sfc[sfc_id] += sum_cpu_sfc
             if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
