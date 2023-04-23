@@ -423,7 +423,6 @@ class Hod(Policy):
     def process_event(self, time, sfc_id, ingress_node, egress_node, sfc, delay, log):
         delay_sfc = defaultdict(int)  # dict to store the delay taken to run the sfc over the path
         missed_vnfs = []
-        print(sfc, delay)
         path = self.view.shortest_path(ingress_node, egress_node)
         self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, delay, log)
         vnf_status = {vnf: 0 for vnf in sfc}  # 0 - not processed / 1 - processed
@@ -435,7 +434,7 @@ class Hod(Policy):
             v = path[hop]
             self.controller.forward_request_vnf_hop(u, v)
             delay_sfc[sfc_id] += self.view.link_delay(u, v)
-            if self.view.is_nfv_node(v):
+            if self.view.is_nfv_node(v) and v != egress_node:
                 for vnf in sfc:
                     if self.controller.get_vnf(v, vnf):
                         if vnf_status[vnf] == 0:
