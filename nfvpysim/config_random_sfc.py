@@ -73,7 +73,7 @@ NFV_NODE_CACHE_POLICY = 'NFV_CACHE'
 # Remove topologies not needed
 
 # TOPOLOGIES =  ['TATANLD', 'ION', 'BESTEL', 'USCARRIER',  'COGENTCO', 'COLT']
-TOPOLOGIES = ['ION', 'BESTEL', 'USCARRIER', 'COGENTCO']
+TOPOLOGIES = ['ION']
 
 # List of caching and routing strategies
 # Remove strategies not needed

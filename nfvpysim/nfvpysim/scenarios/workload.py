@@ -65,7 +65,7 @@ def get_delay(service):
         17: {'sfc': [4, 3, 5, 6, 0, 1, 2], 'delay': 450},
         18: {'sfc': [1, 2, 6, 3, 5, 4, 7], 'delay': 450},
         19: {'sfc': [0, 1, 2, 4, 3, 7, 5, 6], 'delay': 500},
-        20: {'sfc': [3, 0, 1, 4, 5, 7, 6, 2], 'delay': 500},
+        20: {'sfc': [3, 0, 1, 4, 5, 7, 6, 2], 'delay': 500}
 
     }
     for k, v in dict_services.items():
