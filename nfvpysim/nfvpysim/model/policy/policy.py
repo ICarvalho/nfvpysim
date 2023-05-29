@@ -97,7 +97,7 @@ class Bcsp(Policy):
                             vnf_status[vnf] = 1
                             self.controller.vnf_proc(vnf)
                             self.controller.proc_vnf_payload(u, v)
-            delay_sfc[sfc_id] += sum_cpu_sfc
+            # delay_sfc[sfc_id] += sum_cpu_sfc
             if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
                 self.controller.sfc_hit(sfc_id)
                 break
@@ -132,22 +132,25 @@ class TapAlgo(Policy):
         topology = self.view.topology()
         paths = self.controller.get_all_paths(topology, ingress_node, egress_node)  # list of (list) paths
         target_path = self.controller.sort_paths_min_cpu_use(paths)
+        print('target_path', target_path)
         sum_cpu_sfc = TapAlgo.sum_vnfs_cpu(sfc)
         dict_node_cpu = {}
-        if self.controller.nodes_rem_cpu(target_path) > sum_cpu_sfc and self.view.delay_path(target_path) < delay:
+        if self.controller.nodes_rem_cpu(target_path) >= sum_cpu_sfc and self.view.delay_path(target_path) < delay:
             nfv_nodes = self.controller.nfv_nodes_path(target_path)
+            print('nfv_nodes', nfv_nodes)
             for node in nfv_nodes:
                 dict_node_cpu[node] = self.controller.sum_vnfs_cpu_on_node(node)
-            node_max_cpu = min(dict_node_cpu.keys())
+                print('dict_nodes', dict_node_cpu[node])
+            node_max_cpu = min(dict_node_cpu, key=dict_node_cpu.get)
             node_max_cpu_avail = dict_node_cpu[node_max_cpu]
+            print('node_max_cpu', node_max_cpu_avail)
             for node in target_path:
                 if node == node_max_cpu:
                     if sum_cpu_sfc <= node_max_cpu_avail:
                         self.controller.put_sfc(node, sfc)
                         break
 
-                else:
-                    continue
+
 
         return target_path
 
@@ -157,20 +160,21 @@ class TapAlgo(Policy):
         sum_cpu_sfc = TapAlgo.sum_vnfs_cpu(sfc)
         self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, delay, log)
         path = self.find_path(ingress_node, egress_node, sfc, delay)
+        # delay_sfc[sfc_id] = 0
         for hop in range(1, len(path)):
             delay_sfc[sfc_id] = 0
             u = path[hop - 1]
             v = path[hop]
             self.controller.forward_request_vnf_hop(u, v)
             delay_sfc[sfc_id] += self.view.link_delay(u, v)
-            if self.view.is_nfv_node(v):
+            if self.view.is_nfv_node(v) and v != egress_node:
                 for vnf in sfc:
                     if self.controller.get_vnf(v, vnf):
                         if vnf_status[vnf] == 0:
                             vnf_status[vnf] = 1
                             self.controller.vnf_proc(vnf)
                             self.controller.proc_vnf_payload(u, v)
-            delay_sfc[sfc_id] += sum_cpu_sfc
+            # delay_sfc[sfc_id] += sum_cpu_sfc
             if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
                 self.controller.sfc_hit(sfc_id)
                 break
@@ -198,15 +202,14 @@ class FirstFit(Policy, ABC):
         sum_vnfs_cpu = 0
         for vnf in vnfs:
             if vnf in vnfs_cpu.keys():
-                sum_vnfs_cpu += vnfs_cpu[vnf]
+                sum_vnfs_cpu += vnfs_cpu.get(vnf)
         return sum_vnfs_cpu
 
     def first_fit_search(self, path, sfc):
-        sum_cpu_nodes = {}
         sum_vnfs_sfc = FirstFit.sum_vnfs_cpu(sfc)
+        print(sum_vnfs_sfc)
         for node in path:
-            sum_cpu_nodes[node] = self.controller.sum_vnfs_cpu_on_node(node)
-            if sum_cpu_nodes[node] <= sum_vnfs_sfc:
+            if self.controller.sum_vnfs_cpu_on_node(node) <= sum_vnfs_sfc:
                 self.controller.put_sfc(node, sfc)
                 break
         return
@@ -217,21 +220,23 @@ class FirstFit(Policy, ABC):
         sum_cpu_sfc = FirstFit.sum_vnfs_cpu(sfc)
         self.controller.start_session(time, sfc_id, ingress_node, egress_node, sfc, delay, log)
         path = self.view.shortest_path(ingress_node, egress_node)
-
+        delay_sfc[sfc_id] = 0
         for hop in range(1, len(path)):
-            delay_sfc[sfc_id] = 0
+            # delay_sfc[sfc_id] = 0
             u = path[hop - 1]
             v = path[hop]
             self.controller.forward_request_vnf_hop(u, v)
             delay_sfc[sfc_id] += self.view.link_delay(u, v)
             if self.view.is_nfv_node(v):
-                for vnf in sfc:
-                    if self.controller.get_vnf(v, vnf):
-                        if vnf_status[vnf] == 0:
-                            vnf_status[vnf] = 1
-                            self.controller.vnf_proc(vnf)
-                            self.controller.proc_vnf_payload(u, v)
-            delay_sfc[sfc_id] += sum_cpu_sfc
+                if self.controller.sum_vnfs_cpu_on_node(v) <= sum_cpu_sfc:
+                    self.controller.put_sfc(v, sfc)
+                    for vnf in sfc:
+                        if self.controller.get_vnf(v, vnf):
+                            if vnf_status[vnf] == 0:
+                                vnf_status[vnf] = 1
+                                self.controller.vnf_proc(vnf)
+                                self.controller.proc_vnf_payload(u, v)
+            # delay_sfc[sfc_id] += sum_cpu_sfc
             if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
                 self.controller.sfc_hit(sfc_id)
                 break
@@ -282,7 +287,7 @@ class Markov(Policy):
                             vnf_status[vnf] = 1
                             self.controller.vnf_proc(vnf)
                             self.controller.proc_vnf_payload(u, v)
-            delay_sfc[sfc_id] += sum_cpu_sfc
+            # delay_sfc[sfc_id] += sum_cpu_sfc
             if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
                 self.controller.sfc_hit(sfc_id)
                 break
@@ -320,8 +325,9 @@ class FirstOrder(Policy):
         vnf_status = {vnf: 0 for vnf in sfc}  # 0 - not processed / 1 - processed
         sum_cpu_sfc = FirstOrder.sum_vnfs_cpu(sfc)  # total time processing of the sfc
         # for u, v in path_links(path):
+        delay_sfc[sfc_id] = 0
         for hop in range(1, len(path)):
-            delay_sfc[sfc_id] = 0
+            # delay_sfc[sfc_id] = 0
             u = path[hop - 1]
             v = path[hop]
             self.controller.forward_request_vnf_hop(u, v)
@@ -333,7 +339,7 @@ class FirstOrder(Policy):
                             vnf_status[vnf] = 1
                             self.controller.vnf_proc(vnf)
                             self.controller.proc_vnf_payload(u, v)
-            delay_sfc[sfc_id] += sum_cpu_sfc
+            # delay_sfc[sfc_id] += sum_cpu_sfc
             if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
                 self.controller.sfc_hit(sfc_id)
                 break
@@ -386,10 +392,8 @@ class Baseline(Policy):
                             vnf_status[vnf] = 1
                             self.controller.vnf_proc(vnf)
                             self.controller.proc_vnf_payload(u, v)
-                delay_sfc[sfc_id] += sum_cpu_sfc
-            # print(delay_sfc[sfc_id])
+            # delay_sfc[sfc_id] += sum_cpu_sfc
             if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
-                print(delay_sfc)
                 self.controller.sfc_hit(sfc_id)
                 break
 
@@ -428,8 +432,9 @@ class Hod(Policy):
         vnf_status = {vnf: 0 for vnf in sfc}  # 0 - not processed / 1 - processed
         sum_cpu_sfc = Hod.sum_vnfs_cpu(sfc)  # total time processing of the sfc
         # for u, v in path_links(path):
+        delay_sfc[sfc_id] = 0
         for hop in range(1, len(path)):
-            delay_sfc[sfc_id] = 0
+            # delay_sfc[sfc_id] = 0
             u = path[hop - 1]
             v = path[hop]
             self.controller.forward_request_vnf_hop(u, v)
@@ -454,7 +459,7 @@ class Hod(Policy):
                         self.controller.put_vnf(v, missed_vnf)
                         self.controller.vnf_proc(missed_vnf)
                         self.controller.proc_vnf_payload(u, v)
-            delay_sfc[sfc_id] += sum_cpu_sfc
+            # delay_sfc[sfc_id] += sum_cpu_sfc
             if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
                 self.controller.sfc_hit(sfc_id)
                 break
@@ -493,8 +498,9 @@ class HodOff(Policy):
         vnf_status = {vnf: 0 for vnf in sfc}  # 0 - not processed / 1 - processed
         sum_cpu_sfc = Hod.sum_vnfs_cpu(sfc)  # total time processing of the sfc
         # for u, v in path_links(path):
+        delay_sfc[sfc_id] = 0
         for hop in range(1, len(path)):
-            delay_sfc[sfc_id] = 0.0
+            # delay_sfc[sfc_id] = 0
             u = path[hop - 1]
             v = path[hop]
             self.controller.forward_request_vnf_hop(u, v)
@@ -506,13 +512,15 @@ class HodOff(Policy):
                             vnf_status[vnf] = 1
                             self.controller.vnf_proc(vnf)
                             self.controller.proc_vnf_payload(u, v)
-            delay_sfc[sfc_id] += sum_cpu_sfc
+            # delay_sfc[sfc_id] += sum_cpu_sfc
             if all(value == 1 for value in vnf_status.values()) and delay_sfc[sfc_id] <= delay:
                 self.controller.sfc_hit(sfc_id)
                 break
 
         self.controller.end_session()
 
+
+########################################## CENTRALITY-BASED APPROACHES (USED IN DISSERTATION)##########################
 
 @register_policy('HOD_DEG')
 class HodDeg(Policy):
@@ -788,60 +796,3 @@ class HodEigen(Policy):
                 break
 
         self.controller.end_session()
-
-
-"""
-        for hop in range(1, len(path)):
-            u = path[hop - 1]
-            v = path[hop]
-            self.controller.forward_request_vnf_hop(u, v)
-            if self.view.is_nfv_node(v):
-                for vnf in sfc:
-                    if self.controller.get_vnf(v, vnf):
-                        if vnf_status[vnf] == 0:
-                            vnf_status[vnf] = 1
-                            # self.controller.vnf_proc(vnf)
-                            self.controller.proc_vnf_payload(u, v)
-            if all(value == 1 for value in vnf_status.values()) and v == egress_node:
-                self.controller.sfc_hit(sfc_id)
-
-        self.controller.end_session()
-
-
-"""
-
-"""
-         for hop in range(1, len(path)):
-            u = path[hop - 1]
-            v = path[hop]
-            self.controller.forward_request_vnf_hop(u, v)
-            if self.view.is_nfv_node(v) and v != egress_node:
-                for vnf in sfc:
-                    if self.controller.get_vnf(v, vnf):
-                        if vnf_status[vnf] == 0:
-                            vnf_status[vnf] = 1
-                            #self.controller.vnf_proc(vnf)
-                            self.controller.proc_vnf_payload(u, v)
-                    else:
-                        missed_vnfs.append(vnf)
-
-            if len(missed_vnfs) != 0:
-                sum_cpu_missed_vnfs = GreedyWithOnlinePlacementPolicy.sum_vnfs_cpu(missed_vnfs)
-                nfv_node_min_cpu_all = self.controller.find_nfv_node_with_min_cpu_alloc(ingress_node, egress_node)
-                closest_nfv_node = self.controller.get_closest_nfv_node(path)
-                # sum_cpu_vnfs_on_node = self.controller.sum_vnfs_cpu_on_node(closest_nfv_node)
-                if v == closest_nfv_node: # and v == nfv_node_min_cpu_all:
-                    for missed_vnf in missed_vnfs:
-                        vnf_status[missed_vnf] = 1
-                        self.controller.put_vnf(v, missed_vnf)
-                        #self.controller.vnf_proc(missed_vnf)
-                        self.controller.proc_vnf_payload(u, v)
-            if all(value == 1 for value in vnf_status.values()) and v == egress_node:
-                self.controller.sfc_hit(sfc_id)
-
-        self.controller.end_session()
-
-
-
-
-"""

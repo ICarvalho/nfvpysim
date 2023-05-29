@@ -12,13 +12,13 @@ import logging
 logger = logging.getLogger('orchestration')
 
 __all__ = [
-    'NetworkModelHolu',
+    'NetworkModelRba',
     'NetworkModelFirstOrder',
     'NetworkModelMarkov',
     'NetworkModelBaseLine',
     'NetworkModelProposal',
     'NetworkModelProposalOff',
-    'NetworkViewHolu',
+    'NetworkViewRba',
     'NetworkViewTapAlgo',
     'NetworkViewFirstFit',
     'NetworkViewFirstOrder',
@@ -94,10 +94,10 @@ class NetworkViewProposalOff:
 
 
 
-class NetworkViewHolu:
+class NetworkViewRba:
 
     def __init__(self, model):
-        if not isinstance(model, NetworkModelHolu):
+        if not isinstance(model, NetworkModelRba):
             raise ValueError('The model argument must be an instance of '
                              'NetworkModel')
 
@@ -613,10 +613,10 @@ class NetworkViewEigen:
         return n_vnf_inst
 
 
-################################### NetworkModelHolu ##################################################
+################################### NetworkModelRba ##################################################
 
 
-class NetworkModelHolu:
+class NetworkModelRba:
     """
     Models the internal state of the network.
     This object should never be edited by VNF Allocation Policies directly, but only
@@ -674,8 +674,8 @@ class NetworkModelHolu:
         self.nfv_cache = {node: CACHE_POLICY[policy_name](nfv_cache_size[node], **policy_args)
                           for node in nfv_cache_size}
 
-        self.nfv_nodes_betw = {node: NetworkModelHolu.get_node_betw(topology, node) for node in
-                               NetworkModelHolu.get_nfv_nodes(topology)}
+        self.nfv_nodes_betw = {node: NetworkModelRba.get_node_betw(topology, node) for node in
+                               NetworkModelRba.get_nfv_nodes(topology)}
 
         # for node in self.nfv_cache:
         # print(node)
@@ -693,7 +693,7 @@ class NetworkModelHolu:
                 # for vnf in sfc:
                 self.nfv_cache[node].add_vnf(vnf)
                 # self.nfv_cache[node].list_nfv_cache()
-        """
+        
 
         target_nfv_nodes = vnfs_assignment(self.nfv_cache, sfcs)
         for node in self.nfv_cache:
@@ -703,7 +703,7 @@ class NetworkModelHolu:
                 # for vnf in vnfs:
                 self.nfv_cache[node].add_vnf(vnf)
                 # self.nfv_cache[node].list_nfv_cache()
-
+        """
     @staticmethod
     def get_node_betw(topology, node):
         node_betw = nx.betweenness_centrality(topology)
@@ -2931,20 +2931,23 @@ class NetworkController:
             return self.model.nfv_cache[node].sum_vnfs_cpu_node()
 
     def nodes_rem_cpu(self, path):
-        rem_cpu = 0
+        rem_cpu = {}
         for node in path:
             if node in self.model.nfv_cache:
                 cpu = self.sum_vnfs_cpu_on_node(node)
-                rem_cpu += 100 - cpu
-        return rem_cpu
+                rem_cpu[node] = 100 - cpu
+        return sum(rem_cpu.values())
 
     def sort_paths_min_cpu_use(self, paths):
         dict_of_paths = {}
-        for path in paths:
-            path_rem_cpu = self.nodes_rem_cpu(path)
-            dict_of_paths[path_rem_cpu] = path
-            selected_path = min(dict_of_paths, key=dict_of_paths.get)
-            return dict_of_paths[selected_path]
+        dict_sum_cpu = {}
+        for i, path in enumerate(paths):
+            dict_sum_cpu[i] = self.nodes_rem_cpu(path) + 100
+            dict_of_paths[i] = path
+        path_min_sum_cpu = max(dict_sum_cpu, key=dict_sum_cpu.get)
+        # print('sum:', path_min_sum_cpu)
+        # print('path', dict_of_paths[path_min_sum_cpu])
+        return dict_of_paths[path_min_sum_cpu]
 
     def nfv_nodes_path(self, path):
         return self.model.get_nfv_nodes_path(path)

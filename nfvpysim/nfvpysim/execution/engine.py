@@ -35,7 +35,7 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
         A tree with the aggregated simulation results from all collectors
         :param nfv_cache_policy:
     """
-    model_holu = NetworkModelHolu(topology, nfv_cache_policy, **netconf)
+    model_rba = NetworkModelRba(topology, nfv_cache_policy, **netconf)
     model_tap_algo = NetworkModelTapAlgo(topology, nfv_cache_policy, **netconf)
     model_markov = NetworkModelMarkov(topology, nfv_cache_policy, **netconf)
     model_first_order = NetworkModelFirstOrder(topology, nfv_cache_policy, **netconf)
@@ -48,7 +48,7 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
     model_hod_eigen = NetworkModelProposalEigenVector(topology, nfv_cache_policy, **netconf)
     model_first_fit = NetworkModelFirstFit(topology, nfv_cache_policy, **netconf)
 
-    # view_holu = NetworkViewHolu(model_holu)
+    view_rba = NetworkViewRba(model_rba)
     view_markov = NetworkViewMarkov(model_markov)
     view_tap_algo = NetworkViewTapAlgo(model_tap_algo)
     view_first_order = NetworkViewFirstOrder(model_first_order)
@@ -61,7 +61,7 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
     view_eigen = NetworkViewEigen(model_hod_eigen)
     view_first_fit = NetworkViewFirstFit(model_first_fit)
 
-    # controller_holu = NetworkController(model_holu)
+    controller_rba = NetworkController(model_rba)
     controller_markov = NetworkController(model_markov)
     controller_tap_algo = NetworkController(model_tap_algo)
     controller_first_order = NetworkController(model_first_order)
@@ -230,6 +230,21 @@ def exec_experiment(topology, workload, netconf, policy, nfv_cache_policy, colle
         for time, event in workload:
             policy_inst_hod_eigen.process_event(time, **event)
         return collector_hod_eigen.results()
+
+    if policy['name'] == 'RBA':
+        collectors_inst_rba = [DATA_COLLECTOR[name](view_rba, **params)
+                                     for name, params in collectors.items()]
+        collector_rba = CollectorProxy(view_rba, collectors_inst_rba)
+        controller_rba.attach_collector(collector_rba)
+
+        policy_name_rba = policy['name']
+        policy_args_rba = {k: v for k, v in policy.items() if k != 'name'}
+        policy_inst_rba = POLICY[policy_name_rba](view_rba, controller_rba, **policy_args_rba)
+
+        for time, event in workload:
+            policy_inst_rba.process_event(time, **event)
+        return collector_rba.results()
+
 
 
 """

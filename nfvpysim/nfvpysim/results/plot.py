@@ -327,7 +327,7 @@ def plot_bar_chart(resultset, desc, filename, plotdir):
     """
     fig = plt.figure()
     _, ax1 = plt.subplots()
-    plt.grid(b=True, which='major', color='k', axis='y', linestyle=':')
+    plt.grid(which='major', color='k', axis='y', linestyle=':')
     if 'title' in desc:
         plt.title(desc['title'])
     # Set axis below bars

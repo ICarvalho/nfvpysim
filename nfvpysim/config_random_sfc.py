@@ -32,8 +32,8 @@ N_REPLICATIONS = 10
 DATA_COLLECTORS = [
     'ACCEPTANCE_RATIO',
     'LATENCY',  # Measure request and response latency (based on static link delays)
-    # 'LINK_LOAD'
-#   'PATH_STRETCH'
+    'LINK_LOAD',
+    'PATH_STRETCH'
 
 ]
 
@@ -52,18 +52,14 @@ N_WARMUP_REQUESTS = 0
 
 # Number of measured requests
 
-# N_MEASURED_REQUESTS = [10 ** 1, 10 ** 2, 10 ** 3, 10 ** 4, 10 ** 5]
+# N_MEASURED_REQUESTS = [10 ** 1, 10 ** 2, 10 ** 3]
 N_MEASURED_REQUESTS = [10 ** 3]
 
 # Number of requests per second (over the whole network)
-SFC_REQ_RATES = 10.0
+SFC_REQ_RATES = 100.0
 
 # vnf allocation policy
 VNF_ALLOCATION_POLICY = 'STATIC'
-
-# ALPHA = [0.6, 0.8, 1.0]
-
-# cache size of an nfv_nodes
 
 
 # NFV cache policy for storing VNFs
@@ -72,12 +68,13 @@ NFV_NODE_CACHE_POLICY = 'NFV_CACHE'
 # List of topologies tested
 # Remove topologies not needed
 
-TOPOLOGIES =  ['TATANLD', 'ION', 'BESTEL', 'USCARRIER',  'COGENTCO', 'COLT']
-# TOPOLOGIES = ['ION']
+# TOPOLOGIES = ['TATANLD', 'ION', 'BESTEL', 'USCARRIER',  'COGENTCO', 'COLT']
+TOPOLOGIES = ['ION']
 
 # List of caching and routing strategies
 # Remove strategies not needed
-POLICIES = ['HOD_VNF', 'HOD_VNF_OFF']
+POLICIES = ['TAP_ALGO']
+# POLICIES = ['HOD_VNF', 'HOD_VNF_OFF', 'TAP_ALGO', 'FIRST_FIT']
 # POLICIES = ['BASELINE', 'MARKOV', 'HOD_VNF', 'FIRST_ORDER', 'HOD_VNF_OFF']
 # POLICIES = ['HOD_VNF', 'HOD_DEG', 'HOD_CLOSE', 'HOD_PAGE', 'HOD_EIGEN']
 
