@@ -52,8 +52,8 @@ N_WARMUP_REQUESTS = 0
 
 # Number of measured requests
 
-# N_MEASURED_REQUESTS = [10 ** 1, 10 ** 2, 10 ** 3]
-N_MEASURED_REQUESTS = [10 ** 3]
+N_MEASURED_REQUESTS = [10 ** 5]
+# N_MEASURED_REQUESTS = [ 1 * 10 ** 4, 2 * 10 ** 4, 3 * 10 ** 4, 4 * 10 ** 4, 5 * 10 ** 4]
 
 # Number of requests per second (over the whole network)
 SFC_REQ_RATES = 100.0
@@ -68,13 +68,14 @@ NFV_NODE_CACHE_POLICY = 'NFV_CACHE'
 # List of topologies tested
 # Remove topologies not needed
 
-# TOPOLOGIES = ['TATANLD', 'ION', 'BESTEL', 'USCARRIER',  'COGENTCO', 'COLT']
-TOPOLOGIES = ['ION']
+# TOPOLOGIES = ['ION', 'BESTEL']
+TOPOLOGIES = ['TATANLD', 'ION', 'BESTEL', 'USCARRIER',  'COGENTCO', 'COLT']
+# TOPOLOGIES = ['ION']
 
 # List of caching and routing strategies
 # Remove strategies not needed
-POLICIES = ['TAP_ALGO']
-# POLICIES = ['HOD_VNF', 'HOD_VNF_OFF', 'TAP_ALGO', 'FIRST_FIT']
+# POLICIES = ['TAP_ALGO']
+POLICIES = ['RBA', 'HOD_VNF', 'TAP_ALGO', 'CBA', 'FIRST_FIT']
 # POLICIES = ['BASELINE', 'MARKOV', 'HOD_VNF', 'FIRST_ORDER', 'HOD_VNF_OFF']
 # POLICIES = ['HOD_VNF', 'HOD_DEG', 'HOD_CLOSE', 'HOD_PAGE', 'HOD_EIGEN']
 

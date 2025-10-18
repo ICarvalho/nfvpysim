@@ -45,7 +45,9 @@ POLICY_STYLE = {
     'HOD_VNF_OFF': 'b--p',
     'FIRST_FIT': 'r--<',
     'TAP_ALGO': 'g-->',
-    'HOD_EIGEN': 'c--s'
+    'HOD_EIGEN': 'c--s',
+    'RBA':'m-->',
+    'CBA': 'c--s',
 
     # 'BASELINE': 'r--D',
     # 'HOD': 'k--^',
@@ -67,13 +69,15 @@ POLICY_STYLE = {
 # This dict maps name of strategies to names to be displayed in the legend
 POLICY_LEGEND = {
 
-    'HOD_VNF': 'NS-HOD',
+    'HOD_VNF': 'HOD_VNF',
     'HOD_VNF_OFF': 'HOD_VNF_OFF',
     'BASELINE': 'GREEDY',
-    'FIRST_FIT': 'FF',
+    'FIRST_FIT': 'FIRST_FIT',
     'FIRST_ORDER': 'SECOND_ORD',
     'TAP_ALGO': 'TAP_ALGO',
-    'MARKOV': 'MARKOV'
+    'MARKOV': 'MARKOV',
+    'RBA': 'RBA',
+    'CBA': 'CBA'
 
     # 'HOD_DEG': 'HOD_DEG',
     # 'HOD_CLOSE': 'HOD_CLOSE',
@@ -104,10 +108,11 @@ POLICY_BAR_COLOR_CACHE_SIZE = {
     'HOD_VNF': 'blue',
     'HOD_VNF_OFF': 'navy',
     'BASELINE': 'darkorange',
-    'FIRST_FIT': 'darkred',
-    'FIRST_ORDER': 'k',
-    'TAP_ALGO': 'k',
-    'MARKOV': 'pink'
+    'FIRST_FIT': 'navy',
+    'TAP_ALGO': 'darkred',
+    'MARKOV': 'pink',
+    'RBA': 'pink',
+    'CBA': 'darkorange',
 
     # 'BASELINE': 'dimgray',
     # 'HOD': 'black',
@@ -123,11 +128,13 @@ POLICY_BAR_COLOR_LATENCY = {
 
     'HOD_VNF': 'blue',
     'HOD_VNF_OFF': 'navy',
-    'BASELINE': 'darkorange',
-    'FIRST_FIT': 'darkred',
+    # 'BASELINE': 'darkorange',
+    'FIRST_FIT': 'navy',
     'FIRST_ORDER': 'k',
-    'TAP_ALGO': 'k',
+    'TAP_ALGO': 'darkred',
     'MARKOV': 'pink',
+    'RBA': 'pink',
+    'CBA': 'darkorange'
 
     # 'BASELINE': 'dimgray',
     # 'HOD': 'black',
@@ -145,10 +152,12 @@ POLICY_BAR_COLOR_LINK_LOAD = {
     'HOD_VNF': 'blue',
     'HOD_VNF_OFF': 'navy',
     'BASELINE': 'darkorange',
-    'FIRST_FIT': 'darkred',
+    'FIRST_FIT': 'navy',
     'FIRST_ORDER': 'k',
-    'TAP_ALGO': 'k',
-    'MARKOV': 'pink'
+    'TAP_ALGO': 'darkred',
+    'MARKOV': 'pink',
+    'RBA': 'pink',
+    'CBA': 'darkorange'
 
 }
 
@@ -157,10 +166,11 @@ POLICY_BAR_COLOR_PATH_STRETCH = {
     'HOD_VNF': 'blue',
     'HOD_VNF_OFF': 'navy',
     'BASELINE': 'darkorange',
-    'FIRST_FIT': 'darkred',
+    'FIRST_FIT': 'navy',
     'FIRST_ORDER': 'k',
     'TAP_ALGO': 'k',
-    'MARKOV': 'pink'
+    'MARKOV': 'pink',
+    'CBA': 'darkorange'
 
     # 'BASELINE': 'dimgray',
     # 'HOD': 'black',
@@ -181,7 +191,8 @@ POLICY_BAR_HATCH = {
     'FIRST_FIT': '-',
     'FIRST_ORDER': '\\',
     'TAP_ALGO': 'x',
-   # 'MARKOV': 'x',
+    'RBA': '\\',
+    'CBA': '.',
 
     # 'BASELINE': '/',
     # 'HOD': 'o',
